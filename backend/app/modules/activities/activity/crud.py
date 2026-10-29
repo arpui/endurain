@@ -1352,6 +1352,34 @@ def get_activities_with_thumbnail(
     ]
 
 
+def list_activity_ids_after(
+    db: Session,
+    *,
+    after_id: int = 0,
+    limit: int = core_pagination.DEFAULT_MAINTENANCE_BATCH_SIZE,
+) -> list[int]:
+    """Return the next page of activity ids, ordered by id.
+
+    Paged via ``after_id`` so a caller walking every activity never re-reads a
+    page it already processed.
+
+    Args:
+        db: Database session.
+        after_id: Return only activities with ``id`` greater than this.
+        limit: Maximum number of ids to return.
+
+    Returns:
+        The activity ids, empty when the walk is done.
+    """
+    stmt = (
+        select(activity_models.Activity.id)
+        .where(activity_models.Activity.id > after_id)
+        .order_by(activity_models.Activity.id)
+        .limit(limit)
+    )
+    return [int(activity_id) for activity_id in db.scalars(stmt).all()]
+
+
 def get_activities_without_thumbnail(
     db: Session,
     *,

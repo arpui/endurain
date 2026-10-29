@@ -369,6 +369,28 @@ def list_activities_with_thumbnail(
     return activity_crud.get_activities_with_thumbnail(db, after_id=after_id, limit=limit)
 
 
+def list_activity_ids_after(
+    db: Session,
+    *,
+    after_id: int = 0,
+    limit: int = core_pagination.DEFAULT_MAINTENANCE_BATCH_SIZE,
+) -> list[int]:
+    """Return the next page of activity ids, ordered by id.
+
+    Cross-module surface for reconciliations that must walk every activity
+    without loading all ids at once.
+
+    Args:
+        db: Database session.
+        after_id: Return only activities with ``id`` greater than this.
+        limit: Maximum number of ids to return.
+
+    Returns:
+        The activity ids, empty when the walk is done.
+    """
+    return activity_crud.list_activity_ids_after(db, after_id=after_id, limit=limit)
+
+
 def list_activities_without_thumbnail(
     db: Session,
     *,
