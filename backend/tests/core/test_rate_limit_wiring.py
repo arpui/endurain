@@ -40,6 +40,7 @@ import modules.auth.router as auth_router
 import modules.auth.sign_up_tokens.router as sign_up_tokens_router
 import modules.followers.router as followers_router
 import modules.garmin.router as garmin_router
+import modules.segments.router as segments_router
 import modules.server_settings.router as server_settings_router
 import modules.strava.router as strava_router
 import modules.users.users_profile.router as users_profile_router
@@ -142,6 +143,9 @@ _TIERED_ENDPOINTS = [
     pytest.param(followers_router.accept_follow_request, core_rate_limit.WRITE, id="accept-follow-request"),
     pytest.param(followers_router.reject_follow_request, core_rate_limit.WRITE, id="reject-follow-request"),
     pytest.param(followers_router.delete_follow_relationship, core_rate_limit.WRITE, id="unfollow"),
+    pytest.param(segments_router.import_segment, core_rate_limit.WRITE, id="segment-import"),
+    pytest.param(segments_router.queue_backfill, core_rate_limit.WRITE, id="segment-backfill"),
+    pytest.param(segments_router.delete_segment, core_rate_limit.WRITE, id="segment-delete"),
 ]
 
 

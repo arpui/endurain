@@ -38,6 +38,8 @@ import modules.health.health_water.router as health_water_router
 import modules.health.health_weight.router as health_weight_router
 import modules.health.router as health_router
 import modules.notifications.router as notifications_router
+import modules.segments.activity_router as segments_activity_router
+import modules.segments.router as segments_router
 import modules.server_settings.public_router as server_settings_public_router
 import modules.server_settings.router as server_settings_router
 import modules.strava.router as strava_router
@@ -144,6 +146,14 @@ router.include_router(
     activity_media_router.router,
     prefix=core_config.ROOT_PATH + "/activities/{activity_id}",
     tags=["activity_media"],
+    dependencies=[
+        Depends(auth_dependencies.validate_access_token),
+    ],
+)
+router.include_router(
+    segments_activity_router.router,
+    prefix=core_config.ROOT_PATH + "/activities/{activity_id}",
+    tags=["segments"],
     dependencies=[
         Depends(auth_dependencies.validate_access_token),
     ],
@@ -286,6 +296,12 @@ router.include_router(
         Depends(auth_dependencies.validate_access_token),
         Security(auth_dependencies.check_scopes, scopes=["profile"]),
     ],
+)
+router.include_router(
+    segments_router.router,
+    prefix=core_config.ROOT_PATH + "/segments",
+    tags=["segments"],
+    dependencies=[Depends(auth_dependencies.validate_access_token)],
 )
 router.include_router(
     server_settings_router.router,

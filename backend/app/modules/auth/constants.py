@@ -65,6 +65,13 @@ FOLLOWERS_SCOPE: Final[tuple[str, ...]] = (
     "followers:read",
     "followers:write",
 )
+# Segments keep their own scopes: the library is global and read-heavy, while
+# importing/deleting definitions and queueing a rescan is a rarer write, so an
+# integration token that reads activities should not gain it implicitly.
+SEGMENTS_SCOPE: Final[tuple[str, ...]] = (
+    "segments:read",
+    "segments:write",
+)
 HEALTH_SCOPE: Final[tuple[str, ...]] = (
     "health:read",
     "health:write",
@@ -94,6 +101,8 @@ SCOPE_DICT: Final[dict[str, str]] = {
     "activities:upload": "Upload privileges over activities",
     "followers:read": "Read privileges over the follower/following graph",
     "followers:write": "Follow, unfollow, accept and remove followers",
+    "segments:read": "Read privileges over segments and their efforts",
+    "segments:write": "Import and delete segments, queue effort rescans",
     "health:read": "Read privileges over health data",
     "health:write": "Write privileges over health data",
     "health_targets:read": "Read privileges over health targets data",
@@ -110,6 +119,7 @@ REGULAR_ACCESS_SCOPE: Final[tuple[str, ...]] = (
     USERS_REGULAR_SCOPE
     + ACTIVITIES_SCOPE
     + FOLLOWERS_SCOPE
+    + SEGMENTS_SCOPE
     + GEARS_SCOPE
     + IDENTITY_PROVIDERS_REGULAR_SCOPE
     + HEALTH_SCOPE
