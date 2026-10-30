@@ -4,6 +4,7 @@ import type { SegmentDetailDto, SegmentDetail } from '@/features/segments/types'
 
 import { apiFetch } from '@/services/http'
 import {
+  deleteSegment,
   fetchSegmentEfforts,
   fetchSegments,
   importSegment,
@@ -336,6 +337,13 @@ describe('segments service', () => {
     expect(body.distance).toBeUndefined()
     expect(detail.altitudes).toEqual([100, 103])
     expect(mapSegmentDetail(stored).geometry[0]).toEqual([41, 2])
+  })
+  it('deletes a segment with a void DELETE', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(undefined)
+
+    await deleteSegment(4)
+
+    expect(apiFetch).toHaveBeenCalledWith('/segments/4', { method: 'DELETE', responseType: 'void' })
   })
 })
 

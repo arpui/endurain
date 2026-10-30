@@ -67,5 +67,15 @@
     "needName": "Giv segmentet et navn.",
     "needId": "Giv segmentet et numerisk id."
   },
+  "delete": {
+    "button": "Slet",
+    "title": "Slet segment",
+    "body": "Er du sikker på, at du vil slette \"{name}\"? Alle indsatser på segmentet slettes også. Dette kan ikke fortrydes.",
+    "confirm": "Slet",
+    "cancel": "Annullér",
+    "close": "Luk",
+    "success": "Segment slettet",
+    "error": "Kunne ikke slette segmentet. Prøv venligst igen."
+  },
   "effortCount": "{count} indsatser"
 }

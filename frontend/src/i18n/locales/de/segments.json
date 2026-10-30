@@ -67,5 +67,15 @@
     "needName": "Gib dem Segment einen Namen.",
     "needId": "Gib dem Segment eine numerische ID."
   },
+  "delete": {
+    "button": "Löschen",
+    "title": "Segment löschen",
+    "body": "Bist du sicher, dass du \"{name}\" löschen möchtest? Die zugehörigen Aufwände werden ebenfalls gelöscht. Dies kann nicht rückgängig gemacht werden.",
+    "confirm": "Löschen",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "success": "Segment gelöscht",
+    "error": "Segment konnte nicht gelöscht werden. Bitte versuche es erneut."
+  },
   "effortCount": "{count} Aufwände"
 }

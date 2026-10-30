@@ -8,6 +8,7 @@ import { queryKeys } from '@/services/queryKeys'
 import { useInvalidatingMutation } from '@/composables/useInvalidatingMutation'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import {
+  deleteSegment,
   fetchSegmentById,
   fetchSegmentEfforts,
   fetchSegments,
@@ -109,6 +110,20 @@ export function useImportSegmentMutation() {
   return useInvalidatingMutation({
     mutationKey: ['segments', 'import'],
     mutationFn: importSegment,
+    invalidateKey: queryKeys.segments.all(),
+  })
+}
+
+/**
+ * Deletes one segment. Invalidates the whole segments domain so the library
+ * drops the row and any effort page reading it refetches.
+ *
+ * @returns The mutation performing the delete.
+ */
+export function useDeleteSegmentMutation() {
+  return useInvalidatingMutation<void, number>({
+    mutationKey: ['segments', 'delete'],
+    mutationFn: deleteSegment,
     invalidateKey: queryKeys.segments.all(),
   })
 }

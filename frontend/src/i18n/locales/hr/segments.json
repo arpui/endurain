@@ -67,5 +67,15 @@
     "needName": "Dajte dionici naziv.",
     "needId": "Dajte dionici brojčani ID."
   },
+  "delete": {
+    "button": "Izbriši",
+    "title": "Izbriši dionicu",
+    "body": "Jeste li sigurni da želite izbrisati „{name}”? Njezini napori brišu se zajedno s njom. To se ne može poništiti.",
+    "confirm": "Izbriši",
+    "cancel": "Odustani",
+    "close": "Zatvori",
+    "success": "Dionica izbrisana",
+    "error": "Nije moguće izbrisati dionicu. Pokušajte ponovno."
+  },
   "effortCount": "{count} napora"
 }

@@ -67,5 +67,15 @@
     "needName": "Dai un nome al segmento.",
     "needId": "Dai un ID numerico al segmento."
   },
+  "delete": {
+    "button": "Elimina",
+    "title": "Elimina segmento",
+    "body": "Sei sicuro di voler eliminare \"{name}\"? Anche i suoi sforzi verranno eliminati. Non sarà possibile annullare l'operazione.",
+    "confirm": "Elimina",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "success": "Segmento eliminato",
+    "error": "Impossibile eliminare il segmento. Riprova."
+  },
   "effortCount": "{count} sforzi"
 }

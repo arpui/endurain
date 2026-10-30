@@ -67,5 +67,15 @@
     "needName": "請為該路段命名。",
     "needId": "請為該路段提供數字編號。"
   },
+  "delete": {
+    "button": "刪除",
+    "title": "刪除路段",
+    "body": "確定要刪除「{name}」嗎？該路段的用時也會一併刪除。此操作無法復原。",
+    "confirm": "刪除",
+    "cancel": "取消",
+    "close": "關閉",
+    "success": "路段已刪除",
+    "error": "無法刪除路段。請再試一次。"
+  },
   "effortCount": "{count} 次用時"
 }

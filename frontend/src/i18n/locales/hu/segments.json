@@ -67,5 +67,15 @@
     "needName": "Adj nevet a szakasznak.",
     "needId": "Adj a szakasznak numerikus azonosítót."
   },
+  "delete": {
+    "button": "Törlés",
+    "title": "Szakasz törlése",
+    "body": "Biztosan törölni szeretnéd a(z) „{name}” szakaszt? A hozzá tartozó erőfeszítések is törlődnek. Ezt nem lehet visszavonni.",
+    "confirm": "Törlés",
+    "cancel": "Mégse",
+    "close": "Bezárás",
+    "success": "Szakasz törölve",
+    "error": "Nem sikerült törölni a szakaszt. Kérjük, próbáld újra."
+  },
   "effortCount": "{count} erőfeszítés"
 }

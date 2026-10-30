@@ -67,5 +67,15 @@
     "needName": "Dajte deonici naziv.",
     "needId": "Dajte deonici brojčani ID."
   },
+  "delete": {
+    "button": "Obriši",
+    "title": "Obriši deonicu",
+    "body": "Da li ste sigurni da želite da obrišete \"{name}\"? Njeni napori se brišu zajedno s njom. Ovo se ne može poništiti.",
+    "confirm": "Obriši",
+    "cancel": "Otkaži",
+    "close": "Zatvori",
+    "success": "Deonica obrisana",
+    "error": "Nije moguće obrisati deonicu. Pokušajte ponovo."
+  },
   "effortCount": "{count} napora"
 }

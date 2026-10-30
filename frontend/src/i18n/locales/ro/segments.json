@@ -67,5 +67,15 @@
     "needName": "Dă segmentului un nume.",
     "needId": "Dă segmentului un id numeric."
   },
+  "delete": {
+    "button": "Șterge",
+    "title": "Șterge segmentul",
+    "body": "Sigur dorești să ștergi „{name}”? Eforturile aferente vor fi șterse și ele. Acțiunea nu poate fi anulată.",
+    "confirm": "Șterge",
+    "cancel": "Anulează",
+    "close": "Închide",
+    "success": "Segment șters",
+    "error": "Nu am putut șterge segmentul. Te rugăm să încerci din nou."
+  },
   "effortCount": "{count} eforturi"
 }

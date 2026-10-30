@@ -67,5 +67,15 @@
     "needName": "Odseku daj ime.",
     "needId": "Odseku daj številski ID."
   },
+  "delete": {
+    "button": "Izbriši",
+    "title": "Izbriši odsek",
+    "body": "Ali si prepričan/a, da želiš izbrisati \"{name}\"? Tudi prizadevanja na tem odseku bodo izbrisana. Tega ni mogoče razveljaviti.",
+    "confirm": "Izbriši",
+    "cancel": "Prekliči",
+    "close": "Zapri",
+    "success": "Odsek izbrisan",
+    "error": "Odseka ni bilo mogoče izbrisati. Prosim, poskusi znova."
+  },
   "effortCount": "{count} prizadevanj"
 }

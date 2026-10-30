@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RefreshCw } from '@lucide/vue'
-import { useRoute } from 'vue-router'
+import { RefreshCw, Trash2 } from '@lucide/vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import type { EffortDirectionFilter, SegmentEffort } from '@/features/segments/types'
 import type { GeoPoint } from '@/composables/useMapProvider'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Pagination } from '@/components/ui/pagination'
@@ -20,6 +21,7 @@ import { useRecordsPerPage } from '@/features/config/composables/useRecordsPerPa
 import { useListPagination } from '@/composables/useListPagination'
 import { useToasts } from '@/composables/useToasts'
 import {
+  useDeleteSegmentMutation,
   useSegmentDetailQuery,
   useSegmentEffortsQuery,
   useSegmentsBackfillMutation,
@@ -31,6 +33,7 @@ import { formatSegmentDistance, formatSegmentElevation } from '@/features/segmen
 const { t } = useI18n()
 const toasts = useToasts()
 const route = useRoute()
+const router = useRouter()
 const { data: currentUser } = useCurrentUser()
 
 const units = computed(() => currentUser.value?.units ?? 'metric')
@@ -84,6 +87,28 @@ function queueRescan(): void {
     onError: () => toasts.error(t('segments.rescan.failed')),
   })
 }
+
+// Delete dialog; deleting takes the stored efforts with it, so on success the
+// view leaves a page that no longer exists.
+const isDeleteOpen = ref(false)
+const deleteMutation = useDeleteSegmentMutation()
+
+function confirmDelete(): void {
+  const current = segment.value
+  if (!current) {
+    return
+  }
+  deleteMutation.mutate(current.id, {
+    onSuccess: () => {
+      isDeleteOpen.value = false
+      toasts.success(t('segments.delete.success'))
+      void router.push({ name: 'segments' })
+    },
+    onError: () => {
+      toasts.error(t('segments.delete.error'))
+    },
+  })
+}
 </script>
 
 <template>
@@ -104,10 +129,21 @@ function queueRescan(): void {
             {{ t(segment.source === 'manual' ? 'segments.sourceManual' : 'segments.sourceStrava') }}
           </p>
         </div>
-        <Button variant="ghost" :disabled="backfillMutation.isPending.value" @click="queueRescan">
-          <RefreshCw class="size-4" aria-hidden="true" />
-          {{ t('segments.rescan.button') }}
-        </Button>
+        <div class="flex flex-wrap gap-2">
+          <Button variant="ghost" :disabled="backfillMutation.isPending.value" @click="queueRescan">
+            <RefreshCw class="size-4" aria-hidden="true" />
+            {{ t('segments.rescan.button') }}
+          </Button>
+          <Button
+            variant="ghost"
+            class="text-destructive hover:bg-destructive/10 hover:text-destructive focus-visible:ring-destructive/30"
+            :disabled="deleteMutation.isPending.value"
+            @click="isDeleteOpen = true"
+          >
+            <Trash2 class="size-4" aria-hidden="true" />
+            {{ t('segments.delete.button') }}
+          </Button>
+        </div>
       </header>
 
       <Card class="flex min-w-0 flex-col gap-2">
@@ -151,6 +187,17 @@ function queueRescan(): void {
           />
         </template>
       </Card>
+
+      <ConfirmDialog
+        v-model:open="isDeleteOpen"
+        :title="t('segments.delete.title')"
+        :description="t('segments.delete.body', { name: segment.name })"
+        :confirm-label="t('segments.delete.confirm')"
+        :cancel-label="t('segments.delete.cancel')"
+        :close-label="t('segments.delete.close')"
+        :pending="deleteMutation.isPending.value"
+        @confirm="confirmDelete"
+      />
     </template>
 
     <div v-else class="flex flex-col gap-3" role="status" :aria-label="t('segments.loading')">

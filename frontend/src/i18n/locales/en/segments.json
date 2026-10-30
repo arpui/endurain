@@ -67,5 +67,15 @@
     "needName": "Give the segment a name.",
     "needId": "Give the segment a numeric id."
   },
+  "delete": {
+    "button": "Delete",
+    "title": "Delete segment",
+    "body": "Are you sure you want to delete \"{name}\"? Its efforts are deleted with it. This can't be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel",
+    "close": "Close",
+    "success": "Segment deleted",
+    "error": "Couldn't delete the segment. Please try again."
+  },
   "effortCount": "{count} efforts"
 }

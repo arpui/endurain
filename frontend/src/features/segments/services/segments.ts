@@ -160,6 +160,17 @@ export async function importSegment(input: SegmentImportInput): Promise<SegmentD
 }
 
 /**
+ * Deletes one segment from the library. The server replies `204 No Content`, so
+ * there is no response body to map; the segment's stored efforts cascade with it.
+ *
+ * @param id - Segment identifier.
+ * @throws {HttpError} 404 when the segment does not exist.
+ */
+export async function deleteSegment(id: number): Promise<void> {
+  await apiFetch<void>(`/segments/${id}`, { method: 'DELETE', responseType: 'void' })
+}
+
+/**
  * Queues a full re-match of every activity against the segment library. The
  * server runs it off the request path, so this only reports that it was queued.
  *

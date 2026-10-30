@@ -67,5 +67,15 @@
     "needName": "Daj sekcii názov.",
     "needId": "Daj sekcii číselné ID."
   },
+  "delete": {
+    "button": "Odstrániť",
+    "title": "Odstrániť sekciu",
+    "body": "Naozaj chcete odstrániť „{name}“? Súvisiace výkony budú tiež odstránené. Túto akciu nie je možné vrátiť späť.",
+    "confirm": "Odstrániť",
+    "cancel": "Zrušiť",
+    "close": "Zavrieť",
+    "success": "Sekcia odstránená",
+    "error": "Sekciu sa nepodarilo odstrániť. Skúste to znova."
+  },
   "effortCount": "{count} výkonov"
 }

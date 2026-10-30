@@ -67,5 +67,15 @@
     "needName": "Ge segmentet ett namn.",
     "needId": "Ge segmentet ett numeriskt id."
   },
+  "delete": {
+    "button": "Ta bort",
+    "title": "Ta bort segment",
+    "body": "Är du säker på att du vill ta bort \"{name}\"? Också insatserna på segmentet tas bort. Det kan inte ångras.",
+    "confirm": "Ta bort",
+    "cancel": "Avbryt",
+    "close": "Stäng",
+    "success": "Segment borttaget",
+    "error": "Kunde inte ta bort segmentet. Försök igen."
+  },
   "effortCount": "{count} insatser"
 }

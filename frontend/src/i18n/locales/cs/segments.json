@@ -67,5 +67,15 @@
     "needName": "Zadej sekci název.",
     "needId": "Zadej sekci číselné ID."
   },
+  "delete": {
+    "button": "Smazat",
+    "title": "Smazat sekci",
+    "body": "Opravdu chcete smazat „{name}“? Související výkony budou smazány spolu s ní. Tuto akci nelze vrátit zpět.",
+    "confirm": "Smazat",
+    "cancel": "Zrušit",
+    "close": "Zavřít",
+    "success": "Sekce smazána",
+    "error": "Nepodařilo se smazat sekci. Zkuste to prosím znovu."
+  },
   "effortCount": "{count} výkonů"
 }

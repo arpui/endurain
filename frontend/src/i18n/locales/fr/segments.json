@@ -67,5 +67,15 @@
     "needName": "Donnez un nom au segment.",
     "needId": "Donnez un identifiant numérique au segment."
   },
+  "delete": {
+    "button": "Supprimer",
+    "title": "Supprimer le segment",
+    "body": "Êtes-vous sûr(e) de vouloir supprimer \"{name}\" ? Ses efforts seront également supprimés. Cette action est irréversible.",
+    "confirm": "Supprimer",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "success": "Segment supprimé",
+    "error": "Impossible de supprimer le segment. Veuillez réessayer."
+  },
   "effortCount": "{count} efforts"
 }

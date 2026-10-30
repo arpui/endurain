@@ -67,5 +67,15 @@
     "needName": "Posa un nom al segment.",
     "needId": "Posa un id numèric al segment."
   },
+  "delete": {
+    "button": "Elimina",
+    "title": "Elimina el segment",
+    "body": "Segur que vols eliminar \"{name}\"? Els seus esforços s'eliminen amb ell. Aquesta acció no es pot desfer.",
+    "confirm": "Elimina",
+    "cancel": "Cancel·la",
+    "close": "Tanca",
+    "success": "Segment eliminat",
+    "error": "No s'ha pogut eliminar el segment. Torna-ho a intentar."
+  },
   "effortCount": "{count} esforços"
 }

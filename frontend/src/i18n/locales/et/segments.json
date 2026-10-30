@@ -67,5 +67,15 @@
     "needName": "Anna lõigule nimi.",
     "needId": "Anna lõigule numbriline id."
   },
+  "delete": {
+    "button": "Kustuta",
+    "title": "Kustuta lõik",
+    "body": "Kas oled kindel, et soovid kustutada „{name}“? Selle pingutused kustutatakse koos sellega. Seda ei saa tagasi võtta.",
+    "confirm": "Kustuta",
+    "cancel": "Tühista",
+    "close": "Sulge",
+    "success": "Lõik kustutatud",
+    "error": "Lõiku ei õnnestunud kustutada. Palun proovi uuesti."
+  },
   "effortCount": "{count} pingutust"
 }

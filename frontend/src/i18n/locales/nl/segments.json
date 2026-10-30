@@ -67,5 +67,15 @@
     "needName": "Geef het segment een naam.",
     "needId": "Geef het segment een numerieke id."
   },
+  "delete": {
+    "button": "Verwijderen",
+    "title": "Segment verwijderen",
+    "body": "Weet je zeker dat je \"{name}\" wilt verwijderen? De bijbehorende inspanningen worden ook verwijderd. Dit kan niet ongedaan worden gemaakt.",
+    "confirm": "Verwijderen",
+    "cancel": "Annuleren",
+    "close": "Sluiten",
+    "success": "Segment verwijderd",
+    "error": "Segment kon niet worden verwijderd. Probeer het opnieuw."
+  },
   "effortCount": "{count} inspanningen"
 }
