@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import type { ActivitySegment } from '@/features/activities/types'
@@ -25,6 +26,8 @@ const { t } = useI18n()
 
 interface SegmentRow {
   key: string
+  /** Target of the name link: the segment's own detail page. */
+  segmentId: number
   name: string
   /** Segment length and gain, e.g. `1.95 km · 154 m`. */
   length: string
@@ -69,6 +72,7 @@ const rows = computed<SegmentRow[]>(() =>
       const isBest = !isReverse && best !== null && effort.elapsedSeconds === best
       return {
         key: `${effort.segmentId}-${effort.direction}-${effort.passNumber}`,
+        segmentId: entry.segment.id,
         name: entry.segment.name,
         length,
         time: formatHmsDuration(effort.elapsedSeconds),
@@ -106,7 +110,12 @@ const rows = computed<SegmentRow[]>(() =>
           :class="row.isReverse ? 'text-muted-foreground opacity-60' : ''"
         >
           <td class="py-2 pe-3">
-            <span class="font-medium text-foreground">{{ row.name }}</span>
+            <RouterLink
+              class="font-medium text-foreground underline-offset-4 hover:underline"
+              :to="{ name: 'segment-detail', params: { id: row.segmentId } }"
+            >
+              {{ row.name }}
+            </RouterLink>
             <span v-if="row.pass" class="text-caption ms-2 text-muted-foreground">
               {{ row.pass }}
             </span>

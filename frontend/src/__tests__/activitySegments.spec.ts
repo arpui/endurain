@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { createMemoryHistory, createRouter } from 'vue-router'
 
 import type {
   ActivitySegment,
@@ -80,10 +81,16 @@ function makeSegments(overrides: Partial<Segment> = {}): ActivitySegment[] {
   return [{ ...mapped, segment: { ...mapped.segment, ...overrides } }]
 }
 
+/** Minimal router so the name link resolves to a real href in the DOM. */
+const tableRouter = createRouter({
+  history: createMemoryHistory(),
+  routes: [{ path: '/segments/:id', name: 'segment-detail', component: { template: '<div />' } }],
+})
+
 function mountTable(segments: ActivitySegment[]) {
   return mount(ActivitySegmentsTable, {
     props: { segments, activityType: 1, units: 'metric' },
-    global: { plugins: [i18n] },
+    global: { plugins: [i18n, tableRouter] },
   })
 }
 
@@ -201,6 +208,13 @@ describe('ActivitySegmentsTable', () => {
     expect(text).toContain('Segment')
     expect(text).toContain('Length')
     expect(text).toContain('Time')
+  })
+
+  it('links the segment name to its detail page', () => {
+    const link = rowAt(mountTable(makeSegments()), 0).get('a')
+
+    expect(link.text()).toBe('Final del Puig Vicenç')
+    expect(link.attributes('href')).toBe('/segments/3')
   })
 
   it('marks the pass that is the reader best over the segment', () => {
