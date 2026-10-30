@@ -47,6 +47,8 @@
     "description": "Bir GPX dosyası seçin veya Strava çıkarma betiğinin JSON'unu yapıştırın.",
     "file": "GPX veya JSON dosyası",
     "fileHint": "Bir GPX parkuru (veya rota) çoklu çizgiyi ve varsa irtifaları verir.",
+    "chooseFile": "Bir dosya seç",
+    "chosenFile": "{file} yüklendi",
     "json": "Veya JSON yapıştırın",
     "jsonPlaceholder": "segment_id, name ve latlng dizileri, çıkarma betiğinin dışa aktardığı biçimde",
     "parseJson": "Yapıştırılan JSON'u çözümle",

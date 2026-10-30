@@ -47,6 +47,8 @@
     "description": "Escolhe um ficheiro GPX ou cola o JSON exportado pelo script de extração do Strava.",
     "file": "Ficheiro GPX ou JSON",
     "fileHint": "Um percurso GPX (ou rota) dá a polilinha e, quando existem, as altitudes.",
+    "chooseFile": "Escolher um ficheiro",
+    "chosenFile": "{file} carregado",
     "json": "Ou cola JSON",
     "jsonPlaceholder": "segment_id, name e conjuntos latlng, como o script de extração os exporta",
     "parseJson": "Analisar o JSON colado",

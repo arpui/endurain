@@ -47,6 +47,8 @@
     "description": "Pasirinkite GPX failą arba įklijuokite JSON, kurį eksportuoja Strava išgavimo scenarijus.",
     "file": "GPX arba JSON failas",
     "fileHint": "GPX pėdsakas (arba maršrutas) duoda poliliniją ir, jei yra, aukščius.",
+    "chooseFile": "Pasirinkti failą",
+    "chosenFile": "{file} įkeltas",
     "json": "Arba įklijuokite JSON",
     "jsonPlaceholder": "segment_id, name ir latlng masyvus, kaip juos eksportuoja scenarijus",
     "parseJson": "Apdoroti įklijuotą JSON",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { FileUp } from '@lucide/vue'
+import { FileUp, Upload } from '@lucide/vue'
 
 import type { ParsedSegment } from '@/features/segments/utils/importParsing'
 
@@ -51,6 +51,10 @@ const backfillMutation = useSegmentsBackfillMutation()
 const parsed = ref<ParsedSegment | null>(null)
 /** Why the last read failed, as an i18n key. */
 const parseErrorKey = ref<string | null>(null)
+/** Name of the file last picked, so the choice is visible in the form. */
+const chosenFile = ref('')
+/** The JSON box is the alternative to picking a file, so it starts folded. */
+const isJsonOpen = ref(false)
 /** Raw JSON the user can paste instead of picking a file. */
 const jsonText = ref('')
 const name = ref('')
@@ -96,6 +100,11 @@ function readContent(text: string, filename: string): void {
   }
 }
 
+/** Opens the hidden file picker, the way the other uploads in the app do. */
+function pickFile(): void {
+  fileInput.value?.click()
+}
+
 /** Handles the file picker: GPX or JSON, read as text. */
 async function onFilePicked(event: Event): Promise<void> {
   const target = event.target as HTMLInputElement
@@ -103,6 +112,7 @@ async function onFilePicked(event: Event): Promise<void> {
   if (!file) {
     return
   }
+  chosenFile.value = file.name
   readContent(await file.text(), file.name)
 }
 
@@ -119,6 +129,8 @@ function onJsonPasted(): void {
 function resetForm(): void {
   parsed.value = null
   parseErrorKey.value = null
+  chosenFile.value = ''
+  isJsonOpen.value = false
   jsonText.value = ''
   name.value = ''
   segmentId.value = ''
@@ -187,35 +199,30 @@ async function handleSubmit(): Promise<void> {
   >
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label class="text-caption font-medium text-foreground" for="segment-file">
+        <span class="text-caption font-medium text-foreground">
           {{ t('segments.import.file') }}
-        </label>
-        <input
-          id="segment-file"
-          ref="fileInput"
-          type="file"
-          accept=".gpx,application/gpx+xml,.json,application/json"
-          class="text-meta"
-          :disabled="isBusy"
-          @change="onFilePicked"
-        />
+        </span>
+        <div class="flex flex-wrap items-center gap-2">
+          <input
+            id="segment-file"
+            ref="fileInput"
+            type="file"
+            accept=".gpx,application/gpx+xml,.json,application/json"
+            class="hidden"
+            :aria-label="t('segments.import.chooseFile')"
+            :disabled="isBusy"
+            @change="onFilePicked"
+          />
+          <Button type="button" variant="outline" :disabled="isBusy" @click="pickFile">
+            <Upload class="size-4" aria-hidden="true" />
+            {{ t('segments.import.chooseFile') }}
+          </Button>
+          <span v-if="chosenFile" class="text-caption text-muted-foreground">
+            {{ t('segments.import.chosenFile', { file: chosenFile }) }}
+          </span>
+        </div>
         <p class="text-caption text-muted-foreground">{{ t('segments.import.fileHint') }}</p>
       </div>
-
-      <FormField :label="t('segments.import.json')">
-        <template #default="{ fieldId }">
-          <textarea
-            :id="fieldId"
-            v-model="jsonText"
-            :class="inputFieldClass"
-            class="min-h-24 font-mono text-meta"
-            :placeholder="t('segments.import.jsonPlaceholder')"
-            :disabled="isBusy"
-            rows="4"
-            @change="onJsonPasted"
-          />
-        </template>
-      </FormField>
 
       <div v-if="parseErrorKey" role="alert" class="text-meta text-destructive">
         {{ t(parseErrorKey) }}
@@ -262,15 +269,43 @@ async function handleSubmit(): Promise<void> {
         </FormField>
       </div>
 
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        :disabled="!jsonText.trim()"
-        @click="onJsonPasted"
-      >
-        {{ t('segments.import.parseJson') }}
-      </Button>
+      <!-- Pasting JSON is the fallback for someone with the payload on the
+           clipboard rather than a file, so it stays folded until asked. -->
+      <div class="flex flex-col gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          class="self-start"
+          :disabled="isBusy"
+          @click="isJsonOpen = !isJsonOpen"
+        >
+          {{ t('segments.import.json') }}
+        </Button>
+        <template v-if="isJsonOpen">
+          <textarea
+            v-model="jsonText"
+            :class="inputFieldClass"
+            class="min-h-24 font-mono text-meta"
+            :aria-label="t('segments.import.json')"
+            :placeholder="t('segments.import.jsonPlaceholder')"
+            :disabled="isBusy"
+            rows="4"
+            @change="onJsonPasted"
+          />
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            class="self-start"
+            :disabled="!jsonText.trim()"
+            @click="onJsonPasted"
+          >
+            {{ t('segments.import.parseJson') }}
+          </Button>
+        </template>
+      </div>
     </div>
   </FormDialog>
 </template>

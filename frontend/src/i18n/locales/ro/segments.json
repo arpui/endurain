@@ -47,6 +47,8 @@
     "description": "Alege un fișier GPX sau lipește JSON-ul exportat de scriptul de extracție Strava.",
     "file": "Fișier GPX sau JSON",
     "fileHint": "Un traseu GPX (sau rută) oferă polilinia și, dacă există, altitudinile.",
+    "chooseFile": "Alege un fișier",
+    "chosenFile": "{file} încărcat",
     "json": "Sau lipește JSON",
     "jsonPlaceholder": "segment_id, name și matricele latlng, așa le exportă scriptul de extracție",
     "parseJson": "Analizează JSON-ul lipit",

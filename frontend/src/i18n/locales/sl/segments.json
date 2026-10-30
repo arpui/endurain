@@ -47,6 +47,8 @@
     "description": "Izberi datoteko GPX ali prilepi JSON, ki ga izvozi ekstrakcijski skript Strave.",
     "file": "Datoteka GPX ali JSON",
     "fileHint": "Sled GPX (ali pot) da polilinijo in, če so na voljo, višine.",
+    "chooseFile": "Izberi datoteko",
+    "chosenFile": "{file} naložen",
     "json": "Ali prilepi JSON",
     "jsonPlaceholder": "segment_id, name in polja latlng, kot jih izvozi ekstrakcijski skript",
     "parseJson": "Razčleni prilepljen JSON",

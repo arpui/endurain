@@ -47,6 +47,8 @@
     "description": "Välj en GPX-fil eller klistra in JSON:en som Strava-extraktionsskriptet exporterar.",
     "file": "GPX- eller JSON-fil",
     "fileHint": "En GPX-slinga (eller rutt) ger polylinjen och, om de finns, höjderna.",
+    "chooseFile": "Välj en fil",
+    "chosenFile": "{file} har lästs",
     "json": "Eller klistra in JSON",
     "jsonPlaceholder": "segment_id, name och latlng-arrayer, som extraktionsskriptet exporterar dem",
     "parseJson": "Tolka inklistrad JSON",

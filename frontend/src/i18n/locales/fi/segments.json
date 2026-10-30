@@ -47,6 +47,8 @@
     "description": "Valitse GPX-tiedosto tai liitä Stravan poimintaskriptin viemä JSON.",
     "file": "GPX- tai JSON-tiedosto",
     "fileHint": "GPX-reitti (tai reitti) antaa polylinjan ja mahdolliset korkeudet.",
+    "chooseFile": "Valitse tiedosto",
+    "chosenFile": "{file} ladattu",
     "json": "Tai liitä JSON",
     "jsonPlaceholder": "segment_id, name ja latlng-taulukot, kuten poimintaskripti vie ne",
     "parseJson": "Käsittele liitetty JSON",

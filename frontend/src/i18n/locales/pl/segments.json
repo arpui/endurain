@@ -47,6 +47,8 @@
     "description": "Wybierz plik GPX lub wklej JSON wyeksportowany przez skrypt ekstrakcji Stravy.",
     "file": "Plik GPX lub JSON",
     "fileHint": "Ślad GPX (lub trasa) daje polilinię i, jeśli są, wysokości.",
+    "chooseFile": "Wybierz plik",
+    "chosenFile": "{file} wczytany",
     "json": "Albo wklej JSON",
     "jsonPlaceholder": "segment_id, name i tablice latlng, tak jak eksportuje je skrypt ekstrakcji",
     "parseJson": "Przeanalizuj wklejony JSON",

@@ -47,6 +47,8 @@
     "description": "Tria un fitxer GPX o enganxa el JSON que exporta l'script d'extracció de Strava.",
     "file": "Fitxer GPX o JSON",
     "fileHint": "Un track (o ruta) GPX dona la polyline i, si hi és, les altituds.",
+    "chooseFile": "Tria un fitxer",
+    "chosenFile": "{file} carregat",
     "json": "O enganxa JSON",
     "jsonPlaceholder": "segment_id, name i matrius latlng, com els exporta l'script d'extracció",
     "parseJson": "Analitza el JSON enganxat",

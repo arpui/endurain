@@ -47,6 +47,8 @@
     "description": "Vali GPX-fail või kleebi Strava ekstraheerimisskripti JSON.",
     "file": "GPX- või JSON-fail",
     "fileHint": "GPX-rad (või marsruut) annab polüjoone ja vajadusel ka kõrgused.",
+    "chooseFile": "Vali fail",
+    "chosenFile": "{file} laaditud",
     "json": "Või kleebi JSON",
     "jsonPlaceholder": "segment_id, name ja latlng massiivid, nagu skript need ekspordib",
     "parseJson": "Töötle kleebitud JSON",

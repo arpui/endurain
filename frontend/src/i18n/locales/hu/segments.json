@@ -47,6 +47,8 @@
     "description": "Válassz GPX-fájlt, vagy illeszd be a Strava kinyerő szkriptjének JSON-ját.",
     "file": "GPX- vagy JSON-fájl",
     "fileHint": "Egy GPX-pálya (vagy útvonal) megadja a poligont és, ha vannak, a magasságokat.",
+    "chooseFile": "Fájl kiválasztása",
+    "chosenFile": "{file} betöltve",
     "json": "Vagy illessz be JSON-t",
     "jsonPlaceholder": "segment_id, name és latlng tömbök, ahogy a kinyerő szkript exportálja",
     "parseJson": "Beillesztett JSON feldolgozása",

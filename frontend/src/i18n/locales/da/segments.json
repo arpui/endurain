@@ -47,6 +47,8 @@
     "description": "Vælg en GPX-fil eller indsæt JSON’en som Strava-ekstraktionsskriptet eksporterer.",
     "file": "GPX- eller JSON-fil",
     "fileHint": "Et GPX-spor (eller rute) giver polyline og, hvis til stede, højderne.",
+    "chooseFile": "Vælg en fil",
+    "chosenFile": "{file} indlæst",
     "json": "Eller indsæt JSON",
     "jsonPlaceholder": "segment_id, name og latlng-arrays, som ekstraktionsskriptet eksporterer dem",
     "parseJson": "Fortolk indsat JSON",

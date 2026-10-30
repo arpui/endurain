@@ -47,6 +47,8 @@
     "description": "Vyber súbor GPX alebo vlož JSON z extrakčného skriptu Stravy.",
     "file": "Súbor GPX alebo JSON",
     "fileHint": "Stopa GPX (alebo trať) dáva polylíniu a prípadne aj výšky.",
+    "chooseFile": "Vybrať súbor",
+    "chosenFile": "{file} načítaný",
     "json": "Alebo vlož JSON",
     "jsonPlaceholder": "segment_id, name a polia latlng, ako ich vyváža extrakčný skript",
     "parseJson": "Spracovať vložený JSON",

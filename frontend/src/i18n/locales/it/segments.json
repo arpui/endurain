@@ -47,6 +47,8 @@
     "description": "Scegli un file GPX o incolla il JSON esportato dallo script di estrazione di Strava.",
     "file": "File GPX o JSON",
     "fileHint": "Una traccia GPX (o un percorso) fornisce la polilinea e, se presenti, le quote.",
+    "chooseFile": "Scegli un file",
+    "chosenFile": "{file} caricato",
     "json": "Oppure incolla JSON",
     "jsonPlaceholder": "segment_id, name e matrici latlng, come li esporta lo script di estrazione",
     "parseJson": "Analizza l’JSON incollato",

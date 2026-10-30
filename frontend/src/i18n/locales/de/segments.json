@@ -47,6 +47,8 @@
     "description": "Wähle eine GPX-Datei oder füge das JSON des Strava-Extraktionsskripts ein.",
     "file": "GPX- oder JSON-Datei",
     "fileHint": "Eine GPX-Strecke (oder Route) liefert die Polyline und, falls vorhanden, die Höhen.",
+    "chooseFile": "Datei auswählen",
+    "chosenFile": "{file} geladen",
     "json": "Oder JSON einfügen",
     "jsonPlaceholder": "segment_id, name und latlng-Felder, wie das Extraktionsskript sie exportiert",
     "parseJson": "Eingefügtes JSON auswerten",

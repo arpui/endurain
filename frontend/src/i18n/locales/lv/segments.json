@@ -47,6 +47,8 @@
     "description": "Izvēlies GPX failu vai ielīmē JSON, ko eksportē Strava ekstrakcijas skripts.",
     "file": "GPX vai JSON fails",
     "fileHint": "GPX trase (vai maršruts) dod polilīniju un, ja ir, augstumus.",
+    "chooseFile": "Izvēlēties failu",
+    "chosenFile": "{file} ielādēts",
     "json": "Vai ielīmē JSON",
     "jsonPlaceholder": "segment_id, name un latlng masīvi, kā tos eksportē ekstrakcijas skripts",
     "parseJson": "Apstrādāt ielīmēto JSON",

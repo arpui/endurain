@@ -47,6 +47,8 @@
     "description": "Изберете GPX файл или поставете JSON, който скриптът за извличане експортира.",
     "file": "GPX или JSON файл",
     "fileHint": "GPX запис (или маршрут) дава полилинията и, ако има, височините.",
+    "chooseFile": "Избери файл",
+    "chosenFile": "{file} е зареден",
     "json": "Или поставете JSON",
     "jsonPlaceholder": "segment_id, name и масиви latlng, както ги експортира скриптът",
     "parseJson": "Обработи поставения JSON",

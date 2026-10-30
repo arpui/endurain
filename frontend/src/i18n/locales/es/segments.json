@@ -47,6 +47,8 @@
     "description": "Elige un archivo GPX o pega el JSON que exporta el script de extracción de Strava.",
     "file": "Archivo GPX o JSON",
     "fileHint": "Un track (o ruta) GPX aporta la polilínea y, si la trae, las altitudes.",
+    "chooseFile": "Elegir archivo",
+    "chosenFile": "{file} cargado",
     "json": "O pega JSON",
     "jsonPlaceholder": "segment_id, name y matrices latlng, como los exporta el script de extracción",
     "parseJson": "Analizar el JSON pegado",

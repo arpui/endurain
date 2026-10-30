@@ -47,6 +47,8 @@
     "description": "Виберіть файл GPX або вставте JSON, який експортує скрипт вилучення Strava.",
     "file": "Файл GPX або JSON",
     "fileHint": "Трек GPX (або маршрут) дає полілінію та, якщо є, висоти.",
+    "chooseFile": "Вибрати файл",
+    "chosenFile": "{file} завантажено",
     "json": "Або вставте JSON",
     "jsonPlaceholder": "segment_id, name та масиви latlng, у вигляді, який експортує скрипт",
     "parseJson": "Обробити вставлений JSON",

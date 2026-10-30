@@ -47,6 +47,8 @@
     "description": "Odaberite GPX datoteku ili zalijepite JSON koji generira skripta za izvlačenje sa Strave.",
     "file": "GPX ili JSON datoteka",
     "fileHint": "GPX trag (ili ruta) daje poliliniju i, ako postoje, visine.",
+    "chooseFile": "Odaberi datoteku",
+    "chosenFile": "{file} je učitan",
     "json": "Ili zalijepi JSON",
     "jsonPlaceholder": "segment_id, name i polja latlng, u obliku u kojem ih generira skripta",
     "parseJson": "Obrađuj zalijepljeni JSON",

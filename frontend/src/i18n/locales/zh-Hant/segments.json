@@ -47,6 +47,8 @@
     "description": "選擇 GPX 檔案，或貼上 Strava 擷取腳本輸出的 JSON。",
     "file": "GPX 或 JSON 檔案",
     "fileHint": "GPX 軌跡（或路線）提供折線與（若有）海拔。",
+    "chooseFile": "選擇檔案",
+    "chosenFile": "已讀取 {file}",
     "json": "或貼上 JSON",
     "jsonPlaceholder": "segment_id、name 與 latlng 陣列，依擷取腳本輸出的格式",
     "parseJson": "解析貼上的 JSON",

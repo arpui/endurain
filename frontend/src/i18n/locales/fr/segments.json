@@ -47,6 +47,8 @@
     "description": "Choisissez un fichier GPX ou collez le JSON exporté par le script d’extraction Strava.",
     "file": "Fichier GPX ou JSON",
     "fileHint": "Un parcours GPX (ou une route) fournit la polyligne et, si présentes, les altitudes.",
+    "chooseFile": "Choisir un fichier",
+    "chosenFile": "{file} chargé",
     "json": "Ou collez du JSON",
     "jsonPlaceholder": "segment_id, name et tableaux latlng, tels que les exporte le script d’extraction",
     "parseJson": "Analyser le JSON collé",

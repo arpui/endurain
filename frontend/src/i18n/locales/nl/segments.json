@@ -47,6 +47,8 @@
     "description": "Kies een GPX-bestand of plak de JSON die het Strava-extractiescript exporteert.",
     "file": "GPX- of JSON-bestand",
     "fileHint": "Een GPX-track (of route) geeft de polylijn en, indien aanwezig, de hoogtes.",
+    "chooseFile": "Bestand kiezen",
+    "chosenFile": "{file} geladen",
     "json": "Of plak JSON",
     "jsonPlaceholder": "segment_id, name en latlng-reeksen, zoals het extractiescript ze exporteert",
     "parseJson": "Geplakte JSON verwerken",

@@ -47,6 +47,8 @@
     "description": "Διάλεξε αρχείο GPX ή επικόλλησε το JSON που εξάγει το σενάριο εξαγωγής του Strava.",
     "file": "Αρχείο GPX ή JSON",
     "fileHint": "Μια διαδρομή GPX (ή route) δίνει την πολυγραμμή και, αν υπάρχουν, τα υψόμετρα.",
+    "chooseFile": "Επιλογή αρχείου",
+    "chosenFile": "Το {file} φορτώθηκε",
     "json": "Ή επικόλλησε JSON",
     "jsonPlaceholder": "segment_id, name και πίνακες latlng, όπως τα εξάγει το σενάριο εξαγωγής",
     "parseJson": "Ανάλυση επικολλημένου JSON",
