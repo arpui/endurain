@@ -71,6 +71,10 @@ HEALTH_SCOPE: Final[tuple[str, ...]] = (
     "health_targets:read",
     "health_targets:write",
 )
+# Training-load analysis gets its own pair rather than riding ``activities:*``:
+# settings and thresholds belong to the athlete's training plan, not to one
+# activity, and an upload token should not be able to rewrite them.
+ANALYSIS_SCOPE: Final[tuple[str, ...]] = ("analysis:read", "analysis:write")
 NOTIFICATIONS_REGULAR_SCOPE: Final[tuple[str, ...]] = (
     "notifications:read",
     "notifications:write",
@@ -98,6 +102,8 @@ SCOPE_DICT: Final[dict[str, str]] = {
     "health:write": "Write privileges over health data",
     "health_targets:read": "Read privileges over health targets data",
     "health_targets:write": "Write privileges over health targets data",
+    "analysis:read": "Read privileges over training-load analysis and thresholds",
+    "analysis:write": "Write privileges over training-load analysis settings and recomputes",
     "notifications:read": "Read privileges over notifications",
     "notifications:write": "Write privileges over notifications",
     "server_settings:read": "Read privileges over server settings",
@@ -113,6 +119,7 @@ REGULAR_ACCESS_SCOPE: Final[tuple[str, ...]] = (
     + GEARS_SCOPE
     + IDENTITY_PROVIDERS_REGULAR_SCOPE
     + HEALTH_SCOPE
+    + ANALYSIS_SCOPE
     + NOTIFICATIONS_REGULAR_SCOPE
     + SERVER_SETTINGS_REGULAR_SCOPE
 )

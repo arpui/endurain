@@ -34,6 +34,7 @@ import core.rate_limit as core_rate_limit
 import modules.activities.activity.router as activity_router
 import modules.activities.activity_ingestion.router as ingestion_router
 import modules.activities.activity_media.router as activity_media_router
+import modules.analysis.router as analysis_router
 import modules.auth.identity_providers.public_router as idp_public_router
 import modules.auth.password_reset_tokens.router as password_reset_router
 import modules.auth.router as auth_router
@@ -142,6 +143,9 @@ _TIERED_ENDPOINTS = [
     pytest.param(followers_router.accept_follow_request, core_rate_limit.WRITE, id="accept-follow-request"),
     pytest.param(followers_router.reject_follow_request, core_rate_limit.WRITE, id="reject-follow-request"),
     pytest.param(followers_router.delete_follow_relationship, core_rate_limit.WRITE, id="unfollow"),
+    pytest.param(analysis_router.update_analysis_settings, core_rate_limit.WRITE, id="analysis-settings-update"),
+    pytest.param(analysis_router.queue_threshold_refresh, core_rate_limit.WRITE, id="analysis-threshold-refresh"),
+    pytest.param(analysis_router.queue_load_recompute, core_rate_limit.WRITE, id="analysis-recompute"),
 ]
 
 

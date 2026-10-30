@@ -30,6 +30,8 @@ import modules.activities.activity_thumbnail.scheduled_jobs as activity_thumbnai
 import modules.activities.activity_thumbnail.subscriber_registry as activity_thumbnail_subscriber_registry
 import modules.activities.activity_workout_steps.integration_service as activity_workout_steps_integration
 import modules.activities.contributor_registry as activities_contributor_registry
+import modules.analysis.scheduled_jobs as analysis_scheduled_jobs
+import modules.analysis.subscriber_registry as analysis_subscriber_registry
 import modules.auth.password_reset_tokens.subscriber_registry as password_reset_tokens_subscriber_registry
 import modules.auth.sign_up_tokens.subscriber_registry as sign_up_tokens_subscriber_registry
 import modules.notifications.subscriber_registry as notifications_subscriber_registry
@@ -208,6 +210,20 @@ MODULES: tuple[RuntimeModule, ...] = (
         register_bus=notifications_subscriber_registry.register_all_notification_bus_subscribers,
         register_durable=notifications_subscriber_registry.register_all_notification_durable_handlers,
         nets=notifications_subscriber_registry.NOTIFICATION_DURABLE_SUBSCRIBER_NETS,
+    ),
+    RuntimeModule(
+        name="analysis",
+        register_bus=analysis_subscriber_registry.register_bus_subscribers,
+        register_durable=analysis_subscriber_registry.register_durable_handlers,
+        nets=analysis_subscriber_registry.DURABLE_SUBSCRIBER_NETS,
+        recurring_jobs=analysis_scheduled_jobs.recurring_jobs,
+        startup_tasks=(
+            StartupTask(
+                "reconcile_analysis_loads",
+                "Scheduling training-load reconciliation",
+                analysis_scheduled_jobs.schedule_analysis_reconcile,
+            ),
+        ),
     ),
 )
 

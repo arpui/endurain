@@ -18,6 +18,8 @@ import modules.activities.activity_sets.public_router as activity_sets_public_ro
 import modules.activities.activity_sets.router as activity_sets_router
 import modules.activities.activity_streams.router as activity_streams_router
 import modules.activities.activity_thumbnail.public_router as activity_thumbnail_public_router
+import modules.analysis.activity_router as analysis_activity_router
+import modules.analysis.router as analysis_router
 import modules.auth.api_keys.router as auth_api_keys_router
 import modules.auth.dependencies as auth_dependencies
 import modules.auth.identity_providers.router as identity_providers_router
@@ -173,6 +175,14 @@ router.include_router(
     ],
 )
 router.include_router(
+    analysis_activity_router.router,
+    prefix=core_config.ROOT_PATH + "/activities/{activity_id}",
+    tags=["analysis"],
+    dependencies=[
+        Depends(auth_dependencies.validate_access_token),
+    ],
+)
+router.include_router(
     auth_router.router,
     prefix=core_config.ROOT_PATH + "/auth",
     tags=["auth"],
@@ -286,6 +296,12 @@ router.include_router(
         Depends(auth_dependencies.validate_access_token),
         Security(auth_dependencies.check_scopes, scopes=["profile"]),
     ],
+)
+router.include_router(
+    analysis_router.router,
+    prefix=core_config.ROOT_PATH + "/analysis",
+    tags=["analysis"],
+    dependencies=[Depends(auth_dependencies.validate_access_token)],
 )
 router.include_router(
     server_settings_router.router,

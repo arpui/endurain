@@ -13,6 +13,7 @@ _EXPECTED_CREATED_SUBSCRIBERS = {
     "activity_thumbnail.generate",
     "activity.notify_created",
     "activity_geocoding.reverse_geocode",
+    "analysis.compute_loads",
 }
 _EXPECTED_DELETED_SUBSCRIBERS = {
     "activity_thumbnail.cleanup",
@@ -71,7 +72,7 @@ class TestRuntimeModuleRegistry:
         events = MagicMock()
         runtime_module_registry.register_bus_subscribers(events)
         event_types = [call.args[0] for call in events.subscribe.call_args_list]
-        assert event_types.count(activity_events.ACTIVITY_CREATED) == 3
+        assert event_types.count(activity_events.ACTIVITY_CREATED) == 4
         assert event_types.count(activity_events.ACTIVITY_DELETED) == 3
 
     def test_registers_every_activity_durable_handler(self):
@@ -103,6 +104,7 @@ class TestRuntimeModuleRegistry:
         assert healed == {
             "activity_thumbnail.generate",
             "activity_geocoding.reverse_geocode",
+            "analysis.compute_loads",
         }
         assert exempt == {"activity.notify_created"}
 

@@ -401,6 +401,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/activities/{activity_id}/loads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Activity Loads
+         * @description Return every computed load of this activity, for its owner.
+         *
+         *     Read scope follows the parent activity because the resource belongs to it, while
+         *     the service narrows access to the owner: a load is the athlete's own training
+         *     measure, tied to the thresholds they train against.
+         */
+        get: operations["list_activity_loads_api_v1_activities__activity_id__loads_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/activities/{activity_id}/media": {
         parameters: {
             query?: never;
@@ -589,6 +613,74 @@ export interface paths {
         get: operations["list_activity_workout_steps_api_v1_activities__activity_id__workout_steps_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/recompute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Queue Load Recompute
+         * @description Queue re-measuring every activity with the current thresholds and formulas.
+         */
+        post: operations["queue_load_recompute_api_v1_analysis_recompute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Analysis Settings
+         * @description Return the caller's analysis parameters, including derived thresholds.
+         */
+        get: operations["get_analysis_settings_api_v1_analysis_settings_get"];
+        /**
+         * Update Analysis Settings
+         * @description Update the caller's analysis parameters.
+         *
+         *     A stored load records the threshold it was computed with, so changing a
+         *     threshold does not reinterpret history: queue a recompute afterwards to measure
+         *     every activity against the new value.
+         */
+        put: operations["update_analysis_settings_api_v1_analysis_settings_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/thresholds/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Queue Threshold Refresh
+         * @description Queue re-deriving the caller's thresholds from their own records.
+         */
+        post: operations["queue_threshold_refresh_api_v1_analysis_thresholds_refresh_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5388,6 +5480,28 @@ export interface components {
             total_work?: number | null;
         };
         /**
+         * ActivityLoadRead
+         * @description Serialized load of one activity, as measured by one formula.
+         *
+         *     Attributes:
+         *         method: Formula that produced the load.
+         *         load: Stress score (100 = one hour held at the athlete's threshold).
+         *         intensity_factor: Intensity the load was derived from.
+         *         threshold_used: Threshold value the formula divided by.
+         *         duration_s: Active time the load was computed over.
+         */
+        ActivityLoadRead: {
+            /** Duration S */
+            duration_s: number;
+            /** Intensity Factor */
+            intensity_factor: number | null;
+            /** Load */
+            load: number;
+            method: components["schemas"]["LoadMethod"];
+            /** Threshold Used */
+            threshold_used: number | null;
+        };
+        /**
          * ActivityMediaRead
          * @description A photo attached to an activity, as returned to a client.
          *
@@ -5750,6 +5864,75 @@ export interface components {
             target_value?: number | null;
             /** Weight Display Unit */
             weight_display_unit?: string | null;
+        };
+        /**
+         * AnalysisSettingsRead
+         * @description Serialized analysis parameters of one athlete.
+         *
+         *     Attributes:
+         *         acute_days: Fatigue time constant.
+         *         chronic_days: Fitness time constant.
+         *         primary_method: Formula used when a single load is asked for.
+         *         resting_hr: Resting heart rate stated by the athlete.
+         *         power_thresholds: Threshold per sport group, derived or manual.
+         *         hr_threshold: Threshold heart rate, derived or manual.
+         *         method_params: Per-formula parameters.
+         */
+        AnalysisSettingsRead: {
+            /** Acute Days */
+            acute_days: number;
+            /** Chronic Days */
+            chronic_days: number;
+            hr_threshold?: components["schemas"]["HeartRateThresholdRead"] | null;
+            /** Method Params */
+            method_params?: {
+                [key: string]: number;
+            };
+            /** Power Thresholds */
+            power_thresholds?: {
+                [key: string]: components["schemas"]["PowerThresholdRead"];
+            };
+            primary_method: components["schemas"]["LoadMethod"];
+            /** Resting Hr */
+            resting_hr?: number | null;
+        };
+        /**
+         * AnalysisSettingsUpdate
+         * @description Body updating an athlete's analysis parameters.
+         *
+         *     Every field is optional and only what is sent changes. Sending ``null`` for a
+         *     threshold returns that sport to the derived value instead of leaving the athlete
+         *     with no threshold at all.
+         *
+         *     Attributes:
+         *         acute_days: Fatigue time constant in days.
+         *         chronic_days: Fitness time constant in days.
+         *         primary_method: Formula used when a single load is asked for.
+         *         resting_hr: Resting heart rate in bpm.
+         *         hr_threshold_bpm: Manual threshold heart rate in bpm, or ``None`` to go back
+         *             to the derived one.
+         *         power_threshold_w: Manual threshold power per sport group, or ``None`` per
+         *             sport to go back to the derived one.
+         *         method_params: Whole replacement of the per-formula parameters.
+         */
+        AnalysisSettingsUpdate: {
+            /** Acute Days */
+            acute_days?: number | null;
+            /** Chronic Days */
+            chronic_days?: number | null;
+            /** Hr Threshold Bpm */
+            hr_threshold_bpm?: number | null;
+            /** Method Params */
+            method_params?: {
+                [key: string]: number;
+            } | null;
+            /** Power Threshold W */
+            power_threshold_w?: {
+                [key: string]: number | null;
+            } | null;
+            primary_method?: components["schemas"]["LoadMethod"] | null;
+            /** Resting Hr */
+            resting_hr?: number | null;
         };
         /** Body_create_activity_media_api_v1_activities__activity_id__media_post */
         Body_create_activity_media_api_v1_activities__activity_id__media_post: {
@@ -8323,6 +8506,15 @@ export interface components {
             weight?: number | null;
         };
         /**
+         * HeartRateThresholdRead
+         * @description Serialized threshold heart rate, with its provenance.
+         */
+        HeartRateThresholdRead: {
+            source: components["schemas"]["ThresholdSource"];
+            /** Value Bpm */
+            value_bpm: number;
+        };
+        /**
          * IdentityProvider
          * @description Represents an identity provider with decrypted client credentials.
          *
@@ -8884,6 +9076,24 @@ export interface components {
             type_breakdown?: components["schemas"]["TypeBreakdownItem"][] | null;
         };
         /**
+         * LoadMethod
+         * @description How one activity's training load was measured.
+         *
+         *     Every method except :attr:`TRIMP` answers on the same scale: 100 units is one
+         *     hour held at the athlete's threshold. That shared scale is what lets a day's
+         *     load add up across sports and methods, and what makes an impulse-response
+         *     series meaningful. ``TRIMP`` is a different scale (Banister's) and is reported
+         *     beside the others, never added to them.
+         *
+         *     Attributes:
+         *         COGGAN_TSS: Training Stress Score from Normalized Power over the threshold.
+         *         SKIBA_SCORE: Stress score from xPower, which reacts sooner to bursts.
+         *         HR_LOAD: Load from average heart rate over the threshold heart rate.
+         *         TRIMP: Training impulse from heart-rate reserve (reported, not summed).
+         * @enum {string}
+         */
+        LoadMethod: "coggan_tss" | "skiba_score" | "hr_load" | "trimp";
+        /**
          * LogoutResponse
          * @description Response payload returned by the logout endpoint.
          *
@@ -9402,6 +9612,26 @@ export interface components {
          */
         PasswordType: "strict" | "length_only";
         /**
+         * PowerThresholdRead
+         * @description Serialized power threshold for one sport, with its provenance.
+         *
+         *     Attributes:
+         *         value_w: Threshold power in watts.
+         *         w_prime_j: Fitted anaerobic work capacity in joules, an index rather than an
+         *             absolute: it depends on the duration range the fit used.
+         *         source: Derived or entered by the athlete.
+         *         cv_pct: Fit error as a percentage of the mean, derived values only.
+         */
+        PowerThresholdRead: {
+            /** Cv Pct */
+            cv_pct: number | null;
+            source: components["schemas"]["ThresholdSource"];
+            /** Value W */
+            value_w: number;
+            /** W Prime J */
+            w_prime_j: number | null;
+        };
+        /**
          * ProblemDetail
          * @description An RFC 9457 problem document, as returned for every API error.
          *
@@ -9510,6 +9740,17 @@ export interface components {
             units?: components["schemas"]["Units"] | null;
             /** Username */
             username?: string | null;
+        };
+        /**
+         * RecomputeQueued
+         * @description Response of a recompute request.
+         *
+         *     Attributes:
+         *         queued: Always ``True``: the pass runs off the request path.
+         */
+        RecomputeQueued: {
+            /** Queued */
+            queued: boolean;
         };
         /**
          * RelationshipRead
@@ -9972,6 +10213,18 @@ export interface components {
             /** Client Secret */
             client_secret: string | null;
         };
+        /**
+         * ThresholdSource
+         * @description Where a threshold a load formula used came from.
+         *
+         *     Attributes:
+         *         AUTO: Derived from the athlete's own records (peak-power fit, best sustained
+         *             heart rate); refreshed by the threshold pass and never overwrites a
+         *             manual value.
+         *         MANUAL: Entered by the athlete; wins over anything derived.
+         * @enum {string}
+         */
+        ThresholdSource: "auto" | "manual";
         /**
          * TileMapsTemplate
          * @description Schema representing available tile map templates.
@@ -12784,6 +13037,46 @@ export interface operations {
             };
         };
     };
+    list_activity_loads_api_v1_activities__activity_id__loads_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityLoadRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
     list_activity_media_api_v1_activities__activity_id__media_get: {
         parameters: {
             query?: {
@@ -13156,6 +13449,135 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    queue_load_recompute_api_v1_analysis_recompute_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecomputeQueued"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_analysis_settings_api_v1_analysis_settings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisSettingsRead"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    update_analysis_settings_api_v1_analysis_settings_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnalysisSettingsUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisSettingsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    queue_threshold_refresh_api_v1_analysis_thresholds_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecomputeQueued"];
                 };
             };
             /** @description Unexpected error */
