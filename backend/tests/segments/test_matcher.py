@@ -106,9 +106,25 @@ class TestStraightTraverse:
         assert expected * 0.8 < match.elapsed_seconds < expected * 1.2
 
 
-class TestBracketingRunsToThePassExtremes:
-    def test_a_slow_finish_counts_to_the_far_end_the_trace_reached(self):
-        """The clock runs to the farthest point attained, not to 95 % of the geometry.
+class TestBracketingAnchorsOnTheSegmentEndpoints:
+    def test_the_approach_and_the_run_past_the_finish_are_not_counted(self):
+        """A trace that enters early and keeps going still measures the segment.
+
+        The candidate corridor is 30 m wide, so bracketing on its edges adds a few
+        tens of metres at both ends — around 10 s per end at running speed. The
+        bracket anchors on the geometry's endpoints instead, so the elapsed stays
+        within a stride of the segment itself.
+        """
+        speed = 2.5
+        waypoints = _trace(-3.0, float(_N_POINTS + 3), speed_mps=speed, sample_m=5.0)
+
+        (match,) = match_segment_passes(7, _geometry(), _length_m(), waypoints)
+
+        expected = _length_m() / speed
+        assert abs(match.elapsed_seconds - expected) <= 8.0
+
+    def test_a_slow_finish_still_counts_its_last_metres(self):
+        """The clock runs to the far end the trace reached, not to 95 % of the geometry.
 
         A climb tops out slowly: the last segment metres take far longer than the
         fast approach. Bracketing at a fixed fraction of the polyline would stop
@@ -116,29 +132,26 @@ class TestBracketingRunsToThePassExtremes:
         that actually happened.
         """
         fast = _trace(-2.0, 19.0, speed_mps=5.0)
-        slow = _trace(19.0, float(_N_POINTS + 1), speed_mps=0.5, t0=_last_time(fast))
+        slow = _trace(19.0, float(_N_POINTS + 3), speed_mps=0.5, t0=_last_time(fast))
         waypoints = fast + slow[1:]
 
         (match,) = match_segment_passes(7, _geometry(), _length_m(), waypoints)
 
-        def first_reaching(point_index: int) -> int:
-            """First waypoint whose nearest segment point is at least ``point_index``."""
-            halfway = (point_index - 0.5) * _LNG_STEP
-            return next(i for i, point in enumerate(waypoints) if point["lon"] - _SEG_START_LNG >= halfway)
+        assert match.elapsed_seconds > _length_m() / 5.0 + 60.0
 
-        at_far_end = first_reaching(20)
-        at_95_percent = first_reaching(19)
-        slow_finish_s = (
-            datetime.fromisoformat(waypoints[at_far_end]["time"])
-            - datetime.fromisoformat(waypoints[at_95_percent]["time"])
-        ).total_seconds()
+    def test_a_pass_that_never_anchors_on_an_endpoint_keeps_its_extremes(self):
+        """GPS that stays off the endpoints must still produce the traverse."""
+        offset = 15.0 / 111_320.0  # ~15 m aside: inside the corridor, outside the anchor
+        waypoints = [
+            {"lat": point["lat"] + offset, "lon": point["lon"], "time": point["time"]}
+            for point in _trace(-1.0, float(_N_POINTS + 1), speed_mps=5.0)
+        ]
 
-        # The last geometry metre is worth a full minute here; the effort has to
-        # carry it instead of stopping at 95 % of the polyline.
-        assert slow_finish_s > 60.0
-        assert match.stream_index_end == at_far_end
-        assert match.time_end == datetime.fromisoformat(waypoints[at_far_end]["time"])
-        assert match.elapsed_seconds > _length_m() / 5.0
+        (match,) = match_segment_passes(7, _geometry(), _length_m(), waypoints)
+
+        assert match.direction is segments_constants.SegmentDirection.FORWARD
+        expected = _length_m() / 5.0
+        assert expected * 0.8 < match.elapsed_seconds < expected * 1.3
 
 
 class TestRejectedTraverses:

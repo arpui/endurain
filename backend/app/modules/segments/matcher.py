@@ -12,9 +12,11 @@ The algorithm:
    around), or at a time gap (the activity left and came back).
 3. Accept a pass as a real traverse when it covers at least
    :data:`COVERAGE_MIN` of the segment's index span, classify its direction by
-   the majority sign of the smoothed index steps, and bracket it on the pass's
-   own extremes: from the first waypoint at the near end of the segment to the
-   first later waypoint reaching the far end the athlete actually attained.
+   the majority sign of the smoothed index steps, and bracket it on the pass's own
+   extremes: from the first waypoint at the near end of the segment to the first
+   later waypoint reaching the far end the athlete actually attained. When the
+   trace passes within :data:`ENDPOINT_ANCHOR_M` of the geometry's endpoints, the
+   bracket anchors on those endpoints instead.
 4. Reject implausibly fast passes (:data:`MAX_SPEED_MPS`).
 
 Pass splitting works on *positions within the candidate list*, never on
@@ -41,6 +43,7 @@ SMOOTH_W = 13  # moving-average window for the segment index
 NOISE_JUMP = 10  # implausible nearest-point index jump between candidates: a discontinuity
 GAP_SEC = 75  # time gap between coincident waypoints that closes a pass
 MIN_PASS_POINTS = 3  # fewer candidates than this cannot be a traverse
+ENDPOINT_ANCHOR_M = 10.0  # bracket on the geometry's endpoints when the trace passes this close
 
 _DEG_TO_M = 111_320.0  # metres per degree of latitude (equirectangular approximation)
 
@@ -251,6 +254,10 @@ def match_segment_passes(
     if cand.size == 0:
         return []
     js = jmin[cand]
+    # Distance of every candidate to the geometry's first and last point: what the
+    # endpoint anchoring below reads.
+    d_first = np.hypot(act_x[cand] - seg_x[0], act_y[cand] - seg_y[0])
+    d_last = np.hypot(act_x[cand] - seg_x[-1], act_y[cand] - seg_y[-1])
 
     passes = _split_passes(cand, js, epoch)
     matches: list[segments_contracts.SegmentMatch] = []
@@ -290,6 +297,21 @@ def match_segment_passes(
         i_start = int(cand[pos[j_pass == near_j]].min())
         exit_sel = pos[(act_idx > i_start) & (j_pass == far_j)]
         i_end = int(cand[exit_sel].min()) if exit_sel.size else int(cand[pos[-1]])
+
+        # Anchor the bracket on the geometry's endpoints when the trace clearly
+        # runs over them: the corridor edge (:data:`MATCH_RADIUS_M`) is 30 m wide,
+        # so a waypoint taken as the entry can sit tens of metres short of the
+        # start, which inflates the elapsed by ~10 s on a slow traverse and stops
+        # it agreeing with the elapsed other sources report for the same geometry.
+        # A pass that never comes that close to an endpoint (canopy, a geometry
+        # that overshoots the path) keeps the extremes above.
+        entry_near, exit_near = (d_first, d_last) if near_is_min else (d_last, d_first)
+        anchored_entry = pos[entry_near[pos] <= ENDPOINT_ANCHOR_M]
+        if anchored_entry.size:
+            anchored_start = int(cand[anchored_entry.min()])
+            anchored_exit = pos[(exit_near[pos] <= ENDPOINT_ANCHOR_M) & (act_idx > anchored_start)]
+            if anchored_exit.size:
+                i_start, i_end = anchored_start, int(cand[anchored_exit.min()])
 
         t_start, t_end = times[i_start], times[i_end]
         dt = (t_end - t_start).total_seconds()
