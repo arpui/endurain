@@ -1,0 +1,70 @@
+{
+  "title": "Segmentos",
+  "subtitle": "Tramos medidos dentro de tus actividades.",
+  "loading": "Cargando segmentos…",
+  "sourceStrava": "de Strava",
+  "sourceManual": "definido aquí",
+  "elevation": "Altitud",
+  "map": {
+    "label": "Recorrido del segmento en el mapa"
+  },
+  "error": {
+    "title": "No se han podido cargar los segmentos",
+    "description": "Comprueba la conexión e inténtalo de nuevo."
+  },
+  "empty": {
+    "title": "Aún no hay segmentos",
+    "description": "Importa un segmento desde un archivo GPX o desde el JSON que exporta el script de extracción."
+  },
+  "rescan": {
+    "button": "Recalcular esfuerzos",
+    "queued": "Recálculo de esfuerzos en cola.",
+    "failed": "No se ha podido encolar el recálculo."
+  },
+  "profile": {
+    "title": "Perfil de altimetría",
+    "unavailable": "Este segmento no tiene datos de altitud, así que no hay perfil."
+  },
+  "efforts": {
+    "title": "Tus esfuerzos",
+    "includeReverse": "Incluir pasadas en sentido inverso",
+    "rank": "#",
+    "activity": "Actividad",
+    "date": "Fecha",
+    "time": "Tiempo",
+    "speed": "Velocidad",
+    "best": "Mejor",
+    "reverse": "Sentido inverso",
+    "activityLabel": "Actividad {id}",
+    "empty": {
+      "title": "Aún no hay esfuerzos",
+      "description": "Recalcula los esfuerzos para comparar tus actividades existentes con este segmento."
+    }
+  },
+  "import": {
+    "button": "Importar segmento",
+    "title": "Importar un segmento",
+    "description": "Elige un archivo GPX o pega el JSON que exporta el script de extracción de Strava.",
+    "file": "Archivo GPX o JSON",
+    "fileHint": "Un track (o ruta) GPX aporta la polilínea y, si la trae, las altitudes.",
+    "json": "O pega JSON",
+    "jsonPlaceholder": "segment_id, name y matrices latlng, como los exporta el script de extracción",
+    "parseJson": "Analizar el JSON pegado",
+    "name": "Nombre",
+    "id": "Id del segmento",
+    "idPlaceholder": "Obligatorio para un segmento definido a mano",
+    "parsed": "{points} puntos · {distance}",
+    "submit": "Importar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "done": "«{name}» importado; los esfuerzos se están recalculando.",
+    "duplicate": "Ese segmento ya está en la biblioteca.",
+    "failed": "La importación ha fallado.",
+    "badJson": "Eso no es JSON válido.",
+    "badGpx": "Eso no es un GPX legible.",
+    "tooFewPoints": "La polilínea necesita al menos dos puntos.",
+    "lengthMismatch": "La altitud o la distancia no coincide con el número de puntos.",
+    "needName": "Dale un nombre al segmento.",
+    "needId": "Dale un id numérico al segmento."
+  }
+}

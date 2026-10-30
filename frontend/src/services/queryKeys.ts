@@ -389,6 +389,37 @@ export const queryKeys = {
   },
 
   /**
+   * Segments domain. The library is global, so a list key carries only
+   * pagination; efforts are keyed per direction because the server filters them
+   * (`forward` is the default, `all` also lists reverse passes). An import or a
+   * queued rescan invalidates `all()` so lists, details and effort pages
+   * refetch.
+   */
+  segments: {
+    /** Broad prefix; invalidating this cascades to every segments query. */
+    all: () => ['segments'] as const,
+    lists: () => ['segments', 'list'] as const,
+    /**
+     * @param filters - Serializable list filters (page number and size).
+     * @returns A list query key scoped to the given filters.
+     */
+    list: (filters: Record<string, unknown> = {}) => ['segments', 'list', filters] as const,
+    details: () => ['segments', 'detail'] as const,
+    /**
+     * @param id - Segment identifier.
+     * @returns A detail query key for one segment definition.
+     */
+    detail: (id: number) => ['segments', 'detail', id] as const,
+    /**
+     * @param id - Segment the efforts belong to.
+     * @param direction - The direction filter the page was read with.
+     * @returns A query key for one effort page.
+     */
+    efforts: (id: number, direction: string) =>
+      ['segments', 'detail', id, 'efforts', direction] as const,
+  },
+
+  /**
    * Server settings domain (admin). The singleton settings object and the
    * static tile-map presets each get a key; the edit mutation invalidates
    * `all()` on settle so the form refetches the server-authoritative state.

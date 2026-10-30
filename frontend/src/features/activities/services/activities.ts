@@ -696,7 +696,9 @@ export function mapActivitySegment(dto: ActivitySegmentDto): ActivitySegment {
  *
  * There is no public route for segments: an effort list discloses where and how
  * fast the athlete moved, so it is only read for an authenticated viewer whose
- * activity access the backend has already resolved.
+ * activity access the backend has already resolved. The view asks for every
+ * direction, because a pass against the stored order is part of what happened in
+ * that activity (the descent back down the climb it went up); the table labels it.
  *
  * @param id - Activity identifier.
  * @param context - Auth + cancellation context.
@@ -706,7 +708,7 @@ export async function fetchActivitySegments(
   id: number,
   context: ActivityFetchContext,
 ): Promise<ActivitySegment[]> {
-  const dtos = await apiFetch<ActivitySegmentDto[]>(`/activities/${id}/segments`, {
+  const dtos = await apiFetch<ActivitySegmentDto[]>(`/activities/${id}/segments?direction=all`, {
     auth: context.authenticated,
     signal: context.signal,
   })

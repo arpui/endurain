@@ -11,6 +11,7 @@ import enVerifyEmail from './locales/en/verifyEmail.json'
 import enNotifications from './locales/en/notifications.json'
 import enGears from './locales/en/gears.json'
 import enActivities from './locales/en/activities.json'
+import enSegments from './locales/en/segments.json'
 import enSettings from './locales/en/settings.json'
 import enHome from './locales/en/home.json'
 import enSearch from './locales/en/search.json'
@@ -34,6 +35,7 @@ const en = {
   notifications: enNotifications,
   gears: enGears,
   activities: enActivities,
+  segments: enSegments,
   settings: enSettings,
   home: enHome,
   search: enSearch,

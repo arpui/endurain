@@ -87,6 +87,19 @@ const router = createRouter({
       meta: { requiresAuth: true, cardless: true },
     },
     {
+      path: '/segments',
+      name: 'segments',
+      component: () => import('@/features/segments/views/SegmentsView.vue'),
+      // Cardless: the view supplies its own list/card surfaces.
+      meta: { requiresAuth: true, cardless: true },
+    },
+    {
+      path: '/segments/:id',
+      name: 'segment-detail',
+      component: () => import('@/features/segments/views/SegmentDetailView.vue'),
+      meta: { requiresAuth: true, cardless: true },
+    },
+    {
       path: '/gear/:id',
       name: 'gear',
       component: () => import('@/features/gears/views/GearDetailView.vue'),

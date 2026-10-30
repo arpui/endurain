@@ -1,0 +1,70 @@
+{
+  "title": "Segments",
+  "subtitle": "Trams mesurats dins de les teves activitats.",
+  "loading": "Carregant segments…",
+  "sourceStrava": "de Strava",
+  "sourceManual": "definit aquí",
+  "elevation": "Altitud",
+  "map": {
+    "label": "Recorregut del segment al mapa"
+  },
+  "error": {
+    "title": "No s'han pogut carregar els segments",
+    "description": "Comprova la connexió i torna-ho a provar."
+  },
+  "empty": {
+    "title": "Encara no hi ha segments",
+    "description": "Importa un segment des d'un fitxer GPX o des del JSON que exporta l'script d'extracció."
+  },
+  "rescan": {
+    "button": "Recomputa els esforços",
+    "queued": "Recomputació dels esforços en cua.",
+    "failed": "No s'ha pogut encolar la recomputació."
+  },
+  "profile": {
+    "title": "Perfil d'altimetria",
+    "unavailable": "Aquest segment no té dades d'altitud, així que no hi ha perfil."
+  },
+  "efforts": {
+    "title": "Els teus esforços",
+    "includeReverse": "Inclou les passades en sentit invers",
+    "rank": "#",
+    "activity": "Activitat",
+    "date": "Data",
+    "time": "Temps",
+    "speed": "Velocitat",
+    "best": "Millor",
+    "reverse": "Sentit invers",
+    "activityLabel": "Activitat {id}",
+    "empty": {
+      "title": "Encara no hi ha esforços",
+      "description": "Recomputa els esforços per comparar les activitats existents amb aquest segment."
+    }
+  },
+  "import": {
+    "button": "Importa un segment",
+    "title": "Importa un segment",
+    "description": "Tria un fitxer GPX o enganxa el JSON que exporta l'script d'extracció de Strava.",
+    "file": "Fitxer GPX o JSON",
+    "fileHint": "Un track (o ruta) GPX dona la polyline i, si hi és, les altituds.",
+    "json": "O enganxa JSON",
+    "jsonPlaceholder": "segment_id, name i matrius latlng, com els exporta l'script d'extracció",
+    "parseJson": "Analitza el JSON enganxat",
+    "name": "Nom",
+    "id": "Id del segment",
+    "idPlaceholder": "Obligatori per a un segment definit a mà",
+    "parsed": "{points} punts · {distance}",
+    "submit": "Importa",
+    "cancel": "Cancel·la",
+    "close": "Tanca",
+    "done": "«{name}» importat; els esforços es recompten.",
+    "duplicate": "Aquest segment ja és a la biblioteca.",
+    "failed": "La importació ha fallat.",
+    "badJson": "Això no és JSON vàlid.",
+    "badGpx": "Això no és un GPX llegible.",
+    "tooFewPoints": "La polyline necessita com a mínim dos punts.",
+    "lengthMismatch": "L'altitud o la distància no coincideix amb el nombre de punts.",
+    "needName": "Posa un nom al segment.",
+    "needId": "Posa un id numèric al segment."
+  }
+}

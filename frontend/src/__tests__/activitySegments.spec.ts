@@ -126,12 +126,14 @@ describe('mapActivitySegment', () => {
 })
 
 describe('fetchActivitySegments', () => {
-  it('reads the authenticated activity route only', async () => {
+  it('reads the authenticated route asking for every direction', async () => {
     vi.mocked(apiFetch).mockResolvedValue([segmentDto])
 
     const segments = await fetchActivitySegments(5, { authenticated: true })
 
-    expect(apiFetch).toHaveBeenCalledWith('/activities/5/segments', {
+    // The activity view wants the reverse passes too: they are part of what
+    // happened, and the table labels them.
+    expect(apiFetch).toHaveBeenCalledWith('/activities/5/segments?direction=all', {
       auth: true,
       signal: undefined,
     })

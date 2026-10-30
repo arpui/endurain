@@ -1,0 +1,81 @@
+import type { Schemas } from '@/types'
+
+/**
+ * Wire shapes from the generated OpenAPI schema, kept as the boundary types so a
+ * backend contract change surfaces here as a TypeScript error rather than a
+ * runtime mismatch. The mappers in `services/segments.ts` translate them into the
+ * camelCase domain models below.
+ */
+export type SegmentSummaryDto = Schemas['SegmentRead']
+export type SegmentDetailDto = Schemas['SegmentDetailRead']
+export type SegmentEffortDto = Schemas['SegmentEffortRead']
+export type SegmentImportPayload = Schemas['SegmentImport']
+
+/** A stored segment as the library list shows it. */
+export interface SegmentSummary {
+  id: number
+  name: string
+  /** Definition origin (`strava` or `manual`). */
+  source: string
+  /** External identifier within the source (the Strava segment id). */
+  sourceId: string | null
+  /** Length in metres along the stored geometry order. */
+  distanceM: number
+  /** Positive elevation gain in metres, when the source provided it. */
+  elevationGainM: number | null
+  /** User that imported or created the definition. */
+  createdBy: number | null
+}
+
+/** The full definition, with what the map and the profile need to draw. */
+export interface SegmentDetail extends SegmentSummary {
+  /** Ordered `[[lat, lng], ...]` polyline; index 0 is the canonical start. */
+  geometry: [number, number][]
+  /** Per-point altitude in metres, index-aligned with `geometry`. */
+  altitudes: number[] | null
+}
+
+/** One pass of one of the viewer's activities over a segment. */
+export interface SegmentEffort {
+  segmentId: number
+  activityId: number
+  /** `forward` counts as an effort; `reverse` runs the geometry backwards. */
+  direction: string
+  /** 1-based pass index within (segment, direction). */
+  passNumber: number
+  /** Effort duration in seconds. */
+  elapsedSeconds: number
+  /** Segment distance over elapsed time, in metres per second. */
+  avgSpeedMps: number | null
+  /** Wall-clock time of the first effort waypoint (ISO). */
+  timeStart: string
+  /** Wall-clock time of the last effort waypoint (ISO). */
+  timeEnd: string
+}
+
+/** One page of the segment library. */
+export interface SegmentsPage {
+  items: SegmentSummary[]
+  total: number
+}
+
+/** One page of a segment's efforts. */
+export interface SegmentEffortsPage {
+  items: SegmentEffort[]
+  total: number
+}
+
+/** Which directions an effort list should contain. */
+export type EffortDirectionFilter = 'forward' | 'reverse' | 'all'
+
+/** What the import form submits, before it becomes a `SegmentImportPayload`. */
+export interface SegmentImportInput {
+  /** External id within the source (a Strava segment id, or a chosen number). */
+  segmentId: number
+  name: string
+  latlng: [number, number][]
+  altitude: number[] | null
+  /** Cumulative distance per point; the server uses the last value as length. */
+  distance: number[] | null
+  source: 'strava' | 'manual'
+}
