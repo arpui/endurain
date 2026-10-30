@@ -1,0 +1,68 @@
+{
+  "title": "Treningovna obremenitev",
+  "subtitle": "Skupni učinek vaših aktivnosti: forma, utrujenost in svežina",
+  "loadFailed": "Ni bilo mogoče naložiti treningovne obremenitve",
+  "window": {
+    "label": "Obdobje",
+    "30": "Zadnjih 30 dni",
+    "90": "Zadnjih 90 dni",
+    "365": "Zadnje leto"
+  },
+  "method": {
+    "label": "Obrazec obremenitve",
+    "coggan_tss": "Trening Stress Score (TSS)",
+    "skiba_score": "Stress score (xPower)",
+    "hr_load": "Obremenitev po utripih",
+    "trimp": "Treningovni impulz (TRIMP)"
+  },
+  "sport": {
+    "label": "Šport",
+    "all": "Vsi športi"
+  },
+  "pmc": {
+    "title": "Forma in utrujenost",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Utrujenost",
+    "seriesForm": "Svežina"
+  },
+  "daily": {
+    "title": "Dnevna obremenitev",
+    "series": "Obremenitev",
+    "trimpNote": "TRIMP uporablja drugo lestvico kot drugi obrazci in se nikoli ne prišteva k njim."
+  },
+  "stats": {
+    "windowTotal": "Skupna obremenitev"
+  },
+  "empty": {
+    "title": "Še ni izmerjenih obremenitev",
+    "description": "Ko bodo vaše aktivnosti izmerjene, se tu prikažeta krivulji forme in utrujenosti. Merjenje lahko zaženete v spodnjih nastavitvah."
+  },
+  "settings": {
+    "title": "Parametri in pragovi",
+    "acuteDays": "Dnevi utrujenosti",
+    "chronicDays": "Dnevi forme",
+    "primaryMethod": "Privzeti obrazec",
+    "restingHr": "Mirovan utrip",
+    "save": "Shrani",
+    "saved": "Nastavitve shranjene",
+    "saveFailed": "Ni bilo mogoče shraniti nastavitev",
+    "thresholds": {
+      "title": "Pragovi",
+      "hr": "Prag utripa",
+      "add": "Dodaj prag",
+      "set": "Nastavi",
+      "clear": "Ponastavi",
+      "sourceAuto": "izpeljan",
+      "sourceManual": "ročno",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Osveži pragove",
+    "recompute": "Preračunaj vse obremenitve",
+    "refreshQueued": "Osvežitev pragov v vrsti",
+    "recomputeQueued": "Preračun v vrsti",
+    "failed": "Zahteve ni bilo mogoče uvrstiti v vrsto"
+  }
+}

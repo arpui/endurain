@@ -1,0 +1,68 @@
+{
+  "title": "Træningsbelastning",
+  "subtitle": "Hvad dine aktiviteter løber op i: form, træthed og friskhed",
+  "loadFailed": "Din træningsbelastning kunne ikke indlæses",
+  "window": {
+    "label": "Periode",
+    "30": "Sidste 30 dage",
+    "90": "Sidste 90 dage",
+    "365": "Sidste år"
+  },
+  "method": {
+    "label": "Belastningsformel",
+    "coggan_tss": "Training Stress Score (TSS)",
+    "skiba_score": "Stress-score (xPower)",
+    "hr_load": "Pulsbelastning",
+    "trimp": "Træningsimpuls (TRIMP)"
+  },
+  "sport": {
+    "label": "Sport",
+    "all": "Alle sporter"
+  },
+  "pmc": {
+    "title": "Form og træthed",
+    "seriesFitness": "Form",
+    "seriesFatigue": "Træthed",
+    "seriesForm": "Friskhed"
+  },
+  "daily": {
+    "title": "Daglig belastning",
+    "series": "Belastning",
+    "trimpNote": "TRIMP bruger en anden skala end de andre formler og lægges aldrig sammen med dem."
+  },
+  "stats": {
+    "windowTotal": "Samlet belastning"
+  },
+  "empty": {
+    "title": "Endnu ingen målt belastning",
+    "description": "Når dine aktiviteter er blevet målt, vises din form- og træthedskurve her. Du kan sætte målingen i gang fra indstillingerne herunder."
+  },
+  "settings": {
+    "title": "Parametre og tærskler",
+    "acuteDays": "Træthedsdage",
+    "chronicDays": "Formdage",
+    "primaryMethod": "Standardformel",
+    "restingHr": "Hvilepuls",
+    "save": "Gem",
+    "saved": "Indstillinger gemt",
+    "saveFailed": "Indstillingerne kunne ikke gemmes",
+    "thresholds": {
+      "title": "Tærskler",
+      "hr": "Tærskelpuls",
+      "add": "Tilføj tærskel",
+      "set": "Sæt",
+      "clear": "Fortryd",
+      "sourceAuto": "afledt",
+      "sourceManual": "manuel",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Opdater tærskler",
+    "recompute": "Genberegn alle belastninger",
+    "refreshQueued": "Opdatering af tærskler sat i kø",
+    "recomputeQueued": "Genberegning sat i kø",
+    "failed": "Anmodningen kunne ikke sættes i kø"
+  }
+}

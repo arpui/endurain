@@ -1,0 +1,68 @@
+{
+  "title": "Harjoituskuorma",
+  "subtitle": "Mihin harjoituksesi laskeutuvat: kunto, väsymys ja virkeys",
+  "loadFailed": "Harjoituskuorman lataus epäonnistui",
+  "window": {
+    "label": "Aikaväli",
+    "30": "Viimeiset 30 päivää",
+    "90": "Viimeiset 90 päivää",
+    "365": "Viimeinen vuosi"
+  },
+  "method": {
+    "label": "Kuormakaava",
+    "coggan_tss": "Training Stress Score (TSS)",
+    "skiba_score": "Stressipisteet (xPower)",
+    "hr_load": "Sykekuorma",
+    "trimp": "Harjoitusimpulssi (TRIMP)"
+  },
+  "sport": {
+    "label": "Laji",
+    "all": "Kaikki lajit"
+  },
+  "pmc": {
+    "title": "Kunto ja väsymys",
+    "seriesFitness": "Kunto",
+    "seriesFatigue": "Väsymys",
+    "seriesForm": "Virkeys"
+  },
+  "daily": {
+    "title": "Päivittäinen kuorma",
+    "series": "Kuorma",
+    "trimpNote": "TRIMP käyttää muista kaavoista poikkeavaa asteikkoa, eikä sitä lasketa yhteen niiden kanssa."
+  },
+  "stats": {
+    "windowTotal": "Kuormat yhteensä"
+  },
+  "empty": {
+    "title": "Kuormia ei ole vielä mitattu",
+    "description": "Kun harjoituksesi on mitattu, kunto- ja väsymyskäyrät näkyvät täällä. Voit käynnistää mittauksen alla olevista asetuksista."
+  },
+  "settings": {
+    "title": "Parametrit ja kynnykset",
+    "acuteDays": "Väsymyspäivät",
+    "chronicDays": "Kuntopäivät",
+    "primaryMethod": "Oletuskaava",
+    "restingHr": "Leposyke",
+    "save": "Tallenna",
+    "saved": "Asetukset tallennettu",
+    "saveFailed": "Asetusten tallennus epäonnistui",
+    "thresholds": {
+      "title": "Kynnykset",
+      "hr": "Sykekynnys",
+      "add": "Lisää kynnys",
+      "set": "Aseta",
+      "clear": "Peruuta",
+      "sourceAuto": "johdettu",
+      "sourceManual": "käsin",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Päivitä kynnykset",
+    "recompute": "Laske kaikki kuormat uudelleen",
+    "refreshQueued": "Kynnyksien päivitys jonossa",
+    "recomputeQueued": "Uudelleenlaskenta jonossa",
+    "failed": "Pyyntöä ei voitu käynnistää"
+  }
+}

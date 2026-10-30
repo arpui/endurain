@@ -387,6 +387,23 @@ export const queryKeys = {
   },
 
   /**
+   * Analysis domain: the athlete's training-load parameters and the fitness
+   * series read from them. A settings write or a queued recompute invalidates
+   * `all()` so the series charts refetch against the new values.
+   */
+  analysis: {
+    /** Broad prefix; invalidating this cascades to every analysis query. */
+    all: () => ['analysis'] as const,
+    /** The caller's analysis parameters (time constants, thresholds). */
+    settings: () => ['analysis', 'settings'] as const,
+    /**
+     * @param filters - The series query parameters (method, taus, sport, dates).
+     * @returns A fitness-series query key scoped to the given filters.
+     */
+    fitness: (filters: Record<string, unknown> = {}) => ['analysis', 'fitness', filters] as const,
+  },
+
+  /**
    * Server settings domain (admin). The singleton settings object and the
    * static tile-map presets each get a key; the edit mutation invalidates
    * `all()` on settle so the form refetches the server-authoritative state.

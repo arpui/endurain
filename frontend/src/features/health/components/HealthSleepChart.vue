@@ -7,7 +7,7 @@ import type { SleepEntry } from '@/features/health/types'
 
 import { themeColor } from '@/lib/themeColor'
 import HealthChartCard from '@/features/health/components/HealthChartCard.vue'
-import { useHealthMetricChart } from '@/features/health/composables/useHealthMetricChart'
+import { useMetricChart } from '@/composables/useMetricChart'
 import { formatHealthEntryDate, formatHoursMinutes } from '@/features/health/utils/healthFormat'
 
 const props = defineProps<{
@@ -62,7 +62,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
   }
 })
 
-useHealthMetricChart(chartRender)
+useMetricChart(chartRender)
 </script>
 
 <template>

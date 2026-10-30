@@ -1,0 +1,68 @@
+{
+  "title": "Träningsbelastning",
+  "subtitle": "Vad dina aktiviteter summerar till: form, trötthet och pigghet",
+  "loadFailed": "Din träningsbelastning kunde inte läsas in",
+  "window": {
+    "label": "Period",
+    "30": "Senaste 30 dagarna",
+    "90": "Senaste 90 dagarna",
+    "365": "Senaste året"
+  },
+  "method": {
+    "label": "Belastningsformel",
+    "coggan_tss": "Training Stress Score (TSS)",
+    "skiba_score": "Stresspoäng (xPower)",
+    "hr_load": "Pulsbelastning",
+    "trimp": "Träningsimpuls (TRIMP)"
+  },
+  "sport": {
+    "label": "Sport",
+    "all": "Alla sporter"
+  },
+  "pmc": {
+    "title": "Form och trötthet",
+    "seriesFitness": "Form",
+    "seriesFatigue": "Trötthet",
+    "seriesForm": "Pigghet"
+  },
+  "daily": {
+    "title": "Daglig belastning",
+    "series": "Belastning",
+    "trimpNote": "TRIMP använder en annan skala än de andra formlerna och adderas aldrig till dem."
+  },
+  "stats": {
+    "windowTotal": "Total belastning"
+  },
+  "empty": {
+    "title": "Ingen belastning har mätts ännu",
+    "description": "När dina aktiviteter har mätts visas din form- och trötthetskurva här. Du kan starta mätningen från inställningarna nedan."
+  },
+  "settings": {
+    "title": "Parametrar och trösklar",
+    "acuteDays": "Trötthetsdagar",
+    "chronicDays": "Formdagar",
+    "primaryMethod": "Standardformel",
+    "restingHr": "Vilopuls",
+    "save": "Spara",
+    "saved": "Inställningar sparade",
+    "saveFailed": "Inställningarna kunde inte sparas",
+    "thresholds": {
+      "title": "Trösklar",
+      "hr": "Tröskelpuls",
+      "add": "Lägg till tröskel",
+      "set": "Sätt",
+      "clear": "Ångra",
+      "sourceAuto": "härledd",
+      "sourceManual": "manuell",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Uppdatera trösklar",
+    "recompute": "Räkna om all belastning",
+    "refreshQueued": "Uppdatering av trösklar köad",
+    "recomputeQueued": "Ombeträkning köad",
+    "failed": "Begäran kunde inte köas"
+  }
+}

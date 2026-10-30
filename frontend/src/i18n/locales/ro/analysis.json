@@ -1,0 +1,68 @@
+{
+  "title": "Încărcare de antrenament",
+  "subtitle": "Ce însumează activitățile tale: formă, oboseală și prospețime",
+  "loadFailed": "Nu s-a putut încărca încărcarea de antrenament",
+  "window": {
+    "label": "Perioadă",
+    "30": "Ultimele 30 de zile",
+    "90": "Ultimele 90 de zile",
+    "365": "Ultimul an"
+  },
+  "method": {
+    "label": "Formula de încărcare",
+    "coggan_tss": "Scor de stres de antrenament (TSS)",
+    "skiba_score": "Scor de stres (xPower)",
+    "hr_load": "Încărcare pe baza pulsului",
+    "trimp": "Impuls de antrenament (TRIMP)"
+  },
+  "sport": {
+    "label": "Sport",
+    "all": "Toate sporturile"
+  },
+  "pmc": {
+    "title": "Formă și oboseală",
+    "seriesFitness": "Formă",
+    "seriesFatigue": "Oboseală",
+    "seriesForm": "Prospețime"
+  },
+  "daily": {
+    "title": "Încărcare zilnică",
+    "series": "Încărcare",
+    "trimpNote": "TRIMP folosește o scală diferită de celelalte formule și nu se adună niciodată cu acestea."
+  },
+  "stats": {
+    "windowTotal": "Încărcare totală"
+  },
+  "empty": {
+    "title": "Nicio încărcare măsurată încă",
+    "description": "Când activitățile tale vor fi măsurate, aici vor apărea curbele de formă și oboseală. Poți porni măsurătoarea din setările de mai jos."
+  },
+  "settings": {
+    "title": "Parametri și praguri",
+    "acuteDays": "Zile de oboseală",
+    "chronicDays": "Zile de formă",
+    "primaryMethod": "Formula implicită",
+    "restingHr": "Puls în repaus",
+    "save": "Salvează",
+    "saved": "Setări salvate",
+    "saveFailed": "Nu s-au putut salva setările",
+    "thresholds": {
+      "title": "Praguri",
+      "hr": "Prag de puls",
+      "add": "Adaugă prag",
+      "set": "Stabilește",
+      "clear": "Renunță",
+      "sourceAuto": "derivat",
+      "sourceManual": "manual",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Actualizează pragurile",
+    "recompute": "Recalculează toate încărcările",
+    "refreshQueued": "Actualizarea pragurilor a fost pusă în coadă",
+    "recomputeQueued": "Recalcularea a fost pusă în coadă",
+    "failed": "Cererea nu a putut fi trimisă"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "title": "Trainingsbelasting",
+  "subtitle": "Wat je activiteiten optellen: fitheid, vermoeidheid en frisheid",
+  "loadFailed": "Kon je trainingsbelasting niet laden",
+  "window": {
+    "label": "Periode",
+    "30": "Laatste 30 dagen",
+    "90": "Laatste 90 dagen",
+    "365": "Afgelopen jaar"
+  },
+  "method": {
+    "label": "Belastingsformule",
+    "coggan_tss": "Training Stress Score (TSS)",
+    "skiba_score": "Stressscore (xPower)",
+    "hr_load": "Hartslagbelasting",
+    "trimp": "Trainingsimpuls (TRIMP)"
+  },
+  "sport": {
+    "label": "Sport",
+    "all": "Alle sporten"
+  },
+  "pmc": {
+    "title": "Fitheid en vermoeidheid",
+    "seriesFitness": "Fitheid",
+    "seriesFatigue": "Vermoeidheid",
+    "seriesForm": "Frisheid"
+  },
+  "daily": {
+    "title": "Dagelijkse belasting",
+    "series": "Belasting",
+    "trimpNote": "TRIMP gebruikt een andere schaal dan de andere formules en wordt er nooit bij opgeteld."
+  },
+  "stats": {
+    "windowTotal": "Totale belasting"
+  },
+  "empty": {
+    "title": "Nog geen belasting gemeten",
+    "description": "Zodra je activiteiten zijn gemeten, verschijnen hier je fitheids- en vermoeidheidscurves. Je kunt de meting starten vanuit de instellingen hieronder."
+  },
+  "settings": {
+    "title": "Parameters en drempels",
+    "acuteDays": "Vermoeidheidsdagen",
+    "chronicDays": "Fitheidsdagen",
+    "primaryMethod": "Standaardformule",
+    "restingHr": "Rusthartslag",
+    "save": "Opslaan",
+    "saved": "Instellingen opgeslagen",
+    "saveFailed": "Kon instellingen niet opslaan",
+    "thresholds": {
+      "title": "Drempels",
+      "hr": "Drempelhartslag",
+      "add": "Drempel toevoegen",
+      "set": "Instellen",
+      "clear": "Terugdraaien",
+      "sourceAuto": "afgeleid",
+      "sourceManual": "handmatig",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Drempels vernieuwen",
+    "recompute": "Alle belastingen herberekenen",
+    "refreshQueued": "Vernieuwen van drempels in wachtrij",
+    "recomputeQueued": "Herberekening in wachtrij",
+    "failed": "Kon het verzoek niet starten"
+  }
+}

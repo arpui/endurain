@@ -1,0 +1,68 @@
+{
+  "title": "Càrrega d'entrenament",
+  "subtitle": "Què sumen les teves activitats: fatiga, forma i frescor",
+  "loadFailed": "No s'ha pogut carregar la teva càrrega d'entrenament",
+  "window": {
+    "label": "Finestra temporal",
+    "30": "Últims 30 dies",
+    "90": "Últims 90 dies",
+    "365": "Últim any"
+  },
+  "method": {
+    "label": "Fórmula de càrrega",
+    "coggan_tss": "Índex d'estrès d'entrenament (TSS)",
+    "skiba_score": "Índex d'estrès (xPower)",
+    "hr_load": "Càrrega per freqüència cardíaca",
+    "trimp": "Impuls d'entrenament (TRIMP)"
+  },
+  "sport": {
+    "label": "Esport",
+    "all": "Tots els esports"
+  },
+  "pmc": {
+    "title": "Forma i fatiga",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Fatiga",
+    "seriesForm": "Frescor"
+  },
+  "daily": {
+    "title": "Càrrega diària",
+    "series": "Càrrega",
+    "trimpNote": "El TRIMP fa servir una escala diferent de les altres fórmules i mai no se suma amb elles."
+  },
+  "stats": {
+    "windowTotal": "Càrrega total"
+  },
+  "empty": {
+    "title": "Encara no hi ha cap càrrega mesurada",
+    "description": "Quan es mesurin les teves activitats, aquí es mostraran les corbes de forma i fatiga. Pots llançar la mesura des dels paràmetres de sota."
+  },
+  "settings": {
+    "title": "Paràmetres i llindars",
+    "acuteDays": "Dies de fatiga",
+    "chronicDays": "Dies de forma",
+    "primaryMethod": "Fórmula per defecte",
+    "restingHr": "FC de repòs",
+    "save": "Desa",
+    "saved": "Paràmetres desats",
+    "saveFailed": "No s'han pogut desar els paràmetres",
+    "thresholds": {
+      "title": "Llindars",
+      "hr": "FC llindar",
+      "add": "Afegeix un llindar",
+      "set": "Fixa",
+      "clear": "Torna enrere",
+      "sourceAuto": "derivat",
+      "sourceManual": "manual",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Actualitza els llindars",
+    "recompute": "Recalcula totes les càrregues",
+    "refreshQueued": "Actualització dels llindars en cua",
+    "recomputeQueued": "Recàlcul en cua",
+    "failed": "No s'ha pogut llançar la petició"
+  }
+}

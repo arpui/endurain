@@ -17,6 +17,7 @@ import enSearch from './locales/en/search.json'
 import enUserProfile from './locales/en/userProfile.json'
 import enSummary from './locales/en/summary.json'
 import enHealth from './locales/en/health.json'
+import enAnalysis from './locales/en/analysis.json'
 
 /**
  * English message set, assembled from one file per feature namespace. The
@@ -40,6 +41,7 @@ const en = {
   userProfile: enUserProfile,
   summary: enSummary,
   health: enHealth,
+  analysis: enAnalysis,
 }
 
 /**

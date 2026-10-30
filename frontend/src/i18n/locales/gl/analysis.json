@@ -1,0 +1,68 @@
+{
+  "title": "Carga de adestramento",
+  "subtitle": "No que se converten as túas actividades: fatiga, forma e frescor",
+  "loadFailed": "Non se puido cargar a túa carga de adestramento",
+  "window": {
+    "label": "Período",
+    "30": "Últimos 30 días",
+    "90": "Últimos 90 días",
+    "365": "Último ano"
+  },
+  "method": {
+    "label": "Fórmula de carga",
+    "coggan_tss": "Índice de estrés de adestramento (TSS)",
+    "skiba_score": "Índice de estrés (xPower)",
+    "hr_load": "Carga por frecuencia cardíaca",
+    "trimp": "Impulso de adestramento (TRIMP)"
+  },
+  "sport": {
+    "label": "Deporte",
+    "all": "Todos os deportes"
+  },
+  "pmc": {
+    "title": "Forma e fatiga",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Fatiga",
+    "seriesForm": "Frescor"
+  },
+  "daily": {
+    "title": "Carga diaria",
+    "series": "Carga",
+    "trimpNote": "O TRIMP emprega unha escala distinta das outras fórmulas e nunca se suma con elas."
+  },
+  "stats": {
+    "windowTotal": "Carga total"
+  },
+  "empty": {
+    "title": "Aínda non hai carga medida",
+    "description": "Cando as túas actividades sexan medidas, verás aquí as curvas de forma e fatiga. Podes iniciar a medición desde a configuración de abaixo."
+  },
+  "settings": {
+    "title": "Parámetros e umbrais",
+    "acuteDays": "Días de fatiga",
+    "chronicDays": "Días de forma",
+    "primaryMethod": "Fórmula por defecto",
+    "restingHr": "FC en repouso",
+    "save": "Gardar",
+    "saved": "Configuración gardada",
+    "saveFailed": "Non se puido gardar a configuración",
+    "thresholds": {
+      "title": "Umbrais",
+      "hr": "FC umbral",
+      "add": "Engadir umbral",
+      "set": "Fixar",
+      "clear": "Reverter",
+      "sourceAuto": "derivado",
+      "sourceManual": "manual",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "ppm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Actualizar umbrais",
+    "recompute": "Recalcular todas as cargas",
+    "refreshQueued": "Actualización dos umbrais na cola",
+    "recomputeQueued": "Recálculo na cola",
+    "failed": "Non se puido iniciar a solicitude"
+  }
+}

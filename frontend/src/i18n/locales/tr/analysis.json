@@ -1,0 +1,68 @@
+{
+  "title": "Antrenman yükü",
+  "subtitle": "Antrenmanlarınızın toplamı: form, yorgunluk ve zindelik",
+  "loadFailed": "Antrenman yükü yüklenemedi",
+  "window": {
+    "label": "Zaman aralığı",
+    "30": "Son 30 gün",
+    "90": "Son 90 gün",
+    "365": "Son yıl"
+  },
+  "method": {
+    "label": "Yük formülü",
+    "coggan_tss": "Antrenman Stres Skoru (TSS)",
+    "skiba_score": "Stres skoru (xPower)",
+    "hr_load": "Nabza göre yük",
+    "trimp": "Antrenman impulsu (TRIMP)"
+  },
+  "sport": {
+    "label": "Spor",
+    "all": "Tüm sporlar"
+  },
+  "pmc": {
+    "title": "Form ve yorgunluk",
+    "seriesFitness": "Form",
+    "seriesFatigue": "Yorgunluk",
+    "seriesForm": "Zindelik"
+  },
+  "daily": {
+    "title": "Günlük yük",
+    "series": "Yük",
+    "trimpNote": "TRIMP diğer formüllerden farklı bir ölçek kullanır ve asla onlarla toplanmaz."
+  },
+  "stats": {
+    "windowTotal": "Toplam yük"
+  },
+  "empty": {
+    "title": "Henüz ölçülmüş yük yok",
+    "description": "Antrenmanlarınız ölçüldüğünde form ve yorgunluk eğrileriniz burada görünecek. Ölçümü aşağıdaki ayarlardan başlatabilirsiniz."
+  },
+  "settings": {
+    "title": "Parametreler ve eşikler",
+    "acuteDays": "Yorgunluk günleri",
+    "chronicDays": "Form günleri",
+    "primaryMethod": "Varsayılan formül",
+    "restingHr": "Dinlenme nabzı",
+    "save": "Kaydet",
+    "saved": "Ayarlar kaydedildi",
+    "saveFailed": "Ayarlar kaydedilemedi",
+    "thresholds": {
+      "title": "Eşikler",
+      "hr": "Eşik nabzı",
+      "add": "Eşik ekle",
+      "set": "Ayarla",
+      "clear": "Geri al",
+      "sourceAuto": "türetilmiş",
+      "sourceManual": "elle",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Eşikleri yenile",
+    "recompute": "Tüm yükleri yeniden hesapla",
+    "refreshQueued": "Eşik yenileme kuyruğa alındı",
+    "recomputeQueued": "Yeniden hesaplama kuyruğa alındı",
+    "failed": "İstek kuyruğa alınamadı"
+  }
+}

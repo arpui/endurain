@@ -1,0 +1,68 @@
+{
+  "title": "Tréninkové zaťaženie",
+  "subtitle": "Súhrn vašich aktivít: forma, únava a sviežosť",
+  "loadFailed": "Nepodarilo sa načítať tréninkové zaťaženie",
+  "window": {
+    "label": "Obdobie",
+    "30": "Posledných 30 dní",
+    "90": "Posledných 90 dní",
+    "365": "Posledný rok"
+  },
+  "method": {
+    "label": "Vzorec zaťaženia",
+    "coggan_tss": "Tréninkové stresové skóre (TSS)",
+    "skiba_score": "Stresové skóre (xPower)",
+    "hr_load": "Zaťaženie podľa tepu",
+    "trimp": "Tréninkový impulz (TRIMP)"
+  },
+  "sport": {
+    "label": "Šport",
+    "all": "Všetky športy"
+  },
+  "pmc": {
+    "title": "Forma a únava",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Únava",
+    "seriesForm": "Sviežosť"
+  },
+  "daily": {
+    "title": "Denné zaťaženie",
+    "series": "Zaťaženie",
+    "trimpNote": "TRIMP používa inú škálu ako ostatné vzorce a nikdy sa k nim nepriráta."
+  },
+  "stats": {
+    "windowTotal": "Celkové zaťaženie"
+  },
+  "empty": {
+    "title": "Zatiaľ žiadne namerané zaťaženie",
+    "description": "Keď sa vaše aktivity nameranú, zobrazia sa tu krivky formy a únavy. Meranie môžete zadať v nastavení nižšie."
+  },
+  "settings": {
+    "title": "Parametre a prahy",
+    "acuteDays": "Dni únavy",
+    "chronicDays": "Dni formy",
+    "primaryMethod": "Predvolený vzorec",
+    "restingHr": "Kľudový tep",
+    "save": "Uložiť",
+    "saved": "Nastavenia uložené",
+    "saveFailed": "Nepodarilo sa uložiť nastavenia",
+    "thresholds": {
+      "title": "Prahy",
+      "hr": "Prahový tep",
+      "add": "Pridať prah",
+      "set": "Nastaviť",
+      "clear": "Vrátiť",
+      "sourceAuto": "odvodená",
+      "sourceManual": "ručne",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Obnoviť prahy",
+    "recompute": "Prepočítať všetky zaťaženia",
+    "refreshQueued": "Obnova prahov vo fronte",
+    "recomputeQueued": "Prepočet vo fronte",
+    "failed": "Nepodarilo sa zadať požiadavku"
+  }
+}

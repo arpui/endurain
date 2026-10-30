@@ -1,0 +1,68 @@
+{
+  "title": "Carico di allenamento",
+  "subtitle": "Cosa sommano le tue attività: forma, fatica e freschezza",
+  "loadFailed": "Impossibile caricare il carico di allenamento",
+  "window": {
+    "label": "Periodo",
+    "30": "Ultimi 30 giorni",
+    "90": "Ultimi 90 giorni",
+    "365": "Ultimo anno"
+  },
+  "method": {
+    "label": "Formula di carico",
+    "coggan_tss": "Indice di stress di allenamento (TSS)",
+    "skiba_score": "Indice di stress (xPower)",
+    "hr_load": "Carico da frequenza cardiaca",
+    "trimp": "Impulso di allenamento (TRIMP)"
+  },
+  "sport": {
+    "label": "Sport",
+    "all": "Tutti gli sport"
+  },
+  "pmc": {
+    "title": "Forma e fatica",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Fatica",
+    "seriesForm": "Freschezza"
+  },
+  "daily": {
+    "title": "Carico giornaliero",
+    "series": "Carico",
+    "trimpNote": "Il TRIMP usa una scala diversa dalle altre formule e non viene mai sommato a esse."
+  },
+  "stats": {
+    "windowTotal": "Carico totale"
+  },
+  "empty": {
+    "title": "Nessun carico misurato",
+    "description": "Quando le tue attività saranno misurate, qui vedrai le curve di forma e fatica. Puoi avviare la misura dalle impostazioni qui sotto."
+  },
+  "settings": {
+    "title": "Parametri e soglie",
+    "acuteDays": "Giorni di fatica",
+    "chronicDays": "Giorni di forma",
+    "primaryMethod": "Formula predefinita",
+    "restingHr": "FC a riposo",
+    "save": "Salva",
+    "saved": "Impostazioni salvate",
+    "saveFailed": "Impossibile salvare le impostazioni",
+    "thresholds": {
+      "title": "Soglie",
+      "hr": "FC di soglia",
+      "add": "Aggiungi soglia",
+      "set": "Imposta",
+      "clear": "Ripristina",
+      "sourceAuto": "derivata",
+      "sourceManual": "manuale",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Aggiorna soglie",
+    "recompute": "Ricalcola tutti i carichi",
+    "refreshQueued": "Aggiornamento soglie in coda",
+    "recomputeQueued": "Ricalcolo in coda",
+    "failed": "Impossibile avviare la richiesta"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "title": "Obciążenie treningowe",
+  "subtitle": "Na co składają się twoje aktywności: forma, zmęczenie i świeżość",
+  "loadFailed": "Nie udało się wczytać obciążenia treningowego",
+  "window": {
+    "label": "Zakres czasu",
+    "30": "Ostatnie 30 dni",
+    "90": "Ostatnie 90 dni",
+    "365": "Ostatni rok"
+  },
+  "method": {
+    "label": "Wzór obciążenia",
+    "coggan_tss": "Training Stress Score (TSS)",
+    "skiba_score": "Score stresu (xPower)",
+    "hr_load": "Obciążenie tętnem",
+    "trimp": "Impuls treningowy (TRIMP)"
+  },
+  "sport": {
+    "label": "Dyscyplina",
+    "all": "Wszystkie dyscypliny"
+  },
+  "pmc": {
+    "title": "Forma i zmęczenie",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Zmęczenie",
+    "seriesForm": "Świeżość"
+  },
+  "daily": {
+    "title": "Dzienne obciążenie",
+    "series": "Obciążenie",
+    "trimpNote": "TRIMP używa innej skali niż pozostałe wzory i nigdy nie jest do nich dodawany."
+  },
+  "stats": {
+    "windowTotal": "Całkowite obciążenie"
+  },
+  "empty": {
+    "title": "Brak zmierzonych obciążeń",
+    "description": "Gdy twoje aktywności zostaną zmierzone, pojawią się tu krzywe formy i zmęczenia. Pomiar możesz zlecić w ustawieniach poniżej."
+  },
+  "settings": {
+    "title": "Parametry i progi",
+    "acuteDays": "Dni zmęczenia",
+    "chronicDays": "Dni formy",
+    "primaryMethod": "Domyślny wzór",
+    "restingHr": "Tętno spoczynkowe",
+    "save": "Zapisz",
+    "saved": "Zapisano ustawienia",
+    "saveFailed": "Nie udało się zapisać ustawień",
+    "thresholds": {
+      "title": "Progi",
+      "hr": "Tętno progowe",
+      "add": "Dodaj próg",
+      "set": "Ustaw",
+      "clear": "Przywróć",
+      "sourceAuto": "wyliczony",
+      "sourceManual": "ręczny",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Odśwież progi",
+    "recompute": "Przelicz wszystkie obciążenia",
+    "refreshQueued": "Odświeżanie progów dodane do kolejki",
+    "recomputeQueued": "Przeliczanie dodane do kolejki",
+    "failed": "Nie udało się dodać zlecenia do kolejki"
+  }
+}

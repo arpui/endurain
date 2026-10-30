@@ -1,0 +1,68 @@
+{
+  "title": "Trainingsbelastung",
+  "subtitle": "Was deine Aktivitäten ergeben: Fitness, Ermüdung und Form",
+  "loadFailed": "Trainingsbelastung konnte nicht geladen werden",
+  "window": {
+    "label": "Zeitraum",
+    "30": "Letzte 30 Tage",
+    "90": "Letzte 90 Tage",
+    "365": "Letztes Jahr"
+  },
+  "method": {
+    "label": "Belastungsformel",
+    "coggan_tss": "Trainings-Stress-Score (TSS)",
+    "skiba_score": "Stress-Score (xPower)",
+    "hr_load": "Herzfrequenz-Belastung",
+    "trimp": "Trainingsimpuls (TRIMP)"
+  },
+  "sport": {
+    "label": "Sportart",
+    "all": "Alle Sportarten"
+  },
+  "pmc": {
+    "title": "Fitness und Ermüdung",
+    "seriesFitness": "Fitness",
+    "seriesFatigue": "Ermüdung",
+    "seriesForm": "Form"
+  },
+  "daily": {
+    "title": "Tägliche Belastung",
+    "series": "Belastung",
+    "trimpNote": "TRIMP nutzt eine andere Skala als die anderen Formeln und wird nie mit ihnen addiert."
+  },
+  "stats": {
+    "windowTotal": "Gesamtbelastung"
+  },
+  "empty": {
+    "title": "Noch keine Belastung gemessen",
+    "description": "Sobald deine Aktivitäten erfasst sind, erscheinen hier deine Fitness- und Ermüdungskurven. Die Messung kannst du unten in den Einstellungen anstoßen."
+  },
+  "settings": {
+    "title": "Parameter und Schwellenwerte",
+    "acuteDays": "Ermüdungstage",
+    "chronicDays": "Fitnesstage",
+    "primaryMethod": "Standardformel",
+    "restingHr": "Herzfrequenz in Ruhe",
+    "save": "Speichern",
+    "saved": "Einstellungen gespeichert",
+    "saveFailed": "Einstellungen konnten nicht gespeichert werden",
+    "thresholds": {
+      "title": "Schwellenwerte",
+      "hr": "Schwellen-HF",
+      "add": "Schwellenwert hinzufügen",
+      "set": "Setzen",
+      "clear": "Zurücknehmen",
+      "sourceAuto": "abgeleitet",
+      "sourceManual": "manuell",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Schwellenwerte aktualisieren",
+    "recompute": "Alle Belastungen neu berechnen",
+    "refreshQueued": "Aktualisierung der Schwellenwerte eingereiht",
+    "recomputeQueued": "Neberechnung eingereiht",
+    "failed": "Anfrage konnte nicht gestartet werden"
+  }
+}

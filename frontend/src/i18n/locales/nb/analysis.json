@@ -1,0 +1,68 @@
+{
+  "title": "Treningsbelastning",
+  "subtitle": "Hva aktivitetene dine løper seg opp i: form, tretthet og friskhet",
+  "loadFailed": "Kunne ikke laste treningsbelastningen",
+  "window": {
+    "label": "Periode",
+    "30": "Siste 30 dager",
+    "90": "Siste 90 dager",
+    "365": "Siste år"
+  },
+  "method": {
+    "label": "Belastningsformel",
+    "coggan_tss": "Training Stress Score (TSS)",
+    "skiba_score": "Stress-score (xPower)",
+    "hr_load": "Pulsbelastning",
+    "trimp": "Treningsimpuls (TRIMP)"
+  },
+  "sport": {
+    "label": "Idrett",
+    "all": "Alle idretter"
+  },
+  "pmc": {
+    "title": "Form og tretthet",
+    "seriesFitness": "Form",
+    "seriesFatigue": "Tretthet",
+    "seriesForm": "Friskhet"
+  },
+  "daily": {
+    "title": "Daglig belastning",
+    "series": "Belastning",
+    "trimpNote": "TRIMP bruker en annen skala enn de andre formlene og legges aldri sammen med dem."
+  },
+  "stats": {
+    "windowTotal": "Total belastning"
+  },
+  "empty": {
+    "title": "Ingen belastning målt ennå",
+    "description": "Når aktivitetene dine er målt, vises form- og tretthetskurvene her. Du kan starte målingen fra innstillingene under."
+  },
+  "settings": {
+    "title": "Parametre og terskler",
+    "acuteDays": "Tretthetsdager",
+    "chronicDays": "Formdager",
+    "primaryMethod": "Standardformel",
+    "restingHr": "Hvilepuls",
+    "save": "Lagre",
+    "saved": "Innstillinger lagret",
+    "saveFailed": "Kunne ikke lagre innstillingene",
+    "thresholds": {
+      "title": "Terskler",
+      "hr": "Terskelpuls",
+      "add": "Legg til terskel",
+      "set": "Sett",
+      "clear": "Angre",
+      "sourceAuto": "avledet",
+      "sourceManual": "manuelt",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Oppdater terskler",
+    "recompute": "Regn ut alle belastninger på nytt",
+    "refreshQueued": "Oppdatering av terskler lagt i kø",
+    "recomputeQueued": "Ny utregning lagt i kø",
+    "failed": "Kunne ikke legge forespørselen i kø"
+  }
+}

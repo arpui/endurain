@@ -1,0 +1,68 @@
+{
+  "title": "Carga de entrenamiento",
+  "subtitle": "En lo que se convierten tus actividades: fatiga, forma y frescura",
+  "loadFailed": "No se pudo cargar tu carga de entrenamiento",
+  "window": {
+    "label": "Periodo",
+    "30": "Últimos 30 días",
+    "90": "Últimos 90 días",
+    "365": "Último año"
+  },
+  "method": {
+    "label": "Fórmula de carga",
+    "coggan_tss": "Índice de estrés de entrenamiento (TSS)",
+    "skiba_score": "Índice de estrés (xPower)",
+    "hr_load": "Carga por frecuencia cardíaca",
+    "trimp": "Impulso de entrenamiento (TRIMP)"
+  },
+  "sport": {
+    "label": "Deporte",
+    "all": "Todos los deportes"
+  },
+  "pmc": {
+    "title": "Forma y fatiga",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Fatiga",
+    "seriesForm": "Frescura"
+  },
+  "daily": {
+    "title": "Carga diaria",
+    "series": "Carga",
+    "trimpNote": "TRIMP usa una escala distinta a las demás fórmulas y nunca se suma con ellas."
+  },
+  "stats": {
+    "windowTotal": "Carga total"
+  },
+  "empty": {
+    "title": "Aún no hay carga medida",
+    "description": "Cuando se midan tus actividades verás aquí las curvas de forma y fatiga. Puedes lanzar la medición desde los ajustes de abajo."
+  },
+  "settings": {
+    "title": "Parámetros y umbrales",
+    "acuteDays": "Días de fatiga",
+    "chronicDays": "Días de forma",
+    "primaryMethod": "Fórmula predeterminada",
+    "restingHr": "FC en reposo",
+    "save": "Guardar",
+    "saved": "Ajustes guardados",
+    "saveFailed": "No se pudieron guardar los ajustes",
+    "thresholds": {
+      "title": "Umbrales",
+      "hr": "FC umbral",
+      "add": "Añadir umbral",
+      "set": "Fijar",
+      "clear": "Revertir",
+      "sourceAuto": "derivado",
+      "sourceManual": "manual",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "ppm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Actualizar umbrales",
+    "recompute": "Recalcular todas las cargas",
+    "refreshQueued": "Actualización de umbrales en cola",
+    "recomputeQueued": "Recálculo en cola",
+    "failed": "No se pudo lanzar la solicitud"
+  }
+}

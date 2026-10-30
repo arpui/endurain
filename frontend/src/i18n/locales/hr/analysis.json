@@ -1,0 +1,68 @@
+{
+  "title": "Trainingsko opterećenje",
+  "subtitle": "Zbroj vaših aktivnosti: forma, umor i svežina",
+  "loadFailed": "Nije moguće učitati training opterećenje",
+  "window": {
+    "label": "Razdoblje",
+    "30": "Zadnjih 30 dana",
+    "90": "Zadnjih 90 dana",
+    "365": "Zadnja godina"
+  },
+  "method": {
+    "label": "Formula opterećenja",
+    "coggan_tss": "Training Stress Score (TSS)",
+    "skiba_score": "Stress score (xPower)",
+    "hr_load": "Opterećenje po pulsu",
+    "trimp": "Training impuls (TRIMP)"
+  },
+  "sport": {
+    "label": "Sport",
+    "all": "Svi sportovi"
+  },
+  "pmc": {
+    "title": "Forma i umor",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Umor",
+    "seriesForm": "Svežina"
+  },
+  "daily": {
+    "title": "Dnevno opterećenje",
+    "series": "Opterećenje",
+    "trimpNote": "TRIMP koristi drugu ljestvicu od drugih formula i nikada im se ne zbraja."
+  },
+  "stats": {
+    "windowTotal": "Ukupno opterećenje"
+  },
+  "empty": {
+    "title": "Još nema izmjerenog opterećenja",
+    "description": "Kad vaše aktivnosti budu izmjerene, ovdje se pojavljuju krivulje forme i umora. Mjerenje možete pokrenuti u postavkama ispod."
+  },
+  "settings": {
+    "title": "Parametri i pragovi",
+    "acuteDays": "Dani umora",
+    "chronicDays": "Dani forme",
+    "primaryMethod": "Zadana formula",
+    "restingHr": "Puls u mirovanju",
+    "save": "Spremi",
+    "saved": "Postavke spremljene",
+    "saveFailed": "Nije moguće spremiti postavke",
+    "thresholds": {
+      "title": "Pragovi",
+      "hr": "Prag pulsa",
+      "add": "Dodaj prag",
+      "set": "Postavi",
+      "clear": "Vrati",
+      "sourceAuto": "izvedeno",
+      "sourceManual": "ručno",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Osvježi pragove",
+    "recompute": "Preračunaj sva opterećenja",
+    "refreshQueued": "Osvježavanje pragova u redu",
+    "recomputeQueued": "Preračun u redu",
+    "failed": "Zahtjev nije poslan"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "title": "Treniruočių krūvis",
+  "subtitle": "Į ką sueina jūsų veiklos: forma, nuovargis ir gaivumas",
+  "loadFailed": "Nepavyko įkelti treniruočių krūvio",
+  "window": {
+    "label": "Laikotarpis",
+    "30": "Paskutinės 30 dienų",
+    "90": "Paskutinės 90 dienų",
+    "365": "Paskutiniai metai"
+  },
+  "method": {
+    "label": "Krūvio formulė",
+    "coggan_tss": "Treniruotės streso balas (TSS)",
+    "skiba_score": "Streso balas (xPower)",
+    "hr_load": "Krūvis pagal pulsą",
+    "trimp": "Treniruotės impulsas (TRIMP)"
+  },
+  "sport": {
+    "label": "Sportas",
+    "all": "Visi sportai"
+  },
+  "pmc": {
+    "title": "Forma ir nuovargis",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Nuovargis",
+    "seriesForm": "Gaivumas"
+  },
+  "daily": {
+    "title": "Dienos krūvis",
+    "series": "Krūvis",
+    "trimpNote": "TRIMP naudoja kitą skalę nei kitos formulės ir niekada su jomis nesumuojamas."
+  },
+  "stats": {
+    "windowTotal": "Bendras krūvis"
+  },
+  "empty": {
+    "title": "Dar nėra išmatuoto krūvio",
+    "description": "Išmatavus jūsų veiklas, čia atsiras formos ir nuovargio kreivės. Matavimą galite paleisti žemiau esamuose nustatymuose."
+  },
+  "settings": {
+    "title": "Parametrai ir slenksčiai",
+    "acuteDays": "Nuovargio dienos",
+    "chronicDays": "Formos dienos",
+    "primaryMethod": "Numatytoji formulė",
+    "restingHr": "Pulsas ramybės būsenoje",
+    "save": "Įrašyti",
+    "saved": "Nustatymai išsaugoti",
+    "saveFailed": "Nepavyko išsaugoti nustatymų",
+    "thresholds": {
+      "title": "Slenksčiai",
+      "hr": "Slenkstinis pulsas",
+      "add": "Pridėti slenkstį",
+      "set": "Nustatyti",
+      "clear": "Atšaukti",
+      "sourceAuto": "išvesta",
+      "sourceManual": "rankiniu būdu",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Atnaujinti slenksčius",
+    "recompute": "Perskaičiuoti visus krūvius",
+    "refreshQueued": "Slenkčių atnaujinimas padėtas į eilę",
+    "recomputeQueued": "Perskaičiavimas padėtas į eilę",
+    "failed": "Nepavyko paleisti užklausos"
+  }
+}

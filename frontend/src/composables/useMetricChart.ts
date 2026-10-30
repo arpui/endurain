@@ -1,8 +1,8 @@
 /**
- * Shared mount/update/teardown lifecycle for the health metric charts. Each
- * chart computes its own {@link ChartRenderOptions}; this composable owns the
- * container ref and drives the chart provider so the six metric charts collapse
- * to just their unique data shaping.
+ * Shared mount/update/teardown lifecycle for a single-canvas metric chart.
+ * Each chart computes its own {@link ChartRenderOptions}; this composable owns
+ * the container ref and drives the chart provider so every metric chart
+ * collapses to just its unique data shaping.
  */
 
 import {
@@ -28,7 +28,7 @@ import { useRenderProvidersReady } from '@/providers'
  *
  * @param render - The chart's reactive render options (a computed/getter).
  */
-export function useHealthMetricChart(render: MaybeRefOrGetter<ChartRenderOptions>): void {
+export function useMetricChart(render: MaybeRefOrGetter<ChartRenderOptions>): void {
   const ready = useRenderProvidersReady()
   const container = useTemplateRef<HTMLElement>('chartContainer')
   let instance: ChartInstance | null = null

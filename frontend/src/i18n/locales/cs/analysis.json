@@ -1,0 +1,68 @@
+{
+  "title": "Tréninkové zatížení",
+  "subtitle": "Co souhrnem znamenají vaše aktivity: forma, únava a svěžest",
+  "loadFailed": "Nepodařilo se načíst tréninkové zatížení",
+  "window": {
+    "label": "Období",
+    "30": "Posledních 30 dní",
+    "90": "Posledních 90 dní",
+    "365": "Poslední rok"
+  },
+  "method": {
+    "label": "Vzorec zatížení",
+    "coggan_tss": "Tréninkové stresové skóre (TSS)",
+    "skiba_score": "Stresové skóre (xPower)",
+    "hr_load": "Zatížení podle tepu",
+    "trimp": "Tréninkový impuls (TRIMP)"
+  },
+  "sport": {
+    "label": "Sport",
+    "all": "Všechny sporty"
+  },
+  "pmc": {
+    "title": "Forma a únava",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Únava",
+    "seriesForm": "Svěžest"
+  },
+  "daily": {
+    "title": "Denní zatížení",
+    "series": "Zatížení",
+    "trimpNote": "TRIMP používá jinou škálu než ostatní vzorce a nikdy se k nim nepřičítá."
+  },
+  "stats": {
+    "windowTotal": "Celkové zatížení"
+  },
+  "empty": {
+    "title": "Zatím žádné změřené zatížení",
+    "description": "Až budou vaše aktivity změřeny, zobrazí se zde křivky formy a únavy. Měření můžete zadat v nastavení níže."
+  },
+  "settings": {
+    "title": "Parametry a prahy",
+    "acuteDays": "Dny únavy",
+    "chronicDays": "Dny formy",
+    "primaryMethod": "Výchozí vzorec",
+    "restingHr": "Klidový tep",
+    "save": "Uložit",
+    "saved": "Nastavení uloženo",
+    "saveFailed": "Nepodařilo se uložit nastavení",
+    "thresholds": {
+      "title": "Prahy",
+      "hr": "Prahový tep",
+      "add": "Přidat prah",
+      "set": "Nastavit",
+      "clear": "Vrátit",
+      "sourceAuto": "odvozený",
+      "sourceManual": "ruční",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Obnovit prahy",
+    "recompute": "Přepočítat všechna zatížení",
+    "refreshQueued": "Obnova prahů ve frontě",
+    "recomputeQueued": "Přepočet ve frontě",
+    "failed": "Nepodařilo se zadat požadavek"
+  }
+}

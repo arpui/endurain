@@ -1,0 +1,68 @@
+{
+  "title": "Training load",
+  "subtitle": "What your activities add up to: fatigue, fitness and form",
+  "loadFailed": "Could not load your training load",
+  "window": {
+    "label": "Time window",
+    "30": "Last 30 days",
+    "90": "Last 90 days",
+    "365": "Last year"
+  },
+  "method": {
+    "label": "Load formula",
+    "coggan_tss": "Training Stress Score",
+    "skiba_score": "Stress score (xPower)",
+    "hr_load": "Heart-rate load",
+    "trimp": "Training impulse (TRIMP)"
+  },
+  "sport": {
+    "label": "Sport",
+    "all": "All sports"
+  },
+  "pmc": {
+    "title": "Fitness and fatigue",
+    "seriesFitness": "Fitness",
+    "seriesFatigue": "Fatigue",
+    "seriesForm": "Form"
+  },
+  "daily": {
+    "title": "Daily load",
+    "series": "Load",
+    "trimpNote": "TRIMP uses a different scale than the other formulas and is never added to them."
+  },
+  "stats": {
+    "windowTotal": "Total load"
+  },
+  "empty": {
+    "title": "No load measured yet",
+    "description": "Once your activities have been measured, your fitness and fatigue curves will appear here. You can queue the measurement from the settings below."
+  },
+  "settings": {
+    "title": "Parameters and thresholds",
+    "acuteDays": "Fatigue days",
+    "chronicDays": "Fitness days",
+    "primaryMethod": "Default formula",
+    "restingHr": "Resting heart rate",
+    "save": "Save",
+    "saved": "Settings saved",
+    "saveFailed": "Could not save the settings",
+    "thresholds": {
+      "title": "Thresholds",
+      "hr": "Threshold heart rate",
+      "add": "Add threshold",
+      "set": "Set",
+      "clear": "Revert",
+      "sourceAuto": "derived",
+      "sourceManual": "manual",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Refresh thresholds",
+    "recompute": "Recompute all loads",
+    "refreshQueued": "Threshold refresh queued",
+    "recomputeQueued": "Recompute queued",
+    "failed": "Could not queue the request"
+  }
+}

@@ -93,6 +93,13 @@ const router = createRouter({
       meta: { requiresAuth: true, cardless: true },
     },
     {
+      path: '/analysis',
+      name: 'analysis',
+      component: () => import('@/features/analysis/views/AnalysisView.vue'),
+      // Cardless: the view supplies its own chart/card surfaces.
+      meta: { requiresAuth: true, cardless: true },
+    },
+    {
       path: '/activity/:id',
       name: 'activity',
       component: () => import('@/features/activities/views/ActivityDetailView.vue'),

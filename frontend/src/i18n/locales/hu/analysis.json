@@ -1,0 +1,68 @@
+{
+  "title": "Edzésterhelés",
+  "subtitle": "Mit jelentenek az edzéseid: állóképesség, fáradtság és frissesség",
+  "loadFailed": "Nem sikerült betölteni az edzésterhelést",
+  "window": {
+    "label": "Időszak",
+    "30": "Elmúlt 30 nap",
+    "90": "Elmúlt 90 nap",
+    "365": "Elmúlt év"
+  },
+  "method": {
+    "label": "Terhelési képlet",
+    "coggan_tss": "Edzési stressz pontszám (TSS)",
+    "skiba_score": "Stresszpont (xPower)",
+    "hr_load": "Pulzus alapú terhelés",
+    "trimp": "Edzésimpulzus (TRIMP)"
+  },
+  "sport": {
+    "label": "Sportág",
+    "all": "Minden sportág"
+  },
+  "pmc": {
+    "title": "Állóképesség és fáradtság",
+    "seriesFitness": "Állóképesség",
+    "seriesFatigue": "Fáradtság",
+    "seriesForm": "Frissesség"
+  },
+  "daily": {
+    "title": "Napi terhelés",
+    "series": "Terhelés",
+    "trimpNote": "A TRIMP más skálán mér, mint a többi képlet, és soha nem adódik hozzájuk."
+  },
+  "stats": {
+    "windowTotal": "Összes terhelés"
+  },
+  "empty": {
+    "title": "Még nincs mért terhelés",
+    "description": "Ha az edzéseid felmérésre kerülnek, itt jelennek meg az állóképességi és fáradtsági görbék. A mérést az alábbi beállításokból indíthatod el."
+  },
+  "settings": {
+    "title": "Paraméterek és küszöbértékek",
+    "acuteDays": "Fáradtság napok",
+    "chronicDays": "Állóképesség napok",
+    "primaryMethod": "Alapértelmezett képlet",
+    "restingHr": "Nyugalmi pulzus",
+    "save": "Mentés",
+    "saved": "Beállítások mentve",
+    "saveFailed": "Nem sikerült menteni a beállításokat",
+    "thresholds": {
+      "title": "Küszöbértékek",
+      "hr": "Küszöbpulzus",
+      "add": "Küszöbérték hozzáadása",
+      "set": "Beállítás",
+      "clear": "Visszavonás",
+      "sourceAuto": "származtatott",
+      "sourceManual": "kézi",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Küszöbértékek frissítése",
+    "recompute": "Összes terhelés újraszámítása",
+    "refreshQueued": "Küszöbfrissítés sorban",
+    "recomputeQueued": "Újraszámítás sorban",
+    "failed": "Nem sikerült elindítani a kérést"
+  }
+}

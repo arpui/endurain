@@ -1,0 +1,68 @@
+{
+  "title": "训练负荷",
+  "subtitle": "你的活动总和：体能、疲劳与状态",
+  "loadFailed": "无法加载训练负荷",
+  "window": {
+    "label": "时间范围",
+    "30": "最近 30 天",
+    "90": "最近 90 天",
+    "365": "最近一年"
+  },
+  "method": {
+    "label": "负荷公式",
+    "coggan_tss": "训练压力分数 (TSS)",
+    "skiba_score": "压力分数 (xPower)",
+    "hr_load": "心率负荷",
+    "trimp": "训练冲动 (TRIMP)"
+  },
+  "sport": {
+    "label": "运动",
+    "all": "全部运动"
+  },
+  "pmc": {
+    "title": "体能与疲劳",
+    "seriesFitness": "体能",
+    "seriesFatigue": "疲劳",
+    "seriesForm": "状态"
+  },
+  "daily": {
+    "title": "每日负荷",
+    "series": "负荷",
+    "trimpNote": "TRIMP 使用与其他公式不同的量表，不会与它们相加。"
+  },
+  "stats": {
+    "windowTotal": "负荷总计"
+  },
+  "empty": {
+    "title": "尚未测量任何负荷",
+    "description": "测量你的活动后，这里将显示体能和疲劳曲线。可在下方设置中启动测量。"
+  },
+  "settings": {
+    "title": "参数与阈值",
+    "acuteDays": "疲劳天数",
+    "chronicDays": "体能天数",
+    "primaryMethod": "默认公式",
+    "restingHr": "静息心率",
+    "save": "保存",
+    "saved": "设置已保存",
+    "saveFailed": "无法保存设置",
+    "thresholds": {
+      "title": "阈值",
+      "hr": "阈值心率",
+      "add": "添加阈值",
+      "set": "设置",
+      "clear": "还原",
+      "sourceAuto": "自动推导",
+      "sourceManual": "手动",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "刷新阈值",
+    "recompute": "重新计算全部负荷",
+    "refreshQueued": "阈值刷新已排队",
+    "recomputeQueued": "重新计算已排队",
+    "failed": "无法提交请求"
+  }
+}

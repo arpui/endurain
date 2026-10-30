@@ -1,0 +1,68 @@
+{
+  "title": "Carga de treino",
+  "subtitle": "No que as tuas atividades se resumem: forma, fadiga e frescura",
+  "loadFailed": "Não foi possível carregar a tua carga de treino",
+  "window": {
+    "label": "Período",
+    "30": "Últimos 30 dias",
+    "90": "Últimos 90 dias",
+    "365": "Último ano"
+  },
+  "method": {
+    "label": "Fórmula de carga",
+    "coggan_tss": "Índice de stress de treino (TSS)",
+    "skiba_score": "Índice de stress (xPower)",
+    "hr_load": "Carga por frequência cardíaca",
+    "trimp": "Impulso de treino (TRIMP)"
+  },
+  "sport": {
+    "label": "Desporto",
+    "all": "Todos os desportos"
+  },
+  "pmc": {
+    "title": "Forma e fadiga",
+    "seriesFitness": "Forma",
+    "seriesFatigue": "Fadiga",
+    "seriesForm": "Frescura"
+  },
+  "daily": {
+    "title": "Carga diária",
+    "series": "Carga",
+    "trimpNote": "O TRIMP usa uma escala diferente das outras fórmulas e nunca é somado a elas."
+  },
+  "stats": {
+    "windowTotal": "Carga total"
+  },
+  "empty": {
+    "title": "Ainda não há carga medida",
+    "description": "Quando as tuas atividades forem medidas, verás aqui as curvas de forma e fadiga. Podes iniciar a medição nas definições abaixo."
+  },
+  "settings": {
+    "title": "Parâmetros e limiares",
+    "acuteDays": "Dias de fadiga",
+    "chronicDays": "Dias de forma",
+    "primaryMethod": "Fórmula predefinida",
+    "restingHr": "FC em repouso",
+    "save": "Guardar",
+    "saved": "Definições guardadas",
+    "saveFailed": "Não foi possível guardar as definições",
+    "thresholds": {
+      "title": "Limiares",
+      "hr": "FC limiar",
+      "add": "Adicionar limiar",
+      "set": "Definir",
+      "clear": "Repor",
+      "sourceAuto": "derivado",
+      "sourceManual": "manual",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Atualizar limiares",
+    "recompute": "Recalcular todas as cargas",
+    "refreshQueued": "Atualização de limiares na fila",
+    "recomputeQueued": "Recálculo na fila",
+    "failed": "Não foi possível iniciar o pedido"
+  }
+}

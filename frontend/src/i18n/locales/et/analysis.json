@@ -1,0 +1,68 @@
+{
+  "title": "Treeningskoormus",
+  "subtitle": "Mille teie tegevused kokku tulevad: vorm, väsimus ja värskus",
+  "loadFailed": "Treeningskoormuse laadimine ebaõnnestus",
+  "window": {
+    "label": "Ajavahemik",
+    "30": "Viimased 30 päeva",
+    "90": "Viimased 90 päeva",
+    "365": "Viimane aasta"
+  },
+  "method": {
+    "label": "Koormuse valem",
+    "coggan_tss": "Training Stress Score (TSS)",
+    "skiba_score": "Stressiskoor (xPower)",
+    "hr_load": "Pulsikoormus",
+    "trimp": "Treeningimpulss (TRIMP)"
+  },
+  "sport": {
+    "label": "Ala",
+    "all": "Kõik alad"
+  },
+  "pmc": {
+    "title": "Vorm ja väsimus",
+    "seriesFitness": "Vorm",
+    "seriesFatigue": "Väsimus",
+    "seriesForm": "Värskus"
+  },
+  "daily": {
+    "title": "Päevane koormus",
+    "series": "Koormus",
+    "trimpNote": "TRIMP kasutab teistest valemitest erinevat skaalat ega liideta nendega."
+  },
+  "stats": {
+    "windowTotal": "Koormus kokku"
+  },
+  "empty": {
+    "title": "Koormusi pole veel mõõdetud",
+    "description": "Kui teie tegevused on mõõdetud, kuvatakse siin vormi- ja väsimuskõverad. Mõõtmist saate käivitada allpool olevatest seadistustest."
+  },
+  "settings": {
+    "title": "Parameetrid ja läved",
+    "acuteDays": "Väsimuspäevad",
+    "chronicDays": "Vormipäevad",
+    "primaryMethod": "Vaikimisi valem",
+    "restingHr": "Pulss puhkeolekus",
+    "save": "Salvesta",
+    "saved": "Seaded salvestatud",
+    "saveFailed": "Seadete salvestamine ebaõnnestus",
+    "thresholds": {
+      "title": "Läved",
+      "hr": "Lävepulss",
+      "add": "Lisa lävi",
+      "set": "Määra",
+      "clear": "Tühista",
+      "sourceAuto": "tuletatud",
+      "sourceManual": "käsitsi",
+      "wattsPlaceholder": "W",
+      "bpmPlaceholder": "bpm"
+    }
+  },
+  "actions": {
+    "refreshThresholds": "Värskenda läveid",
+    "recompute": "Arvuta kõik koormused uuesti",
+    "refreshQueued": "Lävede värskendus järjekorras",
+    "recomputeQueued": "Ülearvutus järjekorras",
+    "failed": "Päringut ei saanud käivitada"
+  }
+}

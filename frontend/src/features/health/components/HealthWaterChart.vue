@@ -9,7 +9,7 @@ import type { WaterEntry } from '@/features/health/types'
 import { themeColor } from '@/lib/themeColor'
 import { mlToFlOz } from '@/utils/units'
 import HealthChartCard from '@/features/health/components/HealthChartCard.vue'
-import { useHealthMetricChart } from '@/features/health/composables/useHealthMetricChart'
+import { useMetricChart } from '@/composables/useMetricChart'
 import { formatHealthEntryDate } from '@/features/health/utils/healthFormat'
 
 const props = defineProps<{
@@ -78,7 +78,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
   }
 })
 
-useHealthMetricChart(chartRender)
+useMetricChart(chartRender)
 </script>
 
 <template>
