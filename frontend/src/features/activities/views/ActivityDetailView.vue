@@ -20,6 +20,7 @@ import ActivityHrZones from '@/features/activities/components/ActivityHrZones.vu
 import ActivityLapsTable from '@/features/activities/components/ActivityLapsTable.vue'
 import ActivityMetricsGrid from '@/features/activities/components/ActivityMetricsGrid.vue'
 import ActivityPrivacyAlerts from '@/features/activities/components/ActivityPrivacyAlerts.vue'
+import ActivitySegmentsTable from '@/features/activities/components/ActivitySegmentsTable.vue'
 import ActivityStreamChart from '@/features/activities/components/ActivityStreamChart.vue'
 import ActivityWorkoutSets from '@/features/activities/components/ActivityWorkoutSets.vue'
 import {
@@ -27,6 +28,7 @@ import {
   useActivityLapsQuery,
   useActivityOwnerQuery,
   useActivityQuery,
+  useActivitySegmentsQuery,
   useActivitySetsQuery,
   useActivityStreamsQuery,
   useActivityWorkoutStepsQuery,
@@ -56,6 +58,10 @@ const { data: activity, isPending, isError, refetch } = useActivityQuery(activit
 const activityLoaded = computed(() => !!activity.value)
 const { data: streams } = useActivityStreamsQuery(activityId, activityLoaded)
 const { data: laps } = useActivityLapsQuery(activityId, activityLoaded)
+
+// Segment efforts are only readable by an authenticated viewer whose access to
+// the activity the backend has resolved, so a public share shows no section.
+const { data: segments } = useActivitySegmentsQuery(activityId, activityLoaded)
 
 const currentUserId = computed(() => currentUser.value?.id ?? null)
 
@@ -113,6 +119,8 @@ const showLaps = computed(
     canViewField(activity.value, 'hideLaps', currentUserId.value) &&
     (laps.value?.length ?? 0) > 0,
 )
+
+const showSegments = computed(() => !!activity.value && (segments.value?.length ?? 0) > 0)
 
 // Workout steps/sets. Fetched for every activity (like laps/streams); the
 // section self-hides when there is no data, mirroring v1 which fetches these
@@ -349,6 +357,15 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
             :exercise-titles="exerciseTitles ?? []"
           />
         </template>
+      </Card>
+
+      <Card v-if="showSegments" class="flex flex-col gap-3">
+        <h2 class="text-card-heading">{{ t('activities.segments.title') }}</h2>
+        <ActivitySegmentsTable
+          :segments="segments ?? []"
+          :activity-type="activity?.activityType ?? 0"
+          :units="units"
+        />
       </Card>
     </template>
   </div>

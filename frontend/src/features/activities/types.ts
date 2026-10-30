@@ -14,6 +14,9 @@ export type ActivityMediaDto = Schemas['ActivityMediaRead']
 export type ActivityWorkoutStepDto = Schemas['ActivityWorkoutStepsRead']
 export type ActivitySetDto = Schemas['ActivitySetsRead']
 export type ActivityExerciseTitleDto = Schemas['ActivityExerciseTitlesRead']
+export type SegmentDto = Schemas['SegmentRead']
+export type SegmentEffortDto = Schemas['SegmentEffortRead']
+export type ActivitySegmentDto = Schemas['ActivitySegmentRead']
 
 /**
  * Per-sport aggregated stats for a timeframe (this week / this month). Keys are
@@ -120,6 +123,43 @@ export interface ActivityLap {
   totalCycles: number | null
   /** Lap intensity label (e.g. `active`, `rest`). */
   intensity: string | null
+}
+
+/** A stored segment definition, as an activity's segment list exposes it. */
+export interface Segment {
+  id: number
+  /** Display name as imported or created. */
+  name: string
+  /** Definition origin (`strava` or `manual`). */
+  source: string
+  /** Length in metres along the stored geometry order. */
+  distanceM: number
+  /** Positive elevation gain in metres, when the source provided it. */
+  elevationGainM: number | null
+}
+
+/** One pass of an activity over a segment. */
+export interface SegmentEffort {
+  segmentId: number
+  activityId: number
+  /** `forward` counts as an effort; `reverse` runs the geometry backwards. */
+  direction: string
+  /** 1-based pass index within (segment, direction). */
+  passNumber: number
+  /** Effort duration in seconds. */
+  elapsedSeconds: number
+  /** Segment distance over elapsed time, in metres per second. */
+  avgSpeedMps: number | null
+  /** Wall-clock time of the first effort waypoint (ISO). */
+  timeStart: string
+  /** Wall-clock time of the last effort waypoint (ISO). */
+  timeEnd: string
+}
+
+/** One segment with the passes one activity made over it. */
+export interface ActivitySegment {
+  segment: Segment
+  efforts: SegmentEffort[]
 }
 
 /**

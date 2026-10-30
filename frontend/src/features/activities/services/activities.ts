@@ -17,6 +17,8 @@ import type {
   ActivityFeedSlice,
   ActivityLap,
   ActivityLapDto,
+  ActivitySegment,
+  ActivitySegmentDto,
   ActivitySetDto,
   ActivityStats,
   ActivityStream,
@@ -25,6 +27,10 @@ import type {
   ActivityWorkoutStep,
   ActivityWorkoutStepDto,
   HrZoneBucket,
+  Segment,
+  SegmentDto,
+  SegmentEffort,
+  SegmentEffortDto,
   StreamWaypoint,
 } from '../types'
 
@@ -650,6 +656,61 @@ export async function fetchActivityLaps(
   )
   const dtos = await fetchAllChildPages<ActivityLapDto>(path, context)
   return dtos.map(mapActivityLap)
+}
+
+/** Maps a stored segment definition DTO to the domain model. */
+export function mapSegment(dto: SegmentDto): Segment {
+  return {
+    id: dto.id,
+    name: dto.name,
+    source: dto.source,
+    distanceM: dto.distance_m,
+    elevationGainM: dto.elevation_gain_m ?? null,
+  }
+}
+
+/** Maps one segment pass DTO to the domain model. */
+export function mapSegmentEffort(dto: SegmentEffortDto): SegmentEffort {
+  return {
+    segmentId: dto.segment_id,
+    activityId: dto.activity_id,
+    direction: dto.direction,
+    passNumber: dto.pass_number,
+    elapsedSeconds: dto.elapsed_seconds,
+    avgSpeedMps: dto.avg_speed_mps ?? null,
+    timeStart: dto.time_start,
+    timeEnd: dto.time_end,
+  }
+}
+
+/** Maps an activity's segment (with its passes) DTO to the domain model. */
+export function mapActivitySegment(dto: ActivitySegmentDto): ActivitySegment {
+  return {
+    segment: mapSegment(dto.segment),
+    efforts: (dto.efforts ?? []).map(mapSegmentEffort),
+  }
+}
+
+/**
+ * Fetches the segments one activity traversed, with its efforts on each.
+ *
+ * There is no public route for segments: an effort list discloses where and how
+ * fast the athlete moved, so it is only read for an authenticated viewer whose
+ * activity access the backend has already resolved.
+ *
+ * @param id - Activity identifier.
+ * @param context - Auth + cancellation context.
+ * @returns The traversed segments, ordered by segment name.
+ */
+export async function fetchActivitySegments(
+  id: number,
+  context: ActivityFetchContext,
+): Promise<ActivitySegment[]> {
+  const dtos = await apiFetch<ActivitySegmentDto[]>(`/activities/${id}/segments`, {
+    auth: context.authenticated,
+    signal: context.signal,
+  })
+  return (dtos ?? []).map(mapActivitySegment)
 }
 
 /**

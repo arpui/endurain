@@ -488,6 +488,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/activities/{activity_id}/segments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Activity Segments
+         * @description Return the segments this activity traversed, with its efforts on each.
+         *
+         *     Read scope follows the parent activity: these efforts belong to the
+         *     activity, and its privacy rules decide who may see them. Reverse passes are
+         *     included only on request (``direction=reverse`` or ``direction=all``).
+         */
+        get: operations["list_activity_segments_api_v1_activities__activity_id__segments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/activities/{activity_id}/sets": {
         parameters: {
             query?: never;
@@ -4189,6 +4213,104 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/segments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Segments
+         * @description Return one page of the segment library, with the matching total.
+         */
+        get: operations["list_segments_api_v1_segments_get"];
+        put?: never;
+        /**
+         * Import Segment
+         * @description Store a segment definition from an import payload.
+         *
+         *     Matching existing activities against the new segment is not on the request
+         *     path: the hourly reconcile pass picks up activities that never had efforts,
+         *     and a full re-match can be queued through the backfill route afterwards.
+         */
+        post: operations["import_segment_api_v1_segments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/segments/backfill": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Queue Backfill
+         * @description Queue a full re-match of every activity against the segment library.
+         *
+         *     Deliberately declared before ``/{segment_id}`` so the literal path is not
+         *     swallowed by the dynamic route.
+         */
+        post: operations["queue_backfill_api_v1_segments_backfill_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/segments/{segment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Segment
+         * @description Return one segment, with its geometry and bounding box.
+         */
+        get: operations["get_segment_api_v1_segments__segment_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Segment
+         * @description Delete a segment; its stored efforts cascade with it.
+         */
+        delete: operations["delete_segment_api_v1_segments__segment_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/segments/{segment_id}/efforts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Segment Efforts
+         * @description Return one page of the requester's efforts on the given segment, fastest first.
+         *
+         *     Reverse passes are stored for information only, so they are only listed when
+         *     asked for (``direction=reverse`` or ``direction=all``).
+         */
+        get: operations["list_segment_efforts_api_v1_segments__segment_id__efforts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/server_settings": {
         parameters: {
             query?: never;
@@ -5542,6 +5664,19 @@ export interface components {
             workout_rpe?: number | null;
         };
         /**
+         * ActivitySegmentRead
+         * @description One segment with the efforts one activity made over it.
+         *
+         *     Attributes:
+         *         segment: The segment definition (without geometry).
+         *         efforts: The activity's passes, chronological.
+         */
+        ActivitySegmentRead: {
+            /** Efforts */
+            efforts: components["schemas"]["SegmentEffortRead"][];
+            segment: components["schemas"]["SegmentRead"];
+        };
+        /**
          * ActivitySetsRead
          * @description Schema for reading activity workout sets.
          *
@@ -5751,6 +5886,17 @@ export interface components {
             /** Weight Display Unit */
             weight_display_unit?: string | null;
         };
+        /**
+         * BackfillQueued
+         * @description Response of a backfill request.
+         *
+         *     Attributes:
+         *         queued: Always ``True``: the rescan runs off the request path.
+         */
+        BackfillQueued: {
+            /** Queued */
+            queued: boolean;
+        };
         /** Body_create_activity_media_api_v1_activities__activity_id__media_post */
         Body_create_activity_media_api_v1_activities__activity_id__media_post: {
             /** File */
@@ -5915,6 +6061,21 @@ export interface components {
              */
             total_elevation_gain: number;
         };
+        /**
+         * EffortDirectionFilter
+         * @description Query vocabulary selecting which effort directions to read.
+         *
+         *     ``ALL`` exists because a segment's stored reverse passes are real traverses
+         *     in the opposite direction, and a caller that wants them must ask: the
+         *     library pages default to ``FORWARD``, the direction that counts.
+         *
+         *     Attributes:
+         *         FORWARD: Only efforts that follow the stored geometry order.
+         *         REVERSE: Only efforts against it.
+         *         ALL: Both directions.
+         * @enum {string}
+         */
+        EffortDirectionFilter: "forward" | "reverse" | "all";
         /**
          * EmailStatus
          * @description Whether outgoing email is usable, and why not when it is not.
@@ -9342,6 +9503,32 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** Page[SegmentEffortRead] */
+        Page_SegmentEffortRead_: {
+            /** Items */
+            items: components["schemas"]["SegmentEffortRead"][];
+            /** Next */
+            next?: number | null;
+            /** Num Records */
+            num_records: number;
+            /** Page */
+            page: number;
+            /** Total */
+            total: number;
+        };
+        /** Page[SegmentRead] */
+        Page_SegmentRead_: {
+            /** Items */
+            items: components["schemas"]["SegmentRead"][];
+            /** Next */
+            next?: number | null;
+            /** Num Records */
+            num_records: number;
+            /** Page */
+            page: number;
+            /** Total */
+            total: number;
+        };
         /**
          * PasswordResetConfirm
          * @description Request schema for confirming a password reset.
@@ -9523,6 +9710,191 @@ export interface components {
             incoming?: components["schemas"]["FollowRelationshipRead"] | null;
             outgoing?: components["schemas"]["FollowRelationshipRead"] | null;
         };
+        /**
+         * SegmentDetailRead
+         * @description Serialized segment including its geometry and bounding box.
+         *
+         *     Attributes:
+         *         min_lat: Bounding box south edge.
+         *         min_lng: Bounding box west edge.
+         *         max_lat: Bounding box north edge.
+         *         max_lng: Bounding box east edge.
+         *         geometry: Ordered ``[[lat, lng], ...]`` polyline.
+         */
+        SegmentDetailRead: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By */
+            created_by: number | null;
+            /** Distance M */
+            distance_m: number;
+            /** Elevation Gain M */
+            elevation_gain_m: number | null;
+            /** Geometry */
+            geometry: number[][];
+            /** Id */
+            id: number;
+            /** Max Lat */
+            max_lat: number;
+            /** Max Lng */
+            max_lng: number;
+            /** Min Lat */
+            min_lat: number;
+            /** Min Lng */
+            min_lng: number;
+            /** Name */
+            name: string;
+            source: components["schemas"]["SegmentSource"];
+            /** Source Id */
+            source_id: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * SegmentDirection
+         * @description Direction of an effort relative to the stored segment geometry.
+         *
+         *     The segment geometry has one canonical order (start → end). An effort that
+         *     travels it in that order is ``forward`` — the only direction that counts as
+         *     a real effort, matching how Strava treats a climb ridden backwards. An
+         *     effort in the opposite order is ``reverse``, stored for information only.
+         *
+         *     Attributes:
+         *         FORWARD: The effort follows the stored geometry order.
+         *         REVERSE: The effort runs against the stored geometry order.
+         * @enum {string}
+         */
+        SegmentDirection: "forward" | "reverse";
+        /**
+         * SegmentEffortRead
+         * @description Serialized effort of one activity over one segment.
+         *
+         *     Attributes:
+         *         segment_id: Segment traversed.
+         *         activity_id: Activity that traversed it.
+         *         direction: ``forward`` (counts) or ``reverse`` (informational).
+         *         pass_number: 1-based pass index within (segment, activity, direction).
+         *         elapsed_seconds: Effort duration.
+         *         avg_speed_mps: Segment distance over elapsed time.
+         *         coverage: Fraction of distinct segment points touched.
+         *         time_start: Wall-clock time of the first effort waypoint.
+         *         time_end: Wall-clock time of the last effort waypoint.
+         *         stream_index_start: GPS-stream index of the first effort waypoint.
+         *         stream_index_end: GPS-stream index of the last effort waypoint.
+         */
+        SegmentEffortRead: {
+            /** Activity Id */
+            activity_id: number;
+            /** Avg Speed Mps */
+            avg_speed_mps: number | null;
+            /** Coverage */
+            coverage: number | null;
+            direction: components["schemas"]["SegmentDirection"];
+            /** Elapsed Seconds */
+            elapsed_seconds: number;
+            /** Pass Number */
+            pass_number: number;
+            /** Segment Id */
+            segment_id: number;
+            /** Stream Index End */
+            stream_index_end: number;
+            /** Stream Index Start */
+            stream_index_start: number;
+            /**
+             * Time End
+             * Format: date-time
+             */
+            time_end: string;
+            /**
+             * Time Start
+             * Format: date-time
+             */
+            time_start: string;
+        };
+        /**
+         * SegmentImport
+         * @description Body of a segment import (the shape of a Fase-0 Strava artifact).
+         *
+         *     Attributes:
+         *         segment_id: External (Strava) segment identifier.
+         *         name: Display name.
+         *         latlng: Ordered ``[[lat, lng], ...]`` polyline from the segment stream.
+         *         altitude: Per-point altitude in meters, when the source provides it.
+         *         distance: Per-point cumulative distance in meters, when provided; the
+         *             last value is used as the segment length, otherwise it is summed
+         *             from the geometry.
+         *         source: Definition origin; ``strava`` for imported segments.
+         */
+        SegmentImport: {
+            /** Altitude */
+            altitude?: number[] | null;
+            /** Distance */
+            distance?: number[] | null;
+            /** Latlng */
+            latlng: number[][];
+            /** Name */
+            name: string;
+            /** Segment Id */
+            segment_id: number;
+            /** @default strava */
+            source: components["schemas"]["SegmentSource"];
+        };
+        /**
+         * SegmentRead
+         * @description Serialized segment without its geometry.
+         *
+         *     Attributes:
+         *         id: Segment identifier.
+         *         name: Display name.
+         *         source: Definition origin.
+         *         source_id: External identifier within the source, or ``None``.
+         *         distance_m: Length along the stored geometry.
+         *         elevation_gain_m: Positive elevation gain, when known.
+         *         created_by: Importing/creating user, when known.
+         *         created_at: Creation timestamp.
+         *         updated_at: Last-update timestamp.
+         */
+        SegmentRead: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By */
+            created_by: number | null;
+            /** Distance M */
+            distance_m: number;
+            /** Elevation Gain M */
+            elevation_gain_m: number | null;
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            source: components["schemas"]["SegmentSource"];
+            /** Source Id */
+            source_id: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * SegmentSource
+         * @description Where a segment definition came from.
+         *
+         *     Attributes:
+         *         STRAVA: Imported from a Strava segment (``source_id`` is the Strava id).
+         *         MANUAL: Drawn or defined inside Endurain (no external id).
+         * @enum {string}
+         */
+        SegmentSource: "strava" | "manual";
         /**
          * ServerSettingsEdit
          * @description Edit schema for server settings updates.
@@ -12933,6 +13305,48 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                     "image/*": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_activity_segments_api_v1_activities__activity_id__segments_get: {
+        parameters: {
+            query?: {
+                direction?: components["schemas"]["EffortDirectionFilter"];
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivitySegmentRead"][];
                 };
             };
             /** @description Validation Error */
@@ -17926,6 +18340,240 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UsersRead"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_segments_api_v1_segments_get: {
+        parameters: {
+            query?: {
+                page_number?: number | null;
+                num_records?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SegmentRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    import_segment_api_v1_segments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SegmentImport"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SegmentDetailRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    queue_backfill_api_v1_segments_backfill_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BackfillQueued"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_segment_api_v1_segments__segment_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                segment_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SegmentDetailRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_segment_api_v1_segments__segment_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                segment_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_segment_efforts_api_v1_segments__segment_id__efforts_get: {
+        parameters: {
+            query?: {
+                direction?: components["schemas"]["EffortDirectionFilter"];
+                page_number?: number | null;
+                num_records?: number | null;
+            };
+            header?: never;
+            path: {
+                segment_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SegmentEffortRead_"];
                 };
             };
             /** @description Validation Error */
