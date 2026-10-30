@@ -104,7 +104,7 @@ class SegmentListItemRead(SegmentRead):
     shared while "how many times have I done this" is not.
 
     Attributes:
-        effort_count: The reader's stored efforts on this segment.
+        effort_count: The reader's counted (forward) efforts on this segment.
     """
 
     effort_count: StrictInt = 0

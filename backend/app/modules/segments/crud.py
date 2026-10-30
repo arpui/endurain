@@ -3,6 +3,7 @@
 from collections.abc import Sequence
 
 from sqlalchemy import delete, func, select
+from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.orm import Session
 
 import core.logger as core_logger
@@ -101,8 +102,8 @@ def list_segments(
         activity_ids: Whose efforts to count; the caller resolves the scoping.
 
     Returns:
-        The page of segments, each carrying how many of those activities' efforts
-        touch it.
+        The page of segments, each carrying how many counted (forward) efforts the
+        given activities have on it.
     """
     own_efforts = (
         select(func.count())
@@ -110,6 +111,9 @@ def list_segments(
         .where(
             segments_models.SegmentEffort.segment_id == segments_models.Segment.id,
             segments_models.SegmentEffort.activity_id.in_(activity_ids),
+            # Only the counted direction: the list number must match what the
+            # segment page's leaderboard shows by default.
+            segments_models.SegmentEffort.direction == segments_constants.SegmentDirection.FORWARD.value,
         )
         .scalar_subquery()
     )
@@ -270,7 +274,7 @@ def list_best_forward_efforts(
             segments_models.SegmentEffort.elapsed_seconds,
             segments_models.SegmentEffort.id,
         )
-        .distinct(segments_models.SegmentEffort.segment_id)
+        .ext(distinct_on(segments_models.SegmentEffort.segment_id))
     )
     return [
         (int(segment_id), int(activity_id), int(elapsed)) for segment_id, activity_id, elapsed in db.execute(stmt).all()

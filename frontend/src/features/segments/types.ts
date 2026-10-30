@@ -30,7 +30,7 @@ export interface SegmentBase {
 
 /** A stored segment as the library list shows it. */
 export interface SegmentSummary extends SegmentBase {
-  /** How many of the reader's activities have an effort on this segment. */
+  /** How many of the reader's activities have a counted effort on this segment. */
   effortCount: number
 }
 
