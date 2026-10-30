@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Odseki",
+  "subtitle": "Deoni poti, merjeni po svojih aktivnostih.",
+  "loading": "Nalaganje odsekov…",
+  "sourceStrava": "iz Strave",
+  "sourceManual": "določen tukaj",
+  "elevation": "Višinska razlika",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Pot odseka na zemljevidu"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Odsekov ni bilo mogoče naložiti",
+    "description": "Preveri povezavo in poskusi znova."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Še ni odsekov",
+    "description": "Uvozi odsek iz datoteke GPX ali iz JSON-a, ki ga izvozi ekstrakcijski skript."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Ponovno izračunaj prizadevanja",
+    "queued": "Ponovni izračun prizadevanj je v vrsti.",
+    "failed": "Ponovnega izračuna ni bilo mogoče uvrstiti v vrsto."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Višinski profil",
+    "unavailable": "Ta odsek nima višinskih podatkov, zato ni profila."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
-    "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "title": "Vaša prizadevanja",
+    "includeReverse": "Vključi prehode v nasprotni smeri",
+    "rank": "Št.",
+    "activity": "Aktivnost",
+    "date": "Datum",
+    "time": "Čas",
+    "speed": "Hitrost",
+    "best": "Najboljši",
+    "reverse": "Nasprotna smer",
+    "activityLabel": "Aktivnost {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Še ni prizadevanj",
+      "description": "Ponovno izračunaj prizadevanja, da se primerjajo s svojimi obstoječimi aktivnostmi."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Uvozi odsek",
+    "title": "Uvozi odsek",
+    "description": "Izberi datoteko GPX ali prilepi JSON, ki ga izvozi ekstrakcijski skript Strave.",
+    "file": "Datoteka GPX ali JSON",
+    "fileHint": "Sled GPX (ali pot) da polilinijo in, če so na voljo, višine.",
+    "json": "Ali prilepi JSON",
+    "jsonPlaceholder": "segment_id, name in polja latlng, kot jih izvozi ekstrakcijski skript",
+    "parseJson": "Razčleni prilepljen JSON",
+    "name": "Ime",
+    "id": "ID odseka",
+    "idPlaceholder": "Obvezno za ročno določen odsek",
+    "parsed": "{points} točk · {distance}",
+    "submit": "Uvozi",
+    "cancel": "Prekliči",
+    "close": "Zapri",
+    "done": "Odsek „{name}“ uvožen; prizadevanja se ponovno izračunavajo.",
+    "duplicate": "Ta odsek je že v knjižnici.",
+    "failed": "Uvoz ni uspel.",
+    "badJson": "To ni veljaven JSON.",
+    "badGpx": "To ni berljiva datoteka GPX.",
+    "tooFewPoints": "Polilinija potrebuje vsaj dve točki.",
+    "lengthMismatch": "Višina ali razdalja ne ustreza številu točk.",
+    "needName": "Odseku daj ime.",
+    "needId": "Odseku daj številski ID."
+  },
+  "effortCount": "{count} prizadevanj"
 }

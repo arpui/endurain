@@ -35,5 +35,8 @@
     "edit": "Editar",
     "supported": "Markdown suportado",
     "empty": "Nada para pré-visualizar"
+  },
+  "map": {
+    "recenter": "Recentrar o mapa"
   }
 }

@@ -35,5 +35,8 @@
     "edit": "Redaguoti",
     "supported": "Palaikomas Markdown",
     "empty": "Nėra ką peržiūrėti"
+  },
+  "map": {
+    "recenter": "Iš naujo centruoti žemėlapį"
   }
 }

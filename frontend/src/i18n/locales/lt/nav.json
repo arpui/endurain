@@ -17,5 +17,6 @@
   "preferences": "Nuostatos",
   "updateAvailable": "Yra atnaujinimas",
   "updateAvailableTitle": "Prieinama versija {version}",
-  "updateViewRelease": "Peržiūrėti leidimo pastabas"
+  "updateViewRelease": "Peržiūrėti leidimo pastabas",
+  "segments": "Atkarpos"
 }

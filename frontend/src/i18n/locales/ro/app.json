@@ -35,5 +35,8 @@
     "edit": "Editează",
     "supported": "Markdown acceptat",
     "empty": "Nimic de previzualizat"
+  },
+  "map": {
+    "recenter": "Recentrează harta"
   }
 }

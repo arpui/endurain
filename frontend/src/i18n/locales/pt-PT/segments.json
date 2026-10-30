@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Segmentos",
+  "subtitle": "Troços de percurso medidos nas tuas atividades.",
+  "loading": "A carregar segmentos…",
+  "sourceStrava": "do Strava",
+  "sourceManual": "definido aqui",
+  "elevation": "Elevação",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Percurso do segmento no mapa"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Não foi possível carregar os segmentos",
+    "description": "Verifica a ligação e tenta de novo."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Ainda não há segmentos",
+    "description": "Importa um segmento de um ficheiro GPX ou do JSON exportado pelo script de extração."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Recalcular esforços",
+    "queued": "Recálculo de esforços em fila.",
+    "failed": "Não foi possível colocar o recálculo em fila."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Perfil de elevação",
+    "unavailable": "Este segmento não tem dados de altitude, por isso não há perfil."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
-    "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "title": "Os teus esforços",
+    "includeReverse": "Incluir passagens em sentido inverso",
+    "rank": "N.º",
+    "activity": "Atividade",
+    "date": "Data",
+    "time": "Tempo",
+    "speed": "Velocidade",
+    "best": "Melhor",
+    "reverse": "Sentido inverso",
+    "activityLabel": "Atividade {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Ainda não há esforços",
+      "description": "Recalcula os esforços para comparar as tuas atividades existentes com este segmento."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Importar segmento",
+    "title": "Importar um segmento",
+    "description": "Escolhe um ficheiro GPX ou cola o JSON exportado pelo script de extração do Strava.",
+    "file": "Ficheiro GPX ou JSON",
+    "fileHint": "Um percurso GPX (ou rota) dá a polilinha e, quando existem, as altitudes.",
+    "json": "Ou cola JSON",
+    "jsonPlaceholder": "segment_id, name e conjuntos latlng, como o script de extração os exporta",
+    "parseJson": "Analisar o JSON colado",
+    "name": "Nome",
+    "id": "Id do segmento",
+    "idPlaceholder": "Obrigatório para um segmento definido à mão",
+    "parsed": "{points} pontos · {distance}",
+    "submit": "Importar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "done": "“{name}” importado; os esforços estão a ser recalculados.",
+    "duplicate": "Este segmento já está na biblioteca.",
+    "failed": "A importação falhou.",
+    "badJson": "Isso não é JSON válido.",
+    "badGpx": "Isso não é um ficheiro GPX legível.",
+    "tooFewPoints": "A polilinha precisa de pelo menos dois pontos.",
+    "lengthMismatch": "A altitude ou a distância não corresponde ao número de pontos.",
+    "needName": "Dá um nome ao segmento.",
+    "needId": "Dá um id numérico ao segmento."
+  },
+  "effortCount": "{count} esforços"
 }

@@ -272,5 +272,16 @@
     "inlineSkating": "Roller",
     "hiit": "HIIT",
     "jumpRope": "Saut à la corde"
+  },
+  "segments": {
+    "title": "Segments",
+    "segment": "Segment",
+    "length": "Longueur",
+    "time": "Temps",
+    "tempo": "Allure / Vitesse",
+    "reverse": "Sens inverse",
+    "pass": "Passage {number}",
+    "best": "Meilleur",
+    "slowerThanBest": "{delta} plus lent"
   }
 }

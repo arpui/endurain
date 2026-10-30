@@ -35,5 +35,8 @@
     "edit": "Rediģēt",
     "supported": "Markdown tiek atbalstīts",
     "empty": "Nav ko priekšskatīt"
+  },
+  "map": {
+    "recenter": "Atkārtoti centrēt karti"
   }
 }

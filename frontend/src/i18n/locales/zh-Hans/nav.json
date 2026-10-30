@@ -17,5 +17,6 @@
   "preferences": "偏好设置",
   "updateAvailable": "有可用更新",
   "updateAvailableTitle": "版本 {version} 现已推出",
-  "updateViewRelease": "查看发行说明"
+  "updateViewRelease": "查看发行说明",
+  "segments": "路段"
 }

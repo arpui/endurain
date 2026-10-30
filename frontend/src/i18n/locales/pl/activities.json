@@ -272,5 +272,16 @@
     "inlineSkating": "Jazda na rolkach",
     "hiit": "HIIT",
     "jumpRope": "Skakanka"
+  },
+  "segments": {
+    "title": "Odcinki",
+    "segment": "Odcinek",
+    "length": "Długość",
+    "time": "Czas",
+    "tempo": "Tempo / Prędkość",
+    "reverse": "Odwrotny kierunek",
+    "pass": "Przejazd {number}",
+    "best": "Najlepszy",
+    "slowerThanBest": "{delta} wolniej"
   }
 }

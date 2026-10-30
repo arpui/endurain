@@ -272,5 +272,16 @@
     "inlineSkating": "Inline korčuľovanie",
     "hiit": "HIIT",
     "jumpRope": "Skakanie cez lanom"
+  },
+  "segments": {
+    "title": "Sekcie",
+    "segment": "Sekcia",
+    "length": "Dĺžka",
+    "time": "Čas",
+    "tempo": "Tempo / Rýchlosť",
+    "reverse": "Opačný smer",
+    "pass": "Prejazd {number}",
+    "best": "Najlepší",
+    "slowerThanBest": "{delta} pomalší"
   }
 }

@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Posmi",
+  "subtitle": "Maršruta posmi, mērīti tavās aktivitātēs.",
+  "loading": "Ielādē posmus…",
+  "sourceStrava": "no Strava",
+  "sourceManual": "definēts šeit",
+  "elevation": "Augstuma ieguvums",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Posma maršruts kartē"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Neizdevās ielādēt posmus",
+    "description": "Pārbaudi savienojumu un mēģini vēlreiz."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Posmu vēl nav",
+    "description": "Importē posmu no GPX faila vai no JSON, ko eksportē ekstrakcijas skripts."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Pārrēķināt piepūles",
+    "queued": "Piepūļu pārrēķins ievietots rindā.",
+    "failed": "Neizdevās ievietot pārrēķinu rindā."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Augstuma profils",
+    "unavailable": "Šim posmam nav augstuma datu, tāpēc profila nav."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
-    "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "title": "Tavas piepūles",
+    "includeReverse": "Iekļaut braucienus pretējā virzienā",
+    "rank": "Nr.",
+    "activity": "Aktivitāte",
+    "date": "Datums",
+    "time": "Laiks",
+    "speed": "Ātrums",
+    "best": "Labākais",
+    "reverse": "Pretējs virziens",
+    "activityLabel": "Aktivitāte {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Piepūļu vēl nav",
+      "description": "Pārrēķini piepūles, lai salīdzinātu esošās aktivitātes ar šo posmu."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Importēt posmu",
+    "title": "Importēt posmu",
+    "description": "Izvēlies GPX failu vai ielīmē JSON, ko eksportē Strava ekstrakcijas skripts.",
+    "file": "GPX vai JSON fails",
+    "fileHint": "GPX trase (vai maršruts) dod polilīniju un, ja ir, augstumus.",
+    "json": "Vai ielīmē JSON",
+    "jsonPlaceholder": "segment_id, name un latlng masīvi, kā tos eksportē ekstrakcijas skripts",
+    "parseJson": "Apstrādāt ielīmēto JSON",
+    "name": "Nosaukums",
+    "id": "Posma id",
+    "idPlaceholder": "Obligāts manuāli definētam posmam",
+    "parsed": "{points} punkti · {distance}",
+    "submit": "Importēt",
+    "cancel": "Atcelt",
+    "close": "Aizvērt",
+    "done": "„{name}“ importēts; piepūles tiek pārrēķinātas.",
+    "duplicate": "Šis posms bibliotēkā jau ir.",
+    "failed": "Importēšana neizdevās.",
+    "badJson": "Tas nav derīgs JSON.",
+    "badGpx": "Tas nav lasāms GPX fails.",
+    "tooFewPoints": "Polilīnijai vajadzīgi vismaz divi punkti.",
+    "lengthMismatch": "Augstums vai attālums neatbilst punktu skaitam.",
+    "needName": "Dod posmam nosaukumu.",
+    "needId": "Dod posmam skaitlisku id."
+  },
+  "effortCount": "{count} piepūles"
 }

@@ -272,5 +272,16 @@
     "inlineSkating": "Tekerlekli paten",
     "hiit": "HIIT",
     "jumpRope": "Atlama ipi"
+  },
+  "segments": {
+    "title": "Segmentler",
+    "segment": "Segment",
+    "length": "Uzunluk",
+    "time": "Süre",
+    "tempo": "Tempo / Hız",
+    "reverse": "Ters yön",
+    "pass": "Geçiş {number}",
+    "best": "En iyi",
+    "slowerThanBest": "{delta} yavaş"
   }
 }

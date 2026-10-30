@@ -272,5 +272,16 @@
     "inlineSkating": "Role",
     "hiit": "HIIT",
     "jumpRope": "Săritura cu frânghie"
+  },
+  "segments": {
+    "title": "Segment",
+    "segment": "Segment",
+    "length": "Lungime",
+    "time": "Timp",
+    "tempo": "Ritm / Viteză",
+    "reverse": "Sens invers",
+    "pass": "Trecere {number}",
+    "best": "Cel mai bun",
+    "slowerThanBest": "{delta} mai lent"
   }
 }

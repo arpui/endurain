@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Segment",
+  "subtitle": "Porțiuni de traseu măsurate în activitățile tale.",
+  "loading": "Se încarcă segmentele…",
+  "sourceStrava": "din Strava",
+  "sourceManual": "definit aici",
+  "elevation": "Diferență de nivel",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Traseul segmentului pe hartă"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Nu am putut încărca segmentele",
+    "description": "Verifică conexiunea și încearcă din nou."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Încă nu există segmente",
+    "description": "Importă un segment dintr-un fișier GPX sau din JSON-ul exportat de scriptul de extracție."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Recalculează eforturile",
+    "queued": "Recalcularea eforturilor a fost pusă în coadă.",
+    "failed": "Nu am putut pune recalcularea în coadă."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Profil de altitudine",
+    "unavailable": "Acest segment nu are date de altitudine, deci nu există profil."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
-    "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "title": "Eforturile tale",
+    "includeReverse": "Include trecerile în sens invers",
+    "rank": "Nr.",
+    "activity": "Activitate",
+    "date": "Dată",
+    "time": "Timp",
+    "speed": "Viteză",
+    "best": "Cel mai bun",
+    "reverse": "Sens invers",
+    "activityLabel": "Activitate {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Încă nu există eforturi",
+      "description": "Recalculează eforturile pentru a compara activitățile existente cu acest segment."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Importă segment",
+    "title": "Importă un segment",
+    "description": "Alege un fișier GPX sau lipește JSON-ul exportat de scriptul de extracție Strava.",
+    "file": "Fișier GPX sau JSON",
+    "fileHint": "Un traseu GPX (sau rută) oferă polilinia și, dacă există, altitudinile.",
+    "json": "Sau lipește JSON",
+    "jsonPlaceholder": "segment_id, name și matricele latlng, așa le exportă scriptul de extracție",
+    "parseJson": "Analizează JSON-ul lipit",
+    "name": "Nume",
+    "id": "Id segment",
+    "idPlaceholder": "Obligatoriu pentru un segment definit manual",
+    "parsed": "{points} puncte · {distance}",
+    "submit": "Importă",
+    "cancel": "Anulează",
+    "close": "Închide",
+    "done": "„{name}” importat; eforturile se recalculează.",
+    "duplicate": "Acest segment este deja în bibliotecă.",
+    "failed": "Importul a eșuat.",
+    "badJson": "Acela nu este JSON valid.",
+    "badGpx": "Acela nu este un fișier GPX lizibil.",
+    "tooFewPoints": "Polilinia are nevoie de cel puțin două puncte.",
+    "lengthMismatch": "Altitudinea sau distanța nu corespunde numărului de puncte.",
+    "needName": "Dă segmentului un nume.",
+    "needId": "Dă segmentului un id numeric."
+  },
+  "effortCount": "{count} eforturi"
 }

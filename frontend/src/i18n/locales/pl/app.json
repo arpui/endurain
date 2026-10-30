@@ -35,5 +35,8 @@
     "edit": "Edytuj",
     "supported": "Obsługa Markdown",
     "empty": "Nie ma nic do podglądu"
+  },
+  "map": {
+    "recenter": "Wyśrodkuj mapę ponownie"
   }
 }

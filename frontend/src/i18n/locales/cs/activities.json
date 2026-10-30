@@ -272,5 +272,16 @@
     "inlineSkating": "In-line bruslení",
     "hiit": "HIIT",
     "jumpRope": "Skákání přes hák"
+  },
+  "segments": {
+    "title": "Sekce",
+    "segment": "Sekce",
+    "length": "Délka",
+    "time": "Čas",
+    "tempo": "Tempo / Rychlost",
+    "reverse": "Obrácený směr",
+    "pass": "Průjezd {number}",
+    "best": "Nejlepší",
+    "slowerThanBest": "{delta} pomalejší"
   }
 }

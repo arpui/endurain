@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Sekce",
+  "subtitle": "Úseky tratě měřené napříč tvými aktivitami.",
+  "loading": "Načítám sekce…",
+  "sourceStrava": "ze Stravy",
+  "sourceManual": "definováno zde",
+  "elevation": "Převýšení",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Trasa sekce na mapě"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Sekce se nepodařilo načíst",
+    "description": "Zkontroluj připojení a zkus to znovu."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Zatím žádné sekce",
+    "description": "Importuj sekci ze souboru GPX nebo z JSONu, který vyváží extrakční skript."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Přepočítat výkony",
+    "queued": "Přepočet výkonů zařazen do fronty.",
+    "failed": "Přepočet se nepodařilo zařadit do fronty."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Výškový profil",
+    "unavailable": "Tato sekce nemá výšková data, profil tedy není k dispozici."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
+    "title": "Tvoje výkony",
+    "includeReverse": "Zahrnout projetí obráceným směrem",
     "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "activity": "Aktivita",
+    "date": "Datum",
+    "time": "Čas",
+    "speed": "Rychlost",
+    "best": "Nejlepší",
+    "reverse": "Obrácený směr",
+    "activityLabel": "Aktivita {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Zatím žádné výkony",
+      "description": "Přepočítej výkony, aby se srovnaly s tvými stávajícími aktivitami."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Importovat sekci",
+    "title": "Importovat sekci",
+    "description": "Vyber soubor GPX nebo vlož JSON z extrakčního skriptu Stravy.",
+    "file": "Soubor GPX nebo JSON",
+    "fileHint": "Stopa GPX (nebo trať) dává polylinii a případně i výšky.",
+    "json": "Nebo vlož JSON",
+    "jsonPlaceholder": "segment_id, name a pole latlng, jak je vyváží extrakční skript",
+    "parseJson": "Zpracovat vložený JSON",
+    "name": "Název",
+    "id": "ID sekce",
+    "idPlaceholder": "Povinné u sekce definované ručně",
+    "parsed": "{points} bodů · {distance}",
+    "submit": "Importovat",
+    "cancel": "Zrušit",
+    "close": "Zavřít",
+    "done": "Sekce „{name}“ importována; výkony se přepočítávají.",
+    "duplicate": "Tato sekce už v knihovně je.",
+    "failed": "Import se nezdařil.",
+    "badJson": "To není platný JSON.",
+    "badGpx": "To není čitelný soubor GPX.",
+    "tooFewPoints": "Polylinie potřebuje alespoň dva body.",
+    "lengthMismatch": "Výška nebo vzdálenost neodpovídá počtu bodů.",
+    "needName": "Zadej sekci název.",
+    "needId": "Zadej sekci číselné ID."
+  },
+  "effortCount": "{count} výkonů"
 }

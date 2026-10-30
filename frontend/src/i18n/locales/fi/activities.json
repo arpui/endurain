@@ -272,5 +272,16 @@
     "inlineSkating": "Rullaluistelu",
     "hiit": "HIIT",
     "jumpRope": "Hyppynaru"
+  },
+  "segments": {
+    "title": "Osiot",
+    "segment": "Osio",
+    "length": "Pituus",
+    "time": "Aika",
+    "tempo": "Vauhti / Nopeus",
+    "reverse": "Vastasuunta",
+    "pass": "Ohitus {number}",
+    "best": "Paras",
+    "slowerThanBest": "{delta} hitaammin"
   }
 }

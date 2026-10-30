@@ -35,5 +35,8 @@
     "edit": "Upraviť",
     "supported": "Markdown je podporovaný",
     "empty": "Nie je čo zobraziť"
+  },
+  "map": {
+    "recenter": "Znovu vystrediť mapu"
   }
 }

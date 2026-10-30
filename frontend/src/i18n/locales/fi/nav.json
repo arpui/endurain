@@ -17,5 +17,6 @@
   "preferences": "Asetukset",
   "updateAvailable": "Päivitys saatavilla",
   "updateAvailableTitle": "Versio {version} on saatavilla",
-  "updateViewRelease": "Näytä julkaisutiedot"
+  "updateViewRelease": "Näytä julkaisutiedot",
+  "segments": "Osiot"
 }

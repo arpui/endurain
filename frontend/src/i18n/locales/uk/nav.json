@@ -17,5 +17,6 @@
   "preferences": "Параметри",
   "updateAvailable": "Доступне оновлення",
   "updateAvailableTitle": "Доступна версія {version}",
-  "updateViewRelease": "Переглянути примітки до випуску"
+  "updateViewRelease": "Переглянути примітки до випуску",
+  "segments": "Відрізки"
 }

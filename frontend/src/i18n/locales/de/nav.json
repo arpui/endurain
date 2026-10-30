@@ -17,5 +17,6 @@
   "preferences": "Einstellungen",
   "updateAvailable": "Update verfügbar",
   "updateAvailableTitle": "Version {version} ist verfügbar",
-  "updateViewRelease": "Versionshinweise anzeigen"
+  "updateViewRelease": "Versionshinweise anzeigen",
+  "segments": "Segmente"
 }

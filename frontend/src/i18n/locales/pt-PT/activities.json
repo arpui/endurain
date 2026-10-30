@@ -272,5 +272,16 @@
     "inlineSkating": "Patinagem em linha",
     "hiit": "HIIT",
     "jumpRope": "Corda de saltar"
+  },
+  "segments": {
+    "title": "Segmentos",
+    "segment": "Segmento",
+    "length": "Comprimento",
+    "time": "Tempo",
+    "tempo": "Ritmo / Velocidade",
+    "reverse": "Sentido inverso",
+    "pass": "Passagem {number}",
+    "best": "Melhor",
+    "slowerThanBest": "{delta} mais lento"
   }
 }

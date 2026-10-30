@@ -17,5 +17,6 @@
   "preferences": "Nastavitve",
   "updateAvailable": "Na voljo je posodobitev",
   "updateAvailableTitle": "Na voljo je različica {version}",
-  "updateViewRelease": "Poglej opombe ob izdaji"
+  "updateViewRelease": "Poglej opombe ob izdaji",
+  "segments": "Odseki"
 }

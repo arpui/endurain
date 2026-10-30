@@ -17,5 +17,6 @@
   "preferences": "Προτιμήσεις",
   "updateAvailable": "Διαθέσιμη ενημέρωση",
   "updateAvailableTitle": "Η έκδοση {version} είναι διαθέσιμη",
-  "updateViewRelease": "Προβολή σημειώσεων έκδοσης"
+  "updateViewRelease": "Προβολή σημειώσεων έκδοσης",
+  "segments": "Τμήματα"
 }

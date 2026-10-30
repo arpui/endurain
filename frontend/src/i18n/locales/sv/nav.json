@@ -17,5 +17,6 @@
   "preferences": "Inställningar",
   "updateAvailable": "Uppdatering tillgänglig",
   "updateAvailableTitle": "Version {version} är tillgänglig",
-  "updateViewRelease": "Visa versionsanteckningar"
+  "updateViewRelease": "Visa versionsanteckningar",
+  "segments": "Segment"
 }

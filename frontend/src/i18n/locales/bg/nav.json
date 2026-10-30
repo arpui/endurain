@@ -17,5 +17,6 @@
   "preferences": "Предпочитания",
   "updateAvailable": "Налично е обновление",
   "updateAvailableTitle": "Налична е версия {version}",
-  "updateViewRelease": "Виж бележките към изданието"
+  "updateViewRelease": "Виж бележките към изданието",
+  "segments": "Сегменти"
 }

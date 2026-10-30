@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Відрізки",
+  "subtitle": "Ділянки маршруту, виміряні у ваших активностях.",
+  "loading": "Завантаження відрізків…",
+  "sourceStrava": "зі Strava",
+  "sourceManual": "визначено тут",
+  "elevation": "Підйом",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Маршрут відрізка на карті"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Не вдалося завантажити відрізки",
+    "description": "Перевірте з'єднання й спробуйте ще раз."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Відрізків ще немає",
+    "description": "Імпортуйте відрізок із файла GPX або з JSON, який експортує скрипт вилучення."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Перерахувати зусилля",
+    "queued": "Перерахунок зусиль поставлено в чергу.",
+    "failed": "Не вдалося поставити перерахунок у чергу."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Профіль висот",
+    "unavailable": "У цього відрізка немає даних про висоту, тому профілю немає."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
-    "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "title": "Ваші зусилля",
+    "includeReverse": "Показати проходи у зворотному напрямку",
+    "rank": "№",
+    "activity": "Активність",
+    "date": "Дата",
+    "time": "Час",
+    "speed": "Швидкість",
+    "best": "Найкраще",
+    "reverse": "Зворотний напрям",
+    "activityLabel": "Активність {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Зусиль ще немає",
+      "description": "Перерахуйте зусилля, щоб порівняти наявні активності з цим відрізком."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Імпортувати відрізок",
+    "title": "Імпортувати відрізок",
+    "description": "Виберіть файл GPX або вставте JSON, який експортує скрипт вилучення Strava.",
+    "file": "Файл GPX або JSON",
+    "fileHint": "Трек GPX (або маршрут) дає полілінію та, якщо є, висоти.",
+    "json": "Або вставте JSON",
+    "jsonPlaceholder": "segment_id, name та масиви latlng, у вигляді, який експортує скрипт",
+    "parseJson": "Обробити вставлений JSON",
+    "name": "Назва",
+    "id": "Ід. відрізка",
+    "idPlaceholder": "Обов'язково для відрізка, визначеного вручну",
+    "parsed": "{points} точок · {distance}",
+    "submit": "Імпортувати",
+    "cancel": "Скасувати",
+    "close": "Закрити",
+    "done": "«{name}» імпортовано; зусилля перераховуються.",
+    "duplicate": "Такий відрізок уже є у бібліотеці.",
+    "failed": "Не вдалося імпортувати.",
+    "badJson": "Це некоректний JSON.",
+    "badGpx": "Це нечитаемий файл GPX.",
+    "tooFewPoints": "Полілінія потребує принаймні двох точок.",
+    "lengthMismatch": "Висота або відстань не відповідає кількості точок.",
+    "needName": "Дайте відрізку назву.",
+    "needId": "Дайте відрізку числовий ідентифікатор."
+  },
+  "effortCount": "{count} зусиль"
 }

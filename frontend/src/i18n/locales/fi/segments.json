@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Osiot",
+  "subtitle": "Reittiosuuksia, mitattuna aktiviteeteissasi.",
+  "loading": "Ladataan osioita…",
+  "sourceStrava": "Stravasta",
+  "sourceManual": "määritelty täällä",
+  "elevation": "Nousu",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Osion reitti kartalla"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Osioita ei voitu ladata",
+    "description": "Tarkista yhteys ja yritä uudelleen."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Ei osioita vielä",
+    "description": "Tuo osio GPX-tiedostosta tai poimintaskriptin viemästä JSONista."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Laske suoritukset uudelleen",
+    "queued": "Suoritusten uudelleenlasku jonossa.",
+    "failed": "Uudelleenlaskua ei voitu laittaa jonoon."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Korkeusprofiili",
+    "unavailable": "Tällä osiolla ei ole korkeustietoja, joten profiilia ei ole."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
-    "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "title": "Sinun suorituksesi",
+    "includeReverse": "Näytä myös vastasuunnan ohitukset",
+    "rank": "Nro",
+    "activity": "Aktiviteetti",
+    "date": "Päivämäärä",
+    "time": "Aika",
+    "speed": "Nopeus",
+    "best": "Paras",
+    "reverse": "Vastasuunta",
+    "activityLabel": "Aktiviteetti {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Ei suorituksia vielä",
+      "description": "Laske suoritukset uudelleen, jotta olemassa olevat aktiviteetit vertaillaan tähän osioon."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Tuo osio",
+    "title": "Tuo osio",
+    "description": "Valitse GPX-tiedosto tai liitä Stravan poimintaskriptin viemä JSON.",
+    "file": "GPX- tai JSON-tiedosto",
+    "fileHint": "GPX-reitti (tai reitti) antaa polylinjan ja mahdolliset korkeudet.",
+    "json": "Tai liitä JSON",
+    "jsonPlaceholder": "segment_id, name ja latlng-taulukot, kuten poimintaskripti vie ne",
+    "parseJson": "Käsittele liitetty JSON",
+    "name": "Nimi",
+    "id": "Osion tunniste",
+    "idPlaceholder": "Pakollinen käsin määritellylle osiolle",
+    "parsed": "{points} pistettä · {distance}",
+    "submit": "Tuo",
+    "cancel": "Peruuta",
+    "close": "Sulje",
+    "done": "„{name}” tuotu; suorituksia lasketaan uudelleen.",
+    "duplicate": "Tämä osio on jo kirjastossa.",
+    "failed": "Tuonti epäonnistui.",
+    "badJson": "Tuo ei ole kelvollinen JSON.",
+    "badGpx": "Tuo ei ole luettava GPX-tiedosto.",
+    "tooFewPoints": "Polylinja tarvitsee vähintään kaksi pistettä.",
+    "lengthMismatch": "Korkeus tai matka ei vastaa pisteiden määrää.",
+    "needName": "Anna osiolle nimi.",
+    "needId": "Anna osiolle numeerinen tunniste."
+  },
+  "effortCount": "{count} suoritusta"
 }

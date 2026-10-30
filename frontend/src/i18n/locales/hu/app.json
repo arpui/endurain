@@ -35,5 +35,8 @@
     "edit": "Szerkesztés",
     "supported": "Markdown támogatott",
     "empty": "Nincs mit megjeleníteni"
+  },
+  "map": {
+    "recenter": "Térkép újraközpontosítása"
   }
 }

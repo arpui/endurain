@@ -35,5 +35,8 @@
     "edit": "Muuda",
     "supported": "Markdown on toetatud",
     "empty": "Pole midagi näidata"
+  },
+  "map": {
+    "recenter": "Taasta kaardi tsentr"
   }
 }

@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Segmenten",
+  "subtitle": "Routestukken gemeten over je activiteiten.",
+  "loading": "Segmenten laden…",
+  "sourceStrava": "van Strava",
+  "sourceManual": "hier gedefinieerd",
+  "elevation": "Hoogte",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Segmentroute op de kaart"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Kan segmenten niet laden",
+    "description": "Controleer de verbinding en probeer het opnieuw."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Nog geen segmenten",
+    "description": "Importeer een segment uit een GPX-bestand of uit de JSON die het extractiescript exporteert."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Inspanningen herberekenen",
+    "queued": "Herberekening van inspanningen in de wachtrij.",
+    "failed": "Kon de herberekening niet inplannen."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Hoogteprofiel",
+    "unavailable": "Dit segment heeft geen hoogtede gegevens, dus er is geen profiel."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
+    "title": "Jouw inspanningen",
+    "includeReverse": "Teruggerichte doorgangen tonen",
     "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "activity": "Activiteit",
+    "date": "Datum",
+    "time": "Tijd",
+    "speed": "Snelheid",
+    "best": "Beste",
+    "reverse": "Terugrichting",
+    "activityLabel": "Activiteit {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Nog geen inspanningen",
+      "description": "Herbereken de inspanningen om je bestaande activiteiten met dit segment te vergelijken."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Segment importeren",
+    "title": "Segment importeren",
+    "description": "Kies een GPX-bestand of plak de JSON die het Strava-extractiescript exporteert.",
+    "file": "GPX- of JSON-bestand",
+    "fileHint": "Een GPX-track (of route) geeft de polylijn en, indien aanwezig, de hoogtes.",
+    "json": "Of plak JSON",
+    "jsonPlaceholder": "segment_id, name en latlng-reeksen, zoals het extractiescript ze exporteert",
+    "parseJson": "Geplakte JSON verwerken",
+    "name": "Naam",
+    "id": "Segment-id",
+    "idPlaceholder": "Verplicht voor een handmatig gedefinieerd segment",
+    "parsed": "{points} punten · {distance}",
+    "submit": "Importeren",
+    "cancel": "Annuleren",
+    "close": "Sluiten",
+    "done": "“{name}” geïmporteerd; de inspanningen worden herberekend.",
+    "duplicate": "Dat segment staat al in de bibliotheek.",
+    "failed": "Het importeren is mislukt.",
+    "badJson": "Dat is geen geldige JSON.",
+    "badGpx": "Dat is geen leesbaar GPX-bestand.",
+    "tooFewPoints": "De polylijn heeft minimaal twee punten nodig.",
+    "lengthMismatch": "Hoogte of afstand komt niet overeen met het aantal punten.",
+    "needName": "Geef het segment een naam.",
+    "needId": "Geef het segment een numerieke id."
+  },
+  "effortCount": "{count} inspanningen"
 }

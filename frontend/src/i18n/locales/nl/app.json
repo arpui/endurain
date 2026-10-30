@@ -35,5 +35,8 @@
     "edit": "Bewerken",
     "supported": "Markdown ondersteund",
     "empty": "Niets om een voorbeeld van te tonen"
+  },
+  "map": {
+    "recenter": "Kaart hercentreren"
   }
 }

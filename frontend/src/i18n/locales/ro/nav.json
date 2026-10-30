@@ -17,5 +17,6 @@
   "preferences": "Preferințe",
   "updateAvailable": "Actualizare disponibilă",
   "updateAvailableTitle": "Versiunea {version} este disponibilă",
-  "updateViewRelease": "Vezi notele de lansare"
+  "updateViewRelease": "Vezi notele de lansare",
+  "segments": "Segment"
 }

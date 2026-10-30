@@ -17,5 +17,6 @@
   "preferences": "Predvoľby",
   "updateAvailable": "Dostupná aktualizácia",
   "updateAvailableTitle": "Verzia {version} je dostupná",
-  "updateViewRelease": "Zobraziť poznámky k vydaniu"
+  "updateViewRelease": "Zobraziť poznámky k vydaniu",
+  "segments": "Sekcie"
 }

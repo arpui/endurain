@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Сегменти",
+  "subtitle": "Участъци от маршрута, мерени в активностите ти.",
+  "loading": "Зареждане на сегментите…",
+  "sourceStrava": "от Strava",
+  "sourceManual": "дефиниран тук",
+  "elevation": "Изкачване",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Маршрутът на сегмента на картата"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Сегментите не можаха да се заредят",
+    "description": "Проверете връзката и опитайте отново."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Все още няма сегменти",
+    "description": "Импортирайте сегмент от GPX файл или от JSON, който експортният скрипт генерира."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Преизчисляване на усилията",
+    "queued": "Преизчисляването е на опашката.",
+    "failed": "Не можа да се сложи преизчисляването на опашката."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Височинен профил",
+    "unavailable": "Този сегмент няма данни за надморска височина, затова няма профил."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
-    "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "title": "Вашите усилия",
+    "includeReverse": "Включи минавания в обратната посока",
+    "rank": "№",
+    "activity": "Активност",
+    "date": "Дата",
+    "time": "Време",
+    "speed": "Скорост",
+    "best": "Най-добро",
+    "reverse": "Обратна посока",
+    "activityLabel": "Активност {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Все още няма усилия",
+      "description": "Преизчислете усилията, за да се съпоставят със съществуващите активности."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Импортиране на сегмент",
+    "title": "Импортиране на сегмент",
+    "description": "Изберете GPX файл или поставете JSON, който скриптът за извличане експортира.",
+    "file": "GPX или JSON файл",
+    "fileHint": "GPX запис (или маршрут) дава полилинията и, ако има, височините.",
+    "json": "Или поставете JSON",
+    "jsonPlaceholder": "segment_id, name и масиви latlng, както ги експортира скриптът",
+    "parseJson": "Обработи поставения JSON",
+    "name": "Име",
+    "id": "Ид. на сегмента",
+    "idPlaceholder": "Задължително за ръчно дефиниран сегмент",
+    "parsed": "{points} точки · {distance}",
+    "submit": "Импортирай",
+    "cancel": "Отказ",
+    "close": "Затвори",
+    "done": "„{name}“ е импортиран; усилията се преизчисляват.",
+    "duplicate": "Този сегмент вече е в библиотеката.",
+    "failed": "Импортирането се провали.",
+    "badJson": "Това не е валиден JSON.",
+    "badGpx": "Това не е четим GPX файл.",
+    "tooFewPoints": "Полилинията се нуждае от поне две точки.",
+    "lengthMismatch": "Височината или разстоянието не съответстват на броя точки.",
+    "needName": "Дайте име на сегмента.",
+    "needId": "Дайте числов идентификатор на сегмента."
+  },
+  "effortCount": "{count} усилия"
 }

@@ -35,5 +35,8 @@
     "edit": "Düzenle",
     "supported": "Markdown destekleniyor",
     "empty": "Önizlenecek bir şey yok"
+  },
+  "map": {
+    "recenter": "Haritayı yeniden ortala"
   }
 }

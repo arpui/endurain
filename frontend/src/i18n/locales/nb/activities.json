@@ -272,5 +272,16 @@
     "inlineSkating": "Rulleskøyter",
     "hiit": "HIIT",
     "jumpRope": "Hoppetau"
+  },
+  "segments": {
+    "title": "Segmenter",
+    "segment": "Segment",
+    "length": "Lengde",
+    "time": "Tid",
+    "tempo": "Tempo / Fart",
+    "reverse": "Motsatt retning",
+    "pass": "Passasje {number}",
+    "best": "Best",
+    "slowerThanBest": "{delta} tregere"
   }
 }

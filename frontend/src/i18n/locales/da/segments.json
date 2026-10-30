@@ -1,70 +1,71 @@
 {
-  "title": "Segments",
-  "subtitle": "Route sections measured across your activities.",
-  "loading": "Loading segments…",
-  "sourceStrava": "from Strava",
-  "sourceManual": "defined here",
-  "elevation": "Elevation",
+  "title": "Segmenter",
+  "subtitle": "Rutestrækninger målt på tværs af dine aktiviteter.",
+  "loading": "Indlæser segmenter…",
+  "sourceStrava": "fra Strava",
+  "sourceManual": "defineret her",
+  "elevation": "Højdemeter",
   "map": {
-    "label": "Segment route on the map"
+    "label": "Segmentets rute på kortet"
   },
   "error": {
-    "title": "Could not load segments",
-    "description": "Check the connection and try again."
+    "title": "Kunne ikke indlæse segmenter",
+    "description": "Tjek forbindelse og prøv igen."
   },
   "empty": {
-    "title": "No segments yet",
-    "description": "Import a segment from a GPX file or from the JSON exported by the extraction script."
+    "title": "Ingen segmenter endnu",
+    "description": "Importér et segment fra en GPX-fil eller fra JSON’en som ekstraktionsskriptet eksporterer."
   },
   "rescan": {
-    "button": "Recompute efforts",
-    "queued": "Effort recompute queued.",
-    "failed": "Could not queue the recompute."
+    "button": "Beregn indsatser igen",
+    "queued": "Genberegning af indsatser i kø.",
+    "failed": "Kunne ikke lægge genberegning i kø."
   },
   "profile": {
-    "title": "Elevation profile",
-    "unavailable": "This segment has no altitude data, so there is no profile."
+    "title": "Højdeprofil",
+    "unavailable": "Dette segment har ingen højdedata, så der er intet profil."
   },
   "efforts": {
-    "title": "Your efforts",
-    "includeReverse": "Include reverse passes",
+    "title": "Dine indsatser",
+    "includeReverse": "Medtag passager i modsat retning",
     "rank": "#",
-    "activity": "Activity",
-    "date": "Date",
-    "time": "Time",
-    "speed": "Speed",
-    "best": "Best",
-    "reverse": "Reverse",
-    "activityLabel": "Activity {id}",
+    "activity": "Aktivitet",
+    "date": "Dato",
+    "time": "Tid",
+    "speed": "Hastighed",
+    "best": "Bedste",
+    "reverse": "Modsat retning",
+    "activityLabel": "Aktivitet {id}",
     "empty": {
-      "title": "No efforts yet",
-      "description": "Recompute efforts to match your existing activities against this segment."
+      "title": "Ingen indsatser endnu",
+      "description": "Beregn indsatserne igen for at sammenligne dine eksisterende aktiviteter med dette segment."
     }
   },
   "import": {
-    "button": "Import segment",
-    "title": "Import a segment",
-    "description": "Pick a GPX file or paste the JSON exported by the Strava extraction script.",
-    "file": "GPX or JSON file",
-    "fileHint": "A GPX track (or route) gives the polyline and, when present, the altitudes.",
-    "json": "Or paste JSON",
-    "jsonPlaceholder": "segment_id, name and latlng arrays, as the extraction script exports them",
-    "parseJson": "Parse pasted JSON",
-    "name": "Name",
-    "id": "Segment id",
-    "idPlaceholder": "Required for a manually defined segment",
-    "parsed": "{points} points · {distance}",
-    "submit": "Import",
-    "cancel": "Cancel",
-    "close": "Close",
-    "done": "“{name}” imported; efforts are being recomputed.",
-    "duplicate": "That segment is already in the library.",
-    "failed": "The import failed.",
-    "badJson": "That is not valid JSON.",
-    "badGpx": "That is not a readable GPX file.",
-    "tooFewPoints": "The polyline needs at least two points.",
-    "lengthMismatch": "Altitude or distance does not match the number of points.",
-    "needName": "Give the segment a name.",
-    "needId": "Give the segment a numeric id."
-  }
+    "button": "Importér segment",
+    "title": "Importér et segment",
+    "description": "Vælg en GPX-fil eller indsæt JSON’en som Strava-ekstraktionsskriptet eksporterer.",
+    "file": "GPX- eller JSON-fil",
+    "fileHint": "Et GPX-spor (eller rute) giver polyline og, hvis til stede, højderne.",
+    "json": "Eller indsæt JSON",
+    "jsonPlaceholder": "segment_id, name og latlng-arrays, som ekstraktionsskriptet eksporterer dem",
+    "parseJson": "Fortolk indsat JSON",
+    "name": "Navn",
+    "id": "Segment-id",
+    "idPlaceholder": "Kræves for et manuelt defineret segment",
+    "parsed": "{points} punkter · {distance}",
+    "submit": "Importér",
+    "cancel": "Annullér",
+    "close": "Luk",
+    "done": "„{name}“ importeret; indsatserne beregnes igen.",
+    "duplicate": "Det segment er allerede i biblioteket.",
+    "failed": "Importen mislykkedes.",
+    "badJson": "Det er ikke gyldig JSON.",
+    "badGpx": "Det er ikke en læsbar GPX-fil.",
+    "tooFewPoints": "Polylinjen skal bruge mindst to punkter.",
+    "lengthMismatch": "Højde eller distance matcher ikke antallet af punkter.",
+    "needName": "Giv segmentet et navn.",
+    "needId": "Giv segmentet et numerisk id."
+  },
+  "effortCount": "{count} indsatser"
 }

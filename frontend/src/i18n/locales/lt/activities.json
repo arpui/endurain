@@ -272,5 +272,16 @@
     "inlineSkating": "Riedučių sportas",
     "hiit": "HIIT",
     "jumpRope": "Šokimas su virve"
+  },
+  "segments": {
+    "title": "Atkarpos",
+    "segment": "Atkarpa",
+    "length": "Ilgis",
+    "time": "Laikas",
+    "tempo": "Tempas / Greitis",
+    "reverse": "Priešinga kryptis",
+    "pass": "Pravažiavimas {number}",
+    "best": "Geriausias",
+    "slowerThanBest": "{delta} lėčiau"
   }
 }
