@@ -106,6 +106,8 @@ class SegmentDetailRead(SegmentRead):
         max_lat: Bounding box north edge.
         max_lng: Bounding box east edge.
         geometry: Ordered ``[[lat, lng], ...]`` polyline.
+        altitudes: Per-point altitude in meters, index-aligned with
+            ``geometry``, when the source provided it.
     """
 
     min_lat: StrictFloat
@@ -113,6 +115,7 @@ class SegmentDetailRead(SegmentRead):
     max_lat: StrictFloat
     max_lng: StrictFloat
     geometry: list[list[StrictFloat]]
+    altitudes: list[StrictFloat] | None
 
 
 class SegmentEffortRead(BaseModel):

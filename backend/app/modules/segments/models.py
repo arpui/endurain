@@ -27,6 +27,8 @@ class Segment(Base, TimestampMixin):
         max_lng: East edge of the geometry bounding box.
         geometry: Ordered ``[[lat, lng], ...]`` polyline; index 0 is the start
             of the canonical direction.
+        altitudes: Per-point altitude in meters, index-aligned with
+            ``geometry``, when the source provides it.
     """
 
     __tablename__ = "segments"
@@ -75,6 +77,11 @@ class Segment(Base, TimestampMixin):
         Float,
         nullable=True,
         comment="Positive elevation gain in meters, when the source provides it",
+    )
+    altitudes: Mapped[list[float] | None] = mapped_column(
+        JSON,
+        nullable=True,
+        comment="Per-point altitude in meters, index-aligned with geometry, when the source provides it",
     )
     min_lat: Mapped[float] = mapped_column(Float, nullable=False, comment="Bounding box south edge")
     min_lng: Mapped[float] = mapped_column(Float, nullable=False, comment="Bounding box west edge")

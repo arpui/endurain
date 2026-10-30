@@ -23,6 +23,7 @@ class SegmentRecord:
         source_id: External identifier within the source, or ``None``.
         distance_m: Length along the geometry.
         elevation_gain_m: Positive elevation gain, when known.
+        altitudes: Per-point altitude, index-aligned with ``geometry``, when known.
         min_lat: Bounding box south edge.
         min_lng: Bounding box west edge.
         max_lat: Bounding box north edge.
@@ -35,6 +36,7 @@ class SegmentRecord:
     source_id: str | None
     distance_m: float
     elevation_gain_m: float | None
+    altitudes: Sequence[float] | None
     min_lat: float
     min_lng: float
     max_lat: float

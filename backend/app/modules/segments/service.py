@@ -61,6 +61,7 @@ def import_segment(
         source_id=source_id,
         distance_m=float(distance_m),
         elevation_gain_m=elevation_gain_m,
+        altitudes=list(payload.altitude) if payload.altitude is not None else None,
         min_lat=min(lats),
         min_lng=min(lngs),
         max_lat=max(lats),

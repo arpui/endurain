@@ -29,6 +29,7 @@ def _segment_row(segment_id: int = 1, **overrides) -> SimpleNamespace:
         max_lat=41.0,
         max_lng=2.01,
         geometry=[[41.0, 2.0], [41.0, 2.01]],
+        altitudes=[10.0, 25.0],
     )
     for key, value in overrides.items():
         setattr(row, key, value)
@@ -95,11 +96,25 @@ class TestImportSegment:
         record = mock_crud.create_segment.call_args.args[0]
         assert record.distance_m == pytest.approx(2 * 0.001 * 111_320.0 * 0.7547, rel=0.01)
         assert record.elevation_gain_m == 15.0
+        assert record.altitudes == [10.0, 25.0, 20.0]
         assert (record.min_lat, record.max_lat) == (41.0, 41.0)
         assert (record.min_lng, record.max_lng) == (2.0, 2.002)
         assert record.source_id == "7071770"
         db.commit.assert_called_once()
         assert result.id == 1
+
+    @patch("modules.segments.service.segments_crud")
+    def test_a_segment_without_altitudes_stores_none(self, mock_crud):
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_crud.get_segment_by_source_id.return_value = None
+        mock_crud.create_segment.return_value = _segment_row(elevation_gain_m=None, altitudes=None)
+
+        result = service.import_segment(_import_payload(), 2, db)
+
+        assert mock_crud.create_segment.call_args.args[0].altitudes is None
+        assert result.altitudes is None
 
     @patch("modules.segments.service.segments_crud")
     def test_source_distance_array_wins_over_the_polyline_sum(self, mock_crud):

@@ -47,6 +47,7 @@ def _segment_detail_json(**overrides) -> dict:
         "max_lat": 41.0,
         "max_lng": 2.01,
         "geometry": [[41.0, 2.0], [41.0, 2.01]],
+        "altitudes": [10.0, 25.0],
     }
     body.update(overrides)
     return body
@@ -69,6 +70,7 @@ def _segment_row(**overrides) -> SimpleNamespace:
         max_lat=41.0,
         max_lng=2.01,
         geometry=[[41.0, 2.0], [41.0, 2.01]],
+        altitudes=[10.0, 25.0],
     )
     for key, value in overrides.items():
         setattr(row, key, value)

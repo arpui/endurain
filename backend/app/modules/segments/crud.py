@@ -37,6 +37,7 @@ def create_segment(
         created_by=created_by,
         distance_m=record.distance_m,
         elevation_gain_m=record.elevation_gain_m,
+        altitudes=[float(value) for value in record.altitudes] if record.altitudes is not None else None,
         min_lat=record.min_lat,
         min_lng=record.min_lng,
         max_lat=record.max_lat,
