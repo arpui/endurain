@@ -350,6 +350,28 @@ def clear_all_thumbnail_keys(db: Session) -> None:
     activity_crud.clear_all_activity_thumbnail_keys(db)
 
 
+def get_activity_for_derivation(
+    activity_id: int,
+    db: Session,
+) -> activity_schema.ActivityRead | None:
+    """Return an activity row for an internal derivation, with no requester to authorize.
+
+    The analysis module measures an activity for its owner from an event or a
+    scheduled pass: there is no viewer to check against, and it needs the fields
+    privacy masking would hide (heart rate, power). Nothing may serve this shape to a
+    caller: it is the unmasked read a background job needs, the same reason
+    ``activity_streams`` publishes ``get_stream_for_derivation``.
+
+    Args:
+        activity_id: The activity to read.
+        db: Database session.
+
+    Returns:
+        The activity, or ``None`` when it no longer exists.
+    """
+    return activity_crud.get_activity_by_id(activity_id, db)
+
+
 def list_activities_with_thumbnail(
     db: Session,
     *,
@@ -367,6 +389,28 @@ def list_activities_with_thumbnail(
         One bounded page of activity references carrying a stored thumbnail key.
     """
     return activity_crud.get_activities_with_thumbnail(db, after_id=after_id, limit=limit)
+
+
+def list_activity_ids_after(
+    db: Session,
+    *,
+    after_id: int = 0,
+    limit: int = core_pagination.DEFAULT_MAINTENANCE_BATCH_SIZE,
+) -> list[int]:
+    """Return the next page of activity ids, ordered by id.
+
+    Cross-module surface for reconciliations that must walk every activity
+    without loading all ids at once.
+
+    Args:
+        db: Database session.
+        after_id: Return only activities with ``id`` greater than this.
+        limit: Maximum number of ids to return.
+
+    Returns:
+        The activity ids, empty when the walk is done.
+    """
+    return activity_crud.list_activity_ids_after(db, after_id=after_id, limit=limit)
 
 
 def list_activities_without_thumbnail(
