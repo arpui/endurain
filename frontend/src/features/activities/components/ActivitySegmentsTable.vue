@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import type { ActivitySegment } from '@/features/activities/types'
 import type { Units } from '@/features/activities/utils/format'
 
+import { Badge } from '@/components/ui/badge'
 import {
   combineMetric,
   formatDistance,
@@ -32,6 +33,10 @@ interface SegmentRow {
   /** Pass marker, only for the second and later pass in the same direction. */
   pass: string
   isReverse: boolean
+  /** This pass is the reader's fastest forward one over the segment. */
+  isBest: boolean
+  /** How far behind that best time this pass is, e.g. `+0:12`. */
+  delta: string
 }
 
 /**
@@ -50,12 +55,18 @@ const rows = computed<SegmentRow[]>(() =>
       parts.push(combineMetric(formatElevation(entry.segment.elevationGainM, props.units)))
     }
     const length = parts.join(' · ')
+    // The reference is the reader's own fastest forward pass over this segment,
+    // which may come from another activity; a pass in the wrong direction has no
+    // standing against it, so it gets neither marker.
+    const best = entry.bestElapsedSeconds
 
     return entry.efforts.map((effort) => {
       // A segment effort is defined by its distance and elapsed time, so the
       // pace shown here is derived from the average speed rather than a device
       // field the activity may not carry.
       const pace = effort.avgSpeedMps === null ? null : 1 / effort.avgSpeedMps
+      const isReverse = effort.direction === 'reverse'
+      const isBest = !isReverse && best !== null && effort.elapsedSeconds === best
       return {
         key: `${effort.segmentId}-${effort.direction}-${effort.passNumber}`,
         name: entry.segment.name,
@@ -64,7 +75,12 @@ const rows = computed<SegmentRow[]>(() =>
         tempo: formatLapTempo(pace, effort.avgSpeedMps, props.activityType, props.units),
         pass:
           effort.passNumber > 1 ? t('activities.segments.pass', { number: effort.passNumber }) : '',
-        isReverse: effort.direction === 'reverse',
+        isReverse,
+        isBest,
+        delta:
+          !isReverse && best !== null && !isBest && effort.elapsedSeconds > best
+            ? `+${formatHmsDuration(effort.elapsedSeconds - best)}`
+            : '',
       }
     })
   }),
@@ -99,7 +115,15 @@ const rows = computed<SegmentRow[]>(() =>
             </span>
           </td>
           <td class="py-2 pe-3 text-muted-foreground">{{ row.length }}</td>
-          <td class="py-2 pe-3 font-medium text-foreground">{{ row.time }}</td>
+          <td class="py-2 pe-3 font-medium text-foreground">
+            {{ row.time }}
+            <Badge v-if="row.isBest" class="ms-2" variant="secondary">
+              {{ t('activities.segments.best') }}
+            </Badge>
+            <span v-else-if="row.delta" class="text-caption ms-2 font-normal text-muted-foreground">
+              {{ t('activities.segments.slowerThanBest', { delta: row.delta }) }}
+            </span>
+          </td>
           <td class="py-2 text-foreground">{{ row.tempo }}</td>
         </tr>
       </tbody>

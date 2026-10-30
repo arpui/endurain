@@ -160,6 +160,10 @@ export interface SegmentEffort {
 export interface ActivitySegment {
   segment: Segment
   efforts: SegmentEffort[]
+  /** The reader's fastest forward effort on this segment, across all activities. */
+  bestElapsedSeconds: number | null
+  /** Activity holding that best effort, when there is one. */
+  bestActivityId: number | null
 }
 
 /**

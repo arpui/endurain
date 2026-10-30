@@ -178,17 +178,23 @@ class TestSegmentReadsAndDeletes:
         mock_crud.delete_segment.assert_called_once_with(1, db)
         db.commit.assert_called_once()
 
+    @patch("modules.segments.service.activity_integration")
     @patch("modules.segments.service.segments_crud")
-    def test_library_is_global_so_no_owner_filter(self, mock_crud):
+    def test_library_is_global_so_no_owner_filter(self, mock_crud, mock_activities):
         from modules.segments import service
 
         db = MagicMock()
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5), SimpleNamespace(id=10)]
         mock_crud.list_segments.return_value = []
         mock_crud.count_segments.return_value = 0
 
-        service.list_segments(db, page_number=2, num_records=5)
+        service.list_segments(db, page_number=2, num_records=5, requester_user_id=2)
 
-        assert mock_crud.list_segments.call_args.kwargs == {"page_number": 2, "num_records": 5}
+        kwargs = mock_crud.list_segments.call_args.kwargs
+        assert kwargs["page_number"] == 2
+        assert kwargs["num_records"] == 5
+        # The library is not filtered by owner; only the counted efforts are.
+        assert kwargs["activity_ids"] == [5, 10]
 
 
 class TestSegmentEfforts:
@@ -272,17 +278,38 @@ class TestSegmentEfforts:
 
         db = MagicMock()
         mock_activities.resolve_readable_parent.return_value = SimpleNamespace(id=5)
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5), SimpleNamespace(id=10)]
         mock_crud.list_efforts_for_activity_with_segments.return_value = [
             (_effort_row(activity_id=5, segment_id=1), _segment_row(1)),
             (_effort_row(activity_id=5, segment_id=1, pass_number=2), _segment_row(1)),
             (_effort_row(activity_id=5, segment_id=2), _segment_row(2)),
         ]
+        mock_crud.list_best_forward_efforts.return_value = [(1, 10, 900), (2, 5, 400)]
 
         result = service.list_segments_for_activity(5, 2, db)
 
         assert [entry.segment.id for entry in result] == [1, 2]
         assert len(result[0].efforts) == 2
         assert len(result[1].efforts) == 1
+        assert (result[0].best_activity_id, result[0].best_elapsed_seconds) == (10, 900)
+        assert (result[1].best_activity_id, result[1].best_elapsed_seconds) == (5, 400)
+
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.service.segments_crud")
+    def test_activity_view_leaves_no_reference_time_without_own_efforts(self, mock_crud, mock_activities):
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_activities.resolve_readable_parent.return_value = SimpleNamespace(id=5)
+        mock_activities.list_user_activities.return_value = []
+        mock_crud.list_efforts_for_activity_with_segments.return_value = [
+            (_effort_row(activity_id=5, segment_id=1), _segment_row(1)),
+        ]
+        mock_crud.list_best_forward_efforts.return_value = []
+
+        result = service.list_segments_for_activity(5, 3, db)
+
+        assert (result[0].best_activity_id, result[0].best_elapsed_seconds) == (None, None)
 
     @patch("modules.segments.service.activity_integration")
     @patch("modules.segments.service.segments_crud")

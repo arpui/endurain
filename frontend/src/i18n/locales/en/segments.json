@@ -66,5 +66,6 @@
     "lengthMismatch": "Altitude or distance does not match the number of points.",
     "needName": "Give the segment a name.",
     "needId": "Give the segment a numeric id."
-  }
+  },
+  "effortCount": "{count} efforts"
 }

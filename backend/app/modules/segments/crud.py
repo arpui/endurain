@@ -6,6 +6,7 @@ from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
 import core.logger as core_logger
+import modules.segments.constants as segments_constants
 import modules.segments.contracts as segments_contracts
 import modules.segments.models as segments_models
 import modules.segments.schema as segments_schema
@@ -89,25 +90,43 @@ def list_segments(
     *,
     page_number: int,
     num_records: int,
-) -> list[segments_schema.SegmentRead]:
-    """List segments ordered by name, paginated.
+    activity_ids: Sequence[int],
+) -> list[segments_schema.SegmentListItemRead]:
+    """List segments ordered by name, paginated, with the reader's effort count.
 
     Args:
         db: Database session.
         page_number: 1-based page number.
         num_records: Page size.
+        activity_ids: Whose efforts to count; the caller resolves the scoping.
 
     Returns:
-        The page of segments.
+        The page of segments, each carrying how many of those activities' efforts
+        touch it.
     """
+    own_efforts = (
+        select(func.count())
+        .select_from(segments_models.SegmentEffort)
+        .where(
+            segments_models.SegmentEffort.segment_id == segments_models.Segment.id,
+            segments_models.SegmentEffort.activity_id.in_(activity_ids),
+        )
+        .scalar_subquery()
+    )
     stmt = (
-        select(segments_models.Segment)
+        select(segments_models.Segment, own_efforts.label("effort_count"))
         .order_by(segments_models.Segment.name, segments_models.Segment.id)
         .offset((page_number - 1) * num_records)
         .limit(num_records)
     )
-    segments: list[segments_models.Segment] = list(db.scalars(stmt).all())
-    return [segments_schema.SegmentRead.model_validate(segment) for segment in segments]
+    items: list[segments_schema.SegmentListItemRead] = []
+    for segment, count in db.execute(stmt).all():
+        item = segments_schema.SegmentListItemRead.model_validate(segment)
+        # The count comes from the query, not the row, so it is stamped after the
+        # ORM instance is read (never written back onto the ORM object).
+        item.effort_count = int(count or 0)
+        items.append(item)
+    return items
 
 
 def count_segments(db: Session) -> int:
@@ -212,6 +231,50 @@ def activity_ids_with_efforts(activity_ids: Sequence[int], db: Session) -> set[i
         segments_models.SegmentEffort.activity_id.in_(activity_ids),
     )
     return {int(activity_id) for activity_id in db.scalars(stmt).all()}
+
+
+def list_best_forward_efforts(
+    segment_ids: Sequence[int],
+    activity_ids: Sequence[int],
+    db: Session,
+) -> list[tuple[int, int, int]]:
+    """Return each segment's fastest forward effort within a set of activities.
+
+    Postgres' ``DISTINCT ON`` does the per-segment pick in one pass; tie-break on
+    the row id so the answer is stable across reads.
+
+    Args:
+        segment_ids: Segments to answer for.
+        activity_ids: Whose efforts to consider.
+        db: Database session.
+
+    Returns:
+        ``(segment_id, activity_id, elapsed_seconds)`` triples, one per segment
+        that has at least one forward effort.
+    """
+    if not segment_ids or not activity_ids:
+        return []
+    stmt = (
+        select(
+            segments_models.SegmentEffort.segment_id,
+            segments_models.SegmentEffort.activity_id,
+            segments_models.SegmentEffort.elapsed_seconds,
+        )
+        .where(
+            segments_models.SegmentEffort.segment_id.in_(segment_ids),
+            segments_models.SegmentEffort.activity_id.in_(activity_ids),
+            segments_models.SegmentEffort.direction == segments_constants.SegmentDirection.FORWARD.value,
+        )
+        .order_by(
+            segments_models.SegmentEffort.segment_id,
+            segments_models.SegmentEffort.elapsed_seconds,
+            segments_models.SegmentEffort.id,
+        )
+        .distinct(segments_models.SegmentEffort.segment_id)
+    )
+    return [
+        (int(segment_id), int(activity_id), int(elapsed)) for segment_id, activity_id, elapsed in db.execute(stmt).all()
+    ]
 
 
 def list_efforts_for_activity_with_segments(

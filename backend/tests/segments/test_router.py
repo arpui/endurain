@@ -100,10 +100,14 @@ def _effort_row(**overrides) -> SimpleNamespace:
 class TestListSegments:
     @patch("modules.segments.crud.count_segments")
     @patch("modules.segments.crud.list_segments")
-    def test_library_is_paged(self, mock_list, mock_count, mock_db):
+    @patch("modules.segments.service.activity_integration")
+    def test_library_is_paged_with_the_readers_effort_count(self, mock_activities, mock_list, mock_count, mock_db):
         from modules.segments import schema as segments_schema
 
-        mock_list.return_value = [segments_schema.SegmentRead.model_validate(_segment_row())]
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5)]
+        mock_list.return_value = [
+            segments_schema.SegmentListItemRead.model_validate(_segment_row()).model_copy(update={"effort_count": 3})
+        ]
         mock_count.return_value = 1
 
         response = TestClient(_build_app(mock_db)).get("/segments", headers={"Authorization": "Bearer x"})
@@ -112,6 +116,7 @@ class TestListSegments:
         body = response.json()
         assert body["total"] == 1
         assert body["items"][0]["id"] == 1
+        assert body["items"][0]["effort_count"] == 3
         # The list view never carries the polyline: only the detail does.
         assert "geometry" not in body["items"][0]
 
@@ -289,14 +294,17 @@ class TestSegmentEfforts:
 
 
 class TestActivitySegments:
+    @patch("modules.segments.crud.list_best_forward_efforts")
     @patch("modules.segments.crud.list_efforts_for_activity_with_segments")
     @patch("modules.segments.service.activity_integration")
-    def test_traversed_segments_group_their_efforts(self, mock_activities, mock_rows, mock_db):
+    def test_traversed_segments_group_their_efforts(self, mock_activities, mock_rows, mock_best, mock_db):
         mock_activities.resolve_readable_parent.return_value = SimpleNamespace(id=5)
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5)]
         mock_rows.return_value = [
             (_effort_row(), _segment_row()),
             (_effort_row(pass_number=2), _segment_row()),
         ]
+        mock_best.return_value = [(1, 5, 1150)]
 
         response = TestClient(_build_app(mock_db)).get("/activities/5/segments", headers={"Authorization": "Bearer x"})
 
@@ -305,12 +313,15 @@ class TestActivitySegments:
         assert len(body) == 1
         assert body[0]["segment"]["id"] == 1
         assert len(body[0]["efforts"]) == 2
+        assert body[0]["best_activity_id"] == 5
+        assert body[0]["best_elapsed_seconds"] == 1150
         assert "geometry" not in body[0]["segment"]
 
     @patch("modules.segments.crud.list_efforts_for_activity_with_segments")
     @patch("modules.segments.service.activity_integration")
     def test_direction_param_reaches_the_read(self, mock_activities, mock_rows, mock_db):
         mock_activities.resolve_readable_parent.return_value = SimpleNamespace(id=5)
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5)]
         mock_rows.return_value = []
 
         response = TestClient(_build_app(mock_db)).get(

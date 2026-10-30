@@ -688,6 +688,8 @@ export function mapActivitySegment(dto: ActivitySegmentDto): ActivitySegment {
   return {
     segment: mapSegment(dto.segment),
     efforts: (dto.efforts ?? []).map(mapSegmentEffort),
+    bestElapsedSeconds: dto.best_elapsed_seconds ?? null,
+    bestActivityId: dto.best_activity_id ?? null,
   }
 }
 

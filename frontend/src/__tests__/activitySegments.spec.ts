@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 
-import type { ActivitySegment, ActivitySegmentDto, Segment } from '@/features/activities/types'
+import type {
+  ActivitySegment,
+  ActivitySegmentDto,
+  Segment,
+  SegmentEffort,
+} from '@/features/activities/types'
 
 import { apiFetch } from '@/services/http'
 import i18n from '@/i18n'
@@ -37,6 +42,8 @@ const segmentDto: ActivitySegmentDto = {
     created_at: '2026-10-30T06:00:00Z',
     updated_at: '2026-10-30T06:00:00Z',
   },
+  best_elapsed_seconds: 732,
+  best_activity_id: 5,
   efforts: [
     {
       segment_id: 3,
@@ -194,5 +201,38 @@ describe('ActivitySegmentsTable', () => {
     expect(text).toContain('Segment')
     expect(text).toContain('Length')
     expect(text).toContain('Time')
+  })
+
+  it('marks the pass that is the reader best over the segment', () => {
+    const wrapper = mountTable(makeSegments())
+
+    // 732 s equals the reference time; the reverse pass gets no marker.
+    expect(rowAt(wrapper, 0).text()).toContain('Best')
+    expect(rowAt(wrapper, 1).text()).not.toContain('Best')
+  })
+
+  it('shows how far behind the reference a slower forward pass is', () => {
+    const segments = makeSegments()
+    const entry = segments[0]
+    if (entry) {
+      entry.bestElapsedSeconds = 700
+      entry.efforts = [entry.efforts[0] as SegmentEffort]
+    }
+
+    expect(rowAt(mountTable(segments), 0).text()).toContain('+00:32 slower')
+  })
+
+  it('shows no marker at all when the reader has no other effort', () => {
+    const segments = makeSegments()
+    const entry = segments[0]
+    if (entry) {
+      entry.bestElapsedSeconds = null
+      entry.bestActivityId = null
+      entry.efforts = [entry.efforts[0] as SegmentEffort]
+    }
+    const text = rowAt(mountTable(segments), 0).text()
+
+    expect(text).not.toContain('Best')
+    expect(text).not.toContain('slower')
   })
 })

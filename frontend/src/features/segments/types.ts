@@ -6,13 +6,14 @@ import type { Schemas } from '@/types'
  * runtime mismatch. The mappers in `services/segments.ts` translate them into the
  * camelCase domain models below.
  */
-export type SegmentSummaryDto = Schemas['SegmentRead']
+export type SegmentSummaryDto = Schemas['SegmentListItemRead']
+export type SegmentBaseDto = Schemas['SegmentRead']
 export type SegmentDetailDto = Schemas['SegmentDetailRead']
 export type SegmentEffortDto = Schemas['SegmentEffortRead']
 export type SegmentImportPayload = Schemas['SegmentImport']
 
-/** A stored segment as the library list shows it. */
-export interface SegmentSummary {
+/** The fields every stored segment carries, listed or detailed. */
+export interface SegmentBase {
   id: number
   name: string
   /** Definition origin (`strava` or `manual`). */
@@ -27,8 +28,14 @@ export interface SegmentSummary {
   createdBy: number | null
 }
 
+/** A stored segment as the library list shows it. */
+export interface SegmentSummary extends SegmentBase {
+  /** How many of the reader's activities have an effort on this segment. */
+  effortCount: number
+}
+
 /** The full definition, with what the map and the profile need to draw. */
-export interface SegmentDetail extends SegmentSummary {
+export interface SegmentDetail extends SegmentBase {
   /** Ordered `[[lat, lng], ...]` polyline; index 0 is the canonical start. */
   geometry: [number, number][]
   /** Per-point altitude in metres, index-aligned with `geometry`. */

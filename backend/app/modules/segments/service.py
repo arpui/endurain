@@ -113,20 +113,35 @@ def delete_segment(segment_id: int, db: Session) -> None:
     logger.info("Segment deleted", extra=core_logger.context(segment_id=segment_id))
 
 
-def list_segments(db: Session, *, page_number: int, num_records: int) -> segments_schema.SegmentPage:
+def list_segments(
+    db: Session,
+    *,
+    page_number: int,
+    num_records: int,
+    requester_user_id: int,
+) -> segments_schema.SegmentPage:
     """List the segment library, paginated.
 
-    The library is global: every stored segment is visible to every user.
+    The library is global: every stored segment is visible to every user. The
+    per-segment effort count is the reader's own, which is what the list row
+    answers ("quant de vegades l'he fet").
 
     Args:
         db: Database session.
         page_number: 1-based page number.
         num_records: Page size.
+        requester_user_id: The user asking; only their activities are counted.
 
     Returns:
         One page of segments with the matching total.
     """
-    items = segments_crud.list_segments(db, page_number=page_number, num_records=num_records)
+    activity_ids = [activity.id for activity in activity_integration.list_user_activities(requester_user_id, db)]
+    items = segments_crud.list_segments(
+        db,
+        page_number=page_number,
+        num_records=num_records,
+        activity_ids=activity_ids,
+    )
     total = segments_crud.count_segments(db)
     return segments_schema.SegmentPage.build(items, total, page_number, num_records)
 
@@ -162,9 +177,23 @@ def list_segments_for_activity(
             entry = segments_schema.ActivitySegmentRead(
                 segment=segments_schema.SegmentRead.model_validate(segment),
                 efforts=[],
+                best_elapsed_seconds=None,
+                best_activity_id=None,
             )
             grouped[segment.id] = entry
         entry.efforts.append(segments_schema.SegmentEffortRead.model_validate(effort))
+
+    # The reader's fastest forward pass over each of these segments, so the
+    # activity can say whether one of its efforts is a personal record. Their own
+    # efforts only: a viewer without any sees no reference time.
+    own_activity_ids = [activity.id for activity in activity_integration.list_user_activities(requester_user_id, db)]
+    for segment_id, best_activity_id, elapsed in segments_crud.list_best_forward_efforts(
+        list(grouped), own_activity_ids, db
+    ):
+        entry = grouped.get(segment_id)
+        if entry is not None:
+            entry.best_activity_id = best_activity_id
+            entry.best_elapsed_seconds = elapsed
     return list(grouped.values())
 
 

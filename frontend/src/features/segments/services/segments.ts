@@ -1,5 +1,7 @@
 import type {
   EffortDirectionFilter,
+  SegmentBase,
+  SegmentBaseDto,
   SegmentDetail,
   SegmentDetailDto,
   SegmentEffort,
@@ -15,8 +17,8 @@ import type { Schemas } from '@/types'
 
 import { apiFetch } from '@/services/http'
 
-/** Maps a library-list DTO to the domain model. */
-export function mapSegmentSummary(dto: SegmentSummaryDto): SegmentSummary {
+/** Maps the fields every stored segment DTO carries, list or detail. */
+function mapSegmentBase(dto: SegmentBaseDto): SegmentBase {
   return {
     id: dto.id,
     name: dto.name,
@@ -28,10 +30,15 @@ export function mapSegmentSummary(dto: SegmentSummaryDto): SegmentSummary {
   }
 }
 
+/** Maps a library-list DTO to the domain model, with the reader's effort count. */
+export function mapSegmentSummary(dto: SegmentSummaryDto): SegmentSummary {
+  return { ...mapSegmentBase(dto), effortCount: dto.effort_count ?? 0 }
+}
+
 /** Maps a segment detail DTO (geometry and altitudes included) to the domain model. */
 export function mapSegmentDetail(dto: SegmentDetailDto): SegmentDetail {
   return {
-    ...mapSegmentSummary(dto),
+    ...mapSegmentBase(dto),
     geometry: (dto.geometry ?? []).map((point) => [point[0] ?? 0, point[1] ?? 0]),
     altitudes: dto.altitudes ?? null,
   }
@@ -69,9 +76,12 @@ export async function fetchSegments(
     page_number: String(page),
     num_records: String(numRecords),
   })
-  const response = await apiFetch<Schemas['Page_SegmentRead_']>(`/segments?${params.toString()}`, {
-    signal,
-  })
+  const response = await apiFetch<Schemas['Page_SegmentListItemRead_']>(
+    `/segments?${params.toString()}`,
+    {
+      signal,
+    },
+  )
   return {
     items: (response.items ?? []).map(mapSegmentSummary),
     total: response.total ?? 0,

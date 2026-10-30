@@ -121,7 +121,9 @@
     "time": "Time",
     "tempo": "Pace / Speed",
     "reverse": "Reverse",
-    "pass": "Pass {number}"
+    "pass": "Pass {number}",
+    "best": "Best",
+    "slowerThanBest": "{delta} slower"
   },
   "workout": {
     "title": "Workout",

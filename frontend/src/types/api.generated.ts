@@ -5670,8 +5670,16 @@ export interface components {
          *     Attributes:
          *         segment: The segment definition (without geometry).
          *         efforts: The activity's passes, chronological.
+         *         best_elapsed_seconds: The reader's fastest forward effort on this segment
+         *             across all their activities, or ``None`` when they have none. It lets
+         *             an activity say whether this pass is a personal record.
+         *         best_activity_id: Activity holding that best effort, or ``None``.
          */
         ActivitySegmentRead: {
+            /** Best Activity Id */
+            best_activity_id: number | null;
+            /** Best Elapsed Seconds */
+            best_elapsed_seconds: number | null;
             /** Efforts */
             efforts: components["schemas"]["SegmentEffortRead"][];
             segment: components["schemas"]["SegmentRead"];
@@ -9516,10 +9524,10 @@ export interface components {
             /** Total */
             total: number;
         };
-        /** Page[SegmentRead] */
-        Page_SegmentRead_: {
+        /** Page[SegmentListItemRead] */
+        Page_SegmentListItemRead_: {
             /** Items */
-            items: components["schemas"]["SegmentRead"][];
+            items: components["schemas"]["SegmentListItemRead"][];
             /** Next */
             next?: number | null;
             /** Num Records */
@@ -9848,6 +9856,46 @@ export interface components {
             segment_id: number;
             /** @default strava */
             source: components["schemas"]["SegmentSource"];
+        };
+        /**
+         * SegmentListItemRead
+         * @description Serialized segment as the library list shows it.
+         *
+         *     The effort count is scoped to whoever is reading, because the library is
+         *     shared while "how many times have I done this" is not.
+         *
+         *     Attributes:
+         *         effort_count: The reader's stored efforts on this segment.
+         */
+        SegmentListItemRead: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By */
+            created_by: number | null;
+            /** Distance M */
+            distance_m: number;
+            /**
+             * Effort Count
+             * @default 0
+             */
+            effort_count: number;
+            /** Elevation Gain M */
+            elevation_gain_m: number | null;
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            source: components["schemas"]["SegmentSource"];
+            /** Source Id */
+            source_id: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
         };
         /**
          * SegmentRead
@@ -18384,7 +18432,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Page_SegmentRead_"];
+                    "application/json": components["schemas"]["Page_SegmentListItemRead_"];
                 };
             };
             /** @description Validation Error */

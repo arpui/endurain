@@ -97,6 +97,19 @@ class SegmentRead(BaseModel):
     updated_at: datetime
 
 
+class SegmentListItemRead(SegmentRead):
+    """Serialized segment as the library list shows it.
+
+    The effort count is scoped to whoever is reading, because the library is
+    shared while "how many times have I done this" is not.
+
+    Attributes:
+        effort_count: The reader's stored efforts on this segment.
+    """
+
+    effort_count: StrictInt = 0
+
+
 class SegmentDetailRead(SegmentRead):
     """Serialized segment including its geometry and bounding box.
 
@@ -156,12 +169,18 @@ class ActivitySegmentRead(BaseModel):
     Attributes:
         segment: The segment definition (without geometry).
         efforts: The activity's passes, chronological.
+        best_elapsed_seconds: The reader's fastest forward effort on this segment
+            across all their activities, or ``None`` when they have none. It lets
+            an activity say whether this pass is a personal record.
+        best_activity_id: Activity holding that best effort, or ``None``.
     """
 
     model_config = ConfigDict(extra="forbid")
 
     segment: SegmentRead
     efforts: list[SegmentEffortRead]
+    best_elapsed_seconds: StrictInt | None
+    best_activity_id: StrictInt | None
 
 
 class BackfillQueued(BaseModel):
@@ -176,6 +195,7 @@ class BackfillQueued(BaseModel):
     queued: StrictBool
 
 
-#: Page envelopes matching the rest of the API.
-SegmentPage = core_pagination.Page[SegmentRead]
+#: Page envelopes matching the rest of the API. The library page carries the
+#: reader's effort count, so its item type is the list schema, not the plain one.
+SegmentPage = core_pagination.Page[SegmentListItemRead]
 SegmentEffortPage = core_pagination.Page[SegmentEffortRead]

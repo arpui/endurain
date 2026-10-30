@@ -121,7 +121,9 @@
     "time": "Temps",
     "tempo": "Ritme / Velocitat",
     "reverse": "Sentit invers",
-    "pass": "Passada {number}"
+    "pass": "Passada {number}",
+    "best": "Millor",
+    "slowerThanBest": "{delta} més lent"
   },
   "workout": {
     "title": "Entrenament",

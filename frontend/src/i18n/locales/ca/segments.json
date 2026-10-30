@@ -66,5 +66,6 @@
     "lengthMismatch": "L'altitud o la distància no coincideix amb el nombre de punts.",
     "needName": "Posa un nom al segment.",
     "needId": "Posa un id numèric al segment."
-  }
+  },
+  "effortCount": "{count} esforços"
 }

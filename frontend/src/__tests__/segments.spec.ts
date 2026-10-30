@@ -268,6 +268,7 @@ describe('segments service', () => {
           created_by: 2,
           created_at: '2026-10-30T06:00:00Z',
           updated_at: '2026-10-30T06:00:00Z',
+          effort_count: 3,
         },
       ],
       total: 7,
@@ -281,6 +282,7 @@ describe('segments service', () => {
     expect(vi.mocked(apiFetch).mock.calls[0]?.[0]).toBe('/segments?page_number=2&num_records=5')
     expect(page.total).toBe(7)
     expect(page.items[0]?.name).toBe('Up the hill')
+    expect(page.items[0]?.effortCount).toBe(3)
   })
 
   it('passes the direction filter when reading efforts', async () => {
