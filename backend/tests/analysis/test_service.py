@@ -563,3 +563,51 @@ class TestFitnessSeries:
             )
         assert len(series.points) == 10
         assert all(point.load == 0.0 and point.chronic == 0.0 for point in series.points)
+
+
+class TestSettingsClearing:
+    """An explicit null clears a value the athlete no longer wants."""
+
+    def test_a_null_hr_threshold_falls_back_to_derived(self):
+        db = _db()
+        current = _settings(
+            hr_threshold=analysis_schema.HeartRateThresholdRead(
+                value_bpm=160.0,
+                source=analysis_constants.ThresholdSource.MANUAL,
+            )
+        )
+        stored: list[analysis_schema.AnalysisSettingsRead] = []
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=current),
+            patch(f"{_SVC}.analysis_crud.store_settings", side_effect=_capture_settings(stored)),
+        ):
+            analysis_service.update_settings(2, analysis_schema.AnalysisSettingsUpdate(hr_threshold_bpm=None), db)
+        assert stored[0].hr_threshold is None
+
+    def test_an_omitted_hr_threshold_stays_put(self):
+        db = _db()
+        current = _settings(
+            hr_threshold=analysis_schema.HeartRateThresholdRead(
+                value_bpm=160.0,
+                source=analysis_constants.ThresholdSource.MANUAL,
+            )
+        )
+        stored: list[analysis_schema.AnalysisSettingsRead] = []
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=current),
+            patch(f"{_SVC}.analysis_crud.store_settings", side_effect=_capture_settings(stored)),
+        ):
+            analysis_service.update_settings(2, analysis_schema.AnalysisSettingsUpdate(acute_days=10), db)
+        assert stored[0].hr_threshold is not None
+        assert stored[0].hr_threshold.value_bpm == 160.0
+
+    def test_a_null_resting_hr_turns_the_impulse_formulas_off(self):
+        db = _db()
+        current = _settings(resting_hr=50)
+        stored: list[analysis_schema.AnalysisSettingsRead] = []
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=current),
+            patch(f"{_SVC}.analysis_crud.store_settings", side_effect=_capture_settings(stored)),
+        ):
+            analysis_service.update_settings(2, analysis_schema.AnalysisSettingsUpdate(resting_hr=None), db)
+        assert stored[0].resting_hr is None

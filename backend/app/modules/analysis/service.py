@@ -94,13 +94,14 @@ def update_settings(
         The settings after the update.
     """
     current = get_settings(user_id, db)
+    provided = payload.model_fields_set
     if payload.acute_days is not None:
         current.acute_days = payload.acute_days
     if payload.chronic_days is not None:
         current.chronic_days = payload.chronic_days
     if payload.primary_method is not None:
         current.primary_method = payload.primary_method
-    if payload.resting_hr is not None:
+    if "resting_hr" in provided:
         current.resting_hr = payload.resting_hr
     if payload.method_params is not None:
         current.method_params = {key: float(value) for key, value in payload.method_params.items()}
@@ -115,11 +116,14 @@ def update_settings(
                     source=analysis_constants.ThresholdSource.MANUAL,
                     cv_pct=None,
                 )
-    if payload.hr_threshold_bpm is not None:
-        current.hr_threshold = analysis_schema.HeartRateThresholdRead(
-            value_bpm=payload.hr_threshold_bpm,
-            source=analysis_constants.ThresholdSource.MANUAL,
-        )
+    if "hr_threshold_bpm" in provided:
+        if payload.hr_threshold_bpm is None:
+            current.hr_threshold = None
+        else:
+            current.hr_threshold = analysis_schema.HeartRateThresholdRead(
+                value_bpm=payload.hr_threshold_bpm,
+                source=analysis_constants.ThresholdSource.MANUAL,
+            )
     stored = analysis_crud.store_settings(user_id, current, db)
     db.commit()
     logger.info(

@@ -619,6 +619,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/fitness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Fitness Series
+         * @description Return the caller's daily load series with fatigue, fitness and balance.
+         *
+         *     Every parameter is optional: without them the athlete's stored settings decide
+         *     the formula, the time constants and the whole sports, and the window defaults
+         *     to the recent one. Naming them changes only this response, not the settings.
+         */
+        get: operations["get_fitness_series_api_v1_analysis_fitness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/recompute": {
         parameters: {
             query?: never;
@@ -5908,7 +5932,8 @@ export interface components {
          *         acute_days: Fatigue time constant in days.
          *         chronic_days: Fitness time constant in days.
          *         primary_method: Formula used when a single load is asked for.
-         *         resting_hr: Resting heart rate in bpm.
+         *         resting_hr: Resting heart rate in bpm, or ``None`` to remove it (which
+         *             turns the heart-rate impulse formulas off).
          *         hr_threshold_bpm: Manual threshold heart rate in bpm, or ``None`` to go back
          *             to the derived one.
          *         power_threshold_w: Manual threshold power per sport group, or ``None`` per
@@ -6141,6 +6166,54 @@ export interface components {
          * @enum {string}
          */
         FastingType: "16:8" | "18:6" | "20:4" | "OMAD" | "24h" | "36h" | "48h" | "72h" | "custom";
+        /**
+         * FitnessPointRead
+         * @description Serialized one-day point of the fitness/fatigue series.
+         *
+         *     Attributes:
+         *         date: The calendar day (the athlete's local day the activity started on).
+         *         load: Summed load of that day, in the shared scale.
+         *         acute: Fatigue: the exponentially weighted load with the acute time constant.
+         *         chronic: Fitness: the same with the chronic time constant.
+         *         balance: Form minus fatigue (fitness - fatigue), positive means fresh.
+         */
+        FitnessPointRead: {
+            /** Acute */
+            acute: number;
+            /** Balance */
+            balance: number;
+            /** Chronic */
+            chronic: number;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Load */
+            load: number;
+        };
+        /**
+         * FitnessSeriesRead
+         * @description Serialized daily-load series with its parameters, so a chart can label itself.
+         *
+         *     Attributes:
+         *         method: Which formula's rows were summed.
+         *         acute_days: Fatigue time constant used.
+         *         chronic_days: Fitness time constant used.
+         *         sport: Sport group the series is limited to, ``None`` for all sports.
+         *         points: One point per consecutive day of the requested range.
+         */
+        FitnessSeriesRead: {
+            /** Acute Days */
+            acute_days: number;
+            /** Chronic Days */
+            chronic_days: number;
+            method: components["schemas"]["LoadMethod"];
+            /** Points */
+            points: components["schemas"]["FitnessPointRead"][];
+            /** Sport */
+            sport: string | null;
+        };
         /**
          * FollowRelationshipRead
          * @description Serialized representation of a follow relationship.
@@ -13440,6 +13513,51 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_ActivityWorkoutStepsRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_fitness_series_api_v1_analysis_fitness_get: {
+        parameters: {
+            query?: {
+                method?: components["schemas"]["LoadMethod"] | null;
+                acute_days?: number | null;
+                chronic_days?: number | null;
+                sport?: string | null;
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FitnessSeriesRead"];
                 };
             };
             /** @description Validation Error */

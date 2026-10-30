@@ -91,7 +91,8 @@ class AnalysisSettingsUpdate(BaseModel):
         acute_days: Fatigue time constant in days.
         chronic_days: Fitness time constant in days.
         primary_method: Formula used when a single load is asked for.
-        resting_hr: Resting heart rate in bpm.
+        resting_hr: Resting heart rate in bpm, or ``None`` to remove it (which
+            turns the heart-rate impulse formulas off).
         hr_threshold_bpm: Manual threshold heart rate in bpm, or ``None`` to go back
             to the derived one.
         power_threshold_w: Manual threshold power per sport group, or ``None`` per
