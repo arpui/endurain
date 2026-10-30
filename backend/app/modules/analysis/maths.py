@@ -14,6 +14,7 @@ count), while callers drop heart-rate zeros first because they mean "no signal".
 
 from collections.abc import Mapping, Sequence
 from datetime import datetime
+from math import exp
 
 import numpy as np
 
@@ -132,6 +133,34 @@ def best_window_mean(values: Sequence[float], period_s: float, window_s: float) 
     """Return the best sustained average over one window, in the units of ``values``."""
     means = best_means(values, period_s, durations=[int(window_s)])
     return float(means.get(int(window_s), 0.0))
+
+
+def ewf(values: Sequence[float], tau_days: float) -> list[float]:
+    """Return the exponentially weighted function of a daily series.
+
+    Each day relaxes toward that day's value: ``state[d] = v·(1-e^(-1/τ)) + state[d-1]·e^(-1/τ)``,
+    the recurrence GoldenCheetah's PMC uses for fatigue (τ ≈ 7 days) and fitness
+    (τ ≈ 42 days). Starting at zero, a constant daily load converges to that load,
+    so the series reads in the same units as the daily sum. Days before the first
+    value are not emitted: the caller supplies a dense day-by-day series (missing
+    days as ``0.0``) so the decay is continuous.
+
+    Args:
+        values: One value per consecutive day.
+        tau_days: Time constant in days.
+
+    Returns:
+        The smoothed state per day, same length as ``values``.
+    """
+    if tau_days <= 0:
+        return [float(value) for value in values]
+    decay = exp(-1.0 / tau_days)
+    state = 0.0
+    series: list[float] = []
+    for value in values:
+        state = float(value) * (1.0 - decay) + state * decay
+        series.append(state)
+    return series
 
 
 def fit_cp_wprime(

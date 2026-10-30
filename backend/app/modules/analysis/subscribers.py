@@ -30,8 +30,10 @@ ANALYSIS_LOAD_SUBSCRIBER_ID = "analysis.compute_loads"
 ANALYSIS_UPDATE_SUBSCRIBER_ID = "analysis.recompute_loads"
 
 #: Activity columns whose change invalidates a stored load: the time a load scales
-#: with, the sport that decides its threshold, and the summaries the heart-rate and
-#: power formulas read. Anything else (a name, a gear, notes) leaves the load alone.
+#: with, the sport that decides its threshold, the summaries the heart-rate and
+#: power formulas read, and what decides the calendar day the load lands on
+#: (``load_date`` is copied at measure time). Anything else (a name, a gear,
+#: notes) leaves the load alone.
 _LOAD_BEARING_FIELDS = frozenset(
     {
         "total_timer_time",
@@ -41,6 +43,8 @@ _LOAD_BEARING_FIELDS = frozenset(
         "max_hr",
         "average_power",
         "normalized_power",
+        "start_time",
+        "timezone",
     }
 )
 

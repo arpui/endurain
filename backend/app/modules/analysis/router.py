@@ -1,13 +1,15 @@
 """API routes for analysis settings, threshold refresh and recomputation."""
 
 from collections.abc import Callable
+from datetime import date
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, Security
+from fastapi import APIRouter, Depends, Query, Request, Security
 from sqlalchemy.orm import Session
 
 import core.database as core_database
 import core.rate_limit as core_rate_limit
+import modules.analysis.constants as analysis_constants
 import modules.analysis.scheduled_jobs as analysis_scheduled_jobs
 import modules.analysis.schema as analysis_schema
 import modules.analysis.service as analysis_service
@@ -48,6 +50,39 @@ def update_analysis_settings(
     every activity against the new value.
     """
     return analysis_service.update_settings(token_user_id, payload, db)
+
+
+@router.get(
+    "/fitness",
+    response_model=analysis_schema.FitnessSeriesRead,
+)
+def get_fitness_series(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+    method: Annotated[analysis_constants.LoadMethod | None, Query()] = None,
+    acute_days: Annotated[int | None, Query(ge=1, le=180)] = None,
+    chronic_days: Annotated[int | None, Query(ge=1, le=365)] = None,
+    sport: Annotated[str | None, Query(max_length=32)] = None,
+    from_date: Annotated[date | None, Query(alias="from")] = None,
+    to_date: Annotated[date | None, Query(alias="to")] = None,
+) -> analysis_schema.FitnessSeriesRead:
+    """Return the caller's daily load series with fatigue, fitness and balance.
+
+    Every parameter is optional: without them the athlete's stored settings decide
+    the formula, the time constants and the whole sports, and the window defaults
+    to the recent one. Naming them changes only this response, not the settings.
+    """
+    return analysis_service.get_fitness_series(
+        token_user_id,
+        db,
+        method=method,
+        acute_days=acute_days,
+        chronic_days=chronic_days,
+        sport=sport,
+        from_date=from_date,
+        to_date=to_date,
+    )
 
 
 @router.post(

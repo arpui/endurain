@@ -76,6 +76,10 @@ FIT_MIN_PEAKS = 4
 #: 202 W threshold from a single walk.
 FIT_MIN_ACTIVITIES = 3
 
+#: Days a fitness-series request covers when the caller names no range: one typical
+#: mesocycle, with the decay still seeded from the athlete's first measured day.
+FITNESS_WINDOW_DEFAULT_DAYS = 90
+
 #: Longest gap (seconds) still treated as continuous sampling when deriving the
 #: stream's sample period. A larger median gap means the device recorded sparsely
 #: and the windows widen to match.

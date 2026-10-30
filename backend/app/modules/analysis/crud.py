@@ -5,8 +5,9 @@ flushes: the service owns the transaction.
 """
 
 from collections.abc import Sequence
+from datetime import date
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
 import modules.analysis.contracts as analysis_contracts
@@ -97,7 +98,10 @@ def _threshold_document(settings: analysis_schema.AnalysisSettingsRead) -> dict:
 
 def replace_activity_loads(
     activity_id: int,
+    user_id: int,
     duration_s: float,
+    load_date: date | None,
+    sport: str | None,
     records: Sequence[analysis_contracts.LoadRecord],
     db: Session,
 ) -> int:
@@ -108,8 +112,11 @@ def replace_activity_loads(
 
     Args:
         activity_id: The activity whose loads are replaced.
+        user_id: The activity's owner, copied onto every row for aggregation.
         duration_s: Active time the formulas computed over, kept on every row so a
             stored load can be re-derived without re-reading the activity.
+        load_date: Calendar day the activity started in its own timezone.
+        sport: Sport group of the activity type, when categorized.
         records: The computed loads, one per formula that applied.
         db: Database session.
 
@@ -121,11 +128,14 @@ def replace_activity_loads(
         db.add(
             analysis_models.ActivityLoad(
                 activity_id=activity_id,
+                user_id=user_id,
                 method=record.method.value,
                 load=record.load,
                 intensity_factor=record.intensity_factor,
                 threshold_used=record.threshold_used,
                 duration_s=duration_s,
+                load_date=load_date,
+                sport=sport,
             )
         )
     db.flush()
@@ -171,6 +181,45 @@ def activity_ids_with_loads(activity_ids: Sequence[int], db: Session) -> set[int
         .distinct()
     )
     return {int(activity_id) for activity_id in db.scalars(stmt).all()}
+
+
+def daily_load_totals(
+    user_id: int,
+    method: str,
+    db: Session,
+    *,
+    sport: str | None = None,
+) -> list[tuple[date, float]]:
+    """Return one athlete's summed load per calendar day, oldest first.
+
+    Sums every activity's row for one formula into the day the activity started
+    (the row's own ``load_date``: the activity's local calendar day, copied at
+    measure time). Days with no activity are absent; the caller fills them to keep
+    the decay continuous. Rows without a date (an activity that carried no start
+    time) cannot land on a day and are left out.
+
+    Args:
+        user_id: The athlete.
+        method: Which formula's rows to sum.
+        db: Database session.
+        sport: When given, only that sport group contributes.
+
+    Returns:
+        ``(day, summed load)`` pairs, ascending.
+    """
+    stmt = (
+        select(analysis_models.ActivityLoad.load_date, func.sum(analysis_models.ActivityLoad.load))
+        .where(
+            analysis_models.ActivityLoad.user_id == user_id,
+            analysis_models.ActivityLoad.method == method,
+            analysis_models.ActivityLoad.load_date.isnot(None),
+        )
+        .group_by(analysis_models.ActivityLoad.load_date)
+        .order_by(analysis_models.ActivityLoad.load_date)
+    )
+    if sport is not None:
+        stmt = stmt.where(analysis_models.ActivityLoad.sport == sport)
+    return [(row[0], float(row[1])) for row in db.execute(stmt).all()]
 
 
 def replace_duration_peaks(

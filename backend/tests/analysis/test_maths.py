@@ -6,6 +6,7 @@ expected values are derived in the test from the formula's published definition.
 """
 
 from datetime import datetime, timedelta
+from math import exp
 
 import pytest
 
@@ -138,3 +139,43 @@ class TestCriticalPowerFit:
 
     def test_a_curve_outside_the_range_refuses_the_fit(self):
         assert analysis_maths.fit_cp_wprime({60: 400.0, 120: 380.0, 180: 360.0, 240: 350.0}) is None
+
+
+class TestExponentiallyWeightedFunction:
+    """The PMC recurrence GoldenCheetah uses: relax toward each day's value."""
+
+    def test_a_constant_daily_load_converges_to_that_load(self):
+        series = analysis_maths.ewf([100.0] * 400, 42.0)
+        assert series[-1] == pytest.approx(100.0, rel=1e-3)
+
+    def test_the_first_day_is_the_exact_recurrence_from_zero(self):
+        tau = 7.0
+        decay = exp(-1.0 / tau)
+        series = analysis_maths.ewf([50.0, 0.0], tau)
+        assert series[0] == pytest.approx(50.0 * (1.0 - decay))
+        assert series[1] == pytest.approx(series[0] * decay)
+
+    def test_a_single_spike_decays_geometrically(self):
+        tau = 5.0
+        decay = exp(-1.0 / tau)
+        series = analysis_maths.ewf([100.0] + [0.0] * 3, tau)
+        state = 100.0 * (1.0 - decay)
+        for value in series:
+            assert value == pytest.approx(state)
+            state *= decay
+
+    def test_fatigue_relaxes_faster_than_fitness(self):
+        """After one hard day the acute constant drops below the chronic one.
+
+        The spike lifts fatigue above fitness first (a negative balance), and it
+        decays sooner: the crossing is the "fresh" the athlete feels on a rest
+        day. Same load, same day, only the time constant differs.
+        """
+        loads = [100.0] + [0.0] * 20
+        acute = analysis_maths.ewf(loads, 7.0)
+        chronic = analysis_maths.ewf(loads, 42.0)
+        assert acute[0] > chronic[0]
+        assert acute[-1] < chronic[-1]
+
+    def test_the_series_keeps_the_input_length(self):
+        assert len(analysis_maths.ewf([10.0, 20.0, 30.0], 7.0)) == 3

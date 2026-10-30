@@ -12,8 +12,9 @@ threshold heart rate. A value the athlete typed in is never overwritten by a der
 one, and every stored load records the threshold it was divided by.
 """
 
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from statistics import mean as arithmetic_mean
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from sqlalchemy.orm import Session
 
@@ -175,6 +176,26 @@ def _moving_seconds(activity: activity_schema.ActivityRead) -> float:
     return float(activity.total_timer_time or activity.total_elapsed_time or 0.0)
 
 
+def _local_day(activity: activity_schema.ActivityRead) -> date | None:
+    """Return the calendar day an activity happened on, in its own timezone.
+
+    "Which day is this load part of?" is a local question, and the activities
+    module makes the same conversion for its own date buckets
+    (``activity.query.local_start_time_expression``): ``start_time`` is a UTC
+    instant, the stored IANA ``timezone`` says where it was run. Activities with
+    no timezone (indoor imports) fall back to UTC, and a name the system cannot
+    resolve (legacy aliases are canonicalized on write, but a row can predate
+    that) does the same rather than losing the load.
+    """
+    if activity.start_time is None:
+        return None
+    try:
+        zone = ZoneInfo(activity.timezone or "UTC")
+    except (ZoneInfoNotFoundError, ValueError):
+        zone = ZoneInfo("UTC")
+    return activity.start_time.astimezone(zone).date()
+
+
 def _load_input(
     activity: activity_schema.ActivityRead,
     sport: str | None,
@@ -242,6 +263,8 @@ def _store_loads(
     Returns:
         The number of load rows written.
     """
+    if activity.user_id is None:
+        return 0
     sport = sport_group(activity.activity_type)
     data = _load_input(activity, sport, db)
     computed = analysis_methods.compute_all(data)
@@ -254,7 +277,15 @@ def _store_loads(
         )
         for method, value in computed
     ]
-    written = analysis_crud.replace_activity_loads(activity.id, _moving_seconds(activity), records, db)
+    written = analysis_crud.replace_activity_loads(
+        activity.id,
+        activity.user_id,
+        _moving_seconds(activity),
+        _local_day(activity),
+        sport,
+        records,
+        db,
+    )
     db.commit()
     if written:
         logger.debug(
@@ -498,3 +529,90 @@ def list_activity_loads(
     if not activity_integration.owns_activity(activity_id, requester_user_id, db):
         raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
     return analysis_crud.list_activity_loads(activity_id, db)
+
+
+def get_fitness_series(
+    user_id: int,
+    db: Session,
+    *,
+    method: analysis_constants.LoadMethod | None = None,
+    acute_days: int | None = None,
+    chronic_days: int | None = None,
+    sport: str | None = None,
+    from_date: date | None = None,
+    to_date: date | None = None,
+) -> analysis_schema.FitnessSeriesRead:
+    """Return the athlete's daily load with the fatigue/fitness/balance series.
+
+    A stored row says what one activity cost; the answer to "how fit is this
+    athlete" sums those into days and relaxes each day toward the next with the
+    time constants the athlete configured (overridable per request, so one chart
+    can show 5/45 beside the default 7/42). One day's load adds up across sports
+    because the body does not separate fatigue by sport; ``sport`` narrows the
+    series to one sport's contribution when the athlete wants to see it apart.
+
+    The decay is seeded from the athlete's first measured day, not from the
+    requested range's start: a series that began at zero on the first plotted day
+    would show a ramp-up that never happened (GoldenCheetah's PMC likewise starts
+    at the first activity, not at the window's edge).
+
+    Args:
+        user_id: The athlete.
+        db: Database session.
+        method: Formula to sum, by default the athlete's primary one.
+        acute_days: Override for the fatigue time constant, in days.
+        chronic_days: Override for the fitness time constant, in days.
+        sport: Sport group to restrict the series to, when given.
+        from_date: First day to plot; defaults to the standard window before ``to_date``.
+        to_date: Last day to plot; defaults to today.
+
+    Returns:
+        The series: one point per consecutive day of the requested range.
+
+    Raises:
+        InvalidInputError: If the range is inverted, or the sport is not one the
+            activities module knows.
+    """
+    if sport is not None and sport not in activity_constants.ACTIVITY_TYPES_BY_SPORT:
+        raise core_exceptions.InvalidInputError(f"Unknown sport '{sport}'")
+    if from_date is not None and to_date is not None and from_date > to_date:
+        raise core_exceptions.InvalidInputError("'from' must not be after 'to'")
+
+    settings = get_settings(user_id, db)
+    chosen = method or settings.primary_method
+    tau_acute = acute_days if acute_days is not None else settings.acute_days
+    tau_chronic = chronic_days if chronic_days is not None else settings.chronic_days
+    end = to_date or date.today()
+    start = from_date or end - timedelta(days=analysis_constants.FITNESS_WINDOW_DEFAULT_DAYS)
+    if start > end:
+        raise core_exceptions.InvalidInputError("'from' must not be after 'to'")
+
+    totals = analysis_crud.daily_load_totals(user_id, chosen.value, db, sport=sport)
+    load_by_day = {day: value for day, value in totals}
+    first_measured = totals[0][0] if totals else start
+    seed_from = min(start, first_measured)
+
+    days = [seed_from + timedelta(days=offset) for offset in range((end - seed_from).days + 1)]
+    loads = [load_by_day.get(day, 0.0) for day in days]
+    fatigue = analysis_maths.ewf(loads, float(tau_acute))
+    fitness = analysis_maths.ewf(loads, float(tau_chronic))
+
+    plotted_from = (start - seed_from).days
+    points = [
+        analysis_schema.FitnessPointRead(
+            date=day,
+            load=round(loads[index], 2),
+            acute=round(fatigue[index], 2),
+            chronic=round(fitness[index], 2),
+            balance=round(fitness[index] - fatigue[index], 2),
+        )
+        for index, day in enumerate(days)
+        if index >= plotted_from
+    ]
+    return analysis_schema.FitnessSeriesRead(
+        method=chosen,
+        acute_days=tau_acute,
+        chronic_days=tau_chronic,
+        sport=sport,
+        points=points,
+    )

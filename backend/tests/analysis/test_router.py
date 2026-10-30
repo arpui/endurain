@@ -1,5 +1,6 @@
 """Tests for the analysis routers: status codes and scope wiring."""
 
+from datetime import date
 from unittest.mock import MagicMock, patch
 
 from fastapi import FastAPI
@@ -128,3 +129,65 @@ class TestActivityLoadsRoute:
         ):
             response = client.get("/activities/5/loads")
         assert response.status_code == 404
+
+
+class TestFitnessRoute:
+    def _series(self) -> analysis_schema.FitnessSeriesRead:
+        return analysis_schema.FitnessSeriesRead(
+            method=analysis_constants.LoadMethod.COGGAN_TSS,
+            acute_days=7,
+            chronic_days=42,
+            sport=None,
+            points=[
+                analysis_schema.FitnessPointRead(
+                    date=date(2026, 10, 1),
+                    load=120.0,
+                    acute=16.8,
+                    chronic=2.84,
+                    balance=-13.96,
+                )
+            ],
+        )
+
+    def test_the_series_answers_with_its_parameters(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.router.analysis_service.get_fitness_series", return_value=self._series()):
+            response = client.get("/analysis/fitness")
+        assert response.status_code == 200
+        body = response.json()
+        assert body["method"] == "coggan_tss"
+        assert body["points"][0]["date"] == "2026-10-01"
+
+    def test_the_query_parameters_reach_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch(
+            "modules.analysis.router.analysis_service.get_fitness_series", return_value=self._series()
+        ) as get_series:
+            response = client.get(
+                "/analysis/fitness",
+                params={
+                    "method": "hr_load",
+                    "acute_days": 5,
+                    "chronic_days": 45,
+                    "sport": "run",
+                    "from": "2026-07-01",
+                    "to": "2026-10-01",
+                },
+            )
+        assert response.status_code == 200
+        kwargs = get_series.call_args.kwargs
+        assert kwargs["method"] is analysis_constants.LoadMethod.HR_LOAD
+        assert kwargs["from_date"] == date(2026, 7, 1)
+        assert kwargs["to_date"] == date(2026, 10, 1)
+
+    def test_an_unknown_method_is_refused_before_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.router.analysis_service.get_fitness_series") as get_series:
+            response = client.get("/analysis/fitness", params={"method": "nope"})
+        assert response.status_code == 422
+        get_series.assert_not_called()
+
+    def test_a_time_constant_out_of_range_is_refused(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/fitness", params={"acute_days": 0})
+        assert response.status_code == 422

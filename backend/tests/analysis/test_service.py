@@ -6,9 +6,10 @@ the athlete typed is never overwritten, and who may read a stored load. The
 formulas themselves are tested in ``test_methods.py``.
 """
 
-from datetime import datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -19,6 +20,7 @@ import modules.analysis.service as analysis_service
 
 _SVC = "modules.analysis.service"
 _T0 = datetime(2026, 10, 15, 16, 0, 0)
+_T0_UTC = _T0.replace(tzinfo=UTC)
 
 
 def _db() -> MagicMock:
@@ -35,12 +37,16 @@ def _activity(
     average_hr: int | None = 140,
     max_hr: int | None = 180,
     normalized_power: int | None = 250,
+    start_time: datetime | None = _T0_UTC,
+    timezone: str | None = "Europe/Madrid",
 ) -> SimpleNamespace:
     """Return an activity shaped like the activities module's read schema."""
     return SimpleNamespace(
         id=activity_id,
         activity_type=activity_type,
         user_id=user_id,
+        start_time=start_time,
+        timezone=timezone,
         total_timer_time=seconds,
         total_elapsed_time=seconds,
         average_hr=average_hr,
@@ -173,11 +179,14 @@ class TestComputeLoads:
         ):
             written = analysis_service.compute_loads_for_activity(1, db)
 
-        records = replace.call_args.args[2]
+        records = replace.call_args.args[5]
         methods = {record.method for record in records}
         assert analysis_constants.LoadMethod.COGGAN_TSS in methods
         assert written == 3
-        assert replace.call_args.args[1] == 3600.0
+        assert replace.call_args.args[1] == 2
+        assert replace.call_args.args[2] == 3600.0
+        assert replace.call_args.args[3] == _T0_UTC.astimezone(ZoneInfo("Europe/Madrid")).date()
+        assert replace.call_args.args[4] == "run"
         db.commit.assert_called_once()
 
     def test_a_deleted_activity_writes_nothing(self):
@@ -205,7 +214,7 @@ class TestComputeLoads:
             patch(f"{_SVC}.analysis_crud.replace_activity_loads") as replace,
         ):
             analysis_service.compute_loads_for_activity(1, db)
-        methods = {record.method for record in replace.call_args.args[2]}
+        methods = {record.method for record in replace.call_args.args[5]}
         assert methods == {analysis_constants.LoadMethod.HR_LOAD}
 
     def test_an_uncategorized_sport_gets_no_power_threshold(self):
@@ -232,7 +241,7 @@ class TestComputeLoads:
             patch(f"{_SVC}.analysis_crud.replace_activity_loads") as replace,
         ):
             analysis_service.compute_loads_for_activity(1, db)
-        methods = {record.method for record in replace.call_args.args[2]}
+        methods = {record.method for record in replace.call_args.args[5]}
         assert analysis_constants.LoadMethod.COGGAN_TSS not in methods
 
 
@@ -410,3 +419,147 @@ def _power_threshold() -> analysis_schema.PowerThresholdRead:
         source=analysis_constants.ThresholdSource.AUTO,
         cv_pct=3.0,
     )
+
+
+class TestLocalDay:
+    """The day a load lands on is the athlete's local day, not the UTC one."""
+
+    def test_a_late_utc_run_rolls_into_the_next_local_day(self):
+        activity = _activity(start_time=datetime(2026, 10, 15, 22, 0, tzinfo=UTC), timezone="Asia/Tokyo")
+        assert analysis_service._local_day(activity) == date(2026, 10, 16)
+
+    def test_no_timezone_falls_back_to_utc(self):
+        activity = _activity(start_time=datetime(2026, 10, 15, 22, 0, tzinfo=UTC), timezone=None)
+        assert analysis_service._local_day(activity) == date(2026, 10, 15)
+
+    def test_an_unresolvable_timezone_still_keeps_the_load(self):
+        activity = _activity(start_time=_T0_UTC, timezone="Not/AZone")
+        assert analysis_service._local_day(activity) == _T0_UTC.date()
+
+    def test_an_activity_without_start_time_has_no_day(self):
+        assert analysis_service._local_day(_activity(start_time=None)) is None
+
+
+class TestFitnessSeries:
+    """Reading the stored rows as a fatigue/fitness series."""
+
+    def test_days_without_loads_still_decay_between_the_plotted_points(self):
+        totals = [(date(2026, 10, 1), 100.0), (date(2026, 10, 5), 50.0)]
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.daily_load_totals", return_value=totals),
+        ):
+            series = analysis_service.get_fitness_series(
+                2,
+                _db(),
+                from_date=date(2026, 10, 1),
+                to_date=date(2026, 10, 6),
+            )
+        points = {point.date: point for point in series.points}
+        assert set(points) == {date(2026, 10, day) for day in range(1, 7)}
+        assert points[date(2026, 10, 2)].load == 0.0
+        assert points[date(2026, 10, 2)].acute < 100.0  # decayed, not reset
+        assert points[date(2026, 10, 2)].acute > points[date(2026, 10, 4)].acute
+
+    def test_the_series_is_seeded_before_the_plotted_window(self):
+        """A window starting mid-history must not ramp up from zero on its first day."""
+        totals = [(date(2026, 9, 1) + timedelta(days=offset), 100.0) for offset in range(40)]
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.daily_load_totals", return_value=totals),
+        ):
+            series = analysis_service.get_fitness_series(
+                2,
+                _db(),
+                chronic_days=10,
+                from_date=date(2026, 10, 10),
+                to_date=date(2026, 10, 12),
+            )
+        first = series.points[0]
+        assert first.date == date(2026, 10, 10)
+        assert first.chronic == pytest.approx(100.0, rel=0.05)
+
+    def test_balance_is_fitness_minus_fatigue(self):
+        totals = [(date(2026, 10, 1), 300.0)]
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.daily_load_totals", return_value=totals),
+        ):
+            series = analysis_service.get_fitness_series(
+                2,
+                _db(),
+                acute_days=5,
+                chronic_days=42,
+                from_date=date(2026, 10, 1),
+                to_date=date(2026, 10, 3),
+            )
+        for point in series.points:
+            assert point.balance == pytest.approx(point.chronic - point.acute, abs=0.02)
+
+    def test_missing_parameters_come_from_the_settings_row(self):
+        settings = _settings(
+            acute_days=5,
+            chronic_days=60,
+            primary_method=analysis_constants.LoadMethod.HR_LOAD,
+        )
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings),
+            patch(f"{_SVC}.analysis_crud.daily_load_totals", return_value=[]) as totals,
+        ):
+            series = analysis_service.get_fitness_series(
+                2, _db(), from_date=date(2026, 10, 1), to_date=date(2026, 10, 2)
+            )
+        assert series.method is analysis_constants.LoadMethod.HR_LOAD
+        assert totals.call_args.args[1] == "hr_load"
+        assert (series.acute_days, series.chronic_days) == (5, 60)
+
+    def test_a_requested_method_overrides_the_stored_primary(self):
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.daily_load_totals", return_value=[]) as totals,
+        ):
+            series = analysis_service.get_fitness_series(
+                2,
+                _db(),
+                method=analysis_constants.LoadMethod.SKIBA_SCORE,
+                from_date=date(2026, 10, 1),
+                to_date=date(2026, 10, 2),
+            )
+        assert totals.call_args.args[1] == "skiba_score"
+        assert series.method is analysis_constants.LoadMethod.SKIBA_SCORE
+
+    def test_a_sport_narrows_the_series_to_that_sport(self):
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.daily_load_totals", return_value=[]) as totals,
+        ):
+            analysis_service.get_fitness_series(
+                2,
+                _db(),
+                sport="bike",
+                from_date=date(2026, 10, 1),
+                to_date=date(2026, 10, 2),
+            )
+        assert totals.call_args.kwargs["sport"] == "bike"
+
+    def test_an_unknown_sport_is_refused(self):
+        with pytest.raises(core_exceptions.InvalidInputError):
+            analysis_service.get_fitness_series(2, _db(), sport="kitesurfing")
+
+    def test_an_inverted_range_is_refused(self):
+        with pytest.raises(core_exceptions.InvalidInputError):
+            analysis_service.get_fitness_series(2, _db(), from_date=date(2026, 10, 10), to_date=date(2026, 10, 1))
+
+    def test_no_loads_at_all_answers_a_flat_window(self):
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.daily_load_totals", return_value=[]),
+        ):
+            series = analysis_service.get_fitness_series(
+                2,
+                _db(),
+                from_date=date(2026, 10, 1),
+                to_date=date(2026, 10, 10),
+            )
+        assert len(series.points) == 10
+        assert all(point.load == 0.0 and point.chronic == 0.0 for point in series.points)

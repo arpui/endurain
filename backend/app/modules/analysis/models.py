@@ -1,6 +1,8 @@
 """SQLAlchemy ORM models for training load, thresholds and duration peaks."""
 
-from sqlalchemy import JSON, CheckConstraint, Float, ForeignKey, Integer, String, UniqueConstraint
+from datetime import date
+
+from sqlalchemy import JSON, CheckConstraint, Date, Float, ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 import modules.analysis.constants as analysis_constants
@@ -92,15 +94,27 @@ class ActivityLoad(Base):
     standard score beside a burst-sensitive one and compare them, and changing the
     threshold used is a recompute rather than a reinterpretation.
 
+    The athlete, the local calendar day and the sport group are copied onto the row
+    from the parent activity at measure time. They duplicate data the activities
+    module owns, and that is the point: the daily fitness series groups by them in
+    one indexed read of this table, without the analysis persistence reaching into
+    another module's models or every chart request re-reading the activity list. An
+    edit to what they derive from (start time, timezone, sport) re-measures the
+    activity, the same rule that keeps ``threshold_used`` honest.
+
     Attributes:
         activity_id: The activity this load belongs to (removed with it).
+        user_id: The activity's owner, copied for per-athlete aggregation.
         method: Which formula produced it.
         load: Stress in the shared scale (100 = one hour at threshold).
         intensity_factor: Intensity the load was derived from.
         threshold_used: Threshold value the formula divided by.
         duration_s: Active time the load was computed over, kept so a row can be
             re-derived without re-reading the activity.
-        created_at/updated_at: Row timestamps.
+        load_date: Calendar day the activity started in its own timezone (the day
+            the load lands on in the fitness series), ``None`` when the activity
+            carries no start time.
+        sport: Sport group of the activity's type, ``None`` when uncategorized.
     """
 
     __tablename__ = "analysis_activity_loads"
@@ -112,6 +126,7 @@ class ActivityLoad(Base):
             f"'{analysis_constants.LoadMethod.TRIMP}')",
             name="ck_analysis_activity_loads_method",
         ),
+        Index("ix_analysis_activity_loads_user_method_date", "user_id", "method", "load_date"),
     )
 
     activity_id: Mapped[int] = mapped_column(
@@ -119,6 +134,11 @@ class ActivityLoad(Base):
         primary_key=True,
         index=True,
         comment="Activity this load belongs to",
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        comment="Activity owner, copied so daily series aggregate in one read",
     )
     method: Mapped[str] = mapped_column(
         String(length=32),
@@ -144,6 +164,16 @@ class ActivityLoad(Base):
         Float,
         nullable=False,
         comment="Active time the load was computed over, in seconds",
+    )
+    load_date: Mapped[date | None] = mapped_column(
+        Date,
+        nullable=True,
+        comment="Calendar day the activity started, in its own timezone",
+    )
+    sport: Mapped[str | None] = mapped_column(
+        String(length=32),
+        nullable=True,
+        comment="Sport group of the activity type, when categorized",
     )
 
 

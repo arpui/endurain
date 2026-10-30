@@ -9,9 +9,12 @@ athlete holding the parameters every computation reads: the fatigue/fitness time
 constants, the primary load formula, and the thresholds (derived or typed) that a
 load is a fraction of. ``analysis_activity_loads`` is one row per (activity, formula)
 so the formulas coexist and a stored load keeps the threshold it was divided by --
-changing a threshold is a recompute, never a reinterpretation. ``analysis_duration_peaks``
-caches each athlete's best sustained average per sport and duration, which is both
-the duration-intensity curve and where a derived critical power comes from.
+changing a threshold is a recompute, never a reinterpretation. The owner, local
+calendar day and sport group are copied onto the row at measure time so the daily
+fitness series groups them in one indexed read; an edit to what they derive from
+re-measures the activity. ``analysis_duration_peaks`` caches each athlete's best
+sustained average per sport and duration, which is both the duration-intensity curve
+and where a derived critical power comes from.
 """
 
 from collections.abc import Sequence
@@ -94,6 +97,12 @@ def upgrade() -> None:
     op.create_table(
         "analysis_activity_loads",
         sa.Column("activity_id", sa.Integer(), nullable=False, comment="Activity this load belongs to"),
+        sa.Column(
+            "user_id",
+            sa.Integer(),
+            nullable=False,
+            comment="Activity owner, copied so daily series aggregate in one read",
+        ),
         sa.Column("method", sa.String(length=32), nullable=False, comment="Formula that produced this load"),
         sa.Column(
             "load",
@@ -109,7 +118,20 @@ def upgrade() -> None:
             nullable=False,
             comment="Active time the load was computed over, in seconds",
         ),
+        sa.Column(
+            "load_date",
+            sa.Date(),
+            nullable=True,
+            comment="Calendar day the activity started, in its own timezone",
+        ),
+        sa.Column(
+            "sport",
+            sa.String(length=32),
+            nullable=True,
+            comment="Sport group of the activity type, when categorized",
+        ),
         sa.ForeignKeyConstraint(["activity_id"], ["activities.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("activity_id", "method"),
         sa.CheckConstraint(f"method IN {_METHODS}", name="ck_analysis_activity_loads_method"),
     )
@@ -117,6 +139,12 @@ def upgrade() -> None:
         op.f("ix_analysis_activity_loads_activity_id"),
         "analysis_activity_loads",
         ["activity_id"],
+        unique=False,
+    )
+    op.create_index(
+        "ix_analysis_activity_loads_user_method_date",
+        "analysis_activity_loads",
+        ["user_id", "method", "load_date"],
         unique=False,
     )
 

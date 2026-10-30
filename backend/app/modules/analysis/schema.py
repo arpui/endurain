@@ -1,6 +1,7 @@
 """Pydantic schemas for training load, thresholds and analysis settings."""
 
 from collections.abc import Mapping
+from datetime import date as date_type
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 
@@ -107,6 +108,46 @@ class AnalysisSettingsUpdate(BaseModel):
     hr_threshold_bpm: StrictFloat | None = Field(default=None, ge=60, le=230)
     power_threshold_w: Mapping[StrictStr, StrictFloat | None] | None = None
     method_params: Mapping[StrictStr, StrictFloat] | None = None
+
+
+class FitnessPointRead(BaseModel):
+    """Serialized one-day point of the fitness/fatigue series.
+
+    Attributes:
+        date: The calendar day (the athlete's local day the activity started on).
+        load: Summed load of that day, in the shared scale.
+        acute: Fatigue: the exponentially weighted load with the acute time constant.
+        chronic: Fitness: the same with the chronic time constant.
+        balance: Form minus fatigue (fitness - fatigue), positive means fresh.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    date: date_type
+    load: StrictFloat
+    acute: StrictFloat
+    chronic: StrictFloat
+    balance: StrictFloat
+
+
+class FitnessSeriesRead(BaseModel):
+    """Serialized daily-load series with its parameters, so a chart can label itself.
+
+    Attributes:
+        method: Which formula's rows were summed.
+        acute_days: Fatigue time constant used.
+        chronic_days: Fitness time constant used.
+        sport: Sport group the series is limited to, ``None`` for all sports.
+        points: One point per consecutive day of the requested range.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    method: analysis_constants.LoadMethod
+    acute_days: StrictInt
+    chronic_days: StrictInt
+    sport: StrictStr | None
+    points: list[FitnessPointRead]
 
 
 class RecomputeQueued(BaseModel):
