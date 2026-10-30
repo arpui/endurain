@@ -134,6 +134,8 @@ def list_segments_for_activity(
     activity_id: int,
     requester_user_id: int,
     db: Session,
+    *,
+    direction: segments_schema.EffortDirectionFilter = segments_schema.EffortDirectionFilter.FORWARD,
 ) -> list[segments_schema.ActivitySegmentRead]:
     """List the segments one activity traversed, with its efforts on each.
 
@@ -141,6 +143,7 @@ def list_segments_for_activity(
         activity_id: The activity to read.
         requester_user_id: The user asking, used for the activity's privacy check.
         db: Database session.
+        direction: Which effort directions to include (both when ``ALL``).
 
     Returns:
         One entry per traversed segment, ordered by segment name.
@@ -150,7 +153,7 @@ def list_segments_for_activity(
     """
     if activity_integration.resolve_readable_parent(activity_id, requester_user_id, db) is None:
         raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
-    rows = segments_crud.list_efforts_for_activity_with_segments(activity_id, db)
+    rows = segments_crud.list_efforts_for_activity_with_segments(activity_id, db, direction=_kept_direction(direction))
     grouped: dict[int, segments_schema.ActivitySegmentRead] = {}
     for effort, segment in rows:
         entry = grouped.get(segment.id)
@@ -171,6 +174,7 @@ def list_segment_efforts(
     *,
     page_number: int,
     num_records: int,
+    direction: segments_schema.EffortDirectionFilter = segments_schema.EffortDirectionFilter.FORWARD,
 ) -> segments_schema.SegmentEffortPage:
     """List one segment's efforts limited to the requester's activities.
 
@@ -180,6 +184,7 @@ def list_segment_efforts(
         db: Database session.
         page_number: 1-based page number.
         num_records: Page size.
+        direction: Which effort directions to include (both when ``ALL``).
 
     Returns:
         One page of efforts (fastest first) with the matching total.
@@ -190,15 +195,29 @@ def list_segment_efforts(
     if segments_crud.get_segment_by_id(segment_id, db) is None:
         raise core_exceptions.NotFoundError(f"Segment {segment_id} not found")
     activity_ids = [activity.id for activity in activity_integration.list_user_activities(requester_user_id, db)]
+    kept = _kept_direction(direction)
     items = segments_crud.list_efforts_for_segment(
         segment_id,
         activity_ids,
         db,
         page_number=page_number,
         num_records=num_records,
+        direction=kept,
     )
-    total = segments_crud.count_efforts_for_segment(segment_id, activity_ids, db)
+    total = segments_crud.count_efforts_for_segment(segment_id, activity_ids, db, direction=kept)
     return segments_schema.SegmentEffortPage.build(items, total, page_number, num_records)
+
+
+def _kept_direction(direction: segments_schema.EffortDirectionFilter) -> str | None:
+    """Translate the query filter into the stored direction to keep.
+
+    Args:
+        direction: The requested directions.
+
+    Returns:
+        The direction value to filter on, or ``None`` when both are wanted.
+    """
+    return None if direction is segments_schema.EffortDirectionFilter.ALL else direction.value
 
 
 def match_activity(activity_id: int, db: Session) -> int:

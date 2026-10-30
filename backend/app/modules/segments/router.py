@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, Security, status
+from fastapi import APIRouter, Depends, Query, Request, Security, status
 from sqlalchemy.orm import Session
 
 import core.database as core_database
@@ -111,12 +111,20 @@ def list_segment_efforts(
     token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
     db: Annotated[Session, Depends(core_database.get_db)],
     page: Annotated[core_pagination.PageParams, Depends(core_pagination.child_page_params)],
+    direction: Annotated[segments_schema.EffortDirectionFilter, Query()] = (
+        segments_schema.EffortDirectionFilter.FORWARD
+    ),
 ) -> segments_schema.SegmentEffortPage:
-    """Return one page of the requester's efforts on the given segment, fastest first."""
+    """Return one page of the requester's efforts on the given segment, fastest first.
+
+    Reverse passes are stored for information only, so they are only listed when
+    asked for (``direction=reverse`` or ``direction=all``).
+    """
     return segments_service.list_segment_efforts(
         segment_id,
         token_user_id,
         db,
         page_number=page.page_number,
         num_records=page.num_records,
+        direction=direction,
     )

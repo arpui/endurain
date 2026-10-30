@@ -231,6 +231,53 @@ class TestSegmentEfforts:
         assert body["total"] == 1
         assert body["items"][0]["activity_id"] == 5
 
+    @patch("modules.segments.crud.count_efforts_for_segment")
+    @patch("modules.segments.crud.list_efforts_for_segment")
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.crud.get_segment_by_id")
+    def test_default_direction_is_forward(self, mock_get, mock_activities, mock_list, mock_count, mock_db):
+        from modules.segments import schema as segments_schema
+
+        mock_get.return_value = _segment_row()
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5)]
+        mock_list.return_value = [segments_schema.SegmentEffortRead.model_validate(_effort_row())]
+        mock_count.return_value = 1
+
+        response = TestClient(_build_app(mock_db)).get("/segments/1/efforts", headers={"Authorization": "Bearer x"})
+
+        assert response.status_code == 200
+        assert mock_list.call_args.kwargs["direction"] == "forward"
+
+    @patch("modules.segments.crud.count_efforts_for_segment")
+    @patch("modules.segments.crud.list_efforts_for_segment")
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.crud.get_segment_by_id")
+    def test_direction_all_reaches_the_queries_unfiltered(
+        self, mock_get, mock_activities, mock_list, mock_count, mock_db
+    ):
+        from modules.segments import schema as segments_schema
+
+        mock_get.return_value = _segment_row()
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5)]
+        mock_list.return_value = [segments_schema.SegmentEffortRead.model_validate(_effort_row())]
+        mock_count.return_value = 1
+
+        response = TestClient(_build_app(mock_db)).get(
+            "/segments/1/efforts?direction=all",
+            headers={"Authorization": "Bearer x"},
+        )
+
+        assert response.status_code == 200
+        assert mock_list.call_args.kwargs["direction"] is None
+        assert mock_count.call_args.kwargs["direction"] is None
+
+    def test_unknown_direction_is_rejected(self, mock_db):
+        response = TestClient(_build_app(mock_db)).get(
+            "/segments/1/efforts?direction=sideways",
+            headers={"Authorization": "Bearer x"},
+        )
+        assert response.status_code == 422
+
     @patch("modules.segments.crud.get_segment_by_id")
     def test_efforts_of_missing_segment_are_not_found(self, mock_get, mock_db):
         mock_get.return_value = None
@@ -257,6 +304,20 @@ class TestActivitySegments:
         assert body[0]["segment"]["id"] == 1
         assert len(body[0]["efforts"]) == 2
         assert "geometry" not in body[0]["segment"]
+
+    @patch("modules.segments.crud.list_efforts_for_activity_with_segments")
+    @patch("modules.segments.service.activity_integration")
+    def test_direction_param_reaches_the_read(self, mock_activities, mock_rows, mock_db):
+        mock_activities.resolve_readable_parent.return_value = SimpleNamespace(id=5)
+        mock_rows.return_value = []
+
+        response = TestClient(_build_app(mock_db)).get(
+            "/activities/5/segments?direction=all",
+            headers={"Authorization": "Bearer x"},
+        )
+
+        assert response.status_code == 200
+        assert mock_rows.call_args.kwargs["direction"] is None
 
     @patch("modules.segments.crud.list_efforts_for_activity_with_segments")
     @patch("modules.segments.service.activity_integration")

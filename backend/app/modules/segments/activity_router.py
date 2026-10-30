@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Security
+from fastapi import APIRouter, Depends, Query, Security
 from sqlalchemy.orm import Session
 
 import core.database as core_database
@@ -27,10 +27,14 @@ def list_activity_segments(
     ],
     token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
     db: Annotated[Session, Depends(core_database.get_db)],
+    direction: Annotated[segments_schema.EffortDirectionFilter, Query()] = (
+        segments_schema.EffortDirectionFilter.FORWARD
+    ),
 ) -> list[segments_schema.ActivitySegmentRead]:
     """Return the segments this activity traversed, with its efforts on each.
 
     Read scope follows the parent activity: these efforts belong to the
-    activity, and its privacy rules decide who may see them.
+    activity, and its privacy rules decide who may see them. Reverse passes are
+    included only on request (``direction=reverse`` or ``direction=all``).
     """
-    return segments_service.list_segments_for_activity(activity_id, token_user_id, db)
+    return segments_service.list_segments_for_activity(activity_id, token_user_id, db, direction=direction)

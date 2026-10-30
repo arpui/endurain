@@ -204,6 +204,52 @@ class TestSegmentEfforts:
 
         assert mock_crud.list_efforts_for_segment.call_args.args[1] == [5, 10]
 
+    @pytest.mark.parametrize(
+        ("direction", "expected"),
+        [
+            pytest.param("forward", "forward", id="forward"),
+            pytest.param("reverse", "reverse", id="reverse"),
+            pytest.param("all", None, id="both-directions"),
+        ],
+    )
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.service.segments_crud")
+    def test_effort_direction_filter_reaches_both_queries(self, mock_crud, mock_activities, direction, expected):
+        """The page and its total must be counted under the same filter."""
+        from modules.segments import schema as segments_schema
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_crud.get_segment_by_id.return_value = _segment_row()
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5)]
+        mock_crud.list_efforts_for_segment.return_value = []
+        mock_crud.count_efforts_for_segment.return_value = 0
+
+        service.list_segment_efforts(
+            1,
+            2,
+            db,
+            page_number=1,
+            num_records=10,
+            direction=segments_schema.EffortDirectionFilter(direction),
+        )
+
+        assert mock_crud.list_efforts_for_segment.call_args.kwargs["direction"] == expected
+        assert mock_crud.count_efforts_for_segment.call_args.kwargs["direction"] == expected
+
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.service.segments_crud")
+    def test_activity_view_defaults_to_counted_direction(self, mock_crud, mock_activities):
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_activities.resolve_readable_parent.return_value = SimpleNamespace(id=5)
+        mock_crud.list_efforts_for_activity_with_segments.return_value = []
+
+        service.list_segments_for_activity(5, 2, db)
+
+        assert mock_crud.list_efforts_for_activity_with_segments.call_args.kwargs["direction"] == "forward"
+
     @patch("modules.segments.service.activity_integration")
     @patch("modules.segments.service.segments_crud")
     def test_activity_view_groups_efforts_per_segment(self, mock_crud, mock_activities):

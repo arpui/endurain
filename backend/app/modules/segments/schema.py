@@ -1,11 +1,30 @@
 """Pydantic schemas for segments and segment efforts."""
 
 from datetime import datetime
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator
 
 import core.pagination as core_pagination
 import modules.segments.constants as segments_constants
+
+
+class EffortDirectionFilter(StrEnum):
+    """Query vocabulary selecting which effort directions to read.
+
+    ``ALL`` exists because a segment's stored reverse passes are real traverses
+    in the opposite direction, and a caller that wants them must ask: the
+    library pages default to ``FORWARD``, the direction that counts.
+
+    Attributes:
+        FORWARD: Only efforts that follow the stored geometry order.
+        REVERSE: Only efforts against it.
+        ALL: Both directions.
+    """
+
+    FORWARD = "forward"
+    REVERSE = "reverse"
+    ALL = "all"
 
 
 class SegmentImport(BaseModel):

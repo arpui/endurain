@@ -216,12 +216,15 @@ def activity_ids_with_efforts(activity_ids: Sequence[int], db: Session) -> set[i
 def list_efforts_for_activity_with_segments(
     activity_id: int,
     db: Session,
+    *,
+    direction: str | None = None,
 ) -> list[tuple[segments_models.SegmentEffort, segments_models.Segment]]:
     """List an activity's efforts joined with their segments.
 
     Args:
         activity_id: The activity to read.
         db: Database session.
+        direction: Keep only this direction, or ``None`` for both.
 
     Returns:
         ``(effort, segment)`` pairs ordered by segment name, then by time.
@@ -235,6 +238,8 @@ def list_efforts_for_activity_with_segments(
         .where(segments_models.SegmentEffort.activity_id == activity_id)
         .order_by(segments_models.Segment.name, segments_models.SegmentEffort.time_start)
     )
+    if direction is not None:
+        stmt = stmt.where(segments_models.SegmentEffort.direction == direction)
     return [(effort, segment) for effort, segment in db.execute(stmt).all()]
 
 
@@ -245,6 +250,7 @@ def list_efforts_for_segment(
     *,
     page_number: int,
     num_records: int,
+    direction: str | None = None,
 ) -> list[segments_schema.SegmentEffortRead]:
     """List one segment's efforts restricted to a set of activities, paginated.
 
@@ -256,6 +262,7 @@ def list_efforts_for_segment(
         db: Database session.
         page_number: 1-based page number.
         num_records: Page size.
+        direction: Keep only this direction, or ``None`` for both.
 
     Returns:
         The page of efforts, fastest first.
@@ -272,17 +279,26 @@ def list_efforts_for_segment(
         .offset((page_number - 1) * num_records)
         .limit(num_records)
     )
+    if direction is not None:
+        stmt = stmt.where(segments_models.SegmentEffort.direction == direction)
     efforts: list[segments_models.SegmentEffort] = list(db.scalars(stmt).all())
     return [segments_schema.SegmentEffortRead.model_validate(effort) for effort in efforts]
 
 
-def count_efforts_for_segment(segment_id: int, activity_ids: Sequence[int], db: Session) -> int:
+def count_efforts_for_segment(
+    segment_id: int,
+    activity_ids: Sequence[int],
+    db: Session,
+    *,
+    direction: str | None = None,
+) -> int:
     """Count one segment's efforts within a set of activities.
 
     Args:
         segment_id: The segment to count.
         activity_ids: Activities to include (empty short-circuits).
         db: Database session.
+        direction: Keep only this direction, or ``None`` for both.
 
     Returns:
         The matching effort count.
@@ -297,4 +313,6 @@ def count_efforts_for_segment(segment_id: int, activity_ids: Sequence[int], db: 
             segments_models.SegmentEffort.activity_id.in_(activity_ids),
         )
     )
+    if direction is not None:
+        stmt = stmt.where(segments_models.SegmentEffort.direction == direction)
     return int(db.scalar(stmt) or 0)
