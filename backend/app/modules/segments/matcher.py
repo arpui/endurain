@@ -12,9 +12,9 @@ The algorithm:
    around), or at a time gap (the activity left and came back).
 3. Accept a pass as a real traverse when it covers at least
    :data:`COVERAGE_MIN` of the segment's index span, classify its direction by
-   the majority sign of the smoothed index steps, and bracket it: the effort
-   starts at the first waypoint already near the segment start and ends at the
-   first later waypoint that has reached the segment end.
+   the majority sign of the smoothed index steps, and bracket it on the pass's
+   own extremes: from the first waypoint at the near end of the segment to the
+   first later waypoint reaching the far end the athlete actually attained.
 4. Reject implausibly fast passes (:data:`MAX_SPEED_MPS`).
 
 Pass splitting works on *positions within the candidate list*, never on
@@ -276,22 +276,20 @@ def match_segment_passes(
             else segments_constants.SegmentDirection.REVERSE
         )
 
-        # Bracket inside the pass: the effort runs from the segment's start to
-        # its end, mirrored for a reverse pass, which begins at the geometry's
-        # far end. Measuring from the wrong edge would understate the elapsed
+        # Bracket inside the pass: from the first waypoint at the end of the
+        # segment the athlete entered from, to the first later waypoint reaching
+        # the farthest point along the segment they attained. The pass's own
+        # extremes, not fixed fractions of the stored geometry: a traverse that
+        # stops short of the polyline's last metres still gets the time it really
+        # took, which is how the elapsed reads against the sources that also
+        # report it. Measuring from the wrong edge would understate the elapsed
         # time and trip the plausibility filter below.
-        low_i = max(2, int(0.05 * (n_seg - 1)))
-        high_i = math.ceil(0.95 * (n_seg - 1))
-        if direction is segments_constants.SegmentDirection.REVERSE:
-            entry_sel = pos[j_pass >= high_i]
-            i_start = int(cand[entry_sel].min()) if entry_sel.size else int(cand[pos[0]])
-            exit_sel = pos[(act_idx > i_start) & (j_pass <= low_i)]
-            i_end = int(cand[exit_sel].min()) if exit_sel.size else int(cand[pos[-1]])
-        else:
-            entry_sel = pos[j_pass <= low_i]
-            i_start = int(cand[entry_sel].min()) if entry_sel.size else int(cand[pos[0]])
-            exit_sel = pos[(act_idx > i_start) & (j_pass >= high_i)]
-            i_end = int(cand[exit_sel].min()) if exit_sel.size else int(cand[pos[-1]])
+        near_is_min = direction is segments_constants.SegmentDirection.FORWARD
+        near_j = int(j_pass.min()) if near_is_min else int(j_pass.max())
+        far_j = int(j_pass.max()) if near_is_min else int(j_pass.min())
+        i_start = int(cand[pos[j_pass == near_j]].min())
+        exit_sel = pos[(act_idx > i_start) & (j_pass == far_j)]
+        i_end = int(cand[exit_sel].min()) if exit_sel.size else int(cand[pos[-1]])
 
         t_start, t_end = times[i_start], times[i_end]
         dt = (t_end - t_start).total_seconds()
