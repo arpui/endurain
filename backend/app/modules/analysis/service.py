@@ -1137,6 +1137,10 @@ def _normalize_lap_economy(
     for entry in dynamics:
         if entry.stride_length_m is None or entry.avg_power_w is None or entry.avg_power_w <= 0:
             continue
+        # a recovery cycle carries no useful form signal: at walking intensity the
+        # ratio only measures how little power was applied, so those laps read blank
+        if threshold_w is not None and entry.avg_power_w < 0.70 * threshold_w:
+            continue
         intensity = entry.avg_power_w / threshold_w if threshold_w else 1.0
         entry.economy = round(entry.stride_length_m / intensity / baseline, 2)
 
