@@ -350,3 +350,36 @@ class TestBestSplitTimes:
             )
             == {}
         )
+
+
+class TestBestSplitSpeedCeiling:
+    def test_gps_jitter_faster_than_world_record_pace_is_rejected(self):
+        seconds = 200
+        elapsed = [index * 1.0 for index in range(seconds)]
+        distance = [15.0 * index for index in range(seconds)]  # 15 m/s: GPS jump, not a runner
+        power = [220.0] * seconds
+        altitude = [0.0] * seconds
+        splits = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(100, 400),
+        )
+        assert splits == {}
+
+    def test_a_honest_short_split_still_passes(self):
+        # 100 m in 13 s is 7,7 m/s: under the ceiling, so it counts
+        seconds = 20
+        elapsed = [index * 1.0 for index in range(seconds)]
+        distance = [7.7 * index for index in range(seconds)]
+        power = [500.0] * seconds
+        altitude = [0.0] * seconds
+        splits = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(100,),
+        )
+        assert splits[100][0] == pytest.approx(13.0, abs=1.0)

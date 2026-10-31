@@ -349,6 +349,7 @@ def best_split_times(
             else analysis_constants.BT_MIN_GRADE_PCT_SHORT
         )
         valid &= spans > 0.0
+        valid &= distance / spans <= analysis_constants.BT_MAX_SPEED_MS
         valid &= grades >= min_grade
         if not valid.any():
             continue

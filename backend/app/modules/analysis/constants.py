@@ -102,6 +102,10 @@ BT_MIN_GRADE_PCT = -1.0
 BT_SHORT_MIN_M = 800
 BT_MIN_GRADE_PCT_SHORT = -2.0
 
+#: Split average speed ceiling (m/s), above the 100 m world record pace: GPS jitter
+#: briefly "covers" a distance in an impossible time, and no wattage backs it up.
+BT_MAX_SPEED_MS = 8.0
+
 #: Activities that must contribute peaks before a derived threshold is trusted.
 #: One activity alone fits a curve through its own samples only, which invented a
 #: 202 W threshold from a single walk.
