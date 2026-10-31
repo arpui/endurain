@@ -4,9 +4,9 @@
   "loadFailed": "Ni bilo mogoče naložiti treningovne obremenitve",
   "window": {
     "label": "Obdobje",
-    "30": "Zadnjih 30 dni",
-    "90": "Zadnjih 90 dni",
-    "365": "Zadnje leto"
+    "30": "30 dni",
+    "90": "90 dni",
+    "365": "365 dni"
   },
   "method": {
     "label": "Obrazec obremenitve",
@@ -23,7 +23,8 @@
     "title": "Forma in utrujenost",
     "seriesFitness": "Forma",
     "seriesFatigue": "Utrujenost",
-    "seriesForm": "Svežina"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Dnevna obremenitev",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP uporablja drugo lestvico kot drugi obrazci in se nikoli ne prišteva k njim."
   },
   "stats": {
-    "windowTotal": "Skupna obremenitev"
+    "windowTotal": "Skupna obremenitev",
+    "dailyAvg": "Povpr. obremenitev/dan"
   },
   "empty": {
     "title": "Še ni izmerjenih obremenitev",
@@ -65,7 +67,9 @@
     "recompute": "Preračunaj vse obremenitve",
     "refreshQueued": "Osvežitev pragov v vrsti",
     "recomputeQueued": "Preračun v vrsti",
-    "failed": "Zahteve ni bilo mogoče uvrstiti v vrsto"
+    "failed": "Zahteve ni bilo mogoče uvrstiti v vrsto",
+    "refreshHint": "Ponovno izpelje CP/W′ in prag utripa iz vaših podatkov; ročne vrednosti ostanejo.",
+    "recomputeHint": "Znova izmeri vse aktivnosti z trenutnimi pragovi in obrazcem; naredite po spremembi."
   },
   "sections": "Razdelki analize",
   "sectionLoad": "Treningovna obremenitev",

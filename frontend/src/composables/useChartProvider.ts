@@ -27,6 +27,12 @@ export interface ChartSeries {
    * without dashed support fall back to a solid line.
    */
   dashed?: boolean
+  /**
+   * Renders the series as a solid line overlay on a bar chart (mixed chart),
+   * e.g. the fitness curves over daily load bars. Ignored on line/area charts,
+   * where every series is already a line.
+   */
+  line?: boolean
 }
 
 /** Options controlling a single chart render. */

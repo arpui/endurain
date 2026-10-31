@@ -4,9 +4,9 @@
   "loadFailed": "Din træningsbelastning kunne ikke indlæses",
   "window": {
     "label": "Periode",
-    "30": "Sidste 30 dage",
-    "90": "Sidste 90 dage",
-    "365": "Sidste år"
+    "30": "30 dage",
+    "90": "90 dage",
+    "365": "365 dage"
   },
   "method": {
     "label": "Belastningsformel",
@@ -23,7 +23,8 @@
     "title": "Form og træthed",
     "seriesFitness": "Form",
     "seriesFatigue": "Træthed",
-    "seriesForm": "Friskhed"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Daglig belastning",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP bruger en anden skala end de andre formler og lægges aldrig sammen med dem."
   },
   "stats": {
-    "windowTotal": "Samlet belastning"
+    "windowTotal": "Samlet belastning",
+    "dailyAvg": "Gns. belastning/dag"
   },
   "empty": {
     "title": "Endnu ingen målt belastning",
@@ -65,7 +67,9 @@
     "recompute": "Genberegn alle belastninger",
     "refreshQueued": "Opdatering af tærskler sat i kø",
     "recomputeQueued": "Genberegning sat i kø",
-    "failed": "Anmodningen kunne ikke sættes i kø"
+    "failed": "Anmodningen kunne ikke sættes i kø",
+    "refreshHint": "Genafleder CP/W′ og tærskelpuls fra dine data; manuelle værdier bevares.",
+    "recomputeHint": "Genmåler alle aktiviteter med nuværende tærskler og formel; gøres efter en ændring."
   },
   "sections": "Analyseafsnit",
   "sectionLoad": "Træningsbelastning",

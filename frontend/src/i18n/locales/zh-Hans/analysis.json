@@ -4,9 +4,9 @@
   "loadFailed": "无法加载训练负荷",
   "window": {
     "label": "时间范围",
-    "30": "最近 30 天",
-    "90": "最近 90 天",
-    "365": "最近一年"
+    "30": "30 天",
+    "90": "90 天",
+    "365": "365 天"
   },
   "method": {
     "label": "负荷公式",
@@ -23,7 +23,8 @@
     "title": "体能与疲劳",
     "seriesFitness": "体能",
     "seriesFatigue": "疲劳",
-    "seriesForm": "状态"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "每日负荷",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP 使用与其他公式不同的量表，不会与它们相加。"
   },
   "stats": {
-    "windowTotal": "负荷总计"
+    "windowTotal": "负荷总计",
+    "dailyAvg": "日均负荷"
   },
   "empty": {
     "title": "尚未测量任何负荷",
@@ -65,7 +67,9 @@
     "recompute": "重新计算全部负荷",
     "refreshQueued": "阈值刷新已排队",
     "recomputeQueued": "重新计算已排队",
-    "failed": "无法提交请求"
+    "failed": "无法提交请求",
+    "refreshHint": "从你的数据重新推导 CP/W′ 和阈值心率；手动值会保留。",
+    "recomputeHint": "用当前阈值与公式重新测量全部活动；修改后请执行。"
   },
   "sections": "分析板块",
   "sectionLoad": "训练负荷",

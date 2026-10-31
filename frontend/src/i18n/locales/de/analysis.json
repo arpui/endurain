@@ -4,9 +4,9 @@
   "loadFailed": "Trainingsbelastung konnte nicht geladen werden",
   "window": {
     "label": "Zeitraum",
-    "30": "Letzte 30 Tage",
-    "90": "Letzte 90 Tage",
-    "365": "Letztes Jahr"
+    "30": "30 Tage",
+    "90": "90 Tage",
+    "365": "365 Tage"
   },
   "method": {
     "label": "Belastungsformel",
@@ -23,7 +23,8 @@
     "title": "Fitness und Ermüdung",
     "seriesFitness": "Fitness",
     "seriesFatigue": "Ermüdung",
-    "seriesForm": "Form"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Tägliche Belastung",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP nutzt eine andere Skala als die anderen Formeln und wird nie mit ihnen addiert."
   },
   "stats": {
-    "windowTotal": "Gesamtbelastung"
+    "windowTotal": "Gesamtbelastung",
+    "dailyAvg": "Ø Belastung/Tag"
   },
   "empty": {
     "title": "Noch keine Belastung gemessen",
@@ -65,7 +67,9 @@
     "recompute": "Alle Belastungen neu berechnen",
     "refreshQueued": "Aktualisierung der Schwellenwerte eingereiht",
     "recomputeQueued": "Neberechnung eingereiht",
-    "failed": "Anfrage konnte nicht gestartet werden"
+    "failed": "Anfrage konnte nicht gestartet werden",
+    "refreshHint": "Leitet CP/W′ und Schwellen-HF neu aus deinen Daten ab; manuelle Werte bleiben erhalten.",
+    "recomputeHint": "Misst alle Aktivitäten mit den aktuellen Schwellen und Formeln neu – nach einer Änderung ausführen."
   },
   "sections": "Analysebereiche",
   "sectionLoad": "Trainingsbelastung",

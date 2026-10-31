@@ -4,9 +4,9 @@
   "loadFailed": "Nepodařilo se načíst tréninkové zatížení",
   "window": {
     "label": "Období",
-    "30": "Posledních 30 dní",
-    "90": "Posledních 90 dní",
-    "365": "Poslední rok"
+    "30": "30 dní",
+    "90": "90 dní",
+    "365": "365 dní"
   },
   "method": {
     "label": "Vzorec zatížení",
@@ -23,7 +23,8 @@
     "title": "Forma a únava",
     "seriesFitness": "Forma",
     "seriesFatigue": "Únava",
-    "seriesForm": "Svěžest"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Denní zatížení",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP používá jinou škálu než ostatní vzorce a nikdy se k nim nepřičítá."
   },
   "stats": {
-    "windowTotal": "Celkové zatížení"
+    "windowTotal": "Celkové zatížení",
+    "dailyAvg": "Prům. zatížení/den"
   },
   "empty": {
     "title": "Zatím žádné změřené zatížení",
@@ -65,7 +67,9 @@
     "recompute": "Přepočítat všechna zatížení",
     "refreshQueued": "Obnova prahů ve frontě",
     "recomputeQueued": "Přepočet ve frontě",
-    "failed": "Nepodařilo se zadat požadavek"
+    "failed": "Nepodařilo se zadat požadavek",
+    "refreshHint": "Znovu odvodí CP/W′ a prahový tep z tvých dat; ručně zadané hodnoty zůstávají.",
+    "recomputeHint": "Přepočítá všechny aktivity aktuálními prahy a vzorcem — proveď po změně."
   },
   "sections": "Sekce analýzy",
   "sectionLoad": "Tréninkové zatížení",

@@ -189,18 +189,33 @@ function queueRecompute(): void {
   <Card class="flex min-w-0 flex-col gap-4">
     <h3 class="text-card-heading">{{ t('analysis.settings.title') }}</h3>
 
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      <FormField :label="t('analysis.settings.acuteDays')">
+    <div class="flex flex-wrap items-end gap-2">
+      <FormField :label="t('analysis.settings.acuteDays')" class="w-20">
         <template #default="{ fieldId }">
           <Input :id="fieldId" v-model="parameters.acuteDays" type="number" min="1" max="180" />
         </template>
       </FormField>
-      <FormField :label="t('analysis.settings.chronicDays')">
+      <FormField :label="t('analysis.settings.chronicDays')" class="w-20">
         <template #default="{ fieldId }">
           <Input :id="fieldId" v-model="parameters.chronicDays" type="number" min="1" max="365" />
         </template>
       </FormField>
-      <FormField :label="t('analysis.settings.primaryMethod')">
+      <FormField :label="t('analysis.settings.restingHr')" class="w-20">
+        <template #default="{ fieldId }">
+          <Input :id="fieldId" v-model="parameters.restingHr" type="number" min="20" max="120" />
+        </template>
+      </FormField>
+      <FormField :label="t('analysis.settings.fitFromS')" class="w-20">
+        <template #default="{ fieldId }">
+          <Input :id="fieldId" v-model="parameters.fitFromS" type="number" min="10" max="7200" />
+        </template>
+      </FormField>
+      <FormField :label="t('analysis.settings.fitToS')" class="w-20">
+        <template #default="{ fieldId }">
+          <Input :id="fieldId" v-model="parameters.fitToS" type="number" min="30" max="21600" />
+        </template>
+      </FormField>
+      <FormField :label="t('analysis.settings.primaryMethod')" class="w-56">
         <template #default="{ fieldId }">
           <Select v-model="parameters.primaryMethod" :aria-labelledby="fieldId">
             <option v-for="method in LOAD_METHODS" :key="method" :value="method">
@@ -209,23 +224,6 @@ function queueRecompute(): void {
           </Select>
         </template>
       </FormField>
-      <FormField :label="t('analysis.settings.fitFromS')">
-        <template #default="{ fieldId }">
-          <Input :id="fieldId" v-model="parameters.fitFromS" type="number" min="10" max="7200" />
-        </template>
-      </FormField>
-      <FormField :label="t('analysis.settings.fitToS')">
-        <template #default="{ fieldId }">
-          <Input :id="fieldId" v-model="parameters.fitToS" type="number" min="30" max="21600" />
-        </template>
-      </FormField>
-      <FormField :label="t('analysis.settings.restingHr')">
-        <template #default="{ fieldId }">
-          <Input :id="fieldId" v-model="parameters.restingHr" type="number" min="20" max="120" />
-        </template>
-      </FormField>
-    </div>
-    <div class="flex justify-start">
       <Button :disabled="!parametersDirty || saveMutation.isPending.value" @click="saveParameters">
         {{ t('analysis.settings.save') }}
       </Button>
@@ -255,7 +253,7 @@ function queueRecompute(): void {
           <Input
             v-model="overrides[sport]"
             type="number"
-            class="w-24"
+            class="w-20"
             :placeholder="t('analysis.settings.thresholds.wattsPlaceholder')"
           />
           <Button
@@ -289,7 +287,7 @@ function queueRecompute(): void {
         <Input
           v-model="newWatts"
           type="number"
-          class="w-24"
+          class="w-20"
           :placeholder="t('analysis.settings.thresholds.wattsPlaceholder')"
         />
         <Button
@@ -317,7 +315,7 @@ function queueRecompute(): void {
         <Input
           v-model="hrOverride"
           type="number"
-          class="w-24"
+          class="w-20"
           :placeholder="t('analysis.settings.thresholds.bpmPlaceholder')"
         />
         <Button
@@ -339,14 +337,24 @@ function queueRecompute(): void {
       </div>
     </div>
 
-    <div class="flex flex-wrap gap-2 border-t border-border pt-4">
-      <Button variant="ghost" :disabled="refreshMutation.isPending.value" @click="queueRefresh">
-        <RefreshCw class="size-4" aria-hidden="true" />
-        {{ t('analysis.actions.refreshThresholds') }}
-      </Button>
-      <Button variant="ghost" :disabled="recomputeMutation.isPending.value" @click="queueRecompute">
-        {{ t('analysis.actions.recompute') }}
-      </Button>
+    <div class="flex flex-col gap-2 border-t border-border pt-4">
+      <div class="flex flex-wrap gap-2">
+        <Button variant="ghost" :disabled="refreshMutation.isPending.value" @click="queueRefresh">
+          <RefreshCw class="size-4" aria-hidden="true" />
+          {{ t('analysis.actions.refreshThresholds') }}
+        </Button>
+        <p class="text-xs text-muted-foreground">{{ t('analysis.actions.refreshHint') }}</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <Button
+          variant="ghost"
+          :disabled="recomputeMutation.isPending.value"
+          @click="queueRecompute"
+        >
+          {{ t('analysis.actions.recompute') }}
+        </Button>
+        <p class="text-xs text-muted-foreground">{{ t('analysis.actions.recomputeHint') }}</p>
+      </div>
     </div>
   </Card>
 </template>

@@ -4,9 +4,9 @@
   "loadFailed": "Nu s-a putut încărca încărcarea de antrenament",
   "window": {
     "label": "Perioadă",
-    "30": "Ultimele 30 de zile",
-    "90": "Ultimele 90 de zile",
-    "365": "Ultimul an"
+    "30": "30 de zile",
+    "90": "90 de zile",
+    "365": "365 de zile"
   },
   "method": {
     "label": "Formula de încărcare",
@@ -23,7 +23,8 @@
     "title": "Formă și oboseală",
     "seriesFitness": "Formă",
     "seriesFatigue": "Oboseală",
-    "seriesForm": "Prospețime"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Încărcare zilnică",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP folosește o scală diferită de celelalte formule și nu se adună niciodată cu acestea."
   },
   "stats": {
-    "windowTotal": "Încărcare totală"
+    "windowTotal": "Încărcare totală",
+    "dailyAvg": "Încărcare medie/zi"
   },
   "empty": {
     "title": "Nicio încărcare măsurată încă",
@@ -65,7 +67,9 @@
     "recompute": "Recalculează toate încărcările",
     "refreshQueued": "Actualizarea pragurilor a fost pusă în coadă",
     "recomputeQueued": "Recalcularea a fost pusă în coadă",
-    "failed": "Cererea nu a putut fi trimisă"
+    "failed": "Cererea nu a putut fi trimisă",
+    "refreshHint": "Re-derivă CP/W′ și pragul de puls din datele tale; valorile manuale se păstrează.",
+    "recomputeHint": "Re-măsoară toate activitățile cu pragurile și formula actuale — fă-o după o modificare."
   },
   "sections": "Secțiuni de analiză",
   "sectionLoad": "Încărcare de antrenament",

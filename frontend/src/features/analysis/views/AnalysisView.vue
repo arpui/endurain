@@ -17,7 +17,6 @@ import {
 } from '@/features/analysis/composables/useAnalysis'
 import { LOAD_METHODS, SPORT_GROUPS } from '@/features/analysis/constants'
 import { toIsoDate } from '@/utils/datetime'
-import AnalysisDailyLoadChart from '@/features/analysis/components/AnalysisDailyLoadChart.vue'
 import AnalysisPmcChart from '@/features/analysis/components/AnalysisPmcChart.vue'
 import AnalysisSettingsCard from '@/features/analysis/components/AnalysisSettingsCard.vue'
 
@@ -61,7 +60,12 @@ const fitnessQuery = useFitnessSeriesQuery(seriesQuery)
 
 const points = computed<FitnessPoint[]>(() => fitnessQuery.data.value?.points ?? [])
 const latest = computed<FitnessPoint | undefined>(() => points.value[points.value.length - 1])
-const windowTotal = computed(() => points.value.reduce((sum, point) => sum + point.load, 0))
+/** Average daily load over the plotted window (total load alone invites misreading). */
+const dailyAverage = computed(() =>
+  points.value.length === 0
+    ? 0
+    : points.value.reduce((sum, point) => sum + point.load, 0) / points.value.length,
+)
 
 /** The window has no measured activity at all (nothing to plot yet). */
 const isEmpty = computed(
@@ -86,8 +90,15 @@ const stats = computed<StatRow[]>(() => [
   },
   { key: 'analysis.pmc.seriesFatigue', value: latest.value?.acute, color: 'var(--color-hr)' },
   { key: 'analysis.pmc.seriesForm', value: latest.value?.balance, color: 'var(--color-info)' },
-  { key: 'analysis.stats.windowTotal', value: windowTotal.value, color: 'var(--color-brand)' },
+  { key: 'analysis.stats.dailyAvg', value: dailyAverage.value, color: 'var(--color-brand)' },
 ])
+
+/** Parameters the server actually used, so the chart can label itself. */
+const seriesParams = computed(() => ({
+  method: fitnessQuery.data.value?.method ?? method.value,
+  acuteDays: fitnessQuery.data.value?.acuteDays ?? 0,
+  chronicDays: fitnessQuery.data.value?.chronicDays ?? 0,
+}))
 </script>
 
 <template>
@@ -124,7 +135,7 @@ const stats = computed<StatRow[]>(() => [
       <Select
         v-model="windowDays"
         :aria-label="t('analysis.window.label')"
-        class="w-32"
+        class="w-28"
         @change="applyQuery"
       >
         <option v-for="days in WINDOW_OPTIONS" :key="days" :value="days">
@@ -134,7 +145,7 @@ const stats = computed<StatRow[]>(() => [
       <Select
         v-model="method"
         :aria-label="t('analysis.method.label')"
-        class="w-48"
+        class="w-64"
         @change="applyQuery"
       >
         <option v-for="option in LOAD_METHODS" :key="option" :value="option">
@@ -144,7 +155,7 @@ const stats = computed<StatRow[]>(() => [
       <Select
         v-model="sport"
         :aria-label="t('analysis.sport.label')"
-        class="w-40"
+        class="w-52"
         @change="applyQuery"
       >
         <option value="">{{ t('analysis.sport.all') }}</option>
@@ -179,8 +190,12 @@ const stats = computed<StatRow[]>(() => [
         :description="t('analysis.empty.description')"
       />
       <template v-else>
-        <AnalysisPmcChart :points="points" />
-        <AnalysisDailyLoadChart :points="points" :method="method" />
+        <AnalysisPmcChart
+          :points="points"
+          :method="seriesParams.method"
+          :acute-days="seriesParams.acuteDays"
+          :chronic-days="seriesParams.chronicDays"
+        />
       </template>
     </template>
 

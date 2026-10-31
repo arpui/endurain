@@ -4,9 +4,9 @@
   "loadFailed": "Kunne ikke laste treningsbelastningen",
   "window": {
     "label": "Periode",
-    "30": "Siste 30 dager",
-    "90": "Siste 90 dager",
-    "365": "Siste år"
+    "30": "30 dager",
+    "90": "90 dager",
+    "365": "365 dager"
   },
   "method": {
     "label": "Belastningsformel",
@@ -23,7 +23,8 @@
     "title": "Form og tretthet",
     "seriesFitness": "Form",
     "seriesFatigue": "Tretthet",
-    "seriesForm": "Friskhet"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Daglig belastning",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP bruker en annen skala enn de andre formlene og legges aldri sammen med dem."
   },
   "stats": {
-    "windowTotal": "Total belastning"
+    "windowTotal": "Total belastning",
+    "dailyAvg": "Snitt belastning/dag"
   },
   "empty": {
     "title": "Ingen belastning målt ennå",
@@ -65,7 +67,9 @@
     "recompute": "Regn ut alle belastninger på nytt",
     "refreshQueued": "Oppdatering av terskler lagt i kø",
     "recomputeQueued": "Ny utregning lagt i kø",
-    "failed": "Kunne ikke legge forespørselen i kø"
+    "failed": "Kunne ikke legge forespørselen i kø",
+    "refreshHint": "Ledter CP/W′ og terskelpuls på nytt fra dataene dine; manuelle verdier beholdes.",
+    "recomputeHint": "Måler alle aktiviteter på nytt med gjeldende terskler og formel; gjør dette etter en endring."
   },
   "sections": "Analyseområder",
   "sectionLoad": "Treningsbelastning",

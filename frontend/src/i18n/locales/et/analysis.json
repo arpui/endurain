@@ -4,9 +4,9 @@
   "loadFailed": "Treeningskoormuse laadimine ebaõnnestus",
   "window": {
     "label": "Ajavahemik",
-    "30": "Viimased 30 päeva",
-    "90": "Viimased 90 päeva",
-    "365": "Viimane aasta"
+    "30": "30 päeva",
+    "90": "90 päeva",
+    "365": "365 päeva"
   },
   "method": {
     "label": "Koormuse valem",
@@ -23,7 +23,8 @@
     "title": "Vorm ja väsimus",
     "seriesFitness": "Vorm",
     "seriesFatigue": "Väsimus",
-    "seriesForm": "Värskus"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Päevane koormus",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP kasutab teistest valemitest erinevat skaalat ega liideta nendega."
   },
   "stats": {
-    "windowTotal": "Koormus kokku"
+    "windowTotal": "Koormus kokku",
+    "dailyAvg": "Keskmine koormus/päev"
   },
   "empty": {
     "title": "Koormusi pole veel mõõdetud",
@@ -65,7 +67,9 @@
     "recompute": "Arvuta kõik koormused uuesti",
     "refreshQueued": "Lävede värskendus järjekorras",
     "recomputeQueued": "Ülearvutus järjekorras",
-    "failed": "Päringut ei saanud käivitada"
+    "failed": "Päringut ei saanud käivitada",
+    "refreshHint": "Tuletab CP/W′ ja lävepulsi uuesti Sinu andmetest; käsitsi sisestatud väärtused jäävad.",
+    "recomputeHint": "Mõõdab kõik tegevused uuesti praeguste lävede ja valemiga; tee seda pärast muutmist."
   },
   "sections": "Analüüsi jaotised",
   "sectionLoad": "Treeningskoormus",

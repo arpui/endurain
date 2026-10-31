@@ -4,9 +4,9 @@
   "loadFailed": "Neizdevās ielādēt trenerācijas slodzi",
   "window": {
     "label": "Laika posms",
-    "30": "Pēdējās 30 dienas",
-    "90": "Pēdējās 90 dienas",
-    "365": "Pēdējais gads"
+    "30": "30 dienas",
+    "90": "90 dienas",
+    "365": "365 dienas"
   },
   "method": {
     "label": "Slodzes formula",
@@ -23,7 +23,8 @@
     "title": "Forma un nogurums",
     "seriesFitness": "Forma",
     "seriesFatigue": "Nogurums",
-    "seriesForm": "Svaigums"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Dienas slodze",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP izmanto citu skalu nekā pārējās formulas, un tas nekad netiek saskaitīts ar tām."
   },
   "stats": {
-    "windowTotal": "Kopējā slodze"
+    "windowTotal": "Kopējā slodze",
+    "dailyAvg": "Vid. slodze/dienā"
   },
   "empty": {
     "title": "Vēl nav izmērītu slodžu",
@@ -65,7 +67,9 @@
     "recompute": "Pārrēķināt visas slodzes",
     "refreshQueued": "Sliekšņu atjaunināšana ierindota",
     "recomputeQueued": "Pārrēķināšana ierindota",
-    "failed": "Neizdevās palaist pieprasījumu"
+    "failed": "Neizdevās palaist pieprasījumu",
+    "refreshHint": "Atvasina CP/W′ un sliekšņa pulsu no jūsu datiņiem; manuālās vērtības saglabājas.",
+    "recomputeHint": "Pārmēra visas aktivitātes ar pašreizējiem sliekšņiem un formulu; dariet to pēc maiņas."
   },
   "sections": "Analīzes sadaļas",
   "sectionLoad": "Trenerācijas slodze",

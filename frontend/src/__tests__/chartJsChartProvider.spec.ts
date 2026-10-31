@@ -67,6 +67,26 @@ describe('buildChartConfiguration', () => {
     expect(datasets[1]?.pointRadius).toBe(0)
   })
 
+  it('renders a line series as a solid overlay on a bar chart', () => {
+    const config = buildChartConfiguration({
+      kind: 'bar',
+      series: [
+        { label: 'Fitness', data: [40, 44], line: true },
+        { label: 'Load', data: [80, 120] },
+      ],
+    })
+
+    expect(config.type).toBe('bar')
+    const datasets = config.data.datasets as unknown as Record<string, unknown>[]
+    // The line overlay is a solid line: no dash, no fill, smoothed.
+    expect(datasets[0]?.type).toBe('line')
+    expect(datasets[0]?.borderDash).toBeUndefined()
+    expect(datasets[0]?.fill).toBe(false)
+    expect(datasets[0]?.tension).toBe(0.3)
+    // The plain series keeps the bar geometry.
+    expect(datasets[1]?.type).toBeUndefined()
+  })
+
   it('assigns palette colours by series index and honours explicit colours', () => {
     const config = buildChartConfiguration({
       kind: 'line',

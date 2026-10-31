@@ -4,9 +4,9 @@
   "loadFailed": "無法載入訓練負荷",
   "window": {
     "label": "時間範圍",
-    "30": "最近 30 天",
-    "90": "最近 90 天",
-    "365": "最近一年"
+    "30": "30 天",
+    "90": "90 天",
+    "365": "365 天"
   },
   "method": {
     "label": "負荷公式",
@@ -23,7 +23,8 @@
     "title": "體能與疲勞",
     "seriesFitness": "體能",
     "seriesFatigue": "疲勞",
-    "seriesForm": "狀態"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "每日負荷",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP 使用與其他公式不同的量尺，不會與它們相加。"
   },
   "stats": {
-    "windowTotal": "負荷總計"
+    "windowTotal": "負荷總計",
+    "dailyAvg": "日均負荷"
   },
   "empty": {
     "title": "尚未測量任何負荷",
@@ -65,7 +67,9 @@
     "recompute": "重新計算全部負荷",
     "refreshQueued": "閾值重新整理已排隊",
     "recomputeQueued": "重新計算已排隊",
-    "failed": "無法提交請求"
+    "failed": "無法提交請求",
+    "refreshHint": "從你的數據重新推導 CP/W′ 和閾值心率；手動值會保留。",
+    "recomputeHint": "用目前閾值與公式重新測量全部活動；修改後請執行。"
   },
   "sections": "分析區塊",
   "sectionLoad": "訓練負荷",

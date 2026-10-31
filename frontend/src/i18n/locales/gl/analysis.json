@@ -4,9 +4,9 @@
   "loadFailed": "Non se puido cargar a túa carga de adestramento",
   "window": {
     "label": "Período",
-    "30": "Últimos 30 días",
-    "90": "Últimos 90 días",
-    "365": "Último ano"
+    "30": "30 días",
+    "90": "90 días",
+    "365": "365 días"
   },
   "method": {
     "label": "Fórmula de carga",
@@ -23,7 +23,8 @@
     "title": "Forma e fatiga",
     "seriesFitness": "Forma",
     "seriesFatigue": "Fatiga",
-    "seriesForm": "Frescor"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Carga diaria",
@@ -31,7 +32,8 @@
     "trimpNote": "O TRIMP emprega unha escala distinta das outras fórmulas e nunca se suma con elas."
   },
   "stats": {
-    "windowTotal": "Carga total"
+    "windowTotal": "Carga total",
+    "dailyAvg": "Carga media/día"
   },
   "empty": {
     "title": "Aínda non hai carga medida",
@@ -65,7 +67,9 @@
     "recompute": "Recalcular todas as cargas",
     "refreshQueued": "Actualización dos umbrais na cola",
     "recomputeQueued": "Recálculo na cola",
-    "failed": "Non se puido iniciar a solicitude"
+    "failed": "Non se puido iniciar a solicitude",
+    "refreshHint": "Volve derivar CP/W′ e FC umbral dos teus datos; os valores manuais consérvanse.",
+    "recomputeHint": "Volve medir todas as actividades cos umbrais e a fórmula actuais; faino tras cambiar calquera."
   },
   "sections": "Seccións de análise",
   "sectionLoad": "Carga de adestramento",

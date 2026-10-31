@@ -4,9 +4,9 @@
   "loadFailed": "Harjoituskuorman lataus epäonnistui",
   "window": {
     "label": "Aikaväli",
-    "30": "Viimeiset 30 päivää",
-    "90": "Viimeiset 90 päivää",
-    "365": "Viimeinen vuosi"
+    "30": "30 pv",
+    "90": "90 pv",
+    "365": "365 pv"
   },
   "method": {
     "label": "Kuormakaava",
@@ -23,7 +23,8 @@
     "title": "Kunto ja väsymys",
     "seriesFitness": "Kunto",
     "seriesFatigue": "Väsymys",
-    "seriesForm": "Virkeys"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Päivittäinen kuorma",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP käyttää muista kaavoista poikkeavaa asteikkoa, eikä sitä lasketa yhteen niiden kanssa."
   },
   "stats": {
-    "windowTotal": "Kuormat yhteensä"
+    "windowTotal": "Kuormat yhteensä",
+    "dailyAvg": "Keskim. kuorma/päivä"
   },
   "empty": {
     "title": "Kuormia ei ole vielä mitattu",
@@ -65,7 +67,9 @@
     "recompute": "Laske kaikki kuormat uudelleen",
     "refreshQueued": "Kynnyksien päivitys jonossa",
     "recomputeQueued": "Uudelleenlaskenta jonossa",
-    "failed": "Pyyntöä ei voitu käynnistää"
+    "failed": "Pyyntöä ei voitu käynnistää",
+    "refreshHint": "Johtaa CP/W′:n ja sykekynnyksen uudelleen dataistasi; käsin annetut arvot säilyvät.",
+    "recomputeHint": "Mittaa kaikki aktiviteetit uudelleen nykyisillä kynnyksillä ja kaavalla; tee tämä muutoksen jälkeen."
   },
   "sections": "Analyysiosiot",
   "sectionLoad": "Harjoituskuorma",

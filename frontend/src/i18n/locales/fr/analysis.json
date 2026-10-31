@@ -4,9 +4,9 @@
   "loadFailed": "Impossible de charger votre charge d'entraînement",
   "window": {
     "label": "Période",
-    "30": "30 derniers jours",
-    "90": "90 derniers jours",
-    "365": "Dernière année"
+    "30": "30 jours",
+    "90": "90 jours",
+    "365": "365 jours"
   },
   "method": {
     "label": "Formule de charge",
@@ -23,7 +23,8 @@
     "title": "Forme et fatigue",
     "seriesFitness": "Forme",
     "seriesFatigue": "Fatigue",
-    "seriesForm": "Fraîcheur"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Charge quotidienne",
@@ -31,7 +32,8 @@
     "trimpNote": "Le TRIMP utilise une échelle différente de celle des autres formules et ne s'additionne jamais à elles."
   },
   "stats": {
-    "windowTotal": "Charge totale"
+    "windowTotal": "Charge totale",
+    "dailyAvg": "Charge moy. / jour"
   },
   "empty": {
     "title": "Aucune charge mesurée pour l'instant",
@@ -65,7 +67,9 @@
     "recompute": "Recalculer toutes les charges",
     "refreshQueued": "Actualisation des seuils en file d'attente",
     "recomputeQueued": "Recalcul en file d'attente",
-    "failed": "Impossible de lancer la demande"
+    "failed": "Impossible de lancer la demande",
+    "refreshHint": "Re-dérive CP/W′ et FC de seuil à partir de vos données ; les valeurs manuelles sont conservées.",
+    "recomputeHint": "Re-mesure toutes les activités avec les seuils et la formule actuels ; à faire après un changement."
   },
   "sections": "Sections d'analyse",
   "sectionLoad": "Charge d'entraînement",

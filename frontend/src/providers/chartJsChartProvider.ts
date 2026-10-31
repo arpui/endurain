@@ -85,8 +85,10 @@ export function buildChartConfiguration(
     const color = colorFor(index, series.color, palette)
     // A dashed series is a reference/target line: render it as a dashed line
     // overlay regardless of the chart's geometry, so it sits on top of bars as a
-    // mixed bar/line chart — mirroring v1's dashed target lines.
-    if (series.dashed) {
+    // mixed bar/line chart — mirroring v1's dashed target lines. A `line` series
+    // is the same overlay without the dash: a curve (PMC, trend) read against
+    // bars (daily values).
+    if (series.dashed || series.line) {
       return {
         type: 'line',
         label: series.label,
@@ -94,9 +96,9 @@ export function buildChartConfiguration(
         borderColor: color,
         backgroundColor: color,
         borderWidth: 2,
-        borderDash: [6, 6],
+        borderDash: series.dashed ? [6, 6] : undefined,
         fill: false,
-        tension: 0,
+        tension: series.dashed ? 0 : 0.3,
         pointRadius: 0,
       }
     }

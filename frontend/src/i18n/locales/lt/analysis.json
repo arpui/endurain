@@ -4,9 +4,9 @@
   "loadFailed": "Nepavyko įkelti treniruočių krūvio",
   "window": {
     "label": "Laikotarpis",
-    "30": "Paskutinės 30 dienų",
-    "90": "Paskutinės 90 dienų",
-    "365": "Paskutiniai metai"
+    "30": "30 d.",
+    "90": "90 d.",
+    "365": "365 d."
   },
   "method": {
     "label": "Krūvio formulė",
@@ -23,7 +23,8 @@
     "title": "Forma ir nuovargis",
     "seriesFitness": "Forma",
     "seriesFatigue": "Nuovargis",
-    "seriesForm": "Gaivumas"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Dienos krūvis",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP naudoja kitą skalę nei kitos formulės ir niekada su jomis nesumuojamas."
   },
   "stats": {
-    "windowTotal": "Bendras krūvis"
+    "windowTotal": "Bendras krūvis",
+    "dailyAvg": "Vid. krūvis/d."
   },
   "empty": {
     "title": "Dar nėra išmatuoto krūvio",
@@ -65,7 +67,9 @@
     "recompute": "Perskaičiuoti visus krūvius",
     "refreshQueued": "Slenkčių atnaujinimas padėtas į eilę",
     "recomputeQueued": "Perskaičiavimas padėtas į eilę",
-    "failed": "Nepavyko paleisti užklausos"
+    "failed": "Nepavyko paleisti užklausos",
+    "refreshHint": "Iš naujo išveda CP/W′ ir slenkstinį pulsą iš jūsų duomenų; rankinės reikšmės išsaugomos.",
+    "recomputeHint": "Iš naujo išmatuoja visas veiklas su dabartiniais slenksčiais ir formule; padarykite tai pakeitę."
   },
   "sections": "Analitikos skyriai",
   "sectionLoad": "Treniruočių krūvis",

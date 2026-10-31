@@ -4,9 +4,9 @@
   "loadFailed": "Impossibile caricare il carico di allenamento",
   "window": {
     "label": "Periodo",
-    "30": "Ultimi 30 giorni",
-    "90": "Ultimi 90 giorni",
-    "365": "Ultimo anno"
+    "30": "30 giorni",
+    "90": "90 giorni",
+    "365": "365 giorni"
   },
   "method": {
     "label": "Formula di carico",
@@ -23,7 +23,8 @@
     "title": "Forma e fatica",
     "seriesFitness": "Forma",
     "seriesFatigue": "Fatica",
-    "seriesForm": "Freschezza"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Carico giornaliero",
@@ -31,7 +32,8 @@
     "trimpNote": "Il TRIMP usa una scala diversa dalle altre formule e non viene mai sommato a esse."
   },
   "stats": {
-    "windowTotal": "Carico totale"
+    "windowTotal": "Carico totale",
+    "dailyAvg": "Carico medio/giorno"
   },
   "empty": {
     "title": "Nessun carico misurato",
@@ -65,7 +67,9 @@
     "recompute": "Ricalcola tutti i carichi",
     "refreshQueued": "Aggiornamento soglie in coda",
     "recomputeQueued": "Ricalcolo in coda",
-    "failed": "Impossibile avviare la richiesta"
+    "failed": "Impossibile avviare la richiesta",
+    "refreshHint": "Rideriva CP/W′ e FC di soglia dai tuoi dati; i valori manuali restano.",
+    "recomputeHint": "Rimisura tutte le attività con soglie e formula attuali; fallo dopo una modifica."
   },
   "sections": "Sezioni di analisi",
   "sectionLoad": "Carico di allenamento",

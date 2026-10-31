@@ -4,9 +4,9 @@
   "loadFailed": "Nem sikerült betölteni az edzésterhelést",
   "window": {
     "label": "Időszak",
-    "30": "Elmúlt 30 nap",
-    "90": "Elmúlt 90 nap",
-    "365": "Elmúlt év"
+    "30": "30 nap",
+    "90": "90 nap",
+    "365": "365 nap"
   },
   "method": {
     "label": "Terhelési képlet",
@@ -23,7 +23,8 @@
     "title": "Állóképesség és fáradtság",
     "seriesFitness": "Állóképesség",
     "seriesFatigue": "Fáradtság",
-    "seriesForm": "Frissesség"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Napi terhelés",
@@ -31,7 +32,8 @@
     "trimpNote": "A TRIMP más skálán mér, mint a többi képlet, és soha nem adódik hozzájuk."
   },
   "stats": {
-    "windowTotal": "Összes terhelés"
+    "windowTotal": "Összes terhelés",
+    "dailyAvg": "Átlag terhelés/nap"
   },
   "empty": {
     "title": "Még nincs mért terhelés",
@@ -65,7 +67,9 @@
     "recompute": "Összes terhelés újraszámítása",
     "refreshQueued": "Küszöbfrissítés sorban",
     "recomputeQueued": "Újraszámítás sorban",
-    "failed": "Nem sikerült elindítani a kérést"
+    "failed": "Nem sikerült elindítani a kérést",
+    "refreshHint": "A dataidból újra levezeti a CP/W′-t és a küszöbpulzus; a kézi értékek megmaradnak.",
+    "recomputeHint": "Újraméri az összes aktivitást az aktuális küszöbökkel és képlettel — változtatás után futtasd."
   },
   "sections": "Elemzési szekciók",
   "sectionLoad": "Edzésterhelés",

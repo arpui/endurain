@@ -4,9 +4,9 @@
   "loadFailed": "Kon je trainingsbelasting niet laden",
   "window": {
     "label": "Periode",
-    "30": "Laatste 30 dagen",
-    "90": "Laatste 90 dagen",
-    "365": "Afgelopen jaar"
+    "30": "30 dagen",
+    "90": "90 dagen",
+    "365": "365 dagen"
   },
   "method": {
     "label": "Belastingsformule",
@@ -23,7 +23,8 @@
     "title": "Fitheid en vermoeidheid",
     "seriesFitness": "Fitheid",
     "seriesFatigue": "Vermoeidheid",
-    "seriesForm": "Frisheid"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Dagelijkse belasting",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP gebruikt een andere schaal dan de andere formules en wordt er nooit bij opgeteld."
   },
   "stats": {
-    "windowTotal": "Totale belasting"
+    "windowTotal": "Totale belasting",
+    "dailyAvg": "Gem. belasting/dag"
   },
   "empty": {
     "title": "Nog geen belasting gemeten",
@@ -65,7 +67,9 @@
     "recompute": "Alle belastingen herberekenen",
     "refreshQueued": "Vernieuwen van drempels in wachtrij",
     "recomputeQueued": "Herberekening in wachtrij",
-    "failed": "Kon het verzoek niet starten"
+    "failed": "Kon het verzoek niet starten",
+    "refreshHint": "Haalt CP/W′ en drempelhartslag opnieuw uit je gegevens; handmatige waarden blijven staan.",
+    "recomputeHint": "Hermeet alle activiteiten met de huidige drempels en formule; doe dit na een wijziging."
   },
   "sections": "Analyse-onderdelen",
   "sectionLoad": "Trainingsbelasting",

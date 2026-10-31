@@ -4,9 +4,9 @@
   "loadFailed": "Nie udało się wczytać obciążenia treningowego",
   "window": {
     "label": "Zakres czasu",
-    "30": "Ostatnie 30 dni",
-    "90": "Ostatnie 90 dni",
-    "365": "Ostatni rok"
+    "30": "30 dni",
+    "90": "90 dni",
+    "365": "365 dni"
   },
   "method": {
     "label": "Wzór obciążenia",
@@ -23,7 +23,8 @@
     "title": "Forma i zmęczenie",
     "seriesFitness": "Forma",
     "seriesFatigue": "Zmęczenie",
-    "seriesForm": "Świeżość"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Dzienne obciążenie",
@@ -31,7 +32,8 @@
     "trimpNote": "TRIMP używa innej skali niż pozostałe wzory i nigdy nie jest do nich dodawany."
   },
   "stats": {
-    "windowTotal": "Całkowite obciążenie"
+    "windowTotal": "Całkowite obciążenie",
+    "dailyAvg": "Śr. obciąż./dzień"
   },
   "empty": {
     "title": "Brak zmierzonych obciążeń",
@@ -65,7 +67,9 @@
     "recompute": "Przelicz wszystkie obciążenia",
     "refreshQueued": "Odświeżanie progów dodane do kolejki",
     "recomputeQueued": "Przeliczanie dodane do kolejki",
-    "failed": "Nie udało się dodać zlecenia do kolejki"
+    "failed": "Nie udało się dodać zlecenia do kolejki",
+    "refreshHint": "Ponownie wyprowadza CP/W′ i tętno progowe z twoich danych; wartości ręczne zostają.",
+    "recomputeHint": "Przelicza wszystkie aktywności bieżącymi progami i wzorem — zrób to po zmianie."
   },
   "sections": "Sekcje analizy",
   "sectionLoad": "Obciążenie treningowe",

@@ -4,9 +4,9 @@
   "loadFailed": "Não foi possível carregar a tua carga de treino",
   "window": {
     "label": "Período",
-    "30": "Últimos 30 dias",
-    "90": "Últimos 90 dias",
-    "365": "Último ano"
+    "30": "30 dias",
+    "90": "90 dias",
+    "365": "365 dias"
   },
   "method": {
     "label": "Fórmula de carga",
@@ -23,7 +23,8 @@
     "title": "Forma e fadiga",
     "seriesFitness": "Forma",
     "seriesFatigue": "Fadiga",
-    "seriesForm": "Frescura"
+    "seriesForm": "TSB",
+    "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
     "title": "Carga diária",
@@ -31,7 +32,8 @@
     "trimpNote": "O TRIMP usa uma escala diferente das outras fórmulas e nunca é somado a elas."
   },
   "stats": {
-    "windowTotal": "Carga total"
+    "windowTotal": "Carga total",
+    "dailyAvg": "Carga média/dia"
   },
   "empty": {
     "title": "Ainda não há carga medida",
@@ -65,7 +67,9 @@
     "recompute": "Recalcular todas as cargas",
     "refreshQueued": "Atualização de limiares na fila",
     "recomputeQueued": "Recálculo na fila",
-    "failed": "Não foi possível iniciar o pedido"
+    "failed": "Não foi possível iniciar o pedido",
+    "refreshHint": "Volta a derivar CP/W′ e FC limiar dos teus dados; os valores manuais mantêm-se.",
+    "recomputeHint": "Volta a medir todas as atividades com os limiares e a fórmula atuais; fá-lo depois de mudar algum."
   },
   "sections": "Secções de análise",
   "sectionLoad": "Carga de treino",
