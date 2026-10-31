@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×base",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Salita (%)",
-    "ivHint": "I parametri degli intervalli si confrontano con i tuoi numeri (soglia e mediana della sessione). Vuoto = predefinito."
+    "ivHint": "I parametri degli intervalli si confrontano con i tuoi numeri (soglia e mediana della sessione). Vuoto = predefinito.",
+    "ivEffortIf": "Sforzo ×CP"
   },
   "actions": {
     "refreshThresholds": "Aggiorna soglie",
@@ -126,6 +127,7 @@
     "effortsMany": "sforzi",
     "colStart": "inizio",
     "colGrade": "pendenza",
-    "colContrast": "vs sessione"
+    "colContrast": "vs sessione",
+    "rules": "Rilevazione qui: in piano un tratto conta come intervallo solo se mantiene ≥{effortIf}·CP; uno sforzo si apre a {openW} W e si chiude sotto {closeW} W; minimo {minS} s (sotto {shortS} s serve {shortBase} la mediana della sessione; senza recupero reale —≤{recoveryW} W—, {strongBase}); con pendenza >{climbGrade}% e IF<{climbIf} conta come salita."
   }
 }

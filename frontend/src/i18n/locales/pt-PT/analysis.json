@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×base",
     "ivMinSegmentS": "Int. mín (s)",
     "ivClimbGrade": "Subida (%)",
-    "ivHint": "Os parâmetros de intervalo comparam-se com os teus números (limiar e mediana da sessão). Vazio = predefinido."
+    "ivHint": "Os parâmetros de intervalo comparam-se com os teus números (limiar e mediana da sessão). Vazio = predefinido.",
+    "ivEffortIf": "Esf. ×CP"
   },
   "actions": {
     "refreshThresholds": "Atualizar limiares",
@@ -126,6 +127,7 @@
     "effortsMany": "esforços",
     "colStart": "início",
     "colGrade": "inclinação",
-    "colContrast": "vs sessão"
+    "colContrast": "vs sessão",
+    "rules": "Como é detetado aqui: em plano um troço conta como intervalo só se mantiver ≥{effortIf}·CP; abre-se um esforço a {openW} W e fecha abaixo de {closeW} W; mínimo {minS} s (abaixo de {shortS} s exige {shortBase} a mediana da sessão; sem recuperação real —≤{recoveryW} W—, {strongBase}); com inclinação >{climbGrade}% e IF<{climbIf} conta como subida."
   }
 }

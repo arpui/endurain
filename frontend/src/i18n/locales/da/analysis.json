@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×base",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Stigning (%)",
-    "ivHint": "Intervalparametre sammenlignes med dine egne tal (tærskel og sessionens median). Tomt = standard."
+    "ivHint": "Intervalparametre sammenlignes med dine egne tal (tærskel og sessionens median). Tomt = standard.",
+    "ivEffortIf": "Anstr. ×CP"
   },
   "actions": {
     "refreshThresholds": "Opdater tærskler",
@@ -126,6 +127,7 @@
     "effortsMany": "anstrengelser",
     "colStart": "start",
     "colGrade": "stigning",
-    "colContrast": "vs session"
+    "colContrast": "vs session",
+    "rules": "Så detekteres det her: på fladt tæller en strækning kun som interval, hvis den holder ≥{effortIf}·CP; en anstrengelse åbner ved {openW} W og lukker under {closeW} W; mindst {minS} s (under {shortS} s kræves {shortBase} af sessionens median; uden rigtig restitution —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} tæller det som stigning."
   }
 }

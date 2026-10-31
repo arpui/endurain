@@ -156,6 +156,11 @@ IV_STEADY_SHARE = 0.50
 #: a tempo or a race.
 IV_STEADY_IF = 1.15
 
+#: A flat effort must hold at least this multiple of the threshold on average to count
+#: as an interval: brief contact with the gate is not a rep, sustained work above it is.
+#: Grade-driven pushes are exempt; the climb rule already weighs what the terrain justifies.
+IV_EFFORT_IF = 1.05
+
 #: Minimum segments for the session to read as interval work rather than a single
 #: push.
 IV_MIN_REPS = 2

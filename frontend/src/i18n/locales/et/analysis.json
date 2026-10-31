@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×alus",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Tõus (%)",
-    "ivHint": "Intervalli parameetrid võrreldakse Sinu enda numbritega (läve ja sessioni mediaan). Tühi = vaikeväärtus."
+    "ivHint": "Intervalli parameetrid võrreldakse Sinu enda numbritega (läve ja sessioni mediaan). Tühi = vaikeväärtus.",
+    "ivEffortIf": "Koormus ×CP"
   },
   "actions": {
     "refreshThresholds": "Värskenda läveid",
@@ -126,6 +127,7 @@
     "effortsMany": "koormust",
     "colStart": "algus",
     "colGrade": "tõus",
-    "colContrast": "vs session"
+    "colContrast": "vs session",
+    "rules": "Kuidas siin tuvastatakse: tasasel loeb lõik intervalliks vaid siis, kui peab ≥{effortIf}·CP; koormus avneb {openW} W juures ja sulgub alla {closeW} W; vähemalt {minS} s (alla {shortS} s on vaja {shortBase} sessioni mediaanist; ilma tõelise puhkuseta —≤{recoveryW} W—, {strongBase}); üle {climbGrade}% tõusuga ja IF<{climbIf} loetakse tõusuks."
   }
 }

@@ -277,6 +277,18 @@ describe('activity interval analysis', () => {
       shape: 'intervals',
       threshold_w: 350,
       base_power_w: 280,
+      rules: {
+        open_w: 384,
+        close_w: 315,
+        min_segment_s: 20,
+        short_segment_s: 60,
+        short_base: 1.3,
+        strong_base: 1.22,
+        recovery_w: 279,
+        effort_if: 1.05,
+        climb_grade_pct: 3.5,
+        climb_if: 1.25,
+      },
       segments: [
         {
           kind: 'interval',
@@ -315,6 +327,8 @@ describe('activity interval analysis', () => {
     expect(intervals.shape).toBe('intervals')
     expect(intervals.thresholdW).toBe(350)
     expect(intervals.basePowerW).toBe(280)
+    expect(intervals.rules?.openW).toBe(384)
+    expect(intervals.rules?.effortIf).toBe(1.05)
     expect(intervals.segments[0]).toEqual({
       kind: 'interval',
       startS: 600,
@@ -341,9 +355,11 @@ describe('activity interval analysis', () => {
       base_power_w: 0,
       segments: [],
     })
+
     const intervals = await fetchActivityIntervals(7)
     expect(intervals.shape).toBe('steady')
     expect(intervals.thresholdW).toBeNull()
+    expect(intervals.rules).toBeNull()
     expect(intervals.segments).toEqual([])
   })
 })

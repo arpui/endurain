@@ -220,3 +220,43 @@ class TestThresholdsComeFromTheAthlete:
         blocks = ((300, 250.0), (40, 560.0), (120, 130.0), (40, 560.0), (300, 245.0))
         assert len(_efforts(_analyse(*blocks))) == 2
         assert not _efforts(_analyse(*blocks, parameters={"iv_min_segment_s": 60}))
+
+
+class TestFlatEffortQuality:
+    """A flat stretch earns the interval label by holding above threshold, not by
+    touching it: grazing the opening gate and then cruising below it is tempo."""
+
+    def test_a_flat_run_below_the_average_gate_is_not_an_interval(self):
+        # 200 s at 360 W (1,03x CP) after a real rest: tempo out, not a rep.
+        analysis = _analyse((300, 260.0), (120, 430.0), (300, 150.0), (200, 360.0), (300, 255.0))
+        assert len(_efforts(analysis)) == 1
+        easy = [s for s in analysis.segments if s.kind is analysis_intervals.SegmentKind.EASY]
+        assert any(segment.duration_s >= 180 for segment in easy)
+
+    def test_the_same_length_held_above_the_gate_still_counts(self):
+        analysis = _analyse((300, 260.0), (120, 430.0), (300, 150.0), (200, 380.0), (300, 255.0))
+        assert len(_efforts(analysis)) == 2
+
+    def test_the_gate_is_the_athlete_s_own_knob(self):
+        blocks = ((300, 260.0), (200, 360.0), (300, 255.0))
+        assert not _efforts(_analyse(*blocks))
+        assert len(_efforts(_analyse(*blocks, parameters={"iv_effort_if": 1.0}))) == 1
+
+    def test_a_graded_push_below_the_flat_gate_is_explained_by_terrain(self):
+        power = [250.0] * 300 + [360.0] * 150 + [250.0] * 300
+        speed = [4.0] * 300 + [3.0] * 150 + [4.0] * 300
+        grade = [0.0] * 300 + [7.0] * 150 + [0.0] * 300
+        analysis = analysis_intervals.analyse_activity(
+            power_w=power, period_s=1.0, threshold_w=CP, speeds_ms=speed, grades_pct=grade
+        )
+        efforts = _efforts(analysis)
+        assert len(efforts) == 1
+        assert efforts[0].kind is analysis_intervals.SegmentKind.CLIMB
+
+    def test_the_answer_names_the_gates_it_used(self):
+        analysis = _analyse((300, 250.0), (120, 430.0), (120, 120.0), (300, 245.0))
+        assert analysis.rules is not None
+        assert analysis.rules["open_w"] == 350.0  # 1,00xCP beats 1,15x median here
+        assert analysis.rules["close_w"] == 315.0
+        assert analysis.rules["recovery_w"] == 280.0
+        assert analysis.rules["effort_if"] == 1.05

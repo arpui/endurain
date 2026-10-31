@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×Basis",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Anstieg (%)",
-    "ivHint": "Intervall-Parameter werden mit deinen eigenen Werten verglichen (Schwelle und Median der Einheit). Leer = Standardwert."
+    "ivHint": "Intervall-Parameter werden mit deinen eigenen Werten verglichen (Schwelle und Median der Einheit). Leer = Standardwert.",
+    "ivEffortIf": "Belast. ×CP"
   },
   "actions": {
     "refreshThresholds": "Schwellenwerte aktualisieren",
@@ -126,6 +127,7 @@
     "effortsMany": "Belastungen",
     "colStart": "Beginn",
     "colGrade": "Steigung",
-    "colContrast": "vs Einheit"
+    "colContrast": "vs Einheit",
+    "rules": "So wird erkannt: auf flachem Grund zählt ein Abschnitt nur als Intervall, wenn er ≥{effortIf}·CP hält; ein Einsatz beginnt bei {openW} W und endet unter {closeW} W; mindestens {minS} s (unter {shortS} s braucht er {shortBase} des Einheiten-Medians; ohne echte Erholung —≤{recoveryW} W— {strongBase}); bei Steigung >{climbGrade}% und IF<{climbIf} zählt er als Anstieg."
   }
 }

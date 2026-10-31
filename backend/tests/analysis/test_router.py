@@ -280,6 +280,18 @@ class TestIntervalsRoute:
             shape="intervals",
             threshold_w=350.0,
             base_power_w=280.0,
+            rules=analysis_schema.IntervalRulesRead(
+                open_w=350.0,
+                close_w=315.0,
+                min_segment_s=20.0,
+                short_segment_s=60.0,
+                short_base=1.3,
+                strong_base=1.22,
+                recovery_w=280.0,
+                effort_if=1.05,
+                climb_grade_pct=3.5,
+                climb_if=1.25,
+            ),
             segments=[
                 analysis_schema.IntervalSegmentRead(
                     kind="interval",
@@ -304,6 +316,8 @@ class TestIntervalsRoute:
         assert response.status_code == 200
         body = response.json()
         assert body["shape"] == "intervals"
+        assert body["rules"]["open_w"] == 350.0
+        assert body["rules"]["effort_if"] == 1.05
         assert body["segments"][0]["kind"] == "interval"
         assert body["segments"][0]["contrast"] == 1.46
 

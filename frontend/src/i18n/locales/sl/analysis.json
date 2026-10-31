@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×osnova",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Vzpon (%)",
-    "ivHint": "Parametri intervalov se primerjajo z vašimi številkami (prag in median seje). Prazno = privzeto."
+    "ivHint": "Parametri intervalov se primerjajo z vašimi številkami (prag in median seje). Prazno = privzeto.",
+    "ivEffortIf": "Napor ×CP"
   },
   "actions": {
     "refreshThresholds": "Osveži pragove",
@@ -126,6 +127,7 @@
     "effortsMany": "naprezanj",
     "colStart": "začetek",
     "colGrade": "strmina",
-    "colContrast": "vs seja"
+    "colContrast": "vs seja",
+    "rules": "Kako je zaznano: na ravnem šteje odsek kot interval samo, če drži ≥{effortIf}·CP; naprezanje se odpre pri {openW} W in zapre pod {closeW} W; najmanj {minS} s (pod {shortS} s je potrebnih {shortBase} mediane seje; brez pravega počitka —≤{recoveryW} W—, {strongBase}); s strmino >{climbGrade}% in IF<{climbIf} šteje kot vzpon."
   }
 }

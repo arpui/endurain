@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×bază",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Urcare (%)",
-    "ivHint": "Parametrii de interval sunt comparați cu cifrele tale (prag și mediana ședinței). Gol = implicit."
+    "ivHint": "Parametrii de interval sunt comparați cu cifrele tale (prag și mediana ședinței). Gol = implicit.",
+    "ivEffortIf": "Efort ×CP"
   },
   "actions": {
     "refreshThresholds": "Actualizează pragurile",
@@ -126,6 +127,7 @@
     "effortsMany": "eforturi",
     "colStart": "start",
     "colGrade": "pantă",
-    "colContrast": "vs ședință"
+    "colContrast": "vs ședință",
+    "rules": "Cum se detectează aici: pe plat un trakt contează ca interval doar dacă menține ≥{effortIf}·CP; un efort se deschide la {openW} W și se închide sub {closeW} W; minimum {minS} s (sub {shortS} s cere {shortBase} din mediana ședinței; fără recuperare reală —≤{recoveryW} W—, {strongBase}); pantă >{climbGrade}% cu IF<{climbIf} contează ca urcare."
   }
 }

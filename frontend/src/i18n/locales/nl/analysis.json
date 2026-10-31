@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×basis",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Klim (%)",
-    "ivHint": "Intervalparameters worden vergeleken met je eigen getallen (drempel en mediaan van de sessie). Leeg = standaard."
+    "ivHint": "Intervalparameters worden vergeleken met je eigen getallen (drempel en mediaan van de sessie). Leeg = standaard.",
+    "ivEffortIf": "Inspan. ×CP"
   },
   "actions": {
     "refreshThresholds": "Drempels vernieuwen",
@@ -126,6 +127,7 @@
     "effortsMany": "inspanningen",
     "colStart": "start",
     "colGrade": "helling",
-    "colContrast": "vs sessie"
+    "colContrast": "vs sessie",
+    "rules": "Detectie hier: op vlakke weg telt een stuk alleen als interval als het ≥{effortIf}·CP houdt; een inspanning opent bij {openW} W en sluit onder {closeW} W; minimaal {minS} s (onder {shortS} s is {shortBase} van het sessie-mediaan nodig; zonder echt herstel —≤{recoveryW} W—, {strongBase}); met stijging >{climbGrade}% en IF<{climbIf} telt het als klim."
   }
 }

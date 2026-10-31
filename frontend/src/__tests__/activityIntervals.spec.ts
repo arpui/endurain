@@ -24,7 +24,24 @@ function makeSegment(overrides: Partial<IntervalSegment> = {}): IntervalSegment 
 
 /** Builds a breakdown whose only row is the given segment. */
 function makeIntervals(segment: IntervalSegment): ActivityIntervals {
-  return { shape: 'intervals', thresholdW: 350, basePowerW: 280, segments: [segment] }
+  return {
+    shape: 'intervals',
+    thresholdW: 350,
+    basePowerW: 280,
+    segments: [segment],
+    rules: {
+      openW: 349,
+      closeW: 314,
+      minSegmentS: 20,
+      shortSegmentS: 60,
+      shortBase: 1.3,
+      strongBase: 1.22,
+      recoveryW: 279,
+      effortIf: 1.05,
+      climbGradePct: 3.5,
+      climbIf: 1.25,
+    },
+  }
 }
 
 /** Mounts the table and returns the tempo cell of its first row. */

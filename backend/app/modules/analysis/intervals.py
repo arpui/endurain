@@ -83,6 +83,7 @@ class IntervalParams:
         short_base: Contrast required for a short effort.
         strong_base: Contrast that makes an effort count without a recovery before it.
         recovery_cp: At or below this fraction of the threshold a gap is a real recovery.
+        effort_if: Average intensity a flat run must hold to count as an interval.
         merge_gap_s: A gap no longer than this joins two runs into one effort.
         merge_share: Or a gap no longer than this share of the effort before it.
         climb_grade_pct: Mean grade above which an effort may be terrain rather than a rep.
@@ -100,6 +101,7 @@ class IntervalParams:
     short_base: float = analysis_constants.IV_SHORT_BASE
     strong_base: float = analysis_constants.IV_STRONG_BASE
     recovery_cp: float = analysis_constants.IV_RECOVERY_CP
+    effort_if: float = analysis_constants.IV_EFFORT_IF
     merge_gap_s: float = analysis_constants.IV_MERGE_GAP_S
     merge_share: float = analysis_constants.IV_MERGE_SHARE
     climb_grade_pct: float = analysis_constants.IV_CLIMB_GRADE_PCT
@@ -121,6 +123,7 @@ def params_from(parameters: Mapping[str, float]) -> IntervalParams:
         short_base=parameters.get("iv_short_base", defaults.short_base),
         strong_base=parameters.get("iv_strong_base", defaults.strong_base),
         recovery_cp=parameters.get("iv_recovery_cp", defaults.recovery_cp),
+        effort_if=parameters.get("iv_effort_if", defaults.effort_if),
         merge_gap_s=parameters.get("iv_merge_gap_s", defaults.merge_gap_s),
         merge_share=parameters.get("iv_merge_share", defaults.merge_share),
         climb_grade_pct=parameters.get("iv_climb_grade_pct", defaults.climb_grade_pct),
@@ -166,12 +169,16 @@ class IntervalAnalysis:
         base_power_w: The session's own median power, the relative anchor used.
         threshold_w: The threshold the intensities were divided by.
         segments: Every stretch of the timeline, in order, contiguous and complete.
+        rules: The effective numeric gates used for this session (watts and factors),
+            so the athlete can see why each stretch was called what it was; ``None``
+            when nothing was segmented.
     """
 
     shape: SessionShape
     base_power_w: float
     threshold_w: float | None
     segments: tuple[Segment, ...]
+    rules: Mapping[str, float] | None = None
 
 
 def _window_samples(period_s: float, window_s: float) -> int:
@@ -256,15 +263,25 @@ def _classify_effort(
     period_s: float,
     measured_s: float,
 ) -> SegmentKind:
-    """Return what one effort was: the session's own push, a climb, or a rep."""
+    """Return what one effort was: the session's own push, a climb, a rep, or nothing.
+
+    On flat ground the average has to actually sit above this athlete's threshold
+    (``effort_if``): a run that only grazed the opening gate and then cruised below
+    the threshold is tempo, not a rep. Where the grade explains the power, the climb
+    rule decides instead.
+    """
     power = fmean(signal[run[0] : run[1]])
     intensity = power / anchor_w if anchor_w else 0.0
     if (run[1] - run[0]) * period_s >= params.steady_share * measured_s and intensity < params.steady_if:
         return SegmentKind.RACE
     if grades_pct is not None:
         grade = fmean(grades_pct[run[0] : run[1]])
-        if grade > params.climb_grade_pct and intensity < params.climb_if:
-            return SegmentKind.CLIMB
+        if grade > params.climb_grade_pct:
+            if intensity < params.climb_if:
+                return SegmentKind.CLIMB
+            return SegmentKind.INTERVAL
+    if intensity < params.effort_if:
+        return SegmentKind.EASY
     return SegmentKind.INTERVAL
 
 
@@ -322,11 +339,24 @@ def analyse_activity(
     measured_s = len(signal) * period_s
     efforts = [_classify_effort(run, signal, grades_pct, params, anchor_w, period_s, measured_s) for run in runs]
     segments = _timeline(runs, efforts, signal, speeds_ms, grades_pct, period_s, base, anchor_w, threshold_w)
+    real_efforts = [kind for kind in efforts if kind is not SegmentKind.EASY]
     return IntervalAnalysis(
-        shape=_shape(efforts, segments, base, anchor_w),
+        shape=_shape(real_efforts, segments, base, anchor_w),
         base_power_w=round(base, 1),
         threshold_w=threshold_w,
         segments=tuple(segments),
+        rules={
+            "open_w": round(open_at, 1),
+            "close_w": round(close_at, 1),
+            "min_segment_s": params.min_segment_s,
+            "short_segment_s": params.short_segment_s,
+            "short_base": params.short_base,
+            "strong_base": params.strong_base,
+            "recovery_w": round(params.recovery_cp * anchor_w, 1),
+            "effort_if": params.effort_if,
+            "climb_grade_pct": params.climb_grade_pct,
+            "climb_if": params.climb_if,
+        },
     )
 
 

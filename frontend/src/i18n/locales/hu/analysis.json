@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×alap",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Emelkedő (%)",
-    "ivHint": "Az intervallum paraméterek a saját számaiddal hasonlítjuk össze (küszöb és az edzés mediánja). Üres = alapértelmezett."
+    "ivHint": "Az intervallum paraméterek a saját számaiddal hasonlítjuk össze (küszöb és az edzés mediánja). Üres = alapértelmezett.",
+    "ivEffortIf": "Terhelés ×CP"
   },
   "actions": {
     "refreshThresholds": "Küszöbértékek frissítése",
@@ -126,6 +127,7 @@
     "effortsMany": "terhelés",
     "colStart": "kezdés",
     "colGrade": "emelkedő",
-    "colContrast": "vs edzés"
+    "colContrast": "vs edzés",
+    "rules": "Így kerül felismerésre: laposon egy szakasz csak akkor számít intervallumnak, ha tartja a ≥{effortIf}·CP-t; a terhelés {openW} W-nál nyílik és {closeW} W alatt zárul; minimum {minS} s ({shortS} s alatt az edzés mediánjának {shortBase}?a kell; valódi regeneráció nélkül —≤{recoveryW} W—, {strongBase}); >{climbGrade}% emelkedővel és IF<{climbIf}emelkedőnek számít."
   }
 }

@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×base",
     "ivMinSegmentS": "Int. mín (s)",
     "ivClimbGrade": "Subida (%)",
-    "ivHint": "Los parámetros de intervalo se comparan con tus números (umbral y mediana de cada sesión). Vacío = valor por defecto."
+    "ivHint": "Los parámetros de intervalo se comparan con tus números (umbral y mediana de cada sesión). Vacío = valor por defecto.",
+    "ivEffortIf": "Esf. ×CP"
   },
   "actions": {
     "refreshThresholds": "Actualizar umbrales",
@@ -126,6 +127,7 @@
     "effortsMany": "intentos",
     "colStart": "inicio",
     "colGrade": "pendiente",
-    "colContrast": "vs sesión"
+    "colContrast": "vs sesión",
+    "rules": "Cómo se detecta aquí: en llano un tramo cuenta como intervalo solo si mantiene ≥{effortIf}·CP; se abre uno a {openW} W y se cierra por debajo de {closeW} W; mínimo {minS} s (bajo {shortS} s hace falta {shortBase} la mediana de la sesión; sin recuperación real —≤{recoveryW} W—, {strongBase}); con pendiente >{climbGrade}% e IF<{climbIf} cuenta como subida."
   }
 }

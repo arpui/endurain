@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×baza",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Podbieg (%)",
-    "ivHint": "Parametry interwałów odnoszą się do twoich liczb (próg i mediana sesji). Pusto = wartość domyślna."
+    "ivHint": "Parametry interwałów odnoszą się do twoich liczb (próg i mediana sesji). Pusto = wartość domyślna.",
+    "ivEffortIf": "Akcent ×CP"
   },
   "actions": {
     "refreshThresholds": "Odśwież progi",
@@ -126,6 +127,7 @@
     "effortsMany": "akcenty",
     "colStart": "start",
     "colGrade": "nachylenie",
-    "colContrast": "vs sesja"
+    "colContrast": "vs sesja",
+    "rules": "Jak to wykrywać: na płaskim odcinek liczy się jako interwał tylko, jeśli utrzymuje ≥{effortIf}·CP; akcent otwiera się przy {openW} W i zamyka poniżej {closeW} W; minimum {minS} s (poniżej {shortS} s wymaga {shortBase} mediany sesji; bez prawdziwej regeneracji —≤{recoveryW} W—, {strongBase}); nachylenie >{climbGrade}% z IF<{climbIf} liczy się jako podbieg."
   }
 }
