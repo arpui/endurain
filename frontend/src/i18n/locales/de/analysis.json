@@ -104,7 +104,9 @@
     "timeAboveCp": "Zeit über CP",
     "tau": "Erholungskonstante",
     "seriesBalance": "W′ verbleibend",
-    "balanceTitle": "W′-Rest über die Zeit"
+    "balanceTitle": "W′-Rest über die Zeit",
+    "overlayName": "{months} Monate",
+    "overlayCp": "CP der recenten Fenster: {windows}"
   },
   "intervals": {
     "title": "Intervallanalyse",

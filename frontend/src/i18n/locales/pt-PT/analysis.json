@@ -104,7 +104,9 @@
     "timeAboveCp": "Tempo acima do CP",
     "tau": "Constante de recuperação",
     "seriesBalance": "W′ restante",
-    "balanceTitle": "W′ restante ao longo do tempo"
+    "balanceTitle": "W′ restante ao longo do tempo",
+    "overlayName": "{months} meses",
+    "overlayCp": "CP das janelas recentes: {windows}"
   },
   "intervals": {
     "title": "Análise de intervalos",

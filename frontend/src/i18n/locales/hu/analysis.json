@@ -104,7 +104,9 @@
     "timeAboveCp": "Idő CP felett",
     "tau": "Helyreállítási állandó",
     "seriesBalance": "W′ maradék",
-    "balanceTitle": "W′ maradék idővel"
+    "balanceTitle": "W′ maradék idővel",
+    "overlayName": "{months} hónap",
+    "overlayCp": "A közelmúlt ablakainak CP: {windows}"
   },
   "intervals": {
     "title": "Intervallumelemzés",

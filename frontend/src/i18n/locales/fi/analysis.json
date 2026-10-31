@@ -104,7 +104,9 @@
     "timeAboveCp": "Aika CP:n yläpuolella",
     "tau": "Palautumisvakio",
     "seriesBalance": "W′ jäljellä",
-    "balanceTitle": "W′ jäljellä ajan mittaan"
+    "balanceTitle": "W′ jäljellä ajan mittaan",
+    "overlayName": "{months} kuukautta",
+    "overlayCp": "Recenttien ikkunoiden CP: {windows}"
   },
   "intervals": {
     "title": "Intervallianalyysi",

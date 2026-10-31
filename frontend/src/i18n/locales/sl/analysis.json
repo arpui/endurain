@@ -104,7 +104,9 @@
     "timeAboveCp": "Čas nad CP",
     "tau": "Konstanta obnavljanja",
     "seriesBalance": "W′ ostalo",
-    "balanceTitle": "W′ ostalo skozi čas"
+    "balanceTitle": "W′ ostalo skozi čas",
+    "overlayName": "{months} mesecev",
+    "overlayCp": "CP nedavnih oken: {windows}"
   },
   "intervals": {
     "title": "Analiza intervalov",

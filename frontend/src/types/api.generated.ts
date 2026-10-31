@@ -10121,6 +10121,23 @@ export interface components {
             w_prime_j: number;
         };
         /**
+         * PowerDurationOverlayRead
+         * @description One rolling-window curve: the athlete's recent months against the record.
+         *
+         *     Attributes:
+         *         months: The window's length, months back from today.
+         *         points: Best sustained averages inside the window, shortest first.
+         *         fit: The hyperbolic fit of this window's curve, when it has enough points;
+         *             its own CP is what shows how the threshold has moved.
+         */
+        PowerDurationOverlayRead: {
+            fit: components["schemas"]["PowerDurationFitRead"] | null;
+            /** Months */
+            months: number;
+            /** Points */
+            points: components["schemas"]["DurationPeakRead"][];
+        };
+        /**
          * PowerDurationRead
          * @description Serialized duration-intensity curve of one athlete and sport.
          *
@@ -10133,9 +10150,16 @@ export interface components {
          *             against, or ``None`` when none is stored yet.
          *         sessions: Activities with power in this sport, newest first, so the
          *             client can pick one to compute W' balance against.
+         *         overlays: Curves recomputed from rolling recent windows, so the athlete
+         *             can watch where their form is going, not only where it peaked.
          */
         PowerDurationRead: {
             fit: components["schemas"]["PowerDurationFitRead"] | null;
+            /**
+             * Overlays
+             * @default []
+             */
+            overlays: components["schemas"]["PowerDurationOverlayRead"][];
             /** Points */
             points: components["schemas"]["DurationPeakRead"][];
             /** Sessions */

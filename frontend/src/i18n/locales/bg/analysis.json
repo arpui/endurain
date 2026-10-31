@@ -104,7 +104,9 @@
     "timeAboveCp": "Време над CP",
     "tau": "Константа на възстановяване",
     "seriesBalance": "W′ оставащо",
-    "balanceTitle": "W′ оставащо с времето"
+    "balanceTitle": "W′ оставащо с времето",
+    "overlayName": "{months} месеца",
+    "overlayCp": "CP на скорошните прозорци: {windows}"
   },
   "intervals": {
     "title": "Анализ на интервалите",

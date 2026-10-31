@@ -104,7 +104,9 @@
     "timeAboveCp": "Tid över CP",
     "tau": "Återhämtningskonstant",
     "seriesBalance": "W′ kvar",
-    "balanceTitle": "W′ kvar över tid"
+    "balanceTitle": "W′ kvar över tid",
+    "overlayName": "{months} månader",
+    "overlayCp": "CP för recenta fönster: {windows}"
   },
   "intervals": {
     "title": "Intervallanalys",

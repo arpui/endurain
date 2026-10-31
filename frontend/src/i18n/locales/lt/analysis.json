@@ -104,7 +104,9 @@
     "timeAboveCp": "Laikas virš CP",
     "tau": "Atsigavimo konstanta",
     "seriesBalance": "W′ likę",
-    "balanceTitle": "W′ likutis laikui bėgant"
+    "balanceTitle": "W′ likutis laikui bėgant",
+    "overlayName": "{months} mėnesiai",
+    "overlayCp": "Neseni langai CP: {windows}"
   },
   "intervals": {
     "title": "Intervalų analizė",

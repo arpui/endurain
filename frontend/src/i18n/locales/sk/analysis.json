@@ -104,7 +104,9 @@
     "timeAboveCp": "Čas nad CP",
     "tau": "Konštanta obnovy",
     "seriesBalance": "W′ ostáva",
-    "balanceTitle": "W′ zostávajúce v čase"
+    "balanceTitle": "W′ zostávajúce v čase",
+    "overlayName": "{months} mesiace",
+    "overlayCp": "CP posledných okien: {windows}"
   },
   "intervals": {
     "title": "Analýza intervalov",

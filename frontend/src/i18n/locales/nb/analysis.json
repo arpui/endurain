@@ -104,7 +104,9 @@
     "timeAboveCp": "Tid over CP",
     "tau": "Restitusjonskonstant",
     "seriesBalance": "W′ igjen",
-    "balanceTitle": "W′ igjen over tid"
+    "balanceTitle": "W′ igjen over tid",
+    "overlayName": "{months} måneder",
+    "overlayCp": "CP for recente vinduer: {windows}"
   },
   "intervals": {
     "title": "Intervallanalyse",

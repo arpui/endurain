@@ -104,7 +104,9 @@
     "timeAboveCp": "Laiks virs CP",
     "tau": "Atjaunošanās konstante",
     "seriesBalance": "W′ atlicis",
-    "balanceTitle": "W′ atlikušais laikā"
+    "balanceTitle": "W′ atlikušais laikā",
+    "overlayName": "{months} mēneši",
+    "overlayCp": "Jauno logu CP: {windows}"
   },
   "intervals": {
     "title": "Intervalu analīze",

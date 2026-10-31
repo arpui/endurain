@@ -180,7 +180,7 @@ const sessionOptions = computed(() =>
         </div>
       </Card>
 
-      <PowerDurationChart :points="curve.points" />
+      <PowerDurationChart :points="curve.points" :overlays="curve.overlays" />
 
       <Card class="flex min-w-0 flex-col gap-3">
         <h3 class="text-card-heading">{{ t('analysis.power.balanceHeader') }}</h3>
