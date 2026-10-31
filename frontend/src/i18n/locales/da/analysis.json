@@ -38,7 +38,6 @@
     "description": "Når dine aktiviteter er blevet målt, vises din form- og træthedskurve her. Du kan sætte målingen i gang fra indstillingerne herunder."
   },
   "settings": {
-    "title": "Parametre og tærskler",
     "acuteDays": "Træthedsdage",
     "chronicDays": "Formdage",
     "primaryMethod": "Standardformel",
@@ -47,7 +46,6 @@
     "saved": "Indstillinger gemt",
     "saveFailed": "Indstillingerne kunne ikke gemmes",
     "thresholds": {
-      "title": "Tærskler",
       "hr": "Tærskelpuls",
       "add": "Tilføj tærskel",
       "set": "Sæt",

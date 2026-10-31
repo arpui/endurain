@@ -38,7 +38,6 @@
     "description": "Une fois vos activités mesurées, les courbes de forme et de fatigue s'afficheront ici. Vous pouvez lancer la mesure depuis les réglages ci-dessous."
   },
   "settings": {
-    "title": "Paramètres et seuils",
     "acuteDays": "Jours de fatigue",
     "chronicDays": "Jours de forme",
     "primaryMethod": "Formule par défaut",
@@ -47,7 +46,6 @@
     "saved": "Paramètres enregistrés",
     "saveFailed": "Impossible d'enregistrer les paramètres",
     "thresholds": {
-      "title": "Seuils",
       "hr": "FC de seuil",
       "add": "Ajouter un seuil",
       "set": "Définir",

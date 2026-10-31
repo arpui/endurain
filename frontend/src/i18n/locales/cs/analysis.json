@@ -38,7 +38,6 @@
     "description": "Až budou vaše aktivity změřeny, zobrazí se zde křivky formy a únavy. Měření můžete zadat v nastavení níže."
   },
   "settings": {
-    "title": "Parametry a prahy",
     "acuteDays": "Dny únavy",
     "chronicDays": "Dny formy",
     "primaryMethod": "Výchozí vzorec",
@@ -47,7 +46,6 @@
     "saved": "Nastavení uloženo",
     "saveFailed": "Nepodařilo se uložit nastavení",
     "thresholds": {
-      "title": "Prahy",
       "hr": "Prahový tep",
       "add": "Přidat prah",
       "set": "Nastavit",

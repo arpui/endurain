@@ -38,7 +38,6 @@
     "description": "Kui teie tegevused on mõõdetud, kuvatakse siin vormi- ja väsimuskõverad. Mõõtmist saate käivitada allpool olevatest seadistustest."
   },
   "settings": {
-    "title": "Parameetrid ja läved",
     "acuteDays": "Väsimuspäevad",
     "chronicDays": "Vormipäevad",
     "primaryMethod": "Vaikimisi valem",
@@ -47,7 +46,6 @@
     "saved": "Seaded salvestatud",
     "saveFailed": "Seadete salvestamine ebaõnnestus",
     "thresholds": {
-      "title": "Läved",
       "hr": "Lävepulss",
       "add": "Lisa lävi",
       "set": "Määra",

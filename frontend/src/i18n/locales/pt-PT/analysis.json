@@ -38,7 +38,6 @@
     "description": "Quando as tuas atividades forem medidas, verás aqui as curvas de forma e fadiga. Podes iniciar a medição nas definições abaixo."
   },
   "settings": {
-    "title": "Parâmetros e limiares",
     "acuteDays": "Dias de fadiga",
     "chronicDays": "Dias de forma",
     "primaryMethod": "Fórmula predefinida",
@@ -47,7 +46,6 @@
     "saved": "Definições guardadas",
     "saveFailed": "Não foi possível guardar as definições",
     "thresholds": {
-      "title": "Limiares",
       "hr": "FC limiar",
       "add": "Adicionar limiar",
       "set": "Definir",

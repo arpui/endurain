@@ -38,7 +38,6 @@
     "description": "Kad jūsu aktivitātes būs izmērītas, šeit parādīsies formas un noguruma līknes. Mērīšanu varat palaist iestatījumos zemāk."
   },
   "settings": {
-    "title": "Parametri un sliekšņi",
     "acuteDays": "Noguruma dienas",
     "chronicDays": "Formas dienas",
     "primaryMethod": "Noklusējuma formula",
@@ -47,7 +46,6 @@
     "saved": "Iestatījumi saglabāti",
     "saveFailed": "Neizdevās saglabāt iestatījumus",
     "thresholds": {
-      "title": "Sliekšņi",
       "hr": "Sliekšņa pulss",
       "add": "Pievienot slieksni",
       "set": "Iestatīt",

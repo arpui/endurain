@@ -38,7 +38,6 @@
     "description": "Kun harjoituksesi on mitattu, kunto- ja väsymyskäyrät näkyvät täällä. Voit käynnistää mittauksen alla olevista asetuksista."
   },
   "settings": {
-    "title": "Parametrit ja kynnykset",
     "acuteDays": "Väsymyspäivät",
     "chronicDays": "Kuntopäivät",
     "primaryMethod": "Oletuskaava",
@@ -47,7 +46,6 @@
     "saved": "Asetukset tallennettu",
     "saveFailed": "Asetusten tallennus epäonnistui",
     "thresholds": {
-      "title": "Kynnykset",
       "hr": "Sykekynnys",
       "add": "Lisää kynnys",
       "set": "Aseta",

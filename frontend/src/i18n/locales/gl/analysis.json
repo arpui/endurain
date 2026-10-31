@@ -38,7 +38,6 @@
     "description": "Cando as túas actividades sexan medidas, verás aquí as curvas de forma e fatiga. Podes iniciar a medición desde a configuración de abaixo."
   },
   "settings": {
-    "title": "Parámetros e umbrais",
     "acuteDays": "Días de fatiga",
     "chronicDays": "Días de forma",
     "primaryMethod": "Fórmula por defecto",
@@ -47,7 +46,6 @@
     "saved": "Configuración gardada",
     "saveFailed": "Non se puido gardar a configuración",
     "thresholds": {
-      "title": "Umbrais",
       "hr": "FC umbral",
       "add": "Engadir umbral",
       "set": "Fixar",

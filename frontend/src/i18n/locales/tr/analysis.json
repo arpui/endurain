@@ -38,7 +38,6 @@
     "description": "Antrenmanlarınız ölçüldüğünde form ve yorgunluk eğrileriniz burada görünecek. Ölçümü aşağıdaki ayarlardan başlatabilirsiniz."
   },
   "settings": {
-    "title": "Parametreler ve eşikler",
     "acuteDays": "Yorgunluk günleri",
     "chronicDays": "Form günleri",
     "primaryMethod": "Varsayılan formül",
@@ -47,7 +46,6 @@
     "saved": "Ayarlar kaydedildi",
     "saveFailed": "Ayarlar kaydedilemedi",
     "thresholds": {
-      "title": "Eşikler",
       "hr": "Eşik nabzı",
       "add": "Eşik ekle",
       "set": "Ayarla",

@@ -87,6 +87,21 @@ describe('buildChartConfiguration', () => {
     expect(datasets[1]?.type).toBeUndefined()
   })
 
+  it('enables a shared crosshair tooltip only when asked', () => {
+    const withShared = buildChartConfiguration({
+      kind: 'bar',
+      series: [{ label: 'Load', data: [1, 2] }],
+      sharedTooltip: true,
+    })
+    const without = buildChartConfiguration({
+      kind: 'bar',
+      series: [{ label: 'Load', data: [1, 2] }],
+    })
+
+    expect(withShared.options?.interaction).toEqual({ mode: 'index', intersect: false })
+    expect(without.options?.interaction).toBeUndefined()
+  })
+
   it('assigns palette colours by series index and honours explicit colours', () => {
     const config = buildChartConfiguration({
       kind: 'line',

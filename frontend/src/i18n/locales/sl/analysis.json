@@ -38,7 +38,6 @@
     "description": "Ko bodo vaše aktivnosti izmerjene, se tu prikažeta krivulji forme in utrujenosti. Merjenje lahko zaženete v spodnjih nastavitvah."
   },
   "settings": {
-    "title": "Parametri in pragovi",
     "acuteDays": "Dnevi utrujenosti",
     "chronicDays": "Dnevi forme",
     "primaryMethod": "Privzeti obrazec",
@@ -47,7 +46,6 @@
     "saved": "Nastavitve shranjene",
     "saveFailed": "Ni bilo mogoče shraniti nastavitev",
     "thresholds": {
-      "title": "Pragovi",
       "hr": "Prag utripa",
       "add": "Dodaj prag",
       "set": "Nastavi",

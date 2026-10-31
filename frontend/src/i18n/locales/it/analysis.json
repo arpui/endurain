@@ -38,7 +38,6 @@
     "description": "Quando le tue attività saranno misurate, qui vedrai le curve di forma e fatica. Puoi avviare la misura dalle impostazioni qui sotto."
   },
   "settings": {
-    "title": "Parametri e soglie",
     "acuteDays": "Giorni di fatica",
     "chronicDays": "Giorni di forma",
     "primaryMethod": "Formula predefinita",
@@ -47,7 +46,6 @@
     "saved": "Impostazioni salvate",
     "saveFailed": "Impossibile salvare le impostazioni",
     "thresholds": {
-      "title": "Soglie",
       "hr": "FC di soglia",
       "add": "Aggiungi soglia",
       "set": "Imposta",

@@ -38,7 +38,6 @@
     "description": "Once your activities have been measured, your fitness and fatigue curves will appear here. You can queue the measurement from the settings below."
   },
   "settings": {
-    "title": "Parameters and thresholds",
     "acuteDays": "Fatigue days",
     "chronicDays": "Fitness days",
     "primaryMethod": "Default formula",
@@ -47,7 +46,6 @@
     "saved": "Settings saved",
     "saveFailed": "Could not save the settings",
     "thresholds": {
-      "title": "Thresholds",
       "hr": "Threshold heart rate",
       "add": "Add threshold",
       "set": "Set",

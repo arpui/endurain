@@ -66,6 +66,12 @@ export interface ChartRenderOptions {
    * pinch on touch). Providers without zoom support ignore this.
    */
   zoom?: boolean
+  /**
+   * One hover shows every series aligned to the x label under the cursor (a
+   * shared crosshair tooltip), rather than only the nearest point. Reads well
+   * on date-indexed series where each column carries several values (PMC).
+   */
+  sharedTooltip?: boolean
 }
 
 /** Imperative handle to a mounted chart, returned by {@link ChartProvider.mount}. */

@@ -38,7 +38,6 @@
     "description": "Zodra je activiteiten zijn gemeten, verschijnen hier je fitheids- en vermoeidheidscurves. Je kunt de meting starten vanuit de instellingen hieronder."
   },
   "settings": {
-    "title": "Parameters en drempels",
     "acuteDays": "Vermoeidheidsdagen",
     "chronicDays": "Fitheidsdagen",
     "primaryMethod": "Standaardformule",
@@ -47,7 +46,6 @@
     "saved": "Instellingen opgeslagen",
     "saveFailed": "Kon instellingen niet opslaan",
     "thresholds": {
-      "title": "Drempels",
       "hr": "Drempelhartslag",
       "add": "Drempel toevoegen",
       "set": "Instellen",

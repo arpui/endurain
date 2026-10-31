@@ -187,8 +187,6 @@ function queueRecompute(): void {
 
 <template>
   <Card class="flex min-w-0 flex-col gap-4">
-    <h3 class="text-card-heading">{{ t('analysis.settings.title') }}</h3>
-
     <div class="flex flex-wrap items-end gap-2">
       <FormField :label="t('analysis.settings.acuteDays')" class="w-20">
         <template #default="{ fieldId }">
@@ -229,51 +227,47 @@ function queueRecompute(): void {
       </Button>
     </div>
 
-    <div class="flex flex-col gap-3 border-t border-border pt-4">
-      <h4 class="text-card-heading">{{ t('analysis.settings.thresholds.title') }}</h4>
-
-      <ul class="flex flex-col gap-2">
-        <li
-          v-for="[sport, entry] in Object.entries(settings.powerThresholds)"
-          :key="sport"
-          class="flex flex-wrap items-center gap-2"
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-4">
+      <div
+        v-for="[sport, entry] in Object.entries(settings.powerThresholds)"
+        :key="sport"
+        class="flex flex-wrap items-center gap-2"
+      >
+        <span class="text-body font-medium">{{ t(`home.sports.${sport}`) }}</span>
+        <span class="text-body tabular-nums">{{ Math.round(entry.valueW) }} W</span>
+        <span v-if="entry.wPrimeJ !== null" class="text-body text-muted-foreground">
+          W': {{ Math.round(entry.wPrimeJ / 100) / 10 }} kJ
+        </span>
+        <Badge variant="secondary">
+          {{
+            entry.source === 'manual'
+              ? t('analysis.settings.thresholds.sourceManual')
+              : t('analysis.settings.thresholds.sourceAuto')
+          }}
+        </Badge>
+        <Input
+          v-model="overrides[sport]"
+          type="number"
+          class="w-20"
+          :placeholder="t('analysis.settings.thresholds.wattsPlaceholder')"
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          :disabled="!isPositive(overrides[sport] ?? '')"
+          @click="setPowerThreshold(sport)"
         >
-          <span class="text-body font-medium">{{ t(`home.sports.${sport}`) }}</span>
-          <span class="text-body tabular-nums">{{ Math.round(entry.valueW) }} W</span>
-          <span v-if="entry.wPrimeJ !== null" class="text-body text-muted-foreground">
-            W': {{ Math.round(entry.wPrimeJ / 100) / 10 }} kJ
-          </span>
-          <Badge variant="secondary">
-            {{
-              entry.source === 'manual'
-                ? t('analysis.settings.thresholds.sourceManual')
-                : t('analysis.settings.thresholds.sourceAuto')
-            }}
-          </Badge>
-          <Input
-            v-model="overrides[sport]"
-            type="number"
-            class="w-20"
-            :placeholder="t('analysis.settings.thresholds.wattsPlaceholder')"
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            :disabled="!isPositive(overrides[sport] ?? '')"
-            @click="setPowerThreshold(sport)"
-          >
-            {{ t('analysis.settings.thresholds.set') }}
-          </Button>
-          <Button
-            v-if="entry.source === 'manual'"
-            variant="ghost"
-            size="sm"
-            @click="clearPowerThreshold(sport)"
-          >
-            {{ t('analysis.settings.thresholds.clear') }}
-          </Button>
-        </li>
-      </ul>
+          {{ t('analysis.settings.thresholds.set') }}
+        </Button>
+        <Button
+          v-if="entry.source === 'manual'"
+          variant="ghost"
+          size="sm"
+          @click="clearPowerThreshold(sport)"
+        >
+          {{ t('analysis.settings.thresholds.clear') }}
+        </Button>
+      </div>
 
       <div class="flex flex-wrap items-center gap-2">
         <Label for="analysis-new-threshold-sport">{{

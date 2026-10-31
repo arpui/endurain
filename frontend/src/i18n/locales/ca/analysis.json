@@ -38,7 +38,6 @@
     "description": "Quan es mesurin les teves activitats, aquí es mostraran les corbes de forma i fatiga. Pots llançar la mesura des dels paràmetres de sota."
   },
   "settings": {
-    "title": "Paràmetres i llindars",
     "acuteDays": "Dies de fatiga",
     "chronicDays": "Dies de forma",
     "primaryMethod": "Fórmula per defecte",
@@ -47,7 +46,6 @@
     "saved": "Paràmetres desats",
     "saveFailed": "No s'han pogut desar els paràmetres",
     "thresholds": {
-      "title": "Llindars",
       "hr": "FC llindar",
       "add": "Afegeix un llindar",
       "set": "Fixa",

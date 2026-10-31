@@ -38,7 +38,6 @@
     "description": "När dina aktiviteter har mätts visas din form- och trötthetskurva här. Du kan starta mätningen från inställningarna nedan."
   },
   "settings": {
-    "title": "Parametrar och trösklar",
     "acuteDays": "Trötthetsdagar",
     "chronicDays": "Formdagar",
     "primaryMethod": "Standardformel",
@@ -47,7 +46,6 @@
     "saved": "Inställningar sparade",
     "saveFailed": "Inställningarna kunde inte sparas",
     "thresholds": {
-      "title": "Trösklar",
       "hr": "Tröskelpuls",
       "add": "Lägg till tröskel",
       "set": "Sätt",

@@ -38,7 +38,6 @@
     "description": "Išmatavus jūsų veiklas, čia atsiras formos ir nuovargio kreivės. Matavimą galite paleisti žemiau esamuose nustatymuose."
   },
   "settings": {
-    "title": "Parametrai ir slenksčiai",
     "acuteDays": "Nuovargio dienos",
     "chronicDays": "Formos dienos",
     "primaryMethod": "Numatytoji formulė",
@@ -47,7 +46,6 @@
     "saved": "Nustatymai išsaugoti",
     "saveFailed": "Nepavyko išsaugoti nustatymų",
     "thresholds": {
-      "title": "Slenksčiai",
       "hr": "Slenkstinis pulsas",
       "add": "Pridėti slenkstį",
       "set": "Nustatyti",

@@ -38,7 +38,6 @@
     "description": "Gdy twoje aktywności zostaną zmierzone, pojawią się tu krzywe formy i zmęczenia. Pomiar możesz zlecić w ustawieniach poniżej."
   },
   "settings": {
-    "title": "Parametry i progi",
     "acuteDays": "Dni zmęczenia",
     "chronicDays": "Dni formy",
     "primaryMethod": "Domyślny wzór",
@@ -47,7 +46,6 @@
     "saved": "Zapisano ustawienia",
     "saveFailed": "Nie udało się zapisać ustawień",
     "thresholds": {
-      "title": "Progi",
       "hr": "Tętno progowe",
       "add": "Dodaj próg",
       "set": "Ustaw",

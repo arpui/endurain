@@ -38,7 +38,6 @@
     "description": "Când activitățile tale vor fi măsurate, aici vor apărea curbele de formă și oboseală. Poți porni măsurătoarea din setările de mai jos."
   },
   "settings": {
-    "title": "Parametri și praguri",
     "acuteDays": "Zile de oboseală",
     "chronicDays": "Zile de formă",
     "primaryMethod": "Formula implicită",
@@ -47,7 +46,6 @@
     "saved": "Setări salvate",
     "saveFailed": "Nu s-au putut salva setările",
     "thresholds": {
-      "title": "Praguri",
       "hr": "Prag de puls",
       "add": "Adaugă prag",
       "set": "Stabilește",

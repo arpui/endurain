@@ -127,6 +127,10 @@ export function buildChartConfiguration(
       responsive: true,
       maintainAspectRatio: false,
       animation: false,
+      // A shared tooltip reports every series aligned to the hovered x label,
+      // so one hover over a day lists load, fitness, fatigue and TSB together
+      // even though the lines have no visible points to aim at.
+      ...(options.sharedTooltip ? { interaction: { mode: 'index', intersect: false } } : {}),
       plugins: {
         legend: { display: options.series.length > 1 },
         tooltip: {

@@ -38,7 +38,6 @@
     "description": "Kad vaše aktivnosti budu izmjerene, ovdje se pojavljuju krivulje forme i umora. Mjerenje možete pokrenuti u postavkama ispod."
   },
   "settings": {
-    "title": "Parametri i pragovi",
     "acuteDays": "Dani umora",
     "chronicDays": "Dani forme",
     "primaryMethod": "Zadana formula",
@@ -47,7 +46,6 @@
     "saved": "Postavke spremljene",
     "saveFailed": "Nije moguće spremiti postavke",
     "thresholds": {
-      "title": "Pragovi",
       "hr": "Prag pulsa",
       "add": "Dodaj prag",
       "set": "Postavi",

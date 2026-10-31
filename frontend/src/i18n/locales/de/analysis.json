@@ -38,7 +38,6 @@
     "description": "Sobald deine Aktivitäten erfasst sind, erscheinen hier deine Fitness- und Ermüdungskurven. Die Messung kannst du unten in den Einstellungen anstoßen."
   },
   "settings": {
-    "title": "Parameter und Schwellenwerte",
     "acuteDays": "Ermüdungstage",
     "chronicDays": "Fitnesstage",
     "primaryMethod": "Standardformel",
@@ -47,7 +46,6 @@
     "saved": "Einstellungen gespeichert",
     "saveFailed": "Einstellungen konnten nicht gespeichert werden",
     "thresholds": {
-      "title": "Schwellenwerte",
       "hr": "Schwellen-HF",
       "add": "Schwellenwert hinzufügen",
       "set": "Setzen",

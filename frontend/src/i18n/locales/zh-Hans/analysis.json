@@ -38,7 +38,6 @@
     "description": "测量你的活动后，这里将显示体能和疲劳曲线。可在下方设置中启动测量。"
   },
   "settings": {
-    "title": "参数与阈值",
     "acuteDays": "疲劳天数",
     "chronicDays": "体能天数",
     "primaryMethod": "默认公式",
@@ -47,7 +46,6 @@
     "saved": "设置已保存",
     "saveFailed": "无法保存设置",
     "thresholds": {
-      "title": "阈值",
       "hr": "阈值心率",
       "add": "添加阈值",
       "set": "设置",

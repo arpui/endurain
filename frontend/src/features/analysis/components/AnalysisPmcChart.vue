@@ -23,7 +23,9 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 
-const LOAD_COLOR = themeColor('--color-brand')
+// Pale brand green for the daily-load bars: context to read the curves against,
+// never louder than the fitness/fatigue/TSB lines.
+const LOAD_COLOR = themeColor('--color-brand-light')
 const FITNESS_COLOR = themeColor('--color-brand-mid')
 const FATIGUE_COLOR = themeColor('--color-hr')
 const FORM_COLOR = themeColor('--color-info')
@@ -73,6 +75,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
     ],
     labels,
     valueFormat: (value) => String(Math.round(value)),
+    sharedTooltip: true,
   }
 })
 
@@ -92,7 +95,7 @@ useMetricChart(chartRender)
       </div>
       <span class="text-xs text-muted-foreground">{{ paramsLabel }}</span>
     </div>
-    <div ref="chartContainer" class="relative h-80 w-full min-w-0 sm:h-96" />
+    <div ref="chartContainer" class="relative h-96 w-full min-w-0 sm:h-[28rem]" />
     <p v-if="method === 'trimp'" class="text-body text-muted-foreground">
       {{ t('analysis.daily.trimpNote') }}
     </p>

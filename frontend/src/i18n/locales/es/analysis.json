@@ -38,7 +38,6 @@
     "description": "Cuando se midan tus actividades verás aquí las curvas de forma y fatiga. Puedes lanzar la medición desde los ajustes de abajo."
   },
   "settings": {
-    "title": "Parámetros y umbrales",
     "acuteDays": "Días de fatiga",
     "chronicDays": "Días de forma",
     "primaryMethod": "Fórmula predeterminada",
@@ -47,7 +46,6 @@
     "saved": "Ajustes guardados",
     "saveFailed": "No se pudieron guardar los ajustes",
     "thresholds": {
-      "title": "Umbrales",
       "hr": "FC umbral",
       "add": "Añadir umbral",
       "set": "Fijar",

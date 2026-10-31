@@ -11,6 +11,7 @@
 
 /** Design-token colours that may be resolved for canvas/JS rendering. */
 export type ThemeColorToken =
+  | '--color-brand-light'
   | '--color-brand'
   | '--color-brand-mid'
   | '--color-effort'
@@ -23,6 +24,7 @@ export type ThemeColorToken =
  * available (SSR, unit tests). The single place these hex values are repeated.
  */
 const TOKEN_FALLBACKS: Record<ThemeColorToken, string> = {
+  '--color-brand-light': '#e1f5ee',
   '--color-brand': '#1d9e75',
   '--color-brand-mid': '#0f6e56',
   '--color-effort': '#ef9f27',
