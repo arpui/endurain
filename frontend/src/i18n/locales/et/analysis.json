@@ -154,5 +154,14 @@
       "description": "Ükski lõik aknas ei läbi kallaku filtrit või ühelgi tegevusel pole võimsust."
     },
     "note": "Lõigud, mille nettkalle on alla −1 % (alla 800 m −2 %), jäetakse välja: allamäge ei ole rekord."
+  },
+  "laps": {
+    "cadence": "Kadents",
+    "power": "Võimsus",
+    "lengthRun": "Sammu pikkus",
+    "lengthSwim": "Dist./tõmme",
+    "lengthRide": "Ülekanne",
+    "economy": "Ökonoomsus",
+    "economyNote": "Ökonoomsus = maa tsükli kohta suhtelisel intensiivsusel, võrreldes esimese tugeva lõiguga; alla ×1,00 vorm halveneb."
   }
 }

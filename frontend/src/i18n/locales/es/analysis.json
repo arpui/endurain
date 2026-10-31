@@ -154,5 +154,14 @@
       "description": "Ningún tramo de la ventana supera el filtro de pendiente, o ninguna actividad tiene potencia."
     },
     "note": "Se descartan los tramos con pendiente neta por debajo de −1 % (−2 % bajo 800 m): una bajada no es una marca personal."
+  },
+  "laps": {
+    "cadence": "Cadencia",
+    "power": "Potencia",
+    "lengthRun": "Long. zancada",
+    "lengthSwim": "Dist. brazada",
+    "lengthRide": "Desarrollo",
+    "economy": "Economía",
+    "economyNote": "Economía = longitud por ciclo según la intensidad relativa, referida a la primera pasada sólida; por debajo de ×1,00 la forma decae."
   }
 }

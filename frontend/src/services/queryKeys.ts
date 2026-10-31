@@ -426,6 +426,11 @@ export const queryKeys = {
      * @returns A best-splits query key for one window.
      */
     bestTimes: (months: number | null) => ['analysis', 'best-times', months] as const,
+    /**
+     * @param id - Activity whose per-lap dynamics are keyed.
+     * @returns A lap-dynamics query key for one activity.
+     */
+    lapDynamics: (id: number) => ['analysis', 'lap-dynamics', id] as const,
   },
 
   /**

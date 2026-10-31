@@ -154,5 +154,14 @@
       "description": "Nicio porțiune din fereastră nu trece filtrul de pantă sau nicio activitate are putere."
     },
     "note": "Porțiunile cu pantă netă sub −1 % (−2 % sub 800 m) sunt eliminate: coborâșul nu e record personal."
+  },
+  "laps": {
+    "cadence": "Cadență",
+    "power": "Putere",
+    "lengthRun": "Lungimea pasului",
+    "lengthSwim": "Distanță/lobitură",
+    "lengthRide": "Dezvoltare",
+    "economy": "Economie",
+    "economyNote": "Economie = distanță pe ciclul la intensitate relativă, raportată la primul efort solid; sub ×1,00 forma scade."
   }
 }

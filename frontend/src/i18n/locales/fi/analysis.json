@@ -154,5 +154,14 @@
       "description": "Mikään jakso ikkunassa läpäise kaltevuussuodatinta, tai aktiviteeteissa ei tehoa."
     },
     "note": "Osat, joiden nettoprovisuus on alle −1 % (−2 % alle 800 m), hylätään: alamäki ei ole ennätys."
+  },
+  "laps": {
+    "cadence": "Kadenssi",
+    "power": "Teho",
+    "lengthRun": "Askeleen pituus",
+    "lengthSwim": "Matka/veto",
+    "lengthRide": "Vaihde",
+    "economy": "Taloudellisuus",
+    "economyNote": "Talous = maa per kierros suhteellisella intensiteetillä, suhteessa ensimmäiseen kovaan vetoon; alle ×1,00 kunto hiipuu."
   }
 }

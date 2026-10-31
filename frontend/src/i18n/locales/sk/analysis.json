@@ -154,5 +154,14 @@
       "description": "Žiadny úsek v okne neprejde filtrom stúpania, alebo žiadna aktivita nemá výkon."
     },
     "note": "Úseky s čistým stúpaním pod −1 % (−2 % pod 800 m) sa zamietajú: zjazd nie je rekord."
+  },
+  "laps": {
+    "cadence": "Cadencia",
+    "power": "Výkon",
+    "lengthRun": "Dĺžka kroku",
+    "lengthSwim": "Vzdialenosť/záber",
+    "lengthRide": "Prevod",
+    "economy": "Ekonomika",
+    "economyNote": "Ekonomika = vzdialenosť na cyklus pri relatívnej intenzite, vzťahované k prvému solidnému úseku; pod ×1,00 forma upadá."
   }
 }

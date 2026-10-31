@@ -154,5 +154,14 @@
       "description": "Nenhum troço na janela passa o filtro de inclinação, ou nenhuma atividade tem potência."
     },
     "note": "Troços com inclinação líquida abaixo de −1 % (−2 % abaixo de 800 m) são descartados: uma descida não é um recorde pessoal."
+  },
+  "laps": {
+    "cadence": "Cadência",
+    "power": "Potência",
+    "lengthRun": "Comp. passada",
+    "lengthSwim": "Dist. braçada",
+    "lengthRide": "Desenvolvimento",
+    "economy": "Economia",
+    "economyNote": "Economia = comprimento por ciclo à intensidade relativa, referida à primeira passada sólida; abaixo de ×1,00 a forma decai."
   }
 }

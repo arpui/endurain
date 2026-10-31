@@ -154,5 +154,14 @@
       "description": "Noben odsek v oknu ne preide filtra klancu, ali nobena aktivnost nima moči."
     },
     "note": "Odseki z neto naklonom pod −1 % (−2 % pod 800 m) se zavrnejo: spust ni rekord."
+  },
+  "laps": {
+    "cadence": "Kadenca",
+    "power": "Moč",
+    "lengthRun": "Dolžina koraka",
+    "lengthSwim": "Razdalja/veslanje",
+    "lengthRide": "Prenos",
+    "economy": "Ekonomičnost",
+    "economyNote": "Ekonomičnost = tla na cikel pri relativni intenziteti, glede na prvi trden napor; pod ×1,00 forma pada."
   }
 }

@@ -154,5 +154,14 @@
       "description": "Ningún tramo da xanela pasa o filtro de pendente, ou ningunha actividade ten potencia."
     },
     "note": "Descártanse os tramos con pendente neta por debaixo de −1 % (−2 % baixo 800 m): unha baixada non é unha marca persoal."
+  },
+  "laps": {
+    "cadence": "Cadencia",
+    "power": "Potencia",
+    "lengthRun": "Long. gambada",
+    "lengthSwim": "Dist. brazada",
+    "lengthRide": "Desenvolvemento",
+    "economy": "Economía",
+    "economyNote": "Economía = lonxitude por ciclo á intensidade relativa, referida á primeira passada sólida; por debaixo de ×1,00 a forma decae."
   }
 }

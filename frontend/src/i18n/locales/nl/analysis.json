@@ -154,5 +154,14 @@
       "description": "Geen stuk in het venster doorloopt de hellingfilter, of geen activiteit heeft vermogen."
     },
     "note": "Splits met netto stijging onder −1 % (−2 % onder 800 m) vervallen: een afdaling is geen PR."
+  },
+  "laps": {
+    "cadence": "Trapfrequentie",
+    "power": "Vermogen",
+    "lengthRun": "Passenlengte",
+    "lengthSwim": "Afstand/slag",
+    "lengthRide": "Overbrenging",
+    "economy": "Economisch",
+    "economyNote": "Economie = grond per cyclus bij relatieve intensiteit, relatives de eerste solide inspanning; onder ×1,00 vat de vorm af."
   }
 }

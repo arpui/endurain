@@ -154,5 +154,14 @@
       "description": "Kein Abschnitt im Fenster besteht den Gefällefilter, oder keine Aktivität hat Leistungsdaten."
     },
     "note": "Abschnitte mit Netto-Gefälle unter −1 % (−2 % unter 800 m) werden verworfen: eine Abfahrt ist keine Bestzeit."
+  },
+  "laps": {
+    "cadence": "Trittfrequenz",
+    "power": "Leistung",
+    "lengthRun": "Schrittlänge",
+    "lengthSwim": "Distanz/Zug",
+    "lengthRide": "Übersetzung",
+    "economy": "Ökonomie",
+    "economyNote": "Ökonomie = Strecke pro Tritt bei relativer Intensität, bezogen auf die erste solide Einheit; unter ×1,00 lässt die Form nach."
   }
 }

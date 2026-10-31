@@ -272,3 +272,16 @@ export interface BestTimes {
   months: number | null
   records: BestTime[]
 }
+
+export type LapDynamicsDto = Schemas['LapDynamicsRead']
+
+/** One lap's derived dynamics, as the analysis module measured it. */
+export interface LapDynamics {
+  /** The lap these dynamics belong to (join key with the activity's laps). */
+  lapId: number
+  avgPowerW: number | null
+  /** Ground covered per cycle, in metres, when cadence or cycles allow it. */
+  strideLengthM: number | null
+  /** Stride per unit of relative intensity, relative to the first solid effort. */
+  economy: number | null
+}

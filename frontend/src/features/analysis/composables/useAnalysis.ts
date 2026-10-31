@@ -15,6 +15,7 @@ import { useInvalidatingMutation } from '@/composables/useInvalidatingMutation'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
+  fetchActivityLapDynamics,
   fetchAnalysisSettings,
   fetchBestTimes,
   fetchFitnessSeries,
@@ -191,5 +192,32 @@ export function useBestTimesQuery(months: MaybeRefOrGetter<number | null>) {
     queryKey: computed(() => queryKeys.analysis.bestTimes(toValue(months))),
     queryFn: ({ signal }) => fetchBestTimes(toValue(months), signal),
     enabled: computed(() => isAuthenticated.value),
+  })
+}
+
+/**
+ * Per-lap dynamics of one activity: power, stride length and economy drift.
+ *
+ * The owner's view of the laps table: the economy reference is their own
+ * threshold, so the query is not issued for other viewers.
+ *
+ * @param activityId - Reactive activity id.
+ * @param enabled - Whether the parent activity has loaded and the viewer owns it.
+ * @returns The TanStack query result for the dynamics rows.
+ */
+export function useLapDynamicsQuery(
+  activityId: MaybeRefOrGetter<number | null | undefined>,
+  enabled: MaybeRefOrGetter<boolean> = true,
+) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => {
+    const value = toValue(activityId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.lapDynamics(id.value)),
+    queryFn: ({ signal }) => fetchActivityLapDynamics(id.value, signal),
+    enabled: computed(() => id.value > 0 && toValue(enabled) && isAuthenticated.value),
   })
 }

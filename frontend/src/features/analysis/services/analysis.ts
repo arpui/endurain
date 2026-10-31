@@ -7,6 +7,8 @@
 import type {
   ActivityIntervals,
   ActivityIntervalsDto,
+  LapDynamics,
+  LapDynamicsDto,
   BestTime,
   BestTimeDto,
   BestTimes,
@@ -360,4 +362,33 @@ export async function fetchBestTimes(
   if (months !== null) params.set('months', String(months))
   const dto = await apiFetch<BestTimesDto>(`/analysis/best-times?${params.toString()}`, { signal })
   return mapBestTimes(dto)
+}
+
+/** Maps one lap-dynamics DTO to the domain model. */
+function mapLapDynamics(dto: LapDynamicsDto): LapDynamics {
+  return {
+    lapId: dto.lap_id,
+    avgPowerW: dto.avg_power_w ?? null,
+    strideLengthM: dto.stride_length_m ?? null,
+    economy: dto.economy ?? null,
+  }
+}
+
+/**
+ * Fetches the caller's per-lap dynamics (power, stride length, economy) for one
+ * activity, computed on read against their own threshold.
+ *
+ * @param activityId - The activity to analyze.
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns One entry per lap, in recorded order.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchActivityLapDynamics(
+  activityId: number,
+  signal?: AbortSignal,
+): Promise<LapDynamics[]> {
+  const dtos = await apiFetch<LapDynamicsDto[]>(`/activities/${activityId}/lap-dynamics`, {
+    signal,
+  })
+  return (dtos ?? []).map(mapLapDynamics)
 }

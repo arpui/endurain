@@ -154,5 +154,14 @@
       "description": "Ingen parti i vinduet består stigningsfilteret, eller ingen aktivitet har effekt."
     },
     "note": "Splits med netto stigning under −1 % (−2 % under 800 m) forkastes: en utfor er ikke pers."
+  },
+  "laps": {
+    "cadence": "Kadens",
+    "power": "Effekt",
+    "lengthRun": "Steglengde",
+    "lengthSwim": "Dist./tak",
+    "lengthRide": "Utveksling",
+    "economy": "Økonomi",
+    "economyNote": "Økonomi = distanse per sykel ved relativ intensitet, referert til første solide innsats; under ×1,00 svikter formen."
   }
 }

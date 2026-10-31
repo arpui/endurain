@@ -154,5 +154,14 @@
       "description": "Joks ruožas lange neprašo nuolydžio filtro, arba veiklose nėra galios."
     },
     "note": "Atkarpos su bendru nuoliu žemiau −1 % (−2 % iki 800 m) atmetamos: nusileidimas nėra rekordas."
+  },
+  "laps": {
+    "cadence": "Kadencija",
+    "power": "Galia",
+    "lengthRun": "Žingsnio ilgis",
+    "lengthSwim": "Atstumas/irtimas",
+    "lengthRide": "Perdavimas",
+    "economy": "Ekonomiškumas",
+    "economyNote": "Ekonomika = atstumas per ciklą esant santykinei intensyvumui, palyginti su pirmu tvirtu darvu; žemiau ×1,00 forma smunka."
   }
 }

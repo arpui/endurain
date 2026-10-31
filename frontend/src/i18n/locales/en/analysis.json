@@ -154,5 +154,14 @@
       "description": "No stretch in the window passes the grade filter, or no activity has power."
     },
     "note": "Splits whose net grade falls below −1 % (−2 % under 800 m) are discarded: a downhill is not a personal best."
+  },
+  "laps": {
+    "cadence": "Cadence",
+    "power": "Power",
+    "lengthRun": "Stride length",
+    "lengthSwim": "Distance per stroke",
+    "lengthRide": "Development",
+    "economy": "Economy",
+    "economyNote": "Economy = ground per cycle at relative intensity, referenced to the session's first solid effort; below ×1.00 form is drifting."
   }
 }

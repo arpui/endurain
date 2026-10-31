@@ -154,5 +154,14 @@
       "description": "Penceredeki hiçbir bölüm eğim filtresini geçmiyor ya da hiçbir etkinlik güç içermiyor."
     },
     "note": "Net eğimi −1 % (800 m altı −2 %) altında kalan bölümler elenir: iniş kişisel rekor değildir."
+  },
+  "laps": {
+    "cadence": "Kadans",
+    "power": "Güç",
+    "lengthRun": "Adım uzunluğu",
+    "lengthSwim": "Mesafe/çekiş",
+    "lengthRide": "Aktarım",
+    "economy": "Ekonomi",
+    "economyNote": "Ekonomi = bağıl yoğunlukta tur başına mesafe, seansın ilk sağlam çabasına göre; ×1,00 altındaysa form düşüyor."
   }
 }
