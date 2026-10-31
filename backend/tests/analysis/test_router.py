@@ -329,3 +329,41 @@ class TestIntervalsRoute:
         ):
             response = client.get("/activities/5/intervals")
         assert response.status_code == 404
+
+
+class TestBestTimesRoute:
+    def _read(self) -> analysis_schema.BestTimesRead:
+        return analysis_schema.BestTimesRead(
+            sport="run",
+            months=365,
+            records=[
+                analysis_schema.BestTimeRead(
+                    distance_m=5000,
+                    time_s=1210.0,
+                    avg_power_w=392.0,
+                    activity_id=21,
+                    start_time="2026-09-20T08:00:00+00:00",
+                )
+            ],
+        )
+
+    def test_the_owner_reads_the_table(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.router.analysis_service.get_best_times", return_value=self._read()):
+            response = client.get("/analysis/best-times?months=365")
+        assert response.status_code == 200
+        body = response.json()
+        assert body["records"][0]["distance_m"] == 5000
+        assert body["records"][0]["activity_id"] == 21
+
+    def test_the_window_reaches_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.router.analysis_service.get_best_times", return_value=self._read()) as read:
+            response = client.get("/analysis/best-times?sport=run&months=90")
+        assert response.status_code == 200
+        assert read.call_args.kwargs["months"] == 90
+
+    def test_a_non_positive_window_is_rejected(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/best-times?months=0")
+        assert response.status_code == 422

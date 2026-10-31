@@ -265,3 +265,88 @@ class TestDownsample:
         assert len(sampled) == 10
         assert sampled[-1] == points[-1]
         assert sampled[0] == points[0]
+
+
+class TestBestSplitTimes:
+    """Best splits over canonical race distances, with the downhill guard."""
+
+    @staticmethod
+    def _run(meters_per_second: float, seconds: int, watts: float = 250.0, grade_pct: float = 0.0):
+        """Flat run at constant speed; ``grade_pct`` tilts the whole route."""
+        elapsed = [index * 1.0 for index in range(seconds)]
+        distance = [meters_per_second * index for index in range(seconds)]
+        power = [watts] * seconds
+        # cumulative ascent whose slope matches the requested net grade
+        altitude = [grade_pct / 100.0 * meters_per_second * index for index in range(seconds)]
+        return elapsed, distance, power, altitude
+
+    def test_a_flat_run_yields_its_pace_over_every_covered_distance(self):
+        elapsed, distance, power, altitude = self._run(4.0, 1500, 250.0)  # 6 km at 4 m/s
+        splits = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(1000, 2000, 5000),
+        )
+        assert set(splits) == {1000, 2000, 5000}
+        assert splits[1000][0] == pytest.approx(250.0, rel=0.02)
+        assert splits[5000][0] == pytest.approx(1250.0, rel=0.02)
+        assert splits[1000][1] == pytest.approx(250.0, rel=0.05)
+
+    def test_a_faster_middle_split_wins(self):
+        seconds = 1000
+        elapsed = [index * 1.0 for index in range(seconds)]
+        distance, power = [], []
+        running = 0.0
+        for index in range(seconds):
+            speed, watts = (5.0, 350.0) if 300 <= index < 500 else (3.0, 220.0)
+            running += speed
+            distance.append(running)
+            power.append(watts)
+        altitude = [0.0] * seconds
+        splits = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(1000,),
+        )
+        assert splits[1000][0] == pytest.approx(200.0, rel=0.02)  # the 5 m/s stretch
+        assert splits[1000][1] > 340.0
+
+    def test_a_downhill_split_is_rejected_for_long_distances(self):
+        elapsed, distance, power, altitude = self._run(5.0, 700, 300.0, grade_pct=-2.5)
+        splits = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(1000, 3000),
+        )
+        assert splits == {}  # -2,5 % net fails both the -1 % and the -2 % bound
+
+    def test_the_grade_bounds_follow_the_distance_length(self):
+        elapsed, distance, power, altitude = self._run(5.0, 700, 300.0, grade_pct=-1.5)
+        splits = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(400, 1000),
+        )
+        assert 400 in splits  # short: bound is -2 %, -1,5 % passes
+        assert 1000 not in splits  # long: bound is -1 %, -1,5 % fails
+
+    def test_distances_the_activity_never_covers_are_absent(self):
+        elapsed, distance, power, altitude = self._run(4.0, 100, 250.0)
+        assert (
+            analysis_maths.best_split_times(
+                elapsed_s=elapsed,
+                distance_cum_m=distance,
+                power_w=power,
+                altitude_m=altitude,
+                distances_m=(1000, 5000),
+            )
+            == {}
+        )

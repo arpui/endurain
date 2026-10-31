@@ -14,6 +14,7 @@ one, and every stored load records the threshold it was divided by.
 
 import calendar
 from datetime import UTC, date, datetime, timedelta
+from itertools import accumulate
 from statistics import mean as arithmetic_mean
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -1039,5 +1040,108 @@ def get_activity_intervals(
                 avg_speed_ms=segment.avg_speed_ms,
             )
             for segment in analysis.segments
+        ],
+    )
+
+
+def get_best_times(
+    user_id: int,
+    sport: str,
+    db: Session,
+    *,
+    months: int | None = None,
+) -> analysis_schema.BestTimesRead:
+    """Return the athlete's best splits over the canonical race distances.
+
+    Each distance's fastest window is found in every activity's own samples, so
+    the table answers "the best I have run", never "the best my watch reported
+    per lap". Splits whose net grade falls below the bound for their length are
+    discarded: a downhill sprint is not a personal best. Activities without a
+    power stream cannot appear (the table shows watts alongside every time);
+    without elevation a split is read as flat, which the short-distance bound
+    already tolerates.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group to read (the distances are running's).
+        db: Database session.
+        months: Window in months back from today, or ``None`` for all history.
+
+    Returns:
+        One record per distance achieved inside the window, shortest first.
+
+    Raises:
+        InvalidInputError: If the sport is unknown or the window is not positive.
+    """
+    if sport not in activity_constants.ACTIVITY_TYPES_BY_SPORT:
+        raise core_exceptions.InvalidInputError(f"Unknown sport '{sport}'")
+    if months is not None and months <= 0:
+        raise core_exceptions.InvalidInputError(f"Invalid months '{months}'")
+
+    since = _months_ago(datetime.now(UTC), months) if months else None
+    best: dict[int, tuple[float, float, int, datetime | None]] = {}
+    for activity in activity_integration.list_user_activities(user_id, db):
+        if sport_group(activity.activity_type) != sport:
+            continue
+        started = activity.start_time
+        if started is not None and started.tzinfo is not None and since is not None and started < since:
+            continue
+        if since is not None and (started is None or started.tzinfo is None):
+            continue
+        period_s, power_w, power_stamps = _stream_samples(
+            activity.id,
+            activity_streams_constants.STREAM_TYPE_POWER,
+            "power",
+            db,
+            keep_zeros=True,
+        )
+        if not power_w or period_s <= 0:
+            continue
+        _, speeds, speed_stamps = _stream_samples(
+            activity.id,
+            activity_streams_constants.STREAM_TYPE_SPEED,
+            "vel",
+            db,
+            keep_zeros=True,
+        )
+        _, elevations, elevation_stamps = _stream_samples(
+            activity.id,
+            activity_streams_constants.STREAM_TYPE_ELEVATION,
+            "ele",
+            db,
+            keep_zeros=True,
+        )
+        speed_ms = _align_to_power(speeds, speed_stamps, power_stamps, period_s)
+        if not speed_ms:
+            continue
+        altitude_m = _align_to_power(elevations, elevation_stamps, power_stamps, period_s)
+
+        count = len(power_w)
+        elapsed_s = [index * period_s for index in range(count)]
+        distance_cum_m = list(accumulate(speed * period_s for speed in speed_ms))
+        altitude_series_m = altitude_m if altitude_m is not None else (0.0,) * count
+        splits = analysis_maths.best_split_times(
+            elapsed_s=elapsed_s,
+            distance_cum_m=distance_cum_m,
+            power_w=power_w,
+            altitude_m=altitude_series_m,
+        )
+        for distance_m, (time_s, avg_power_w) in splits.items():
+            current = best.get(distance_m)
+            if current is None or time_s < current[0]:
+                best[distance_m] = (time_s, avg_power_w, activity.id, started)
+
+    return analysis_schema.BestTimesRead(
+        sport=sport,
+        months=months,
+        records=[
+            analysis_schema.BestTimeRead(
+                distance_m=distance_m,
+                time_s=round(values[0], 1),
+                avg_power_w=round(values[1], 1),
+                activity_id=values[2],
+                start_time=values[3].isoformat() if values[3] is not None else None,
+            )
+            for distance_m, values in sorted(best.items())
         ],
     )
