@@ -367,3 +367,30 @@ class TestBestTimesRoute:
         client = TestClient(_build_app(MagicMock()))
         response = client.get("/analysis/best-times?months=0")
         assert response.status_code == 422
+
+
+class TestLapDynamicsRoute:
+    def test_the_owner_reads_the_dynamics(self):
+        client = TestClient(_build_app(MagicMock()))
+        rows = [
+            analysis_schema.LapDynamicsRead(
+                lap_id=7,
+                avg_power_w=400.0,
+                stride_length_m=2.9,
+                economy=0.96,
+            )
+        ]
+        with patch("modules.analysis.activity_router.analysis_service.get_activity_lap_dynamics", return_value=rows):
+            response = client.get("/activities/5/lap-dynamics")
+        assert response.status_code == 200
+        assert response.json()[0]["lap_id"] == 7
+        assert response.json()[0]["economy"] == 0.96
+
+    def test_another_users_activity_is_not_found(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch(
+            "modules.analysis.activity_router.analysis_service.get_activity_lap_dynamics",
+            side_effect=core_exceptions.NotFoundError("Activity 5 not found"),
+        ):
+            response = client.get("/activities/5/lap-dynamics")
+        assert response.status_code == 404

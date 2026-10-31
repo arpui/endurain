@@ -25,6 +25,8 @@ import core.logger as core_logger
 import modules.activities.activity.constants as activity_constants
 import modules.activities.activity.integration_service as activity_integration
 import modules.activities.activity.schema as activity_schema
+import modules.activities.activity_laps.integration_service as activity_laps_integration
+import modules.activities.activity_laps.schema as activity_laps_schema
 import modules.activities.activity_streams.constants as activity_streams_constants
 import modules.activities.activity_streams.integration_service as activity_streams_integration
 import modules.analysis.constants as analysis_constants
@@ -1044,6 +1046,101 @@ def get_activity_intervals(
     )
 
 
+def get_activity_lap_dynamics(
+    activity_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> list[analysis_schema.LapDynamicsRead]:
+    """Return per-lap dynamics: power, stride length and a fatigue-referenced economy.
+
+    The columns come from what the device already recorded per lap; the economy
+    number is the athlete's own reference frame - stride per unit of relative
+    intensity, normalized to the first solid effort of the session - so a drift
+    below 1 reads as form degrading under fatigue, whatever the absolute pace was.
+
+    Args:
+        activity_id: The activity to analyze.
+        requester_user_id: The athlete asking; only their own activity answers.
+        db: Database session.
+
+    Returns:
+        One entry per lap, in recorded order; empty when the activity has no laps.
+
+    Raises:
+        NotFoundError: If the activity is not the requester's.
+    """
+    if not activity_integration.owns_activity(activity_id, requester_user_id, db):
+        raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
+    activity = activity_integration.get_activity_for_derivation(activity_id, db)
+    if activity is None:
+        return []
+    threshold = get_settings(requester_user_id, db).power_thresholds.get(sport_group(activity.activity_type))
+    threshold_w = threshold.value_w if threshold else None
+
+    dynamics: list[analysis_schema.LapDynamicsRead] = []
+    for lap in activity_laps_integration.list_laps_for_derivation(activity_id, db):
+        stride_m = _lap_stride_length_m(lap)
+        power_w = float(lap.avg_power) if lap.avg_power else None
+        dynamics.append(
+            analysis_schema.LapDynamicsRead(
+                lap_id=lap.id,
+                avg_power_w=power_w,
+                stride_length_m=round(stride_m, 2) if stride_m else None,
+                economy=None,
+            )
+        )
+
+    _normalize_lap_economy(dynamics, threshold_w)
+    return dynamics
+
+
+def _lap_stride_length_m(lap: activity_laps_schema.ActivityLapsRead) -> float | None:
+    """Return ground covered per cycle for one lap, or ``None`` when unmeasurable."""
+    distance = float(lap.total_distance or 0.0)
+    elapsed = float(lap.total_elapsed_time or 0.0)
+    if lap.enhanced_avg_speed:
+        speed: float | None = float(lap.enhanced_avg_speed)
+    elif elapsed > 0 and distance > 0:
+        speed = distance / elapsed
+    else:
+        speed = None
+    if speed and lap.avg_cadence:
+        return speed / (float(lap.avg_cadence) / 60.0)
+    if lap.total_cycles and distance > 0:
+        return distance / float(lap.total_cycles)
+    return None
+
+
+def _normalize_lap_economy(
+    dynamics: list[analysis_schema.LapDynamicsRead],
+    threshold_w: float | None,
+) -> None:
+    """Set each lap's economy relative to the session's first solid effort.
+
+    Economy is stride per unit of intensity: the same stride at lower relative
+    power is better form. The first lap that worked (a power above this athlete's
+    easy level, when they have one) is the baseline, and a value under 1 says the
+    later laps needed more intensity for less ground per cycle - the drift fatigue
+    shows before pace does.
+    """
+    baseline = None
+    for entry in dynamics:
+        if entry.stride_length_m is None or entry.avg_power_w is None or entry.avg_power_w <= 0:
+            continue
+        if threshold_w is not None and entry.avg_power_w < 0.70 * threshold_w:
+            continue
+        intensity = entry.avg_power_w / threshold_w if threshold_w else 1.0
+        baseline = entry.stride_length_m / intensity
+        break
+    if baseline is None or baseline <= 0:
+        return
+    for entry in dynamics:
+        if entry.stride_length_m is None or entry.avg_power_w is None or entry.avg_power_w <= 0:
+            continue
+        intensity = entry.avg_power_w / threshold_w if threshold_w else 1.0
+        entry.economy = round(entry.stride_length_m / intensity / baseline, 2)
+
+
 def get_best_times(
     user_id: int,
     sport: str,
@@ -1078,6 +1175,7 @@ def get_best_times(
     if months is not None and months <= 0:
         raise core_exceptions.InvalidInputError(f"Invalid months '{months}'")
 
+    threshold = get_settings(user_id, db).power_thresholds.get(sport)
     since = _months_ago(datetime.now(UTC), months) if months else None
     best: dict[int, tuple[float, float, int, datetime | None]] = {}
     for activity in activity_integration.list_user_activities(user_id, db):
@@ -1116,10 +1214,9 @@ def get_best_times(
             continue
         altitude_m = _align_to_power(elevations, elevation_stamps, power_stamps, period_s)
         # alignment copies the nearest sample across dropouts, which can repeat a GPS
-        # speed spike second after second and invent distance; the median erases those
-        # copies while leaving any honest fast stretch (longer than half the window) as it ran
-        median_window = 2 * (int(analysis_constants.BT_SPEED_MEDIAN_S / period_s) // 2) + 1
-        speed_ms = tuple(analysis_maths.moving_median(speed_ms, median_window))
+        # speed spike second after second and invent distance; no foot runs that fast,
+        # so cap every sample at the split speed ceiling before accumulating
+        speed_ms = tuple(min(value, analysis_constants.BT_MAX_SPEED_MS) for value in speed_ms)
 
         count = len(power_w)
         elapsed_s = [index * period_s for index in range(count)]
@@ -1130,6 +1227,7 @@ def get_best_times(
             distance_cum_m=distance_cum_m,
             power_w=power_w,
             altitude_m=altitude_series_m,
+            threshold_w=threshold.value_w if threshold else None,
         )
         for distance_m, (time_s, avg_power_w) in splits.items():
             current = best.get(distance_m)

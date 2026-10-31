@@ -315,15 +315,20 @@ def best_split_times(
     power_w: Sequence[float],
     altitude_m: Sequence[float],
     distances_m: Sequence[int] = analysis_constants.BT_DISTANCES_M,
+    threshold_w: float | None = None,
 ) -> dict[int, tuple[float, float]]:
     """Return ``(time_s, avg_power_w)`` for the fastest valid split of each distance.
 
     A split of distance D is every window the cumulative distance spans D or more;
     the fastest is the one taken between the latest sample that starts it and the
-    sample that closes it. The split counts only when its net grade over D stays
-    above the bound for its length: below it the athlete was coasting downhill, and
-    the time says nothing about fitness. Distances the activity never covers, and
-    distances whose every split ran downhill, are absent from the result.
+    sample that closes it, and tied times go to the window with the highest power,
+    which is the one sitting on the real effort rather than on GPS jitter around it.
+    The split counts only when its net grade over D stays above the bound for its
+    length: below it the athlete was coasting downhill, and the time says nothing
+    about fitness. Below that same length GPS speed itself stops being trustworthy
+    (jitter and under-measured bursts), so there the split must also carry a real
+    engine: mean power at least ``BT_EFFORT_IF`` times the athlete's threshold.
+    Distances no window satisfies are absent from the result.
     """
     cum = np.asarray(distance_cum_m, dtype=float)
     elapsed = np.asarray(elapsed_s, dtype=float)
@@ -348,16 +353,19 @@ def best_split_times(
             if distance >= analysis_constants.BT_SHORT_MIN_M
             else analysis_constants.BT_MIN_GRADE_PCT_SHORT
         )
+        powers = (power_cum[ends] - power_cum[begins]) / np.maximum(spans, 1e-9)
         valid &= spans > 0.0
         valid &= distance / spans <= analysis_constants.BT_MAX_SPEED_MS
         valid &= grades >= min_grade
+        if distance < analysis_constants.BT_SHORT_MIN_M and threshold_w:
+            valid &= powers >= analysis_constants.BT_EFFORT_IF * threshold_w
         if not valid.any():
             continue
         candidates = np.flatnonzero(valid)
-        best = candidates[int(np.argmin(spans[candidates]))]
-        end, begin = int(ends[best]), int(begins[best])
-        samples = end - begin
-        result[int(distance)] = (float(spans[best]), float((power_cum[end] - power_cum[begin]) / samples))
+        # fastest first; among equals, the hardest effort wins
+        order = np.lexsort((-powers[candidates], spans[candidates]))
+        best = int(candidates[order[0]])
+        result[int(distance)] = (float(spans[best]), float(powers[best]))
     return result
 
 

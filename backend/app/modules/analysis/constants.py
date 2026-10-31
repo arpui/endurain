@@ -106,12 +106,10 @@ BT_MIN_GRADE_PCT_SHORT = -2.0
 #: briefly "covers" a distance in an impossible time, and no wattage backs it up.
 BT_MAX_SPEED_MS = 8.0
 
-#: Median window (seconds) applied to the aligned speed stream before distances are
-#: accumulated. A GPS dropout makes the nearest-sample alignment repeat whatever the
-#: last value was - including a spike - and the copies invent distance that passes for
-#: a split; a stretch of real fast running (a few samples longer than half the window)
-#: survives the median untouched.
-BT_SPEED_MEDIAN_S = 15.0
+#: Mean power a short split must hold, as a multiple of the athlete's threshold, for
+#: its speed to count as fitness: under 800 m GPS speed alone is too easy to fake by
+#: gravity or jitter, so the engine has to be there (the interval quality gate's idea).
+BT_EFFORT_IF = 1.05
 
 #: Activities that must contribute peaks before a derived threshold is trusted.
 #: One activity alone fits a curve through its own samples only, which invented a
