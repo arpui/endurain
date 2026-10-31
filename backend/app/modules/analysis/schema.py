@@ -420,6 +420,30 @@ class BestTimesRead(BaseModel):
     records: list[BestTimeRead]
 
 
+class LapDynamicsRead(BaseModel):
+    """Serialized per-lap dynamics, computed from the lap's own recorded numbers.
+
+    Cadence and power are what the device reported; stride length is derived
+    (speed over cadence, falling back to distance over cycles), and the economy
+    value is that stride per unit of relative intensity, normalized to the first
+    solid effort of the session: it drifts below 1 as form degrades under fatigue.
+
+    Attributes:
+        lap_id: The lap these dynamics belong to.
+        avg_power_w: Mean power over the lap, when the device recorded one.
+        stride_length_m: Ground covered per cycle, when cadence or cycles exist.
+        economy: Stride per unit of relative intensity, relative to the session's
+            first solid effort; ``None`` when there is not enough data.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    lap_id: StrictInt
+    avg_power_w: StrictFloat | None
+    stride_length_m: StrictFloat | None
+    economy: StrictFloat | None
+
+
 class RecomputeQueued(BaseModel):
     """Response of a recompute request.
 

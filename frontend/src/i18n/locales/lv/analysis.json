@@ -154,5 +154,14 @@
       "description": "Neviens posms logā neiztur slīpuma filtru, vai nevai aktivitātei nav jaudas."
     },
     "note": "Posmi ar neto slīpumu zem −1 % (zem −2 % īsākiem par 800 m) tiek atmesti: nobraukums nav rekords."
+  },
+  "laps": {
+    "cadence": "Kadence",
+    "power": "Jauda",
+    "lengthRun": "Soļa garums",
+    "lengthSwim": "Att./dziens",
+    "lengthRide": "Pārnesums",
+    "economy": "Ekonomija",
+    "economyNote": "Ekonomija = ceļš vienā ciklā pie relatīvā intensitātes, atskaites pirmā iesilde; zem ×1.00 forma krītas."
   }
 }

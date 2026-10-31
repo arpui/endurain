@@ -383,3 +383,47 @@ class TestBestSplitSpeedCeiling:
             distances_m=(100,),
         )
         assert splits[100][0] == pytest.approx(13.0, abs=1.0)
+
+
+class TestBestSplitPowerRules:
+    def test_short_splits_below_the_power_floor_are_rejected(self):
+        seconds = 60
+        elapsed = [index * 1.0 for index in range(seconds)]
+        distance = [5.5 * index for index in range(seconds)]
+        power = [180.0] * seconds
+        altitude = [0.0] * seconds
+        without = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(100,),
+        )
+        with_floor = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(100,),
+            threshold_w=350.0,
+        )
+        assert 100 in without
+        assert with_floor == {}
+
+    def test_equal_times_go_to_the_window_sitting_on_the_effort(self):
+        seconds = 30
+        elapsed = [index * 1.0 for index in range(seconds)]
+        distance = [5.0 * index for index in range(seconds)]  # constant 5 m/s
+        power = [100.0] * 10 + [600.0] * 20  # the effort starts at second 10
+        altitude = [0.0] * seconds
+        splits = analysis_maths.best_split_times(
+            elapsed_s=elapsed,
+            distance_cum_m=distance,
+            power_w=power,
+            altitude_m=altitude,
+            distances_m=(100,),
+        )
+        # every 100 m window spans the same handful of seconds; the tie goes to the
+        # one sitting on the 600 W block rather than the one starting in the easy part
+        assert splits[100][0] == pytest.approx(20.0)
+        assert splits[100][1] > 550.0

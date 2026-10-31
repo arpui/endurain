@@ -405,6 +405,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/activities/{activity_id}/lap-dynamics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Activity Lap Dynamics
+         * @description Return per-lap dynamics (power, stride length, fatigue-referenced economy) for
+         *     the activity's owner: derived from the laps the device recorded and the athlete's
+         *     own threshold, so the drift of form under fatigue reads against their numbers.
+         */
+        get: operations["get_activity_lap_dynamics_api_v1_activities__activity_id__lap_dynamics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/activities/{activity_id}/laps": {
         parameters: {
             query?: never;
@@ -9521,6 +9543,32 @@ export interface components {
          */
         Language: "ca" | "zh-Hans" | "zh-Hant" | "de" | "fr" | "gl" | "it" | "nl" | "pt-PT" | "sl" | "sv" | "es" | "en" | "pl" | "tr" | "uk" | "ro" | "nb" | "da" | "fi" | "cs" | "el" | "hu" | "bg" | "hr" | "sr" | "sk" | "lt" | "lv" | "et";
         /**
+         * LapDynamicsRead
+         * @description Serialized per-lap dynamics, computed from the lap's own recorded numbers.
+         *
+         *     Cadence and power are what the device reported; stride length is derived
+         *     (speed over cadence, falling back to distance over cycles), and the economy
+         *     value is that stride per unit of relative intensity, normalized to the first
+         *     solid effort of the session: it drifts below 1 as form degrades under fatigue.
+         *
+         *     Attributes:
+         *         lap_id: The lap these dynamics belong to.
+         *         avg_power_w: Mean power over the lap, when the device recorded one.
+         *         stride_length_m: Ground covered per cycle, when cadence or cycles exist.
+         *         economy: Stride per unit of relative intensity, relative to the session's
+         *             first solid effort; ``None`` when there is not enough data.
+         */
+        LapDynamicsRead: {
+            /** Avg Power W */
+            avg_power_w: number | null;
+            /** Economy */
+            economy: number | null;
+            /** Lap Id */
+            lap_id: number;
+            /** Stride Length M */
+            stride_length_m: number | null;
+        };
+        /**
          * LicenseInfo
          * @description API license metadata.
          *
@@ -13951,6 +13999,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ActivityIntervalsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_activity_lap_dynamics_api_v1_activities__activity_id__lap_dynamics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LapDynamicsRead"][];
                 };
             };
             /** @description Validation Error */

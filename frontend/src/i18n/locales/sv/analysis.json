@@ -154,5 +154,14 @@
       "description": "Ingen sträcka i fönstret klarar lutningsfiltret, eller ingen aktivitet har effekt."
     },
     "note": "Splits med netto lutning under −1 % (−2 % under 800 m) kasseras: förbacke är inget pers."
+  },
+  "laps": {
+    "cadence": "Stegfrekvens",
+    "power": "Effekt",
+    "lengthRun": "Steglängd",
+    "lengthSwim": "Sträcka/tag",
+    "lengthRide": "Överväxling",
+    "economy": "Ekonomi",
+    "economyNote": "Ekonomi = sträcka per varv vid relativ intensitet, mot sessionens första solida insats; under ×1,00 sviktar formen."
   }
 }

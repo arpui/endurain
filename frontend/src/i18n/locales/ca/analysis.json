@@ -154,5 +154,14 @@
       "description": "No hi ha cap tram a la finestra que superi el filtre de desnivell, o cap activitat amb potència."
     },
     "note": "Els trams amb desnivell net per sota de −1 % (−2 % per sota de 800 m) es descarten: una baixada no és una marca personal."
+  },
+  "laps": {
+    "cadence": "Cadència",
+    "power": "Potència",
+    "lengthRun": "Long. gambada",
+    "lengthSwim": "Dist. braçada",
+    "lengthRide": "Desenvolupament",
+    "economy": "Economia",
+    "economyNote": "Economia = longitud per cicle segons la intensitat relativa, referida a la primera passa sòlida de la sessió; per sota de ×1,00 la forma decau."
   }
 }

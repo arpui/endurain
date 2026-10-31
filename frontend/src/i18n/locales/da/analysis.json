@@ -154,5 +154,14 @@
       "description": "Ingen strækning i vinduet består stigningsfiltret, eller ingen aktivitet har effekt."
     },
     "note": "Splits med netto stigning under −1 % (−2 % under 800 m) kasseres: en nedkørsel er ingen PR."
+  },
+  "laps": {
+    "cadence": "Kadence",
+    "power": "Effekt",
+    "lengthRun": "Skridtlængde",
+    "lengthSwim": "Dist./tag",
+    "lengthRide": "Gearlængde",
+    "economy": "Økonomi",
+    "economyNote": "Økonomi = grund pr. cyklus ved relativ intensitet, i forhold til den første solide indsats; under ×1,00 svigter formen."
   }
 }

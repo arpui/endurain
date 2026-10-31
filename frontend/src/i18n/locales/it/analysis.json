@@ -154,5 +154,14 @@
       "description": "Nessun tratto della finestra supera il filtro di pendenza, o nessuna attività ha potenza."
     },
     "note": "I tratti con pendenza netta sotto −1 % (−2 % sotto 800 m) scartati: una discesa non è un primato personale."
+  },
+  "laps": {
+    "cadence": "Cadenza",
+    "power": "Potenza",
+    "lengthRun": "Lunghezza falcata",
+    "lengthSwim": "Dist. bracciata",
+    "lengthRide": "Sviluppo",
+    "economy": "Economia",
+    "economyNote": "Economia = lunghezza per ciclo a intensità relativa, riferita alla prima prova solida; sotto ×1,00 la forma cala."
   }
 }

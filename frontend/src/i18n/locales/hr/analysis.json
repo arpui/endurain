@@ -154,5 +154,14 @@
       "description": "Nijedna dionica u prozoru ne prolazi filter nagiba, ili nijedna aktivnost nema snagu."
     },
     "note": "Dionice s neto nagibom ispod −1 % (−2 % ispod 800 m) se odbacuju: silazak nije rekord."
+  },
+  "laps": {
+    "cadence": "Kadencija",
+    "power": "Snaga",
+    "lengthRun": "Duljina koraka",
+    "lengthSwim": "Udaljenost/zahvat",
+    "lengthRide": "Prijenos",
+    "economy": "Ekonomičnost",
+    "economyNote": "Ekonomičnost = tlo po ciklu pri relativnom intenzitetu, u odnosu na prvi čvrsti napor; ispod ×1,00 forma opada."
   }
 }

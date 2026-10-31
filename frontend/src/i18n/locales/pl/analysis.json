@@ -154,5 +154,14 @@
       "description": "Żaden odcinek w oknie nie przechodzi filtra nachylenia, albo żadna aktywność nie ma mocy."
     },
     "note": "Odcinki o nachyleniu netto poniżej −1 % (−2 % poniżej 800 m) są odrzucane: zjazd nie jest rekordem."
+  },
+  "laps": {
+    "cadence": "Kadencja",
+    "power": "Moc",
+    "lengthRun": "Długość kroku",
+    "lengthSwim": "Dystans/ruch",
+    "lengthRide": "Przełożenie",
+    "economy": "Ekonomia",
+    "economyNote": "Ekonomia = dystans na cykl przy względnej intensywności, w odniesieniu do pierwszego solidnego akcentu; poniżej ×1,00 forma spada."
   }
 }

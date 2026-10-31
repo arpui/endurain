@@ -154,5 +154,14 @@
       "description": "Egyik szakasz sem felel meg az emelkedésszűrőnek, vagy nincs teljesítmény adat."
     },
     "note": "A −1 %-nál (800 m alatt −2 %) meredekebb meredekségű szakaszok kiesnek: lejtőn nem csúcs."
+  },
+  "laps": {
+    "cadence": "Fordulatszám",
+    "power": "Teljesítmény",
+    "lengthRun": "Lépéshossz",
+    "lengthSwim": "Táv/húzás",
+    "lengthRide": "Áttétel",
+    "economy": "Gazdaságosság",
+    "economyNote": "Gazdaságosság = megtett út körönként relatív intenzitáson, az első stabil erős réshez viszonyítva; ×1,00 alatt romlik a forma."
   }
 }

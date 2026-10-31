@@ -60,6 +60,25 @@ def get_activity_wprime_balance(
 
 
 @router.get(
+    "/lap-dynamics",
+    response_model=list[analysis_schema.LapDynamicsRead],
+)
+def get_activity_lap_dynamics(
+    activity_id: activity_dependencies.ActivityId,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["activities:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> list[analysis_schema.LapDynamicsRead]:
+    """Return per-lap dynamics (power, stride length, fatigue-referenced economy).
+
+    Computed for the activity's owner from the laps the device recorded and the
+    athlete's own threshold, so the drift of form under fatigue reads against
+    their numbers.
+    """
+    return analysis_service.get_activity_lap_dynamics(activity_id, token_user_id, db)
+
+
+@router.get(
     "/intervals",
     response_model=analysis_schema.ActivityIntervalsRead,
 )

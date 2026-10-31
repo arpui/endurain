@@ -154,5 +154,14 @@
       "description": "Aucun tronçon de la fenêtre ne passe le filtre de pente, ou aucune activité n'a de puissance."
     },
     "note": "Les tronçons dont la pente nette descend sous −1 % (−2 % sous 800 m) sont écartés : une descente n'est pas un record."
+  },
+  "laps": {
+    "cadence": "Cadence",
+    "power": "Puissance",
+    "lengthRun": "Longueur foulée",
+    "lengthSwim": "Dist. par brassée",
+    "lengthRide": "Développement",
+    "economy": "Économie",
+    "economyNote": "Économie = distance par cycle à intensité relative, référencée au premier effort solide ; sous ×1,00 la forme fléchit."
   }
 }

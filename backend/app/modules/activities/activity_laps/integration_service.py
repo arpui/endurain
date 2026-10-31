@@ -8,6 +8,10 @@ import modules.activities.activity_laps.crud as activity_laps_crud
 import modules.activities.activity_laps.schema as activity_laps_schema
 import modules.activities.contributors as activities_contributors
 
+#: Bound for a derivation read: lap counts are unbounded in the domain (a lap per
+#: kilometre over an ultra), and the dynamics consumer needs one activity at a time.
+_DERIVATION_MAX_LAPS = 500
+
 
 def _list_laps_for_activities(
     activity_ids: list[int],
@@ -23,6 +27,27 @@ def _list_laps_for_activities(
         Laps for activity IDs already scoped by the caller.
     """
     return activity_laps_crud.get_activities_laps(activity_ids, db)
+
+
+def list_laps_for_derivation(
+    activity_id: int,
+    db: Session,
+) -> list[activity_laps_schema.ActivityLapsRead]:
+    """Return every lap of one activity for another module's read-only computation.
+
+    The analysis module derives per-lap dynamics (power, cadence, stride) for the
+    activity's owner; the ownership check belongs to that caller, not here, and no
+    page bound applies because the consumer needs the whole timeline at once.
+    Same shape of seam as :func:`modules.activities.activity.integration_service.get_activity_for_derivation`.
+
+    Args:
+        activity_id: The activity whose laps are needed.
+        db: Database session.
+
+    Returns:
+        The laps in recorded order, empty when the activity has none.
+    """
+    return activity_laps_crud.get_activity_laps(activity_id, db, num_records=_DERIVATION_MAX_LAPS)
 
 
 def _store_laps(

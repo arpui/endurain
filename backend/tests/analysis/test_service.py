@@ -999,6 +999,7 @@ class TestBestTimes:
         db = _db()
         with (
             patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
             patch(f"{_SVC}._stream_samples", side_effect=streams),
         ):
             return analysis_service.get_best_times(2, "run", db)
@@ -1034,6 +1035,7 @@ class TestBestTimes:
         db = _db()
         with (
             patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[recent, older]),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
             patch(f"{_SVC}._stream_samples", side_effect=streams),
         ):
             read = analysis_service.get_best_times(2, "run", db, months=3)
@@ -1045,6 +1047,7 @@ class TestBestTimes:
         db = _db()
         with (
             patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[activity]),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
             patch(f"{_SVC}._stream_samples", side_effect=streams),
         ):
             read = analysis_service.get_best_times(2, "run", db)
@@ -1061,6 +1064,7 @@ class TestBestTimes:
         db = _db()
         with (
             patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[activity]),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
             patch(f"{_SVC}._stream_samples", side_effect=streams),
         ):
             read = analysis_service.get_best_times(2, "run", db)
@@ -1089,16 +1093,130 @@ class TestBestTimes:
             return 1.0, (), ()
 
         activity = _activity(1, start_time=datetime.now(UTC))
+        threshold = analysis_schema.PowerThresholdRead(
+            value_w=350.0,
+            w_prime_j=20_000.0,
+            source=analysis_constants.ThresholdSource.AUTO,
+            cv_pct=2.0,
+        )
         db = _db()
         with (
             patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[activity]),
+            patch(f"{_SVC}.get_settings", return_value=_settings(power_thresholds={"run": threshold})),
             patch(f"{_SVC}._stream_samples", side_effect=streams),
         ):
             read = analysis_service.get_best_times(2, "run", db)
-        by_distance = {record.distance_m: record for record in read.records}
-        assert by_distance[100].time_s >= 30.0  # the real pace, not the 13 s artifact
+        distances = {record.distance_m for record in read.records}
+        # the copies feed a short window the athlete's engine never produced (210 W
+        # under a 1,05x threshold floor), while the honest kilometre pace survives
+        assert 100 not in distances
+        assert 1000 in distances
+
+    def test_short_splits_need_a_real_engine_behind_the_speed(self):
+        """Fast coasting (gravity or jitter) is not a best; from 800 m up, pace suffices."""
+        seconds = 500
+        speeds = [5.5] * seconds  # 5,5 m/s: 100 m in 18 s
+        watts = [180.0] * seconds  # while barely working
+
+        def streams(activity_id, stream_type, _key, _db, *, keep_zeros):
+            stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(seconds))
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, tuple(watts), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple(speeds), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([0.0] * seconds), stamps
+            return 1.0, (), ()
+
+        activity = _activity(1, start_time=datetime.now(UTC))
+        threshold = analysis_schema.PowerThresholdRead(
+            value_w=350.0,
+            w_prime_j=20_000.0,
+            source=analysis_constants.ThresholdSource.AUTO,
+            cv_pct=2.0,
+        )
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[activity]),
+            patch(f"{_SVC}.get_settings", return_value=_settings(power_thresholds={"run": threshold})),
+            patch(f"{_SVC}._stream_samples", side_effect=streams),
+        ):
+            with_threshold = analysis_service.get_best_times(2, "run", db)
+        distances = {record.distance_m for record in with_threshold.records}
+        assert 100 not in distances  # 180 W carries no 100 m personal best
+        assert 1000 in distances  # the same speed over 1 km is an honest tempo split
 
     def test_an_unknown_sport_is_rejected(self):
         db = _db()
         with pytest.raises(core_exceptions.InvalidInputError):
             analysis_service.get_best_times(2, "kiteboarding", db)
+
+
+class TestLapDynamics:
+    def _lap(self, lap_id, *, distance, elapsed, speed=None, cadence=None, cycles=None, power=None):
+        return SimpleNamespace(
+            id=lap_id,
+            total_distance=distance,
+            total_elapsed_time=elapsed,
+            enhanced_avg_speed=speed,
+            avg_cadence=cadence,
+            total_cycles=cycles,
+            avg_power=power,
+        )
+
+    def _read(self, laps):
+        db = _db()
+        activity = _activity()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=activity),
+            patch(
+                f"{_SVC}.get_settings",
+                return_value=_settings(
+                    power_thresholds={
+                        "run": analysis_schema.PowerThresholdRead(
+                            value_w=350.0,
+                            w_prime_j=20000.0,
+                            source=analysis_constants.ThresholdSource.AUTO,
+                            cv_pct=2.0,
+                        )
+                    }
+                ),
+            ),
+            patch(f"{_SVC}.activity_laps_integration.list_laps_for_derivation", return_value=laps),
+        ):
+            return analysis_service.get_activity_lap_dynamics(1, 2, db)
+
+    def test_stride_prefers_speed_over_cadence_and_falls_back_to_cycles(self):
+        by_cadence = self._lap(10, distance=1000.0, elapsed=250.0, speed=4.0, cadence=80)
+        by_cycles = self._lap(11, distance=1000.0, elapsed=250.0, cycles=350)
+        rows = self._read([by_cadence, by_cycles])
+        assert rows[0].stride_length_m == pytest.approx(3.0)  # 4 m/s over 80 cycles/min
+        assert rows[1].stride_length_m == pytest.approx(2.86, abs=0.01)
+
+    def test_economy_is_referenced_to_the_first_solid_lap_and_drops_with_fatigue(self):
+        fresh = self._lap(20, distance=1000.0, elapsed=250.0, speed=4.0, cadence=80, power=400)
+        tired = self._lap(21, distance=1000.0, elapsed=260.0, speed=3.85, cadence=80, power=400)
+        rows = self._read([fresh, tired])
+        assert rows[0].economy == 1.0
+        assert rows[1].economy == pytest.approx(0.96, abs=0.01)
+
+    def test_easy_laps_before_the_first_work_relay_never_set_the_baseline(self):
+        easy = self._lap(30, distance=1000.0, elapsed=400.0, speed=2.5, cadence=75, power=150)
+        work = self._lap(31, distance=1000.0, elapsed=250.0, speed=4.0, cadence=80, power=400)
+        rows = self._read([easy, work])
+        assert rows[1].economy == 1.0  # baseline is the first lap that actually worked
+
+    def test_laps_without_data_answer_nothing_invented(self):
+        rows = self._read([self._lap(40, distance=1000.0, elapsed=250.0)])
+        assert rows[0].avg_power_w is None
+        assert rows[0].stride_length_m is None
+        assert rows[0].economy is None
+
+    def test_another_athletes_activity_is_not_found(self):
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=False),
+            pytest.raises(core_exceptions.NotFoundError),
+        ):
+            analysis_service.get_activity_lap_dynamics(1, 7, db)

@@ -15,7 +15,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
 import ActivityDetailHeader from '@/features/activities/components/ActivityDetailHeader.vue'
 import ActivityIntervalTable from '@/features/analysis/components/ActivityIntervalTable.vue'
-import { useActivityIntervalsQuery } from '@/features/analysis/composables/useAnalysis'
+import LapDynamicsTable from '@/features/analysis/components/LapDynamicsTable.vue'
+import {
+  useActivityIntervalsQuery,
+  useLapDynamicsQuery,
+} from '@/features/analysis/composables/useAnalysis'
 import ActivityGallery from '@/features/activities/components/ActivityGallery.vue'
 import ActivityGearCard from '@/features/activities/components/ActivityGearCard.vue'
 import ActivityHrZones from '@/features/activities/components/ActivityHrZones.vue'
@@ -81,6 +85,12 @@ const { data: intervals } = useActivityIntervalsQuery(
 )
 const showIntervals = computed(
   () => (intervals.value?.segments.length ?? 0) > 0 && intervals.value?.thresholdW != null,
+)
+// The analysis laps table replaces the plain one for the owner: same rows, plus
+// power, stride length and an economy drift read against their own threshold.
+const { data: lapDynamics } = useLapDynamicsQuery(
+  activityId,
+  computed(() => activityLoaded.value && isOwner.value),
 )
 
 const ownerQuery = useActivityOwnerQuery(activity)
@@ -345,7 +355,14 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
             <TabsTrigger value="sets">{{ t('activities.workout.title') }}</TabsTrigger>
           </TabsList>
           <TabsContent value="laps">
-            <ActivityLapsTable :laps="laps ?? []" :activity="activity" :units="units" />
+            <LapDynamicsTable
+              v-if="isOwner"
+              :laps="laps ?? []"
+              :dynamics="lapDynamics ?? []"
+              :activity="activity"
+              :units="units"
+            />
+            <ActivityLapsTable v-else :laps="laps ?? []" :activity="activity" :units="units" />
           </TabsContent>
           <TabsContent value="sets">
             <ActivityWorkoutSets
@@ -359,7 +376,14 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
         <!-- Only one available → a plain titled table. -->
         <template v-else-if="showLaps">
           <h2 class="text-card-heading">{{ t('activities.laps.title') }}</h2>
-          <ActivityLapsTable :laps="laps ?? []" :activity="activity" :units="units" />
+          <LapDynamicsTable
+            v-if="isOwner"
+            :laps="laps ?? []"
+            :dynamics="lapDynamics ?? []"
+            :activity="activity"
+            :units="units"
+          />
+          <ActivityLapsTable v-else :laps="laps ?? []" :activity="activity" :units="units" />
         </template>
         <template v-else>
           <h2 class="text-card-heading">{{ t('activities.workout.title') }}</h2>
