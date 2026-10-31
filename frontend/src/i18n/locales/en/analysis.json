@@ -13,7 +13,12 @@
     "coggan_tss": "Training Stress Score",
     "skiba_score": "Stress score (xPower)",
     "hr_load": "Heart-rate load",
-    "trimp": "Training impulse (TRIMP)"
+    "trimp": "Training impulse (TRIMP)",
+    "rss_total": "aRSS total",
+    "rss_up": "aRSS climbs",
+    "rss_high": "aRSS high",
+    "rss_mid": "aRSS middle",
+    "rss_low": "aRSS low"
   },
   "sport": {
     "label": "Sport",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Load",
-    "trimpNote": "TRIMP uses a different scale than the other formulas and is never added to them."
+    "trimpNote": "TRIMP uses a different scale than the other formulas and is never added to them.",
+    "rssNote": "aRSS measures only activities that carry power. An activity without power stays out of this series; heart-rate load is what measures it.",
+    "bandNote": "The bands say where the work happened: climbs, high, middle, low. Each powered second counts in exactly one band, so they add up to aRSS total."
   },
   "stats": {
     "dailyAvg": "Avg load / day"

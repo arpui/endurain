@@ -9409,14 +9409,27 @@ export interface components {
          *     series meaningful. ``TRIMP`` is a different scale (Banister's) and is reported
          *     beside the others, never added to them.
          *
+         *     The ``RSS_*`` methods are one family: an exponential stress kernel summed per
+         *     second over the samples of an activity that carries power. :attr:`RSS_TOTAL`
+         *     is the family's general load; the other four split it by *where* the effort
+         *     happened (climbs, high, middle and low intensity), each sample falling in
+         *     exactly one of them. They answer on the shared scale too: the kernel is
+         *     normalized so one hour at threshold is ~100.
+         *
          *     Attributes:
          *         COGGAN_TSS: Training Stress Score from Normalized Power over the threshold.
          *         SKIBA_SCORE: Stress score from xPower, which reacts sooner to bursts.
          *         HR_LOAD: Load from average heart rate over the threshold heart rate.
          *         TRIMP: Training impulse from heart-rate reserve (reported, not summed).
+         *         RSS_TOTAL: Exponential-intensity stress over every powered second.
+         *         RSS_UP: The share of that stress taken on climbs (grade above a cutoff).
+         *         RSS_HIGH: The share taken above a high fraction of threshold, off climbs.
+         *         RSS_MID: The share taken between the band cutoffs, off climbs.
+         *         RSS_LOW: The share taken below a low fraction of threshold, slow and off
+         *             climbs.
          * @enum {string}
          */
-        LoadMethod: "coggan_tss" | "skiba_score" | "hr_load" | "trimp";
+        LoadMethod: "coggan_tss" | "skiba_score" | "hr_load" | "trimp" | "rss_total" | "rss_up" | "rss_high" | "rss_mid" | "rss_low";
         /**
          * LogoutResponse
          * @description Response payload returned by the logout endpoint.

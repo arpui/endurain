@@ -13,7 +13,12 @@
     "coggan_tss": "Training Stress Score (TSS)",
     "skiba_score": "Stressiskoor (xPower)",
     "hr_load": "Pulsikoormus",
-    "trimp": "Treeningimpulss (TRIMP)"
+    "trimp": "Treeningimpulss (TRIMP)",
+    "rss_total": "aRSS kokku",
+    "rss_up": "aRSS tõusud",
+    "rss_high": "aRSS kõrge",
+    "rss_mid": "aRSS keskmine",
+    "rss_low": "aRSS madal"
   },
   "sport": {
     "label": "Ala",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Koormus",
-    "trimpNote": "TRIMP kasutab teistest valemitest erinevat skaalat ega liideta nendega."
+    "trimpNote": "TRIMP kasutab teistest valemitest erinevat skaalat ega liideta nendega.",
+    "rssNote": "aRSS mõõdab ainult võimsusega tegevusi. Ilma võimsuseta tegevus jääb sellest sarjast välja; seda mõõdab pulssikoormus.",
+    "bandNote": "Ribad näitavad, kus töö tehti: tõusud, kõrge, keskmine, madal. Iga võimsusega sekund loendub vaid ühes ribas, seega liidetakse need aRSS kokku väärtuseks."
   },
   "stats": {
     "dailyAvg": "Keskmine koormus/päev"

@@ -13,7 +13,12 @@
     "coggan_tss": "Índice de estrés de adestramento (TSS)",
     "skiba_score": "Índice de estrés (xPower)",
     "hr_load": "Carga por frecuencia cardíaca",
-    "trimp": "Impulso de adestramento (TRIMP)"
+    "trimp": "Impulso de adestramento (TRIMP)",
+    "rss_total": "aRSS total",
+    "rss_up": "aRSS subidas",
+    "rss_high": "aRSS intenso",
+    "rss_mid": "aRSS medio",
+    "rss_low": "aRSS suave"
   },
   "sport": {
     "label": "Deporte",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Carga",
-    "trimpNote": "O TRIMP emprega unha escala distinta das outras fórmulas e nunca se suma con elas."
+    "trimpNote": "O TRIMP emprega unha escala distinta das outras fórmulas e nunca se suma con elas.",
+    "rssNote": "O aRSS só mide actividades con potencia. Unha actividade sen potencia queda fóra desta serie; quen a mide é a carga por FC.",
+    "bandNote": "As bandas din onde estivo o traballo: subidas, intenso, medio, suave. Cada segundo con potencia conta nunha soa banda, polo que se suman ao aRSS total."
   },
   "stats": {
     "dailyAvg": "Carga media/día"

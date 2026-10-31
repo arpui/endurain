@@ -13,7 +13,12 @@
     "coggan_tss": "Trainings-Stress-Score (TSS)",
     "skiba_score": "Stress-Score (xPower)",
     "hr_load": "Herzfrequenz-Belastung",
-    "trimp": "Trainingsimpuls (TRIMP)"
+    "trimp": "Trainingsimpuls (TRIMP)",
+    "rss_total": "aRSS gesamt",
+    "rss_up": "aRSS Anstiege",
+    "rss_high": "aRSS intensiv",
+    "rss_mid": "aRSS mittel",
+    "rss_low": "aRSS locker"
   },
   "sport": {
     "label": "Sportart",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Belastung",
-    "trimpNote": "TRIMP nutzt eine andere Skala als die anderen Formeln und wird nie mit ihnen addiert."
+    "trimpNote": "TRIMP nutzt eine andere Skala als die anderen Formeln und wird nie mit ihnen addiert.",
+    "rssNote": "aRSS misst nur Aktivitäten mit Leistung. Eine Aktivität ohne Leistung bleibt außerhalb dieser Serie; dafür misst die Herzfrequenz-Last sie.",
+    "bandNote": "Die Bänder zeigen, wo die Arbeit steckte: Anstiege, intensiv, mittel, locker. Jede Leistungssekunde zählt in genau einem Band, sie addieren sich zum aRSS gesamt."
   },
   "stats": {
     "dailyAvg": "Ø Belastung/Tag"

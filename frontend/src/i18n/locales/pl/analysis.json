@@ -13,7 +13,12 @@
     "coggan_tss": "Training Stress Score (TSS)",
     "skiba_score": "Score stresu (xPower)",
     "hr_load": "Obciążenie tętnem",
-    "trimp": "Impuls treningowy (TRIMP)"
+    "trimp": "Impuls treningowy (TRIMP)",
+    "rss_total": "aRSS razem",
+    "rss_up": "aRSS podbiegi",
+    "rss_high": "aRSS wysokie",
+    "rss_mid": "aRSS średnie",
+    "rss_low": "aRSS niskie"
   },
   "sport": {
     "label": "Dyscyplina",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Obciążenie",
-    "trimpNote": "TRIMP używa innej skali niż pozostałe wzory i nigdy nie jest do nich dodawany."
+    "trimpNote": "TRIMP używa innej skali niż pozostałe wzory i nigdy nie jest do nich dodawany.",
+    "rssNote": "aRSS mierzy tylko aktywności z mocą. Aktywność bez mocy pozostaje poza tą serią; mierzy ją obciążenie tętnem.",
+    "bandNote": "Pasma mówią, gdzie była praca: podbiegi, wysokie, średnie, niskie. Każda sekunda z mocą liczy się w jednym pasmie, więc sumują się do aRSS razem."
   },
   "stats": {
     "dailyAvg": "Śr. obciąż./dzień"

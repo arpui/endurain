@@ -13,7 +13,12 @@
     "coggan_tss": "Treniruotės streso balas (TSS)",
     "skiba_score": "Streso balas (xPower)",
     "hr_load": "Krūvis pagal pulsą",
-    "trimp": "Treniruotės impulsas (TRIMP)"
+    "trimp": "Treniruotės impulsas (TRIMP)",
+    "rss_total": "aRSS bendra",
+    "rss_up": "aRSS įkalnės",
+    "rss_high": "aRSS aukšta",
+    "rss_mid": "aRSS vidutinė",
+    "rss_low": "aRSS žema"
   },
   "sport": {
     "label": "Sportas",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Krūvis",
-    "trimpNote": "TRIMP naudoja kitą skalę nei kitos formulės ir niekada su jomis nesumuojamas."
+    "trimpNote": "TRIMP naudoja kitą skalę nei kitos formulės ir niekada su jomis nesumuojamas.",
+    "rssNote": "aRSS matuoja tik veiklas su galia. Veikla be galios į šią seriją nepatenka; ją matuoja pulsine apkrova.",
+    "bandNote": "Juostos parodo, kur buvo darbas: įkalnės, aukšta, vidutinė, žema. Kiekviena galios sekundė skaičiuojama tik vienoje juostoje, todėl jos sudaro aRSS bendrą."
   },
   "stats": {
     "dailyAvg": "Vid. krūvis/d."

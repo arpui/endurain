@@ -13,7 +13,12 @@
     "coggan_tss": "Trenerācijas stresa rādītājs (TSS)",
     "skiba_score": "Stresa rādītājs (xPower)",
     "hr_load": "Slodze pēc pulsa",
-    "trimp": "Trenerācijas impulss (TRIMP)"
+    "trimp": "Trenerācijas impulss (TRIMP)",
+    "rss_total": "aRSS kopā",
+    "rss_up": "aRSS kāpumi",
+    "rss_high": "aRSS augsts",
+    "rss_mid": "aRSS vidējs",
+    "rss_low": "aRSS zems"
   },
   "sport": {
     "label": "Sporta veids",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Slodze",
-    "trimpNote": "TRIMP izmanto citu skalu nekā pārējās formulas, un tas nekad netiek saskaitīts ar tām."
+    "trimpNote": "TRIMP izmanto citu skalu nekā pārējās formulas, un tas nekad netiek saskaitīts ar tām.",
+    "rssNote": "aRSS mēra tikai aktivitātes ar jaudu. Aktivitāte bez jaudas šajā sērijā netiek iekļauta; to mēra sloga pēc pulsa.",
+    "bandNote": "Joslas parāda, kur bija darbs: kāpumi, augsts, vidējs, zems. Katra jaudas sekunde skaitās tikai vienā joslā, tāpēc tās summējas kopā ar aRSS kopā."
   },
   "stats": {
     "dailyAvg": "Vid. slodze/dienā"

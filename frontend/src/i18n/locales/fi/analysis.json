@@ -13,7 +13,12 @@
     "coggan_tss": "Training Stress Score (TSS)",
     "skiba_score": "Stressipisteet (xPower)",
     "hr_load": "Sykekuorma",
-    "trimp": "Harjoitusimpulssi (TRIMP)"
+    "trimp": "Harjoitusimpulssi (TRIMP)",
+    "rss_total": "aRSS yhteensä",
+    "rss_up": "aRSS nousut",
+    "rss_high": "aRSS korkea",
+    "rss_mid": "aRSS keski",
+    "rss_low": "aRSS kevyt"
   },
   "sport": {
     "label": "Laji",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Kuorma",
-    "trimpNote": "TRIMP käyttää muista kaavoista poikkeavaa asteikkoa, eikä sitä lasketa yhteen niiden kanssa."
+    "trimpNote": "TRIMP käyttää muista kaavoista poikkeavaa asteikkoa, eikä sitä lasketa yhteen niiden kanssa.",
+    "rssNote": "aRSS mittaa vain teholiikunnat. Ilman tehoa oleva liikunta jää tämän sarjan ulkopuolelle; sykekuorma mittaa sen.",
+    "bandNote": "Kaistat näyttävät missä työ tehtiin: nousut, korkea, keski, kevyt. Jokainen tehosekunti lasketaan vain yhdessä kaistassa, joten ne summautuvat aRSS-yhteensäarvoon."
   },
   "stats": {
     "dailyAvg": "Keskim. kuorma/päivä"

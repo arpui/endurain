@@ -43,6 +43,45 @@ def sample_period_s(timestamps: Sequence[datetime]) -> float:
     return float(min(np.median(positive), analysis_constants.MAX_SAMPLE_PERIOD_S))
 
 
+def grade_pct_series(
+    elevations_m: Sequence[float],
+    speeds_ms: Sequence[float],
+    period_s: float,
+) -> tuple[float, ...]:
+    """Return the grade in percent at each sample, from elevation over ground distance.
+
+    The distance walked or ridden between two samples is the speed held over the
+    sample period, so the grade is the elevation gain divided by it. A centered
+    median over a handful of samples then damps the ±few-metre noise GPS elevation
+    carries, which otherwise reads as a steep hill on flat ground.
+
+    Args:
+        elevations_m: Elevation in metres, one value per sample.
+        speeds_ms: Moving speed in metres per second, one value per sample.
+        period_s: Seconds between samples.
+
+    Returns:
+        One grade percentage per sample, clamped to ±100 %.
+    """
+    count = len(elevations_m)
+    if count < 2 or period_s <= 0:
+        return tuple(0.0 for _ in range(count))
+    raw: list[float] = [0.0]
+    for index in range(1, count):
+        distance = speeds_ms[index] * period_s if index < len(speeds_ms) else 0.0
+        if distance <= 0:
+            raw.append(0.0)
+            continue
+        gain = elevations_m[index] - elevations_m[index - 1]
+        raw.append(max(-100.0, min(100.0, 100.0 * gain / distance)))
+    half = max(1, int(analysis_constants.GRADE_MEDIAN_WINDOW_S // max(period_s, 1.0)) // 2)
+    smoothed: list[float] = []
+    for index in range(count):
+        window = sorted(raw[max(0, index - half) : min(count, index + half + 1)])
+        smoothed.append(window[len(window) // 2])
+    return tuple(smoothed)
+
+
 def window_samples(period_s: float, window_s: float) -> int:
     """Return how many samples span ``window_s`` at ``period_s`` seconds per sample."""
     if period_s <= 0:

@@ -94,6 +94,11 @@ WPRIME_POINTS_MAX = 600
 #: and the windows widen to match.
 MAX_SAMPLE_PERIOD_S = 10.0
 
+#: Window the recorded grade is median-filtered over, in seconds. GPS elevation
+#: carries a few metres of noise, which over a few seconds of ground reads as a
+#: steep hill where the athlete was flat out.
+GRADE_MEDIAN_WINDOW_S = 15.0
+
 
 class LoadMethod(StrEnum):
     """How one activity's training load was measured.
@@ -104,17 +109,35 @@ class LoadMethod(StrEnum):
     series meaningful. ``TRIMP`` is a different scale (Banister's) and is reported
     beside the others, never added to them.
 
+    The ``RSS_*`` methods are one family: an exponential stress kernel summed per
+    second over the samples of an activity that carries power. :attr:`RSS_TOTAL`
+    is the family's general load; the other four split it by *where* the effort
+    happened (climbs, high, middle and low intensity), each sample falling in
+    exactly one of them. They answer on the shared scale too: the kernel is
+    normalized so one hour at threshold is ~100.
+
     Attributes:
         COGGAN_TSS: Training Stress Score from Normalized Power over the threshold.
         SKIBA_SCORE: Stress score from xPower, which reacts sooner to bursts.
         HR_LOAD: Load from average heart rate over the threshold heart rate.
         TRIMP: Training impulse from heart-rate reserve (reported, not summed).
+        RSS_TOTAL: Exponential-intensity stress over every powered second.
+        RSS_UP: The share of that stress taken on climbs (grade above a cutoff).
+        RSS_HIGH: The share taken above a high fraction of threshold, off climbs.
+        RSS_MID: The share taken between the band cutoffs, off climbs.
+        RSS_LOW: The share taken below a low fraction of threshold, slow and off
+            climbs.
     """
 
     COGGAN_TSS = "coggan_tss"
     SKIBA_SCORE = "skiba_score"
     HR_LOAD = "hr_load"
     TRIMP = "trimp"
+    RSS_TOTAL = "rss_total"
+    RSS_UP = "rss_up"
+    RSS_HIGH = "rss_high"
+    RSS_MID = "rss_mid"
+    RSS_LOW = "rss_low"
 
 
 class ThresholdSource(StrEnum):
@@ -129,3 +152,53 @@ class ThresholdSource(StrEnum):
 
     AUTO = "auto"
     MANUAL = "manual"
+
+
+#: Every stored method, as a SQL ``IN`` list, so the two check constraints and the
+#: registry can never drift apart from the enum.
+def method_sql_list() -> str:
+    """Return the quoted ``IN (...)`` list of every :class:`LoadMethod` value."""
+    return ", ".join(f"'{method.value}'" for method in LoadMethod)
+
+
+# --- Exponential (RSS) stress family -------------------------------------------
+#
+# The athlete's own formula, fitted on running power: each second of an activity
+# that carries power contributes a stress rate that grows exponentially with the
+# intensity, and the activity's load is that rate summed over the seconds. The
+# defaults below are the fitted constants; every one of them is overridable per
+# athlete through ``analysis_settings.method_params``, keyed as named here.
+
+#: Exponential coefficient ``A`` of the kernel ``B + A · e^(E · power/threshold)``.
+RSS_KERNEL_A = 0.0289929
+
+#: Exponent coefficient ``E`` of the kernel.
+RSS_KERNEL_E = 3.82932
+
+#: Constant term ``B`` of the kernel.
+RSS_KERNEL_B = 0.363086
+
+#: Sum divisor: the kernel value one hour at threshold is normalized to, which puts
+#: the family on the shared scale (100 = one hour at threshold).
+RSS_NORM = 1.6
+
+#: Grade (%) above which a second is a climb: it is measured by ``RSS_UP`` and
+#: never by the intensity bands, and the kernel gets its steepest floor.
+RSS_CLIMB_GRADE_PCT = 10.0
+
+#: Grade (%) above which the kernel gets its first floor: a gradient costs more
+#: than its watts alone.
+RSS_SOFT_GRADE_PCT = 5.0
+
+#: Kernel floor applied above the soft grade, and above the climb grade.
+RSS_SOFT_FLOOR = 0.65
+RSS_CLIMB_FLOOR = 0.8
+
+#: Band edges, as fractions of the threshold power. A second is low at or below
+#: ``RSS_LOW_FRACTION`` while moving slowly, high above ``RSS_HIGH_FRACTION``, and
+#: middle in between (a fast low-power second counts as middle, not low).
+RSS_LOW_FRACTION = 0.5
+RSS_HIGH_FRACTION = 0.95
+
+#: Moving speed (m/s) below which a low-power second is a slow one.
+RSS_SLOW_SPEED_MS = 5.0

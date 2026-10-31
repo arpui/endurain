@@ -13,7 +13,12 @@
     "coggan_tss": "Tréninkové stresové skóre (TSS)",
     "skiba_score": "Stresové skóre (xPower)",
     "hr_load": "Zaťaženie podľa tepu",
-    "trimp": "Tréninkový impulz (TRIMP)"
+    "trimp": "Tréninkový impulz (TRIMP)",
+    "rss_total": "aRSS spolu",
+    "rss_up": "aRSS stúpania",
+    "rss_high": "aRSS vysoká",
+    "rss_mid": "aRSS stredná",
+    "rss_low": "aRSS nízka"
   },
   "sport": {
     "label": "Šport",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Zaťaženie",
-    "trimpNote": "TRIMP používa inú škálu ako ostatné vzorce a nikdy sa k nim nepriráta."
+    "trimpNote": "TRIMP používa inú škálu ako ostatné vzorce a nikdy sa k nim nepriráta.",
+    "rssNote": "aRSS meria iba aktivity s výkonom. Aktivita bez výkonu nie je v tejto rade; tú merí záťaž podľa tepu.",
+    "bandNote": "Pásma hovoria, kde bola práca: stúpania, vysoká, stredná, nízka. Každá sekunda s výkonom sa počíta v jednom pásme, preto sa sčítajú na aRSS spolu."
   },
   "stats": {
     "dailyAvg": "Priem. zaťaženie/deň"

@@ -192,6 +192,53 @@ class TestComputeLoads:
         assert replace.call_args.args[4] == "run"
         db.commit.assert_called_once()
 
+    def test_a_climbing_run_measures_the_exponential_bands_apart(self):
+        """Speed and elevation reach the formulas, so climbs score as climbs."""
+        db = _db()
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=250.0,
+                    w_prime_j=20000.0,
+                    source=analysis_constants.ThresholdSource.AUTO,
+                    cv_pct=3.0,
+                )
+            }
+        )
+        watts = [100.0] * 300 + [280.0] * 300 + [280.0] * 300  # easy, hard flat, hard climbing
+        speeds = [1.5] * 300 + [3.6] * 300 + [2.4] * 300
+        elevations = [100.0] * 600 + [100.0 + index * 0.3 for index in range(300)]
+        # The last section gains 0.3 m per second at 2.4 m/s: a 12 % grade, above
+        # the climb cutoff, so those seconds are measured as climbs.
+
+        def stream_for(_activity_id: int, stream_type: int, _db):
+            if stream_type == 2:
+                return _stream(watts)
+            if stream_type == 5:
+                return _stream(speeds, key="vel")
+            if stream_type == 4:
+                return _stream(elevations, key="ele")
+            return None
+
+        with (
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity(seconds=900.0)),
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings),
+            patch(f"{_SVC}.activity_streams_integration.get_stream_for_derivation", side_effect=stream_for),
+            patch(f"{_SVC}.analysis_crud.replace_activity_loads", return_value=9) as replace,
+        ):
+            analysis_service.compute_loads_for_activity(1, db)
+
+        records = {record.method: record.load for record in replace.call_args.args[5]}
+        assert records[analysis_constants.LoadMethod.RSS_UP] > 0
+        assert records[analysis_constants.LoadMethod.RSS_HIGH] > 0
+        assert records[analysis_constants.LoadMethod.RSS_LOW] > 0
+        assert analysis_constants.LoadMethod.RSS_MID not in records  # every second is easy, high or climbing
+        total = records[analysis_constants.LoadMethod.RSS_TOTAL]
+        bands = sum(
+            load for method, load in records.items() if method.value.startswith("rss_") and method.value != "rss_total"
+        )
+        assert bands == pytest.approx(total, rel=1e-6)
+
     def test_a_deleted_activity_writes_nothing(self):
         db = _db()
         with (

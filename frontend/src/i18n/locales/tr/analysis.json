@@ -13,7 +13,12 @@
     "coggan_tss": "Antrenman Stres Skoru (TSS)",
     "skiba_score": "Stres skoru (xPower)",
     "hr_load": "Nabza göre yük",
-    "trimp": "Antrenman impulsu (TRIMP)"
+    "trimp": "Antrenman impulsu (TRIMP)",
+    "rss_total": "aRSS toplam",
+    "rss_up": "aRSS tırmanışlar",
+    "rss_high": "aRSS yüksek",
+    "rss_mid": "aRSS orta",
+    "rss_low": "aRSS düşük"
   },
   "sport": {
     "label": "Spor",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Yük",
-    "trimpNote": "TRIMP diğer formüllerden farklı bir ölçek kullanır ve asla onlarla toplanmaz."
+    "trimpNote": "TRIMP diğer formüllerden farklı bir ölçek kullanır ve asla onlarla toplanmaz.",
+    "rssNote": "aRSS yalnızca güç içeren aktiviteleri ölçer. Gücü olmayan bir aktivite bu serinin dışında kalır; onu nabız yükü ölçer.",
+    "bandNote": "Bantlar işin nerede yapıldığını gösterir: tırmanışlar, yüksek, orta, düşük. Her güç saniyesi yalnızca bir bantta sayılır, bu yüzden toplamı aRSS toplam verir."
   },
   "stats": {
     "dailyAvg": "Ort. yük/gün"

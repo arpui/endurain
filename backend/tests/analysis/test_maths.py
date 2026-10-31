@@ -20,6 +20,35 @@ def _stamps(count: int, step_s: float = 1.0) -> list[datetime]:
     return [_T0 + timedelta(seconds=index * step_s) for index in range(count)]
 
 
+class TestGradeSeries:
+    """The grade the per-second formulas read: elevation over ground distance."""
+
+    def test_flat_ground_reads_zero(self):
+        grades = analysis_maths.grade_pct_series([100.0] * 50, [3.0] * 50, 1.0)
+        assert grades == tuple([0.0] * 50)
+
+    def test_a_steady_climb_reads_its_gradient(self):
+        # 3 m/s gaining 0.3 m per second is a 10 % grade.
+        elevations = [100.0 + 0.3 * index for index in range(60)]
+        grades = analysis_maths.grade_pct_series(elevations, [3.0] * 60, 1.0)
+        assert grades[30] == pytest.approx(10.0, abs=0.2)
+
+    def test_a_single_noisy_altitude_sample_does_not_invent_a_hill(self):
+        # One metre of GPS noise over a couple of seconds would read as a 30 %
+        # grade; the median filter over the window keeps the flat ground flat.
+        elevations = [100.0] * 30 + [101.0] + [100.0] * 30
+        grades = analysis_maths.grade_pct_series(elevations, [3.0] * 61, 1.0)
+        assert max(abs(grade) for grade in grades) < 1.0
+
+    def test_a_stopped_sample_contributes_no_grade(self):
+        elevations = [100.0, 100.5, 101.0]
+        grades = analysis_maths.grade_pct_series(elevations, [3.0, 0.0, 0.0], 1.0)
+        assert grades[1] == 0.0 and grades[2] == 0.0
+
+    def test_a_one_sample_stream_is_flat(self):
+        assert analysis_maths.grade_pct_series([100.0], [3.0], 1.0) == (0.0,)
+
+
 class TestSamplePeriod:
     def test_one_hertz_stream_reports_one_second(self):
         assert analysis_maths.sample_period_s(_stamps(10)) == pytest.approx(1.0)

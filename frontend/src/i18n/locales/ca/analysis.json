@@ -13,7 +13,12 @@
     "coggan_tss": "Índex d'estrès d'entrenament (TSS)",
     "skiba_score": "Índex d'estrès (xPower)",
     "hr_load": "Càrrega per freqüència cardíaca",
-    "trimp": "Impuls d'entrenament (TRIMP)"
+    "trimp": "Impuls d'entrenament (TRIMP)",
+    "rss_total": "aRSS global",
+    "rss_up": "aRSS pujades",
+    "rss_high": "aRSS intens",
+    "rss_mid": "aRSS mitjà",
+    "rss_low": "aRSS suau"
   },
   "sport": {
     "label": "Esport",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Càrrega",
-    "trimpNote": "El TRIMP fa servir una escala diferent de les altres fórmules i mai no se suma amb elles."
+    "trimpNote": "El TRIMP fa servir una escala diferent de les altres fórmules i mai no se suma amb elles.",
+    "rssNote": "L'aRSS només mesura activitats amb potència. Una activitat sense potència queda fora d'aquesta sèrie; qui la mesura és la càrrega per FC.",
+    "bandNote": "Les bandes diuen on ha estat la feina: pujades, intens, mitjà, suau. Cada segon amb potència compta en una sola banda, per això se sumen a l'aRSS global."
   },
   "stats": {
     "dailyAvg": "Càrrega mitjana/dia"

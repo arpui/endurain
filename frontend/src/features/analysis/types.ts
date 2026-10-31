@@ -20,7 +20,16 @@ export type WprimeBalanceDto = Schemas['WprimeBalanceRead']
 export type WprimePointDto = Schemas['WprimePointRead']
 
 /** Load formula keys, mirroring the backend `LoadMethod` enum. */
-export type LoadMethod = 'coggan_tss' | 'skiba_score' | 'hr_load' | 'trimp'
+export type LoadMethod =
+  | 'coggan_tss'
+  | 'skiba_score'
+  | 'hr_load'
+  | 'trimp'
+  | 'rss_total'
+  | 'rss_up'
+  | 'rss_high'
+  | 'rss_mid'
+  | 'rss_low'
 
 /** How a stored threshold was obtained: derived from records or typed in. */
 export type ThresholdSource = 'auto' | 'manual'

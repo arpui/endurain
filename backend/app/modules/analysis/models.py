@@ -39,10 +39,7 @@ class AnalysisSettings(Base, TimestampMixin):
     __table_args__ = (
         UniqueConstraint("user_id", name="uq_analysis_settings_user"),
         CheckConstraint(
-            f"primary_method IN ('{analysis_constants.LoadMethod.COGGAN_TSS}', "
-            f"'{analysis_constants.LoadMethod.SKIBA_SCORE}', "
-            f"'{analysis_constants.LoadMethod.HR_LOAD}', "
-            f"'{analysis_constants.LoadMethod.TRIMP}')",
+            f"primary_method IN ({analysis_constants.method_sql_list()})",
             name="ck_analysis_settings_primary_method",
         ),
     )
@@ -134,10 +131,7 @@ class ActivityLoad(Base):
     __tablename__ = "analysis_activity_loads"
     __table_args__ = (
         CheckConstraint(
-            f"method IN ('{analysis_constants.LoadMethod.COGGAN_TSS}', "
-            f"'{analysis_constants.LoadMethod.SKIBA_SCORE}', "
-            f"'{analysis_constants.LoadMethod.HR_LOAD}', "
-            f"'{analysis_constants.LoadMethod.TRIMP}')",
+            f"method IN ({analysis_constants.method_sql_list()})",
             name="ck_analysis_activity_loads_method",
         ),
         Index("ix_analysis_activity_loads_user_method_date", "user_id", "method", "load_date"),

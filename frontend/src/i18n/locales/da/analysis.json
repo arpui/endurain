@@ -13,7 +13,12 @@
     "coggan_tss": "Training Stress Score (TSS)",
     "skiba_score": "Stress-score (xPower)",
     "hr_load": "Pulsbelastning",
-    "trimp": "Træningsimpuls (TRIMP)"
+    "trimp": "Træningsimpuls (TRIMP)",
+    "rss_total": "aRSS total",
+    "rss_up": "aRSS stigninger",
+    "rss_high": "aRSS høj",
+    "rss_mid": "aRSS middel",
+    "rss_low": "aRSS lav"
   },
   "sport": {
     "label": "Sport",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Belastning",
-    "trimpNote": "TRIMP bruger en anden skala end de andre formler og lægges aldrig sammen med dem."
+    "trimpNote": "TRIMP bruger en anden skala end de andre formler og lægges aldrig sammen med dem.",
+    "rssNote": "aRSS måler kun aktiviteter med effekt. En aktivitet uden effekt er uden for denne serie; pulsbelastningen måler den.",
+    "bandNote": "Båndene viser, hvor arbejdet lå: stigninger, høj, middel, lav. Hvert effektsekund tæller i ét bånd, så de lægges sammen til aRSS total."
   },
   "stats": {
     "dailyAvg": "Gns. belastning/dag"

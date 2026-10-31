@@ -8,6 +8,8 @@ import type { ChartRenderOptions } from '@/composables/useChartProvider'
 import { themeColor, themeColorAlpha } from '@/lib/themeColor'
 import { Card } from '@/components/ui/card'
 import { useMetricChart } from '@/composables/useMetricChart'
+import { useTheme } from '@/composables/useTheme'
+import { isRssBandMethod } from '@/features/analysis/constants'
 import { formatMediumDate } from '@/utils/datetime'
 
 const props = defineProps<{
@@ -22,14 +24,31 @@ const props = defineProps<{
 }>()
 
 const { t, locale } = useI18n()
+const { theme } = useTheme()
 
-// Daily-load bars in very dark translucent gray: a barely-there shadow on the
-// dark card, a pale gray on the light one. One theme-agnostic colour because
-// canvas colours resolve at mount time; the lines stay the readable layer.
-const LOAD_COLOR = themeColorAlpha('--color-ink', 0.14)
+// Daily-load bars in a soft mid-gray: muted-foreground sits above the dark card
+// and below the light one, so the bars read as background context in either theme
+// while the fitness/fatigue/TSB lines stay the layer you actually read. The alpha
+// is read per theme so switching theme repaints the canvas.
+const loadColor = computed(() =>
+  themeColorAlpha('--color-muted-foreground', theme.value === 'dark' ? 0.34 : 0.26),
+)
 const FITNESS_COLOR = themeColor('--color-brand-mid')
 const FATIGUE_COLOR = themeColor('--color-hr')
 const FORM_COLOR = themeColor('--color-info')
+
+/** Which caveat the plotted method carries, if any: a different scale, or power-only. */
+const methodNote = computed(() => {
+  if (props.method === 'trimp') {
+    return t('analysis.daily.trimpNote')
+  }
+  if (props.method.startsWith('rss_')) {
+    return isRssBandMethod(props.method)
+      ? `${t('analysis.daily.rssNote')} ${t('analysis.daily.bandNote')}`
+      : t('analysis.daily.rssNote')
+  }
+  return ''
+})
 
 /** Parameters the visible numbers were derived from, so the chart reads self-labelled. */
 const paramsLabel = computed(() =>
@@ -71,7 +90,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
       {
         label: t('analysis.daily.series'),
         data: props.points.map((point) => Math.round(point.load)),
-        color: LOAD_COLOR,
+        color: loadColor.value,
       },
     ],
     labels,
@@ -97,8 +116,6 @@ useMetricChart(chartRender)
       <span class="text-xs text-muted-foreground">{{ paramsLabel }}</span>
     </div>
     <div ref="chartContainer" class="relative h-96 w-full min-w-0 sm:h-[28rem]" />
-    <p v-if="method === 'trimp'" class="text-body text-muted-foreground">
-      {{ t('analysis.daily.trimpNote') }}
-    </p>
+    <p v-if="methodNote" class="text-body text-muted-foreground">{{ methodNote }}</p>
   </Card>
 </template>

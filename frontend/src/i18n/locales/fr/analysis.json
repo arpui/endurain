@@ -13,7 +13,12 @@
     "coggan_tss": "Score de stress d'entraînement (TSS)",
     "skiba_score": "Score de stress (xPower)",
     "hr_load": "Charge en fréquence cardiaque",
-    "trimp": "Impulsion d'entraînement (TRIMP)"
+    "trimp": "Impulsion d'entraînement (TRIMP)",
+    "rss_total": "aRSS total",
+    "rss_up": "aRSS côtes",
+    "rss_high": "aRSS intense",
+    "rss_mid": "aRSS modéré",
+    "rss_low": "aRSS facile"
   },
   "sport": {
     "label": "Sport",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Charge",
-    "trimpNote": "Le TRIMP utilise une échelle différente de celle des autres formules et ne s'additionne jamais à elles."
+    "trimpNote": "Le TRIMP utilise une échelle différente de celle des autres formules et ne s'additionne jamais à elles.",
+    "rssNote": "Le aRSS ne mesure que les activités avec puissance. Une activité sans puissance reste hors de cette série ; c'est la charge FC qui la mesure.",
+    "bandNote": "Les bandes disent où s'est fait le travail : côtes, intense, modéré, facile. Chaque seconde de puissance compte dans une seule bande, elles s'ajoutent donc au total."
   },
   "stats": {
     "dailyAvg": "Charge moy. / jour"

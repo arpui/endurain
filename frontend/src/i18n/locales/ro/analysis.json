@@ -13,7 +13,12 @@
     "coggan_tss": "Scor de stres de antrenament (TSS)",
     "skiba_score": "Scor de stres (xPower)",
     "hr_load": "Încărcare pe baza pulsului",
-    "trimp": "Impuls de antrenament (TRIMP)"
+    "trimp": "Impuls de antrenament (TRIMP)",
+    "rss_total": "aRSS total",
+    "rss_up": "aRSS urcări",
+    "rss_high": "aRSS intens",
+    "rss_mid": "aRSS mediu",
+    "rss_low": "aRSS scăzut"
   },
   "sport": {
     "label": "Sport",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Încărcare",
-    "trimpNote": "TRIMP folosește o scală diferită de celelalte formule și nu se adună niciodată cu acestea."
+    "trimpNote": "TRIMP folosește o scală diferită de celelalte formule și nu se adună niciodată cu acestea.",
+    "rssNote": "aRSS măsoară doar activitățile cu putere. O activitate fără putere rămâne în afara acestei serii; ea este măsurată de sarcina pe puls.",
+    "bandNote": "Benzi arată unde a fost efortul: urcări, intens, mediu, scăzut. Fiecare secundă cu putere contează într-o singură bandă, deci se adună la aRSS total."
   },
   "stats": {
     "dailyAvg": "Încărcare medie/zi"

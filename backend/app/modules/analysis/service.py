@@ -146,8 +146,8 @@ def _stream_samples(
     db: Session,
     *,
     keep_zeros: bool,
-) -> tuple[float, tuple[float, ...]]:
-    """Return one activity stream as ``(sample_period_s, values)``.
+) -> tuple[float, tuple[float, ...], tuple[datetime, ...]]:
+    """Return one activity stream as ``(sample_period_s, values, timestamps)``.
 
     Power keeps its zeros (a stopped athlete does no work, and that is what the
     stored Normalized Power counts); heart-rate streams drop zeros, which are the
@@ -156,12 +156,13 @@ def _stream_samples(
     Args:
         activity_id: The activity whose stream is read.
         stream_type: Stream type code.
-        value_key: Waypoint key to read (``power``, ``hr``).
+        value_key: Waypoint key to read (``power``, ``hr``, ``vel``, ``ele``).
         db: Database session.
         keep_zeros: Whether zero samples are kept.
 
     Returns:
-        The sample period and values; ``(0.0, ())` when the activity has no such stream.
+        The sample period, the values and their timestamps; ``(0.0, (), ())`` when
+        the activity has no such stream.
     """
     stream = activity_streams_integration.get_stream_for_derivation(activity_id, stream_type, db)
     waypoints = (stream.stream_waypoints if stream is not None else None) or []
@@ -177,8 +178,48 @@ def _stream_samples(
         stamps.append(datetime.fromisoformat(point["time"]))
         values.append(value)
     if not values:
-        return 0.0, ()
-    return analysis_maths.sample_period_s(stamps), tuple(values)
+        return 0.0, (), ()
+    return analysis_maths.sample_period_s(stamps), tuple(values), tuple(stamps)
+
+
+def _align_to_power(
+    values: tuple[float, ...],
+    stamps: tuple[datetime, ...],
+    power_stamps: tuple[datetime, ...],
+    period_s: float,
+) -> tuple[float, ...] | None:
+    """Return one value per power sample: the nearest stream sample, within tolerance.
+
+    A stream the power samples fall between (recorded at a slower rate, or with a
+    dropped timestamp) still answers for the second it covers; a sample further
+    away than :data:`analysis_constants.MAX_SAMPLE_PERIOD_S` is a gap, and reading
+    across a gap would invent a speed or an altitude, so it becomes 0.0.
+
+    Args:
+        values: The stream's values.
+        stamps: The stream's timestamps, aligned to ``values``.
+        power_stamps: The timestamps of the power samples to answer for.
+        period_s: Seconds between power samples.
+
+    Returns:
+        One value per power sample, or ``None`` when the stream carries nothing.
+    """
+    if not values:
+        return None
+    tolerance = max(period_s, analysis_constants.MAX_SAMPLE_PERIOD_S)
+    aligned: list[float] = []
+    cursor = 0
+    for stamp in power_stamps:
+        while cursor < len(stamps) and stamps[cursor] < stamp:
+            cursor += 1
+        best = None
+        for candidate in (cursor - 1, cursor):
+            if 0 <= candidate < len(stamps):
+                distance = abs((stamps[candidate] - stamp).total_seconds())
+                if distance <= tolerance and (best is None or distance < best[0]):
+                    best = (distance, values[candidate])
+        aligned.append(best[1] if best else 0.0)
+    return tuple(aligned)
 
 
 def _moving_seconds(activity: activity_schema.ActivityRead) -> float:
@@ -222,20 +263,41 @@ def _load_input(
         A :class:`~modules.analysis.methods.LoadInput` ready for the registry.
     """
     settings = get_settings(activity.user_id or 0, db)
-    period_s, power_w = _stream_samples(
+    period_s, power_w, power_stamps = _stream_samples(
         activity.id,
         activity_streams_constants.STREAM_TYPE_POWER,
         "power",
         db,
         keep_zeros=True,
     )
-    _, hr_values = _stream_samples(
+    _, hr_values, _ = _stream_samples(
         activity.id,
         activity_streams_constants.STREAM_TYPE_HR,
         "hr",
         db,
         keep_zeros=False,
     )
+    # Speed and elevation answer only for the seconds the power stream covers, so
+    # the per-sample formulas read one aligned timeline rather than three clocks.
+    _, speeds, speed_stamps = _stream_samples(
+        activity.id,
+        activity_streams_constants.STREAM_TYPE_SPEED,
+        "vel",
+        db,
+        keep_zeros=True,
+    )
+    _, elevations, elevation_stamps = _stream_samples(
+        activity.id,
+        activity_streams_constants.STREAM_TYPE_ELEVATION,
+        "ele",
+        db,
+        keep_zeros=True,
+    )
+    speed_ms = _align_to_power(speeds, speed_stamps, power_stamps, period_s) if power_w else None
+    altitude_m = _align_to_power(elevations, elevation_stamps, power_stamps, period_s) if power_w else None
+    grade_pct = None
+    if altitude_m is not None and speed_ms is not None:
+        grade_pct = analysis_maths.grade_pct_series(altitude_m, speed_ms, period_s or 1.0)
     threshold = settings.power_thresholds.get(sport) if sport else None
     max_hr = activity.max_hr
     if not max_hr and activity.user_id:
@@ -253,6 +315,8 @@ def _load_input(
         stored_np_w=float(activity.normalized_power) if activity.normalized_power else None,
         average_hr=average_hr,
         max_hr=float(max_hr) if max_hr else None,
+        speed_ms=speed_ms,
+        grade_pct=grade_pct,
         power_threshold_w=float(threshold.value_w) if threshold else None,
         hr_threshold_bpm=float(settings.hr_threshold.value_bpm) if settings.hr_threshold else None,
         resting_hr_bpm=float(settings.resting_hr) if settings.resting_hr else None,
@@ -379,7 +443,7 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
         sport = sport_group(activity.activity_type)
         if sport is None:
             continue
-        period_s, power_w = _stream_samples(
+        period_s, power_w, _ = _stream_samples(
             activity.id,
             activity_streams_constants.STREAM_TYPE_POWER,
             "power",
@@ -393,7 +457,7 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
                 if value >= merged.get(duration, 0.0):
                     merged[duration] = value
                     holder_by_peak[(sport, duration)] = activity.id
-        hr_period_s, hr_values = _stream_samples(
+        hr_period_s, hr_values, _ = _stream_samples(
             activity.id,
             activity_streams_constants.STREAM_TYPE_HR,
             "hr",
@@ -775,7 +839,7 @@ def get_wprime_balance(
             points=[],
         )
 
-    period_s, power_w = _stream_samples(
+    period_s, power_w, _ = _stream_samples(
         activity_id,
         activity_streams_constants.STREAM_TYPE_POWER,
         "power",

@@ -13,7 +13,12 @@
     "coggan_tss": "訓練壓力分數 (TSS)",
     "skiba_score": "壓力分數 (xPower)",
     "hr_load": "心率負荷",
-    "trimp": "訓練脈衝 (TRIMP)"
+    "trimp": "訓練脈衝 (TRIMP)",
+    "rss_total": "aRSS 總計",
+    "rss_up": "aRSS 爬坡",
+    "rss_high": "aRSS 高強度",
+    "rss_mid": "aRSS 中等",
+    "rss_low": "aRSS 低強度"
   },
   "sport": {
     "label": "運動",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "負荷",
-    "trimpNote": "TRIMP 使用與其他公式不同的量尺，不會與它們相加。"
+    "trimpNote": "TRIMP 使用與其他公式不同的量尺，不會與它們相加。",
+    "rssNote": "aRSS 只測量帶功率的活動。沒有功率的活動不計入這條曲線；由心率負荷來測量。",
+    "bandNote": "各分區說明负荷來自哪裡：爬坡、高強度、中等、低強度。每個功率秒只計入一個分區，因此相加等於 aRSS 總計。"
   },
   "stats": {
     "dailyAvg": "日均負荷"

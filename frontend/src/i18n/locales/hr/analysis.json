@@ -13,7 +13,12 @@
     "coggan_tss": "Training Stress Score (TSS)",
     "skiba_score": "Stress score (xPower)",
     "hr_load": "Opterećenje po pulsu",
-    "trimp": "Training impuls (TRIMP)"
+    "trimp": "Training impuls (TRIMP)",
+    "rss_total": "aRSS ukupno",
+    "rss_up": "aRSS usponi",
+    "rss_high": "aRSS visoko",
+    "rss_mid": "aRSS srednje",
+    "rss_low": "aRSS nisko"
   },
   "sport": {
     "label": "Sport",
@@ -28,7 +33,9 @@
   },
   "daily": {
     "series": "Opterećenje",
-    "trimpNote": "TRIMP koristi drugu ljestvicu od drugih formula i nikada im se ne zbraja."
+    "trimpNote": "TRIMP koristi drugu ljestvicu od drugih formula i nikada im se ne zbraja.",
+    "rssNote": "aRSS mjeri samo aktivnosti s snagom. Aktivnost bez snage izvan je ovog niza; nju mjeri opterećenje po pulsu.",
+    "bandNote": "Vrpove govore gdje je bio rad: usponi, visoko, srednje, nisko. Svaka sekunda sa snagom broji se u jednoj traci, pa se zbrajaju u aRSS ukupno."
   },
   "stats": {
     "dailyAvg": "Prosj. opterećenje/dan"

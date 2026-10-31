@@ -17,6 +17,7 @@ export type ThemeColorToken =
   | '--color-hr'
   | '--color-ink'
   | '--color-info'
+  | '--color-muted-foreground'
   | '--color-goal'
 
 /**
@@ -30,6 +31,7 @@ const TOKEN_FALLBACKS: Record<ThemeColorToken, string> = {
   '--color-hr': '#e24b4a',
   '--color-ink': '#2c2c2a',
   '--color-info': '#378add',
+  '--color-muted-foreground': '#888780',
   '--color-goal': '#639922',
 }
 
