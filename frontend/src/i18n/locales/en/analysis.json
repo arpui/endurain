@@ -56,7 +56,9 @@
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Fit from (s)",
+    "fitToS": "Fit to (s)"
   },
   "actions": {
     "refreshThresholds": "Refresh thresholds",
@@ -64,5 +66,32 @@
     "refreshQueued": "Threshold refresh queued",
     "recomputeQueued": "Recompute queued",
     "failed": "Could not queue the request"
+  },
+  "sections": "Analysis sections",
+  "sectionLoad": "Training load",
+  "sectionPower": "Power curve",
+  "power": {
+    "subtitle": "Your highest sustained averages and the critical power derived from them",
+    "chartTitle": "Duration-intensity curve",
+    "seriesCurve": "Best average power",
+    "cp": "Critical power",
+    "wprime": "W′ capacity",
+    "cv": "Fit error",
+    "window": "Fit window",
+    "previewDefault": "Default",
+    "empty": {
+      "title": "No curve for this sport yet",
+      "description": "The curve appears once activities with power for this sport have been measured."
+    },
+    "balanceHeader": "W′ balance",
+    "sessionLabel": "Activity",
+    "sessionPlaceholder": "Choose an activity",
+    "balanceHint": "Choose an activity to see how its efforts consumed and recovered W′.",
+    "balanceEmpty": "This sport needs a fitted W′ to draw the balance; totals above the threshold are still shown.",
+    "workAboveCp": "Work above CP",
+    "timeAboveCp": "Time above CP",
+    "tau": "Recovery constant",
+    "seriesBalance": "W′ remaining",
+    "balanceTitle": "W′ remaining over time"
   }
 }

@@ -56,7 +56,9 @@
       "sourceManual": "ruční",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Přizpůsobení od (s)",
+    "fitToS": "Přizpůsobení do (s)"
   },
   "actions": {
     "refreshThresholds": "Obnovit prahy",
@@ -64,5 +66,32 @@
     "refreshQueued": "Obnova prahů ve frontě",
     "recomputeQueued": "Přepočet ve frontě",
     "failed": "Nepodařilo se zadat požadavek"
+  },
+  "sections": "Sekce analýzy",
+  "sectionLoad": "Tréninkové zatížení",
+  "sectionPower": "Křivka výkonu",
+  "power": {
+    "subtitle": "Vaše nejlepší udržené průměry a kritický výkon z nich odvozený",
+    "chartTitle": "Křivka délka–intenzita",
+    "seriesCurve": "Nejlepší průměrný výkon",
+    "cp": "Kritický výkon",
+    "wprime": "Kapacita W′",
+    "cv": "Chyba fitu",
+    "window": "Okno fitu",
+    "previewDefault": "Výchozí",
+    "empty": {
+      "title": "Pro tento sport zatím žádná křivka",
+      "description": "Křivka se zobrazí, až budou změřeny aktivity tohoto sportu s výkonem."
+    },
+    "balanceHeader": "Balance W′",
+    "sessionLabel": "Aktivita",
+    "sessionPlaceholder": "Vybrat aktivitu",
+    "balanceHint": "Vyberte aktivitu a uvidíte, jak její výkony spotřebovávaly a obnovovaly W′.",
+    "balanceEmpty": "Pro vykreslení balance tento sport potřebuje fitnuté W′; součty nad prahem se zobrazují i tak.",
+    "workAboveCp": "Práce nad CP",
+    "timeAboveCp": "Čas nad CP",
+    "tau": "Konstanta obnovy",
+    "seriesBalance": "W′ zbývá",
+    "balanceTitle": "W′ zbývající v čase"
   }
 }

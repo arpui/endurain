@@ -56,7 +56,9 @@
       "sourceManual": "ręczny",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Dopasowanie od (s)",
+    "fitToS": "Dopasowanie do (s)"
   },
   "actions": {
     "refreshThresholds": "Odśwież progi",
@@ -64,5 +66,32 @@
     "refreshQueued": "Odświeżanie progów dodane do kolejki",
     "recomputeQueued": "Przeliczanie dodane do kolejki",
     "failed": "Nie udało się dodać zlecenia do kolejki"
+  },
+  "sections": "Sekcje analizy",
+  "sectionLoad": "Obciążenie treningowe",
+  "sectionPower": "Krzywa mocy",
+  "power": {
+    "subtitle": "Twoje najlepsze utrzymane średnie i wyprowadzona z nich moc krytyczna",
+    "chartTitle": "Krzywa czas-intensywność",
+    "seriesCurve": "Najlepsza średnia moc",
+    "cp": "Moc krytyczna",
+    "wprime": "Pojemność W′",
+    "cv": "Błąd dopasowania",
+    "window": "Okno dopasowania",
+    "previewDefault": "Domyślnie",
+    "empty": {
+      "title": "Brak krzywej dla tej dyscypliny",
+      "description": "Krzywa pojawi się, gdy zmierzone zostaną aktywności tej dyscypliny z mocą."
+    },
+    "balanceHeader": "Bilans W′",
+    "sessionLabel": "Aktywność",
+    "sessionPlaceholder": "Wybierz aktywność",
+    "balanceHint": "Wybierz aktywność, aby zobaczyć, jak jej wysiłki zużywały i odbudowywały W′.",
+    "balanceEmpty": "Do narysowania bilansu ta dyscyplina wymaga dopasowanego W′; sumy powyżej progu pozostają widoczne.",
+    "workAboveCp": "Praca powyżej CP",
+    "timeAboveCp": "Czas powyżej CP",
+    "tau": "Stała regeneracji",
+    "seriesBalance": "W′ pozostało",
+    "balanceTitle": "W′ pozostałe w czasie"
   }
 }

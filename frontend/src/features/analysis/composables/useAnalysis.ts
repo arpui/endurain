@@ -16,6 +16,8 @@ import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchAnalysisSettings,
   fetchFitnessSeries,
+  fetchPowerDuration,
+  fetchWprimeBalance,
   queueLoadRecompute,
   queueThresholdRefresh,
   updateAnalysisSettings,
@@ -94,5 +96,51 @@ export function useQueueRecomputeMutation() {
     mutationKey: ['analysis', 'recompute'],
     mutationFn: () => queueLoadRecompute(),
     invalidateKey: queryKeys.analysis.all(),
+  })
+}
+
+/**
+ * The duration-intensity curve of one sport, with the fit recomputed for the
+ * requested preview window. Keyed on sport + window so previews of different
+ * ranges sit side by side in the cache.
+ *
+ * @param sport - Reactive sport group.
+ * @param window - Reactive preview fit window (`null` ends keep stored defaults).
+ * @returns The TanStack query result for the curve.
+ */
+export function usePowerDurationQuery(
+  sport: MaybeRefOrGetter<string>,
+  window: MaybeRefOrGetter<{ fitFromS: number | null; fitToS: number | null }>,
+) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+
+  return useQuery({
+    queryKey: computed(() => {
+      const { fitFromS, fitToS } = toValue(window)
+      return queryKeys.analysis.powerDuration(toValue(sport), fitFromS, fitToS)
+    }),
+    queryFn: ({ signal }) => fetchPowerDuration(toValue(sport), toValue(window), signal),
+    placeholderData: keepPreviousData,
+    enabled: computed(() => toValue(sport) !== '' && isAuthenticated.value),
+  })
+}
+
+/**
+ * One activity's W' balance, computed on read by the server.
+ *
+ * @param activityId - Reactive activity id.
+ * @returns The TanStack query result for the balance series.
+ */
+export function useWprimeBalanceQuery(activityId: MaybeRefOrGetter<number | null | undefined>) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => {
+    const value = toValue(activityId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.wprime(id.value)),
+    queryFn: ({ signal }) => fetchWprimeBalance(id.value, signal),
+    enabled: computed(() => id.value > 0 && isAuthenticated.value),
   })
 }

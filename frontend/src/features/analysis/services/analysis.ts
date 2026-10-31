@@ -12,7 +12,11 @@ import type {
   FitnessSeries,
   FitnessSeriesDto,
   LoadMethod,
+  PowerDuration,
+  PowerDurationDto,
   ThresholdSource,
+  WprimeBalance,
+  WprimeBalanceDto,
 } from '../types'
 import type { Schemas } from '@/types'
 
@@ -38,6 +42,8 @@ export function mapSettings(dto: AnalysisSettingsDto): AnalysisSettings {
     acuteDays: dto.acute_days,
     chronicDays: dto.chronic_days,
     primaryMethod: dto.primary_method as LoadMethod,
+    fitFromS: dto.fit_from_s ?? null,
+    fitToS: dto.fit_to_s ?? null,
     restingHr: dto.resting_hr ?? null,
     powerThresholds: power,
     hrThreshold: dto.hr_threshold
@@ -141,4 +147,90 @@ export async function queueLoadRecompute(): Promise<void> {
     method: 'POST',
     body: JSON.stringify({}),
   })
+}
+
+/** Maps a power-duration DTO (curve, fit, threshold, sessions) to the domain model. */
+export function mapPowerDuration(dto: PowerDurationDto): PowerDuration {
+  const entry = dto.threshold
+  return {
+    sport: dto.sport,
+    points: (dto.points ?? []).map((point) => ({
+      durationS: point.duration_s,
+      value: point.value,
+      activityId: point.activity_id ?? null,
+    })),
+    fit: dto.fit
+      ? {
+          criticalPowerW: dto.fit.critical_power_w,
+          wPrimeJ: dto.fit.w_prime_j,
+          cvPct: dto.fit.cv_pct,
+          fitFromS: dto.fit.fit_from_s,
+          fitToS: dto.fit.fit_to_s,
+        }
+      : null,
+    threshold: entry
+      ? {
+          valueW: entry.value_w,
+          wPrimeJ: entry.w_prime_j ?? null,
+          source: mapSource(entry.source),
+          cvPct: entry.cv_pct ?? null,
+        }
+      : null,
+    sessions: (dto.sessions ?? []).map((session) => ({
+      activityId: session.activity_id,
+      name: session.name,
+      startTime: session.start_time ?? null,
+    })),
+  }
+}
+
+/** Maps a W' balance DTO to the domain model. */
+export function mapWprimeBalance(dto: WprimeBalanceDto): WprimeBalance {
+  return {
+    cpW: dto.cp_w ?? null,
+    wPrimeJ: dto.w_prime_j ?? null,
+    tauS: dto.tau_s ?? null,
+    workAboveCpJ: dto.work_above_cp_j,
+    timeAboveCpS: dto.time_above_cp_s,
+    points: (dto.points ?? []).map((point) => ({ tS: point.t_s, remainingJ: point.remaining_j })),
+  }
+}
+
+/**
+ * Fetches the duration-intensity curve of one sport for the caller.
+ *
+ * @param sport - Sport group to read.
+ * @param window - Optional preview fit window; stored settings decide when omitted.
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns The curve with its recomputed fit and the effective threshold.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchPowerDuration(
+  sport: string,
+  window: { fitFromS: number | null; fitToS: number | null },
+  signal?: AbortSignal,
+): Promise<PowerDuration> {
+  const params = new URLSearchParams({ sport })
+  if (window.fitFromS !== null) params.set('fit_from', String(window.fitFromS))
+  if (window.fitToS !== null) params.set('fit_to', String(window.fitToS))
+  const dto = await apiFetch<PowerDurationDto>(`/analysis/power-duration?${params.toString()}`, {
+    signal,
+  })
+  return mapPowerDuration(dto)
+}
+
+/**
+ * Fetches one activity's W' balance and above-CP totals.
+ *
+ * @param activityId - The activity to measure.
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns The balance series and its summary.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchWprimeBalance(
+  activityId: number,
+  signal?: AbortSignal,
+): Promise<WprimeBalance> {
+  const dto = await apiFetch<WprimeBalanceDto>(`/activities/${activityId}/wprime`, { signal })
+  return mapWprimeBalance(dto)
 }

@@ -401,6 +401,19 @@ export const queryKeys = {
      * @returns A fitness-series query key scoped to the given filters.
      */
     fitness: (filters: Record<string, unknown> = {}) => ['analysis', 'fitness', filters] as const,
+    /**
+     * @param sport - Sport group the curve belongs to.
+     * @param fitFromS - Fit window start the preview was asked for.
+     * @param fitToS - Fit window end the preview was asked for.
+     * @returns A power-duration curve key scoped to the given view.
+     */
+    powerDuration: (sport: string, fitFromS: number | null, fitToS: number | null) =>
+      ['analysis', 'power-duration', sport, fitFromS, fitToS] as const,
+    /**
+     * @param id - Activity whose W' balance is keyed.
+     * @returns A W' balance query key for one activity.
+     */
+    wprime: (id: number) => ['analysis', 'wprime', id] as const,
   },
 
   /**

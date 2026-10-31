@@ -56,7 +56,9 @@
       "sourceManual": "manuelt",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Tilpasning fra (s)",
+    "fitToS": "Tilpasning til (s)"
   },
   "actions": {
     "refreshThresholds": "Oppdater terskler",
@@ -64,5 +66,32 @@
     "refreshQueued": "Oppdatering av terskler lagt i kø",
     "recomputeQueued": "Ny utregning lagt i kø",
     "failed": "Kunne ikke legge forespørselen i kø"
+  },
+  "sections": "Analyseområder",
+  "sectionLoad": "Treningsbelastning",
+  "sectionPower": "Effektkurve",
+  "power": {
+    "subtitle": "De beste holdbare gjennomsnittene dine og den kritiske effekten ledet ut fra dem",
+    "chartTitle": "Tid-intensitetskurve",
+    "seriesCurve": "Beste gjennomsnittseffekt",
+    "cp": "Kritisk effekt",
+    "wprime": "W′-kapasitet",
+    "cv": "Tilpasningsfeil",
+    "window": "Tilpasningsvindu",
+    "previewDefault": "Standard",
+    "empty": {
+      "title": "Ingen kurve for denne idretten ennå",
+      "description": "Kurven vises når aktiviteter med effekt for denne idretten er målt."
+    },
+    "balanceHeader": "W′-balanse",
+    "sessionLabel": "Aktivitet",
+    "sessionPlaceholder": "Velg en aktivitet",
+    "balanceHint": "Velg en aktivitet for å se hvordan innsatsen brukte og gjenopprettet W′.",
+    "balanceEmpty": "Denne idretten trenger en tilpasset W′ for å tegne balansen; totalene over terskelen vises likevel.",
+    "workAboveCp": "Arbeid over CP",
+    "timeAboveCp": "Tid over CP",
+    "tau": "Restitusjonskonstant",
+    "seriesBalance": "W′ igjen",
+    "balanceTitle": "W′ igjen over tid"
   }
 }

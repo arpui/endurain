@@ -12,6 +12,12 @@ export type FitnessSeriesDto = Schemas['FitnessSeriesRead']
 export type FitnessPointDto = Schemas['FitnessPointRead']
 export type PowerThresholdDto = Schemas['PowerThresholdRead']
 export type HeartRateThresholdDto = Schemas['HeartRateThresholdRead']
+export type PowerDurationDto = Schemas['PowerDurationRead']
+export type DurationPeakDto = Schemas['DurationPeakRead']
+export type PowerDurationFitDto = Schemas['PowerDurationFitRead']
+export type PowerDurationSessionDto = Schemas['PowerDurationSessionRead']
+export type WprimeBalanceDto = Schemas['WprimeBalanceRead']
+export type WprimePointDto = Schemas['WprimePointRead']
 
 /** Load formula keys, mirroring the backend `LoadMethod` enum. */
 export type LoadMethod = 'coggan_tss' | 'skiba_score' | 'hr_load' | 'trimp'
@@ -47,6 +53,10 @@ export interface AnalysisSettings {
   chronicDays: number
   /** Formula used when a single load is asked for. */
   primaryMethod: LoadMethod
+  /** Shortest peak duration for the CP fit; `null` keeps the server default. */
+  fitFromS: number | null
+  /** Longest peak duration for the CP fit; `null` keeps the server default. */
+  fitToS: number | null
   /** Resting heart rate stated by the athlete. */
   restingHr: number | null
   /** Power threshold per sport group. */
@@ -99,4 +109,68 @@ export interface FitnessQuery {
   fromDate?: string
   /** Last ISO date of the window. */
   toDate?: string
+}
+
+/** One point of the duration-intensity curve. */
+export interface DurationPeak {
+  /** Duration the best average was held for, in seconds. */
+  durationS: number
+  /** Best sustained average at that duration, in watts. */
+  value: number
+  /** Activity holding that best average, when recorded. */
+  activityId: number | null
+}
+
+/** The hyperbolic fit recomputed for one power-duration response. */
+export interface PowerDurationFit {
+  /** Fitted critical power in watts. */
+  criticalPowerW: number
+  /** Fitted anaerobic work capacity in joules. */
+  wPrimeJ: number
+  /** Fit error as a percentage of the mean. */
+  cvPct: number
+  /** Shortest duration included in this fit. */
+  fitFromS: number
+  /** Longest duration included in this fit. */
+  fitToS: number
+}
+
+/** One activity whose samples feed the curve, offered for W' balance. */
+export interface PowerDurationSession {
+  activityId: number
+  name: string
+  startTime: string | null
+}
+
+/** Duration-intensity curve of one athlete and sport. */
+export interface PowerDuration {
+  sport: string
+  points: DurationPeak[]
+  fit: PowerDurationFit | null
+  threshold: PowerThreshold | null
+  sessions: PowerDurationSession[]
+}
+
+/** One sample of a W' balance series. */
+export interface WprimePoint {
+  /** Elapsed seconds since the activity started. */
+  tS: number
+  /** W' remaining at that moment, in joules. */
+  remainingJ: number
+}
+
+/** W' expenditure and balance of one activity. */
+export interface WprimeBalance {
+  /** Critical power measured against, `null` when the sport has none. */
+  cpW: number | null
+  /** Total capacity the balance starts from. */
+  wPrimeJ: number | null
+  /** Repletion time constant used. */
+  tauS: number | null
+  /** Total work done above CP, in joules. */
+  workAboveCpJ: number
+  /** Total time spent above CP, in seconds. */
+  timeAboveCpS: number
+  /** Balance series, evenly thinned for transfer. */
+  points: WprimePoint[]
 }

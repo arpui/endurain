@@ -56,7 +56,9 @@
       "sourceManual": "käsitsi",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Sobitamine alates (s)",
+    "fitToS": "Sobitamine kuni (s)"
   },
   "actions": {
     "refreshThresholds": "Värskenda läveid",
@@ -64,5 +66,32 @@
     "refreshQueued": "Lävede värskendus järjekorras",
     "recomputeQueued": "Ülearvutus järjekorras",
     "failed": "Päringut ei saanud käivitada"
+  },
+  "sections": "Analüüsi jaotised",
+  "sectionLoad": "Treeningskoormus",
+  "sectionPower": "Võimsuse kõver",
+  "power": {
+    "subtitle": "Suurimad püsivad keskmised ja neist tuletatud kriitiline võimsus",
+    "chartTitle": "Kestuse ja intensiivsuse kõver",
+    "seriesCurve": "Parim keskvõimsus",
+    "cp": "Kriitiline võimsus",
+    "wprime": "W′ mahtuvus",
+    "cv": "Sobituse viga",
+    "window": "Sobitamise vahemik",
+    "previewDefault": "Vaikimisi",
+    "empty": {
+      "title": "Selle ala kõver veel puudub",
+      "description": "Kõver ilmub siis, kui selle ala võimsusega tegevused on mõõdetud."
+    },
+    "balanceHeader": "W′ tasakaal",
+    "sessionLabel": "Tegevus",
+    "sessionPlaceholder": "Vali tegevus",
+    "balanceHint": "Vali tegevus, et näha, kuidas pingutused W′-t kulutasid ja taastasid.",
+    "balanceEmpty": "Selle ala jaoks on tasakaalu joonistamiseks vaja sobitatud W′-i; üle läve summad on siiski näha.",
+    "workAboveCp": "Töö üle CP",
+    "timeAboveCp": "Aeg üle CP",
+    "tau": "Taastumiskonstant",
+    "seriesBalance": "W′ alles",
+    "balanceTitle": "W′ alles ajas"
   }
 }

@@ -56,7 +56,9 @@
       "sourceManual": "manuale",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Fit da (s)",
+    "fitToS": "Fit a (s)"
   },
   "actions": {
     "refreshThresholds": "Aggiorna soglie",
@@ -64,5 +66,32 @@
     "refreshQueued": "Aggiornamento soglie in coda",
     "recomputeQueued": "Ricalcolo in coda",
     "failed": "Impossibile avviare la richiesta"
+  },
+  "sections": "Sezioni di analisi",
+  "sectionLoad": "Carico di allenamento",
+  "sectionPower": "Curva di potenza",
+  "power": {
+    "subtitle": "Le tue migliori medie sostenute e la potenza critica che ne deriva",
+    "chartTitle": "Curva durata-intensità",
+    "seriesCurve": "Miglior media di potenza",
+    "cp": "Potenza critica",
+    "wprime": "Capacità W′",
+    "cv": "Errore di fit",
+    "window": "Finestra di fit",
+    "previewDefault": "Predefinito",
+    "empty": {
+      "title": "Nessuna curva per questo sport",
+      "description": "La curva appare quando le attività con potenza di questo sport saranno misurate."
+    },
+    "balanceHeader": "Bilancio di W′",
+    "sessionLabel": "Attività",
+    "sessionPlaceholder": "Scegli un'attività",
+    "balanceHint": "Scegli un'attività per vedere come i suoi sforzi hanno consumato e recuperato W′.",
+    "balanceEmpty": "Per questo sport serve un W′ adattato per tracciare il bilancio; i totali sopra la soglia restano visibili.",
+    "workAboveCp": "Lavoro sopra CP",
+    "timeAboveCp": "Tempo sopra CP",
+    "tau": "Costante di recupero",
+    "seriesBalance": "W′ residua",
+    "balanceTitle": "W′ residua nel tempo"
   }
 }

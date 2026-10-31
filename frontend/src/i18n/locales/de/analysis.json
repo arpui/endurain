@@ -56,7 +56,9 @@
       "sourceManual": "manuell",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Anpassung ab (s)",
+    "fitToS": "Anpassung bis (s)"
   },
   "actions": {
     "refreshThresholds": "Schwellenwerte aktualisieren",
@@ -64,5 +66,32 @@
     "refreshQueued": "Aktualisierung der Schwellenwerte eingereiht",
     "recomputeQueued": "Neberechnung eingereiht",
     "failed": "Anfrage konnte nicht gestartet werden"
+  },
+  "sections": "Analysebereiche",
+  "sectionLoad": "Trainingsbelastung",
+  "sectionPower": "Leistungskurve",
+  "power": {
+    "subtitle": "Deine besten gehaltenen Durchschnittswerte und die daraus abgeleitete kritische Leistung",
+    "chartTitle": "Dauer-Intensitäts-Kurve",
+    "seriesCurve": "Beste Durchschnittsleistung",
+    "cp": "Kritische Leistung",
+    "wprime": "W′-Kapazität",
+    "cv": "Anpassungsfehler",
+    "window": "Anpassungsfenster",
+    "previewDefault": "Standard",
+    "empty": {
+      "title": "Noch keine Kurve für diese Sportart",
+      "description": "Die Kurve erscheint, sobald Aktivitäten mit Leistung dieser Sportart erfasst wurden."
+    },
+    "balanceHeader": "W′-Balance",
+    "sessionLabel": "Aktivität",
+    "sessionPlaceholder": "Aktivität auswählen",
+    "balanceHint": "Wähle eine Aktivität, um zu sehen, wie ihre Anstrengungen W′ verbraucht und zurückgewonnen haben.",
+    "balanceEmpty": "Für diese Sportart ist ein angepasstes W′ nötig, um die Balance zu zeichnen; die Werte über dem Schwellenwert werden weiterhin angezeigt.",
+    "workAboveCp": "Arbeit über CP",
+    "timeAboveCp": "Zeit über CP",
+    "tau": "Erholungskonstante",
+    "seriesBalance": "W′ verbleibend",
+    "balanceTitle": "W′-Rest über die Zeit"
   }
 }

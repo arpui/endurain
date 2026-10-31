@@ -619,6 +619,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/activities/{activity_id}/wprime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Activity Wprime Balance
+         * @description Return this activity's W' balance and above-CP totals, for its owner.
+         *
+         *     Computed on read from the stored power stream and the sport's fitted
+         *     threshold: the series answers for the moment it is asked, so a threshold
+         *     change is reflected immediately instead of needing a recompute pass.
+         */
+        get: operations["get_activity_wprime_balance_api_v1_activities__activity_id__wprime_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/fitness": {
         parameters: {
             query?: never;
@@ -635,6 +659,31 @@ export interface paths {
          *     to the recent one. Naming them changes only this response, not the settings.
          */
         get: operations["get_fitness_series_api_v1_analysis_fitness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/power-duration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Power Duration
+         * @description Return the caller's duration-intensity curve for one sport.
+         *
+         *     The points are the cached best sustained averages; the fit is recomputed for
+         *     the request, so ``fit_from``/``fit_to`` preview a different window without
+         *     changing anything. The response also reports the threshold the sport's loads
+         *     actually use and the sessions that built the curve.
+         */
+        get: operations["get_power_duration_api_v1_analysis_power_duration_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5897,6 +5946,10 @@ export interface components {
          *         acute_days: Fatigue time constant.
          *         chronic_days: Fitness time constant.
          *         primary_method: Formula used when a single load is asked for.
+         *         fit_from_s: Shortest peak duration the critical-power fit uses, ``None``
+         *             while the module default applies.
+         *         fit_to_s: Longest peak duration the critical-power fit uses, ``None``
+         *             while the module default applies.
          *         resting_hr: Resting heart rate stated by the athlete.
          *         power_thresholds: Threshold per sport group, derived or manual.
          *         hr_threshold: Threshold heart rate, derived or manual.
@@ -5907,6 +5960,10 @@ export interface components {
             acute_days: number;
             /** Chronic Days */
             chronic_days: number;
+            /** Fit From S */
+            fit_from_s?: number | null;
+            /** Fit To S */
+            fit_to_s?: number | null;
             hr_threshold?: components["schemas"]["HeartRateThresholdRead"] | null;
             /** Method Params */
             method_params?: {
@@ -5932,6 +5989,10 @@ export interface components {
          *         acute_days: Fatigue time constant in days.
          *         chronic_days: Fitness time constant in days.
          *         primary_method: Formula used when a single load is asked for.
+         *         fit_from_s: Shortest peak duration for the critical-power fit, or ``None``
+         *             to fall back to the module default.
+         *         fit_to_s: Longest peak duration for the critical-power fit, or ``None``
+         *             to fall back to the module default.
          *         resting_hr: Resting heart rate in bpm, or ``None`` to remove it (which
          *             turns the heart-rate impulse formulas off).
          *         hr_threshold_bpm: Manual threshold heart rate in bpm, or ``None`` to go back
@@ -5945,6 +6006,10 @@ export interface components {
             acute_days?: number | null;
             /** Chronic Days */
             chronic_days?: number | null;
+            /** Fit From S */
+            fit_from_s?: number | null;
+            /** Fit To S */
+            fit_to_s?: number | null;
             /** Hr Threshold Bpm */
             hr_threshold_bpm?: number | null;
             /** Method Params */
@@ -6122,6 +6187,23 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+        };
+        /**
+         * DurationPeakRead
+         * @description Serialized one point of the duration-intensity curve.
+         *
+         *     Attributes:
+         *         duration_s: Duration the best average was held for, in seconds.
+         *         value: Best sustained average at that duration, in watts.
+         *         activity_id: Activity holding that best average, when recorded.
+         */
+        DurationPeakRead: {
+            /** Activity Id */
+            activity_id: number | null;
+            /** Duration S */
+            duration_s: number;
+            /** Value */
+            value: number;
         };
         /**
          * EmailStatus
@@ -9685,6 +9767,70 @@ export interface components {
          */
         PasswordType: "strict" | "length_only";
         /**
+         * PowerDurationFitRead
+         * @description Serialized hyperbolic fit of the curve, as recomputed for the request.
+         *
+         *     Attributes:
+         *         critical_power_w: Fitted asymptote of the curve.
+         *         w_prime_j: Fitted anaerobic work capacity, an index tied to the window used.
+         *         cv_pct: Fit error as a percentage of the mean.
+         *         fit_from_s: Shortest duration included in this fit.
+         *         fit_to_s: Longest duration included in this fit.
+         */
+        PowerDurationFitRead: {
+            /** Critical Power W */
+            critical_power_w: number;
+            /** Cv Pct */
+            cv_pct: number;
+            /** Fit From S */
+            fit_from_s: number;
+            /** Fit To S */
+            fit_to_s: number;
+            /** W Prime J */
+            w_prime_j: number;
+        };
+        /**
+         * PowerDurationRead
+         * @description Serialized duration-intensity curve of one athlete and sport.
+         *
+         *     Attributes:
+         *         sport: The sport group the curve belongs to.
+         *         points: Cached best sustained averages, shortest duration first.
+         *         fit: The hyperbolic fit recomputed with the effective window, or ``None``
+         *             when the points cannot define one.
+         *         threshold: The power threshold the loads of this sport are measured
+         *             against, or ``None`` when none is stored yet.
+         *         sessions: Activities with power in this sport, newest first, so the
+         *             client can pick one to compute W' balance against.
+         */
+        PowerDurationRead: {
+            fit: components["schemas"]["PowerDurationFitRead"] | null;
+            /** Points */
+            points: components["schemas"]["DurationPeakRead"][];
+            /** Sessions */
+            sessions: components["schemas"]["PowerDurationSessionRead"][];
+            /** Sport */
+            sport: string;
+            threshold: components["schemas"]["PowerThresholdRead"] | null;
+        };
+        /**
+         * PowerDurationSessionRead
+         * @description Serialized one activity whose samples feed the curve.
+         *
+         *     Attributes:
+         *         activity_id: The activity.
+         *         name: Its name, for a picker label.
+         *         start_time: When it started, ISO-8601 with offset.
+         */
+        PowerDurationSessionRead: {
+            /** Activity Id */
+            activity_id: number;
+            /** Name */
+            name: string;
+            /** Start Time */
+            start_time: string | null;
+        };
+        /**
          * PowerThresholdRead
          * @description Serialized power threshold for one sport, with its provenance.
          *
@@ -12135,6 +12281,50 @@ export interface components {
             type_breakdown?: components["schemas"]["TypeBreakdownItem"][] | null;
         };
         /**
+         * WprimeBalanceRead
+         * @description Serialized W' expenditure and balance of one activity.
+         *
+         *     Carries the anaerobic totals and the downsampled balance curve. An activity
+         *     without power, or whose sport has no (or a capacity-less) threshold, answers
+         *     empty ``points`` with nulls rather than inventing a capacity.
+         *
+         *     Attributes:
+         *         cp_w: Critical power the balance was computed against.
+         *         w_prime_j: Total capacity the balance starts from.
+         *         tau_s: Repletion time constant used, from the stream's below-CP average.
+         *         work_above_cp_j: Total work done above CP, in joules.
+         *         time_above_cp_s: Total time spent above CP, in seconds.
+         *         points: Balance series, evenly thinned for transfer.
+         */
+        WprimeBalanceRead: {
+            /** Cp W */
+            cp_w: number | null;
+            /** Points */
+            points: components["schemas"]["WprimePointRead"][];
+            /** Tau S */
+            tau_s: number | null;
+            /** Time Above Cp S */
+            time_above_cp_s: number;
+            /** W Prime J */
+            w_prime_j: number | null;
+            /** Work Above Cp J */
+            work_above_cp_j: number;
+        };
+        /**
+         * WprimePointRead
+         * @description Serialized one sample of a W' balance series.
+         *
+         *     Attributes:
+         *         t_s: Elapsed seconds since the activity started.
+         *         remaining_j: W' remaining at that moment, in joules.
+         */
+        WprimePointRead: {
+            /** Remaining J */
+            remaining_j: number;
+            /** T S */
+            t_s: number;
+        };
+        /**
          * YearlyPeriodSummary
          * @description Yearly activity summary within lifetime view.
          *
@@ -13535,6 +13725,46 @@ export interface operations {
             };
         };
     };
+    get_activity_wprime_balance_api_v1_activities__activity_id__wprime_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WprimeBalanceRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
     get_fitness_series_api_v1_analysis_fitness_get: {
         parameters: {
             query?: {
@@ -13558,6 +13788,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FitnessSeriesRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_power_duration_api_v1_analysis_power_duration_get: {
+        parameters: {
+            query: {
+                sport: string;
+                fit_from?: number | null;
+                fit_to?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PowerDurationRead"];
                 };
             };
             /** @description Validation Error */

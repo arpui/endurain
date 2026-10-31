@@ -56,7 +56,9 @@
       "sourceManual": "manuel",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Ajustement de (s)",
+    "fitToS": "Ajustement à (s)"
   },
   "actions": {
     "refreshThresholds": "Actualiser les seuils",
@@ -64,5 +66,32 @@
     "refreshQueued": "Actualisation des seuils en file d'attente",
     "recomputeQueued": "Recalcul en file d'attente",
     "failed": "Impossible de lancer la demande"
+  },
+  "sections": "Sections d'analyse",
+  "sectionLoad": "Charge d'entraînement",
+  "sectionPower": "Courbe de puissance",
+  "power": {
+    "subtitle": "Vos meilleures moyennes tenues et la puissance critique qui en est dérivée",
+    "chartTitle": "Courbe durée-intensité",
+    "seriesCurve": "Meilleure moyenne en puissance",
+    "cp": "Puissance critique",
+    "wprime": "Capacité W′",
+    "cv": "Erreur d'ajustement",
+    "window": "Fenêtre d'ajustement",
+    "previewDefault": "Par défaut",
+    "empty": {
+      "title": "Pas encore de courbe pour ce sport",
+      "description": "La courbe s'affiche une fois les activités avec puissance de ce sport mesurées."
+    },
+    "balanceHeader": "Équilibre de W′",
+    "sessionLabel": "Activité",
+    "sessionPlaceholder": "Choisir une activité",
+    "balanceHint": "Choisissez une activité pour voir comment ses efforts ont consommé et récupéré W′.",
+    "balanceEmpty": "Ce sport nécessite un W′ ajusté pour tracer l'équilibre ; les totaux au-dessus du seuil restent affichés.",
+    "workAboveCp": "Travail au-dessus de CP",
+    "timeAboveCp": "Temps au-dessus de CP",
+    "tau": "Constante de récupération",
+    "seriesBalance": "W′ restant",
+    "balanceTitle": "W′ restant au fil du temps"
   }
 }

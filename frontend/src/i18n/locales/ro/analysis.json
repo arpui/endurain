@@ -56,7 +56,9 @@
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Potrivire de la (s)",
+    "fitToS": "Potrivire până la (s)"
   },
   "actions": {
     "refreshThresholds": "Actualizează pragurile",
@@ -64,5 +66,32 @@
     "refreshQueued": "Actualizarea pragurilor a fost pusă în coadă",
     "recomputeQueued": "Recalcularea a fost pusă în coadă",
     "failed": "Cererea nu a putut fi trimisă"
+  },
+  "sections": "Secțiuni de analiză",
+  "sectionLoad": "Încărcare de antrenament",
+  "sectionPower": "Curba de putere",
+  "power": {
+    "subtitle": "Cele mai bune medii susținute și puterea critică derivată din ele",
+    "chartTitle": "Curba durată-intensitate",
+    "seriesCurve": "Cea mai bună medie de putere",
+    "cp": "Putere critică",
+    "wprime": "Capacitate W′",
+    "cv": "Eroare de potrivire",
+    "window": "Fereastră de potrivire",
+    "previewDefault": "Implicit",
+    "empty": {
+      "title": "Nicio curbă pentru acest sport încă",
+      "description": "Curba apare când activitățile cu putere ale acestui sport vor fi măsurate."
+    },
+    "balanceHeader": "Echilibru W′",
+    "sessionLabel": "Activitate",
+    "sessionPlaceholder": "Alege o activitate",
+    "balanceHint": "Alege o activitate pentru a vedea cum eforturile au consumat și reconstituit W′.",
+    "balanceEmpty": "Acest sport are nevoie de un W′ potrivit pentru a desena echilibrul; totalurile de peste prag rămân afișate.",
+    "workAboveCp": "Lucru deasupra CP",
+    "timeAboveCp": "Timp deasupra CP",
+    "tau": "Constantă de refacere",
+    "seriesBalance": "W′ rămas",
+    "balanceTitle": "W′ rămas în timp"
   }
 }

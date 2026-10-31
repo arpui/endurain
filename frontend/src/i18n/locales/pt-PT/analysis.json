@@ -56,7 +56,9 @@
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Ajuste de (s)",
+    "fitToS": "Ajuste até (s)"
   },
   "actions": {
     "refreshThresholds": "Atualizar limiares",
@@ -64,5 +66,32 @@
     "refreshQueued": "Atualização de limiares na fila",
     "recomputeQueued": "Recálculo na fila",
     "failed": "Não foi possível iniciar o pedido"
+  },
+  "sections": "Secções de análise",
+  "sectionLoad": "Carga de treino",
+  "sectionPower": "Curva de potência",
+  "power": {
+    "subtitle": "As tuas melhores médias sustentadas e a potência crítica derivada delas",
+    "chartTitle": "Curva duração-intensidade",
+    "seriesCurve": "Melhor média de potência",
+    "cp": "Potência crítica",
+    "wprime": "Capacidade W′",
+    "cv": "Erro do ajuste",
+    "window": "Janela do ajuste",
+    "previewDefault": "Predefinido",
+    "empty": {
+      "title": "Ainda não há curva para este desporto",
+      "description": "A curva aparece quando as atividades com potência deste desporto forem medidas."
+    },
+    "balanceHeader": "Balanço de W′",
+    "sessionLabel": "Atividade",
+    "sessionPlaceholder": "Escolhe uma atividade",
+    "balanceHint": "Escolhe uma atividade para ver como os seus esforços consumiram e recuperaram W′.",
+    "balanceEmpty": "Este desporto precisa de um W′ ajustado para desenhar o balanço; os totais acima do limiar continuam a ser mostrados.",
+    "workAboveCp": "Trabalho acima do CP",
+    "timeAboveCp": "Tempo acima do CP",
+    "tau": "Constante de recuperação",
+    "seriesBalance": "W′ restante",
+    "balanceTitle": "W′ restante ao longo do tempo"
   }
 }

@@ -7,6 +7,8 @@ import { apiFetch } from '@/services/http'
 import {
   fetchAnalysisSettings,
   fetchFitnessSeries,
+  fetchPowerDuration,
+  fetchWprimeBalance,
   mapFitnessSeries,
   mapSettings,
   queueLoadRecompute,
@@ -175,5 +177,91 @@ describe('analysis writes', () => {
       expect.objectContaining({ signal: undefined }),
     )
     expect(settings.chronicDays).toBe(42)
+  })
+})
+
+describe('power-duration and W-prime mappers', () => {
+  beforeEach(() => {
+    vi.mocked(apiFetch).mockReset()
+  })
+
+  function makePowerDurationDto(
+    overrides: Partial<Schemas['PowerDurationRead']> = {},
+  ): Schemas['PowerDurationRead'] {
+    return {
+      sport: 'run',
+      points: [{ duration_s: 300, value: 316.7, activity_id: 7 }],
+      fit: {
+        critical_power_w: 250,
+        w_prime_j: 15000,
+        cv_pct: 2.5,
+        fit_from_s: 300,
+        fit_to_s: 1800,
+      },
+      threshold: { value_w: 250, w_prime_j: 15000, source: 'auto', cv_pct: 2.5 },
+      sessions: [{ activity_id: 1, name: 'Morning run', start_time: '2026-10-15T16:00:00+00:00' }],
+      ...overrides,
+    }
+  }
+
+  it('maps curve, fit, threshold and sessions', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(makePowerDurationDto())
+    const duration = await fetchPowerDuration('run', { fitFromS: null, fitToS: null })
+    expect(duration.points[0]).toEqual({ durationS: 300, value: 316.7, activityId: 7 })
+    expect(duration.fit?.criticalPowerW).toBe(250)
+    expect(duration.threshold?.source).toBe('auto')
+    expect(duration.sessions[0]?.activityId).toBe(1)
+  })
+
+  it('sends the preview window when typed', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(makePowerDurationDto({ fit: null, threshold: null }))
+    const duration = await fetchPowerDuration('bike', { fitFromS: 120, fitToS: 900 })
+    const url: string = vi.mocked(apiFetch).mock.calls[0]?.[0] as string
+    const params = new URLSearchParams(url.split('?')[1])
+    expect(params.get('sport')).toBe('bike')
+    expect(params.get('fit_from')).toBe('120')
+    expect(params.get('fit_to')).toBe('900')
+    expect(duration.fit).toBeNull()
+    expect(duration.threshold).toBeNull()
+  })
+
+  it('maps a W-prime balance and fetches it per activity', async () => {
+    const dto: Schemas['WprimeBalanceRead'] = {
+      cp_w: 250,
+      w_prime_j: 15000,
+      tau_s: 819.5,
+      work_above_cp_j: 4500,
+      time_above_cp_s: 60,
+      points: [{ t_s: 1, remaining_j: 14750 }],
+    }
+    vi.mocked(apiFetch).mockResolvedValue(dto)
+    const balance = await fetchWprimeBalance(42)
+    expect(apiFetch).toHaveBeenCalledWith(
+      '/activities/42/wprime',
+      expect.objectContaining({ signal: undefined }),
+    )
+    expect(balance.points[0]).toEqual({ tS: 1, remainingJ: 14750 })
+    expect(balance.workAboveCpJ).toBe(4500)
+  })
+
+  it('maps an unavailable balance to nulls without failing', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      cp_w: null,
+      w_prime_j: null,
+      tau_s: null,
+      work_above_cp_j: 0,
+      time_above_cp_s: 0,
+      points: [],
+    })
+    const balance = await fetchWprimeBalance(42)
+    expect(balance.cpW).toBeNull()
+    expect(balance.points).toEqual([])
+  })
+
+  it('reads the new fit-window settings fields', () => {
+    const dto = makeSettingsDto({ fit_from_s: 120, fit_to_s: 900 })
+    const settings = mapSettings(dto)
+    expect(settings.fitFromS).toBe(120)
+    expect(settings.fitToS).toBe(900)
   })
 })

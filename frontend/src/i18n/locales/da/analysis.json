@@ -56,7 +56,9 @@
       "sourceManual": "manuel",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Tilpasning fra (s)",
+    "fitToS": "Tilpasning til (s)"
   },
   "actions": {
     "refreshThresholds": "Opdater tærskler",
@@ -64,5 +66,32 @@
     "refreshQueued": "Opdatering af tærskler sat i kø",
     "recomputeQueued": "Genberegning sat i kø",
     "failed": "Anmodningen kunne ikke sættes i kø"
+  },
+  "sections": "Analyseafsnit",
+  "sectionLoad": "Træningsbelastning",
+  "sectionPower": "Effektkurve",
+  "power": {
+    "subtitle": "Dine bedste holdbare gennemsnit og den kritiske effekt, der udledes af dem",
+    "chartTitle": "Tid-intensitetskurve",
+    "seriesCurve": "Bedste gennemsnitseffekt",
+    "cp": "Kritisk effekt",
+    "wprime": "W′-kapacitet",
+    "cv": "Tilpasningsfejl",
+    "window": "Tilpasningsvindue",
+    "previewDefault": "Standard",
+    "empty": {
+      "title": "Endnu ingen kurve for denne sport",
+      "description": "Kurven vises, når aktiviteter med effekt for denne sport er blevet målt."
+    },
+    "balanceHeader": "W′-balance",
+    "sessionLabel": "Aktivitet",
+    "sessionPlaceholder": "Vælg en aktivitet",
+    "balanceHint": "Vælg en aktivitet for at se, hvordan dens anstrengelser brugte og gendannede W′.",
+    "balanceEmpty": "Denne sport skal have en tilpasset W′ for at vise balancen; totalerne over tærsklen vises stadig.",
+    "workAboveCp": "Arbejde over CP",
+    "timeAboveCp": "Tid over CP",
+    "tau": "Restitutionskonstant",
+    "seriesBalance": "W′ tilbage",
+    "balanceTitle": "W′ tilbage over tid"
   }
 }

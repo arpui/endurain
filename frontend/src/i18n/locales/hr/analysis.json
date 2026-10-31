@@ -56,7 +56,9 @@
       "sourceManual": "ručno",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Prilagodba od (s)",
+    "fitToS": "Prilagodba do (s)"
   },
   "actions": {
     "refreshThresholds": "Osvježi pragove",
@@ -64,5 +66,32 @@
     "refreshQueued": "Osvježavanje pragova u redu",
     "recomputeQueued": "Preračun u redu",
     "failed": "Zahtjev nije poslan"
+  },
+  "sections": "Odjeljci analize",
+  "sectionLoad": "Trainingsko opterećenje",
+  "sectionPower": "Krivlja snage",
+  "power": {
+    "subtitle": "Vaše najbolje održavane srednje vrijednosti i kritična snaga izvedena iz njih",
+    "chartTitle": "Krivlja trajanje-intenzitet",
+    "seriesCurve": "Najbolja srednja snaga",
+    "cp": "Kritična snaga",
+    "wprime": "Kapacitet W′",
+    "cv": "Pogreška prilagodbe",
+    "window": "Prozor prilagodbe",
+    "previewDefault": "Zadano",
+    "empty": {
+      "title": "Još nema krivlje za ovaj sport",
+      "description": "Krivlja se pojavljuje kad aktivnosti ovog sporta sa snagom budu izmjerene."
+    },
+    "balanceHeader": "W′ ravnoteža",
+    "sessionLabel": "Aktivnost",
+    "sessionPlaceholder": "Odaberite aktivnost",
+    "balanceHint": "Odaberite aktivnost da vidite kako su napori trošili i obnavljali W′.",
+    "balanceEmpty": "Za crtanje ravnoteže ovaj sport treba prilagođeni W′; zbrojevi iznad praga i dalje se prikazuju.",
+    "workAboveCp": "Rad iznad CP",
+    "timeAboveCp": "Vrijeme iznad CP",
+    "tau": "Konstanta obnove",
+    "seriesBalance": "W′ preostalo",
+    "balanceTitle": "W′ preostalo kroz vrijeme"
   }
 }

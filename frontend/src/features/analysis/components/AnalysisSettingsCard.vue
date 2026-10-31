@@ -3,11 +3,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RefreshCw } from '@lucide/vue'
 
-import type {
-  AnalysisSettings,
-  AnalysisSettingsUpdateDto,
-  LoadMethod,
-} from '@/features/analysis/types'
+import type { AnalysisSettings, AnalysisSettingsUpdateDto } from '@/features/analysis/types'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -16,6 +12,7 @@ import { FormField } from '@/components/ui/form-field'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { LOAD_METHODS, SPORT_GROUPS } from '@/features/analysis/constants'
 import {
   useQueueRecomputeMutation,
   useQueueThresholdRefreshMutation,
@@ -31,31 +28,12 @@ const props = defineProps<{
 const { t } = useI18n()
 const toasts = useToasts()
 
-const METHOD_OPTIONS: LoadMethod[] = ['coggan_tss', 'skiba_score', 'hr_load', 'trimp']
-
-/** The sport groups the activities module groups activity types into. */
-const SPORT_OPTIONS = [
-  'run',
-  'bike',
-  'swim',
-  'walk',
-  'hike',
-  'rowing',
-  'snow_ski',
-  'snowboard',
-  'windsurf',
-  'stand_up_paddleboarding',
-  'surfing',
-  'kayaking',
-  'sailing',
-  'snowshoeing',
-  'inline_skating',
-]
-
 const parameters = reactive({
   acuteDays: String(props.settings.acuteDays),
   chronicDays: String(props.settings.chronicDays),
   primaryMethod: props.settings.primaryMethod,
+  fitFromS: props.settings.fitFromS === null ? '' : String(props.settings.fitFromS),
+  fitToS: props.settings.fitToS === null ? '' : String(props.settings.fitToS),
   restingHr: props.settings.restingHr === null ? '' : String(props.settings.restingHr),
 })
 
@@ -66,6 +44,8 @@ watch(
     parameters.acuteDays = String(next.acuteDays)
     parameters.chronicDays = String(next.chronicDays)
     parameters.primaryMethod = next.primaryMethod
+    parameters.fitFromS = next.fitFromS === null ? '' : String(next.fitFromS)
+    parameters.fitToS = next.fitToS === null ? '' : String(next.fitToS)
     parameters.restingHr = next.restingHr === null ? '' : String(next.restingHr)
   },
 )
@@ -86,16 +66,21 @@ const parametersDirty = computed(
     parameters.acuteDays !== String(props.settings.acuteDays) ||
     parameters.chronicDays !== String(props.settings.chronicDays) ||
     parameters.primaryMethod !== props.settings.primaryMethod ||
+    parameters.fitFromS !==
+      (props.settings.fitFromS === null ? '' : String(props.settings.fitFromS)) ||
+    parameters.fitToS !== (props.settings.fitToS === null ? '' : String(props.settings.fitToS)) ||
     parameters.restingHr !==
       (props.settings.restingHr === null ? '' : String(props.settings.restingHr)),
 )
 
-/** Writes the time constants, formula and resting heart rate. */
+/** Writes the time constants, formula, fit window and resting heart rate. */
 function saveParameters(): void {
   const payload: AnalysisSettingsUpdateDto = {
     acute_days: Number(parameters.acuteDays),
     chronic_days: Number(parameters.chronicDays),
     primary_method: parameters.primaryMethod,
+    fit_from_s: parameters.fitFromS === '' ? null : Number(parameters.fitFromS),
+    fit_to_s: parameters.fitToS === '' ? null : Number(parameters.fitToS),
     resting_hr: parameters.restingHr === '' ? null : Number(parameters.restingHr),
   }
   saveMutation.mutate(payload, {
@@ -218,10 +203,20 @@ function queueRecompute(): void {
       <FormField :label="t('analysis.settings.primaryMethod')">
         <template #default="{ fieldId }">
           <Select v-model="parameters.primaryMethod" :aria-labelledby="fieldId">
-            <option v-for="method in METHOD_OPTIONS" :key="method" :value="method">
+            <option v-for="method in LOAD_METHODS" :key="method" :value="method">
               {{ t(`analysis.method.${method}`) }}
             </option>
           </Select>
+        </template>
+      </FormField>
+      <FormField :label="t('analysis.settings.fitFromS')">
+        <template #default="{ fieldId }">
+          <Input :id="fieldId" v-model="parameters.fitFromS" type="number" min="10" max="7200" />
+        </template>
+      </FormField>
+      <FormField :label="t('analysis.settings.fitToS')">
+        <template #default="{ fieldId }">
+          <Input :id="fieldId" v-model="parameters.fitToS" type="number" min="30" max="21600" />
         </template>
       </FormField>
       <FormField :label="t('analysis.settings.restingHr')">
@@ -287,7 +282,7 @@ function queueRecompute(): void {
           t('analysis.settings.thresholds.add')
         }}</Label>
         <Select id="analysis-new-threshold-sport" v-model="newSport">
-          <option v-for="sport in SPORT_OPTIONS" :key="sport" :value="sport">
+          <option v-for="sport in SPORT_GROUPS" :key="sport" :value="sport">
             {{ t(`home.sports.${sport}`) }}
           </option>
         </Select>

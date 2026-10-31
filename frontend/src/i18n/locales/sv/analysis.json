@@ -56,7 +56,9 @@
       "sourceManual": "manuell",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Anpassning från (s)",
+    "fitToS": "Anpassning till (s)"
   },
   "actions": {
     "refreshThresholds": "Uppdatera trösklar",
@@ -64,5 +66,32 @@
     "refreshQueued": "Uppdatering av trösklar köad",
     "recomputeQueued": "Ombeträkning köad",
     "failed": "Begäran kunde inte köas"
+  },
+  "sections": "Analyssektioner",
+  "sectionLoad": "Träningsbelastning",
+  "sectionPower": "Effektkurva",
+  "power": {
+    "subtitle": "Dina bästa uthålliga medelvärden och den kritiska effekt som härleds ur dem",
+    "chartTitle": "Tid-intensitetskurva",
+    "seriesCurve": "Bästa medeleffekt",
+    "cp": "Kritisk effekt",
+    "wprime": "W′-kapacitet",
+    "cv": "Anpassningsfel",
+    "window": "Anpassningsfönster",
+    "previewDefault": "Standard",
+    "empty": {
+      "title": "Ingen kurva för denna sport ännu",
+      "description": "Kurvan visas när aktiviteter med effekt för denna sport har mätts."
+    },
+    "balanceHeader": "W′-balans",
+    "sessionLabel": "Aktivitet",
+    "sessionPlaceholder": "Välj en aktivitet",
+    "balanceHint": "Välj en aktivitet för att se hur dess ansträngningar förbrukade och återställde W′.",
+    "balanceEmpty": "Denna sport behöver en anpassad W′ för att rita balansen; totalerna över tröskeln visas ändå.",
+    "workAboveCp": "Arbete över CP",
+    "timeAboveCp": "Tid över CP",
+    "tau": "Återhämtningskonstant",
+    "seriesBalance": "W′ kvar",
+    "balanceTitle": "W′ kvar över tid"
   }
 }

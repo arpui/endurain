@@ -56,7 +56,9 @@
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "ppm"
-    }
+    },
+    "fitFromS": "Axuste desde (s)",
+    "fitToS": "Axuste ata (s)"
   },
   "actions": {
     "refreshThresholds": "Actualizar umbrais",
@@ -64,5 +66,32 @@
     "refreshQueued": "Actualización dos umbrais na cola",
     "recomputeQueued": "Recálculo na cola",
     "failed": "Non se puido iniciar a solicitude"
+  },
+  "sections": "Seccións de análise",
+  "sectionLoad": "Carga de adestramento",
+  "sectionPower": "Curva de potencia",
+  "power": {
+    "subtitle": "As túas mellores medias sostidas e a potencia crítica derivada delas",
+    "chartTitle": "Curva duración-intensidade",
+    "seriesCurve": "Mellor media de potencia",
+    "cp": "Potencia crítica",
+    "wprime": "Capacidade W′",
+    "cv": "Erro do axuste",
+    "window": "Ventá do axuste",
+    "previewDefault": "Por defecto",
+    "empty": {
+      "title": "Aínda non hai curva para este deporte",
+      "description": "A curva aparece cando se midan actividades con potencia deste deporte."
+    },
+    "balanceHeader": "Balance de W′",
+    "sessionLabel": "Actividade",
+    "sessionPlaceholder": "Escolle unha actividade",
+    "balanceHint": "Escolle unha actividade para ver como os seus esforzos consumiron e recuperaron W′.",
+    "balanceEmpty": "Este deporte precisa un W′ axustado para debuxar o balance; os totais por riba do umbral móstranse igualmente.",
+    "workAboveCp": "Traballo por riba de CP",
+    "timeAboveCp": "Tempo por riba de CP",
+    "tau": "Constante de recuperación",
+    "seriesBalance": "W′ restante",
+    "balanceTitle": "W′ restante co tempo"
   }
 }

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouterLink, useRoute } from 'vue-router'
 
 import type { FitnessQuery, FitnessPoint, LoadMethod } from '@/features/analysis/types'
 
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
@@ -13,36 +15,17 @@ import {
   useAnalysisSettingsQuery,
   useFitnessSeriesQuery,
 } from '@/features/analysis/composables/useAnalysis'
+import { LOAD_METHODS, SPORT_GROUPS } from '@/features/analysis/constants'
 import { toIsoDate } from '@/utils/datetime'
 import AnalysisDailyLoadChart from '@/features/analysis/components/AnalysisDailyLoadChart.vue'
 import AnalysisPmcChart from '@/features/analysis/components/AnalysisPmcChart.vue'
 import AnalysisSettingsCard from '@/features/analysis/components/AnalysisSettingsCard.vue'
 
 const { t } = useI18n()
+const route = useRoute()
 
 /** Selectable history windows, in days, in display order. */
 const WINDOW_OPTIONS = [30, 90, 365]
-
-const METHOD_OPTIONS: LoadMethod[] = ['coggan_tss', 'skiba_score', 'hr_load', 'trimp']
-
-/** The sport groups the series can be narrowed to (plus "all sports"). */
-const SPORT_OPTIONS = [
-  'run',
-  'bike',
-  'swim',
-  'walk',
-  'hike',
-  'rowing',
-  'snow_ski',
-  'snowboard',
-  'windsurf',
-  'stand_up_paddleboarding',
-  'surfing',
-  'kayaking',
-  'sailing',
-  'snowshoeing',
-  'inline_skating',
-]
 
 const windowDays = ref(90)
 const method = ref<LoadMethod>('coggan_tss')
@@ -53,16 +36,13 @@ function daysAgo(days: number): string {
   return toIsoDate(new Date(Date.now() - days * 86_400_000))
 }
 
-const seriesQuery = ref<FitnessQuery>({
-  method: method.value,
-  sport: undefined,
-  fromDate: undefined,
-  toDate: undefined,
-})
+function today(): string {
+  return toIsoDate(new Date())
+}
 
 /** Rebuilds the query whenever a toolbar choice changes. */
-function applyQuery(): void {
-  seriesQuery.value = {
+function buildQuery(): FitnessQuery {
+  return {
     method: method.value,
     sport: sport.value === '' ? undefined : sport.value,
     fromDate: daysAgo(windowDays.value - 1),
@@ -70,11 +50,11 @@ function applyQuery(): void {
   }
 }
 
-function today(): string {
-  return toIsoDate(new Date())
-}
+const seriesQuery = ref<FitnessQuery>(buildQuery())
 
-applyQuery()
+function applyQuery(): void {
+  seriesQuery.value = buildQuery()
+}
 
 const settingsQuery = useAnalysisSettingsQuery()
 const fitnessQuery = useFitnessSeriesQuery(seriesQuery)
@@ -117,6 +97,29 @@ const stats = computed<StatRow[]>(() => [
       <p class="text-body">{{ t('analysis.subtitle') }}</p>
     </header>
 
+    <nav class="flex gap-1" :aria-label="t('analysis.sections')">
+      <RouterLink v-slot="{ href, navigate }" :to="{ name: 'analysis' }" custom>
+        <Button
+          as="a"
+          :href="href"
+          :variant="route.name === 'analysis' ? 'default' : 'ghost'"
+          @click="navigate"
+        >
+          {{ t('analysis.sectionLoad') }}
+        </Button>
+      </RouterLink>
+      <RouterLink v-slot="{ href, navigate }" :to="{ name: 'analysis-power' }" custom>
+        <Button
+          as="a"
+          :href="href"
+          :variant="route.name === 'analysis-power' ? 'default' : 'ghost'"
+          @click="navigate"
+        >
+          {{ t('analysis.sectionPower') }}
+        </Button>
+      </RouterLink>
+    </nav>
+
     <div class="flex flex-wrap items-center gap-2">
       <Select
         v-model="windowDays"
@@ -134,7 +137,7 @@ const stats = computed<StatRow[]>(() => [
         class="w-48"
         @change="applyQuery"
       >
-        <option v-for="option in METHOD_OPTIONS" :key="option" :value="option">
+        <option v-for="option in LOAD_METHODS" :key="option" :value="option">
           {{ t(`analysis.method.${option}`) }}
         </option>
       </Select>
@@ -145,7 +148,7 @@ const stats = computed<StatRow[]>(() => [
         @change="applyQuery"
       >
         <option value="">{{ t('analysis.sport.all') }}</option>
-        <option v-for="option in SPORT_OPTIONS" :key="option" :value="option">
+        <option v-for="option in SPORT_GROUPS" :key="option" :value="option">
           {{ t(`home.sports.${option}`) }}
         </option>
       </Select>

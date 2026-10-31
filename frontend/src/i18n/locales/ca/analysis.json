@@ -56,7 +56,9 @@
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Ajust des de (s)",
+    "fitToS": "Ajust fins a (s)"
   },
   "actions": {
     "refreshThresholds": "Actualitza els llindars",
@@ -64,5 +66,32 @@
     "refreshQueued": "Actualització dels llindars en cua",
     "recomputeQueued": "Recàlcul en cua",
     "failed": "No s'ha pogut llançar la petició"
+  },
+  "sections": "Seccions d'anàlisi",
+  "sectionLoad": "Càrrega d'entrenament",
+  "sectionPower": "Corba de potència",
+  "power": {
+    "subtitle": "Les teves millors mitjanes sostingudes i la potència crítica que se'n deriva",
+    "chartTitle": "Corba durada-intensitat",
+    "seriesCurve": "Millor mitjana de potència",
+    "cp": "Potència crítica",
+    "wprime": "Capacitat W′",
+    "cv": "Error d'ajust",
+    "window": "Finestra d'ajust",
+    "previewDefault": "Per defecte",
+    "empty": {
+      "title": "Encara no hi ha corba per a aquest esport",
+      "description": "La corba apareix quan s'hagin mesurat activitats amb potència d'aquest esport."
+    },
+    "balanceHeader": "Balanç de W′",
+    "sessionLabel": "Activitat",
+    "sessionPlaceholder": "Tria una activitat",
+    "balanceHint": "Tria una activitat per veure com els seus esforços han consumit i recuperat W′.",
+    "balanceEmpty": "Aquest esport necessita un W′ ajustat per dibuixar el balanç; els totals per sobre del llindar es mostren igualment.",
+    "workAboveCp": "Feina sobre CP",
+    "timeAboveCp": "Temps sobre CP",
+    "tau": "Constant de recuperació",
+    "seriesBalance": "W′ restant",
+    "balanceTitle": "W′ restant en el temps"
   }
 }

@@ -56,7 +56,9 @@
       "sourceManual": "elle",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Uydurma başlangıcı (s)",
+    "fitToS": "Uydurma bitişi (s)"
   },
   "actions": {
     "refreshThresholds": "Eşikleri yenile",
@@ -64,5 +66,32 @@
     "refreshQueued": "Eşik yenileme kuyruğa alındı",
     "recomputeQueued": "Yeniden hesaplama kuyruğa alındı",
     "failed": "İstek kuyruğa alınamadı"
+  },
+  "sections": "Analiz bölümleri",
+  "sectionLoad": "Antrenman yükü",
+  "sectionPower": "Güç eğrisi",
+  "power": {
+    "subtitle": "En iyi sürdürülen ortalamalarınız ve onlardan türetilen kritik güç",
+    "chartTitle": "Süre-yoğunluk eğrisi",
+    "seriesCurve": "En iyi ortalama güç",
+    "cp": "Kritik güç",
+    "wprime": "W′ kapasitesi",
+    "cv": "Uydurma hatası",
+    "window": "Uydurma aralığı",
+    "previewDefault": "Varsayılan",
+    "empty": {
+      "title": "Bu spor için henüz eğri yok",
+      "description": "Bu sporun güce sahip aktiviteleri ölçüldüğünde eğri belirir."
+    },
+    "balanceHeader": "W′ dengesi",
+    "sessionLabel": "Aktivite",
+    "sessionPlaceholder": "Bir aktivite seçin",
+    "balanceHint": "Çabaların W′ nasıl tükettiğini ve geri yüklediğini görmek için bir aktivite seçin.",
+    "balanceEmpty": "Dengenin çizilmesi için bu sporda uydurulmuş bir W′ gerekir; eşik üstü toplamlar yine gösterilir.",
+    "workAboveCp": "CP üzeri iş",
+    "timeAboveCp": "CP üzeri süre",
+    "tau": "Yenilenme sabiti",
+    "seriesBalance": "Kalan W′",
+    "balanceTitle": "Zaman içinde kalan W′"
   }
 }

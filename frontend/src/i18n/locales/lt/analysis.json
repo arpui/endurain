@@ -56,7 +56,9 @@
       "sourceManual": "rankiniu būdu",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Derinimas nuo (s)",
+    "fitToS": "Derinimas iki (s)"
   },
   "actions": {
     "refreshThresholds": "Atnaujinti slenksčius",
@@ -64,5 +66,32 @@
     "refreshQueued": "Slenkčių atnaujinimas padėtas į eilę",
     "recomputeQueued": "Perskaičiavimas padėtas į eilę",
     "failed": "Nepavyko paleisti užklausos"
+  },
+  "sections": "Analitikos skyriai",
+  "sectionLoad": "Treniruočių krūvis",
+  "sectionPower": "Galingumo kreivė",
+  "power": {
+    "subtitle": "Geriausi jūsų išlaikyti vidurkiai ir iš jų išvesta kritinė galia",
+    "chartTitle": "Trukmės ir intensyvumo kreivė",
+    "seriesCurve": "Geriausia vidutinė galia",
+    "cp": "Kritinė galia",
+    "wprime": "W′ talpa",
+    "cv": "Derinimo paklaida",
+    "window": "Derinimo langas",
+    "previewDefault": "Numatyta",
+    "empty": {
+      "title": "Šio sporto kreivės dar nėra",
+      "description": "Kreivė atsiras, kai bus išmatuotos šio sporto veiklos su galia."
+    },
+    "balanceHeader": "W′ balansas",
+    "sessionLabel": "Veikla",
+    "sessionPlaceholder": "Pasirinkite veiklą",
+    "balanceHint": "Pasirinkite veiklą, kad matytumėte, kaip įdėtos pastangos eikvojo ir atstatė W′.",
+    "balanceEmpty": "Balansui nubraižyti šiam sportui reikia suderinto W′; virš slenksčio sumos vis tiek rodomos.",
+    "workAboveCp": "Darbas virš CP",
+    "timeAboveCp": "Laikas virš CP",
+    "tau": "Atsigavimo konstanta",
+    "seriesBalance": "W′ likę",
+    "balanceTitle": "W′ likutis laikui bėgant"
   }
 }

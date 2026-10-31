@@ -56,7 +56,9 @@
       "sourceManual": "manuāli",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Pielāgošana no (s)",
+    "fitToS": "Pielāgošana līdz (s)"
   },
   "actions": {
     "refreshThresholds": "Atjaunināt sliekšņus",
@@ -64,5 +66,32 @@
     "refreshQueued": "Sliekšņu atjaunināšana ierindota",
     "recomputeQueued": "Pārrēķināšana ierindota",
     "failed": "Neizdevās palaist pieprasījumu"
+  },
+  "sections": "Analīzes sadaļas",
+  "sectionLoad": "Trenerācijas slodze",
+  "sectionPower": "Jaudas līkne",
+  "power": {
+    "subtitle": "Jūsu labākie noturējie vidējie rādītāji un no tiem atvasinātā kritiskā jauda",
+    "chartTitle": "Ilguma-intensitātes līkne",
+    "seriesCurve": "Labākais vidējais jaudas rādītājs",
+    "cp": "Kritiskā jauda",
+    "wprime": "W′ ietilpība",
+    "cv": "Pielāgošanas kļūda",
+    "window": "Pielāgošanas logs",
+    "previewDefault": "Noklusējuma",
+    "empty": {
+      "title": "Šim sporta veidam līknes vēl nav",
+      "description": "Līkne parādīsies, kad šī sporta veida aktivitātes ar jaudu būs izmērītas."
+    },
+    "balanceHeader": "W′ bilance",
+    "sessionLabel": "Aktivitāte",
+    "sessionPlaceholder": "Izvēlieties aktivitāti",
+    "balanceHint": "Izvēlieties aktivitāti, lai redzētu, kā piepūle tērēja un atjaunoja W′.",
+    "balanceEmpty": "Līdzsvara zīmēšanai šim sporta veidam vajag pielāgotu W′; kopsummas virs sliekšņa tiek rādītas arī tad.",
+    "workAboveCp": "Darbs virs CP",
+    "timeAboveCp": "Laiks virs CP",
+    "tau": "Atjaunošanās konstante",
+    "seriesBalance": "W′ atlicis",
+    "balanceTitle": "W′ atlikušais laikā"
   }
 }

@@ -56,7 +56,9 @@
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "ppm"
-    }
+    },
+    "fitFromS": "Ajuste desde (s)",
+    "fitToS": "Ajuste hasta (s)"
   },
   "actions": {
     "refreshThresholds": "Actualizar umbrales",
@@ -64,5 +66,32 @@
     "refreshQueued": "Actualización de umbrales en cola",
     "recomputeQueued": "Recálculo en cola",
     "failed": "No se pudo lanzar la solicitud"
+  },
+  "sections": "Secciones de análisis",
+  "sectionLoad": "Carga de entrenamiento",
+  "sectionPower": "Curva de potencia",
+  "power": {
+    "subtitle": "Tus mejores medias sostenidas y la potencia crítica derivada de ellas",
+    "chartTitle": "Curva duración-intensidad",
+    "seriesCurve": "Mejor media de potencia",
+    "cp": "Potencia crítica",
+    "wprime": "Capacidad W′",
+    "cv": "Error del ajuste",
+    "window": "Ventana de ajuste",
+    "previewDefault": "Predeterminado",
+    "empty": {
+      "title": "Aún no hay curva para este deporte",
+      "description": "La curva aparece cuando se midan actividades con potencia de este deporte."
+    },
+    "balanceHeader": "Balance de W′",
+    "sessionLabel": "Actividad",
+    "sessionPlaceholder": "Elige una actividad",
+    "balanceHint": "Elige una actividad para ver cómo sus esfuerzos consumieron y recuperaron W′.",
+    "balanceEmpty": "Este deporte necesita un W′ ajustado para dibujar el balance; los totales sobre el umbral se muestran igualmente.",
+    "workAboveCp": "Trabajo sobre CP",
+    "timeAboveCp": "Tiempo sobre CP",
+    "tau": "Constante de recuperación",
+    "seriesBalance": "W′ restante",
+    "balanceTitle": "W′ restante en el tiempo"
   }
 }

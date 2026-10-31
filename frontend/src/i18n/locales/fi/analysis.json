@@ -56,7 +56,9 @@
       "sourceManual": "käsin",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Sovituksesta (s)",
+    "fitToS": "Sovitukseen (s)"
   },
   "actions": {
     "refreshThresholds": "Päivitä kynnykset",
@@ -64,5 +66,32 @@
     "refreshQueued": "Kynnyksien päivitys jonossa",
     "recomputeQueued": "Uudelleenlaskenta jonossa",
     "failed": "Pyyntöä ei voitu käynnistää"
+  },
+  "sections": "Analyysiosiot",
+  "sectionLoad": "Harjoituskuorma",
+  "sectionPower": "Tehokäyrä",
+  "power": {
+    "subtitle": "Parhaat kestävät keskiarvosi ja niistä johdettu kriittinen teho",
+    "chartTitle": "Kesto-intensiteettikäyrä",
+    "seriesCurve": "Paras keskiarvoteho",
+    "cp": "Kriittinen teho",
+    "wprime": "W′-kapasiteetti",
+    "cv": "Sovituksen virhe",
+    "window": "Sovitusikkuna",
+    "previewDefault": "Oletus",
+    "empty": {
+      "title": "Lajista ei ole vielä käyrää",
+      "description": "Käyrä näkyy, kun lajin teholiikunnat on mitattu."
+    },
+    "balanceHeader": "W′-tasapaino",
+    "sessionLabel": "Liikunta",
+    "sessionPlaceholder": "Valitse liikunta",
+    "balanceHint": "Valitse liikunta nähdäksesi, kuinka suoritukset kuluttivat ja palauttivat W′:ää.",
+    "balanceEmpty": "Lajilla tulee olla sovitettu W′ tasapainon piirtämiseen; kynnyksen ylittävät yhteenvetot näkyvät silti.",
+    "workAboveCp": "Työ CP:n yläpuolella",
+    "timeAboveCp": "Aika CP:n yläpuolella",
+    "tau": "Palautumisvakio",
+    "seriesBalance": "W′ jäljellä",
+    "balanceTitle": "W′ jäljellä ajan mittaan"
   }
 }

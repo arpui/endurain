@@ -56,7 +56,9 @@
       "sourceManual": "kézi",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Illesztés innen (s)",
+    "fitToS": "Illesztés eddig (s)"
   },
   "actions": {
     "refreshThresholds": "Küszöbértékek frissítése",
@@ -64,5 +66,32 @@
     "refreshQueued": "Küszöbfrissítés sorban",
     "recomputeQueued": "Újraszámítás sorban",
     "failed": "Nem sikerült elindítani a kérést"
+  },
+  "sections": "Elemzési szekciók",
+  "sectionLoad": "Edzésterhelés",
+  "sectionPower": "Teljesítménygörbe",
+  "power": {
+    "subtitle": "A legjobb kitartó átlagaid és a belőlük származtatott kritikus teljesítmény",
+    "chartTitle": "Időtartam-intenzitás görbe",
+    "seriesCurve": "Legjobb átlagteljesítmény",
+    "cp": "Kritikus teljesítmény",
+    "wprime": "W′-kapacitás",
+    "cv": "Illesztési hiba",
+    "window": "Illesztési ablak",
+    "previewDefault": "Alapértelmezett",
+    "empty": {
+      "title": "Ehhez a sportághoz még nincs görbe",
+      "description": "A görbe akkor jelenik meg, ha az adott sportág teljesítményt tartalmazó edzései felmérésre kerülnek."
+    },
+    "balanceHeader": "W′-egyensúly",
+    "sessionLabel": "Aktivitás",
+    "sessionPlaceholder": "Válassz egy aktivitást",
+    "balanceHint": "Válassz egy aktivitást, hogy lásd, hogyan fogyasztották és állították helyre a W′-et.",
+    "balanceEmpty": "Az egyensúly rajzolásához az adott sportághoz illesztett W′ kell; a küszöb feletti összegek ettől is látszanak.",
+    "workAboveCp": "Munka CP felett",
+    "timeAboveCp": "Idő CP felett",
+    "tau": "Helyreállítási állandó",
+    "seriesBalance": "W′ maradék",
+    "balanceTitle": "W′ maradék idővel"
   }
 }

@@ -56,7 +56,9 @@
       "sourceManual": "手动",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "拟合起点 (s)",
+    "fitToS": "拟合终点 (s)"
   },
   "actions": {
     "refreshThresholds": "刷新阈值",
@@ -64,5 +66,32 @@
     "refreshQueued": "阈值刷新已排队",
     "recomputeQueued": "重新计算已排队",
     "failed": "无法提交请求"
+  },
+  "sections": "分析板块",
+  "sectionLoad": "训练负荷",
+  "sectionPower": "功率曲线",
+  "power": {
+    "subtitle": "你的最佳持续平均值及由此推导的临界功率",
+    "chartTitle": "时长-强度曲线",
+    "seriesCurve": "最佳平均功率",
+    "cp": "临界功率",
+    "wprime": "W′ 容量",
+    "cv": "拟合误差",
+    "window": "拟合范围",
+    "previewDefault": "默认",
+    "empty": {
+      "title": "该运动尚无曲线",
+      "description": "测量该运动的功率活动后，曲线将显示在此处。"
+    },
+    "balanceHeader": "W′ 平衡",
+    "sessionLabel": "活动",
+    "sessionPlaceholder": "选择活动",
+    "balanceHint": "选择一个活动，查看其努力如何消耗与恢复 W′。",
+    "balanceEmpty": "绘制该运动的 W′ 平衡需要先拟合 W′；阈值以上的合计仍会显示。",
+    "workAboveCp": "高于 CP 的功",
+    "timeAboveCp": "高于 CP 的时间",
+    "tau": "恢复时间常数",
+    "seriesBalance": "剩余 W′",
+    "balanceTitle": "剩余 W′ 随时间变化"
   }
 }

@@ -56,7 +56,9 @@
       "sourceManual": "handmatig",
       "wattsPlaceholder": "W",
       "bpmPlaceholder": "bpm"
-    }
+    },
+    "fitFromS": "Fit vanaf (s)",
+    "fitToS": "Fit tot (s)"
   },
   "actions": {
     "refreshThresholds": "Drempels vernieuwen",
@@ -64,5 +66,32 @@
     "refreshQueued": "Vernieuwen van drempels in wachtrij",
     "recomputeQueued": "Herberekening in wachtrij",
     "failed": "Kon het verzoek niet starten"
+  },
+  "sections": "Analyse-onderdelen",
+  "sectionLoad": "Trainingsbelasting",
+  "sectionPower": "Vermogenscurve",
+  "power": {
+    "subtitle": "Je beste volgehouden gemiddelden en de daaruit afgeleide critical power",
+    "chartTitle": "Duur-intensiteitscurve",
+    "seriesCurve": "Beste gemiddeld vermogen",
+    "cp": "Critical power",
+    "wprime": "W′-capaciteit",
+    "cv": "Fout van de fit",
+    "window": "Fit-venster",
+    "previewDefault": "Standaard",
+    "empty": {
+      "title": "Nog geen curve voor deze sport",
+      "description": "De curve verschijnt zodra activiteiten met vermogen van deze sport zijn gemeten."
+    },
+    "balanceHeader": "W′-balans",
+    "sessionLabel": "Activiteit",
+    "sessionPlaceholder": "Kies een activiteit",
+    "balanceHint": "Kies een activiteit om te zien hoe haar inspanningen W′ verbruikten en herstelden.",
+    "balanceEmpty": "Deze sport heeft een gepaste W′ nodig om de balans te tekenen; de totalen boven de drempel blijven zichtbaar.",
+    "workAboveCp": "Arbeid boven CP",
+    "timeAboveCp": "Tijd boven CP",
+    "tau": "Herstelconstante",
+    "seriesBalance": "W′ over",
+    "balanceTitle": "W′ over de tijd"
   }
 }
