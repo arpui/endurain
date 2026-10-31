@@ -337,9 +337,10 @@ def best_split_times(
     for distance in distances_m:
         if cum[-1] - cum[0] < distance:
             continue
-        begins = np.searchsorted(cum, cum[ends] - distance)
-        valid = begins < ends
-        valid &= cum[ends] - cum[begins] >= distance
+        # the latest start whose cumulative distance still leaves the full distance
+        # between it and the end: the tightest window ending there covering D
+        begins = np.searchsorted(cum, cum[ends] - distance, side="right") - 1
+        valid = begins >= 0
         spans = elapsed[ends] - elapsed[begins]
         grades = (altitude[ends] - altitude[begins]) / distance * 100.0
         min_grade = (
