@@ -307,6 +307,39 @@ class IntervalSegmentRead(BaseModel):
     avg_speed_ms: StrictFloat | None
 
 
+class IntervalRulesRead(BaseModel):
+    """The effective numeric gates the split used for one session.
+
+    Exposed so an athlete can read back why a stretch was called what it was: every
+    value is in this athlete's own terms (their threshold, this session's median).
+
+    Attributes:
+        open_w: Smoothed power at which an effort begins.
+        close_w: Smoothed power at which it ends.
+        min_segment_s: Shortest stretch that counts at all.
+        short_segment_s: Under this length, the short-effort contrast rule applies.
+        short_base: Contrast a short effort needs over the session median.
+        strong_base: Contrast needed when the gap before was not a real recovery.
+        recovery_w: At or below this, a gap counts as a recovery.
+        effort_if: Average intensity a flat effort must hold to be an interval.
+        climb_grade_pct: Mean grade above which terrain explains the effort.
+        climb_if: Above this intensity even a graded effort is a rep, not a climb.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    open_w: StrictFloat
+    close_w: StrictFloat
+    min_segment_s: StrictFloat
+    short_segment_s: StrictFloat
+    short_base: StrictFloat
+    strong_base: StrictFloat
+    recovery_w: StrictFloat
+    effort_if: StrictFloat
+    climb_grade_pct: StrictFloat
+    climb_if: StrictFloat
+
+
 class ActivityIntervalsRead(BaseModel):
     """How one activity breaks down into efforts, for its owner.
 
@@ -318,6 +351,7 @@ class ActivityIntervalsRead(BaseModel):
         threshold_w: The threshold the intensities were divided by, if the athlete has one.
         base_power_w: The session's own median power, the relative anchor used.
         segments: Contiguous segments covering the timeline, in order.
+        rules: The effective numeric gates used, ``None`` when nothing was segmented.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -326,6 +360,7 @@ class ActivityIntervalsRead(BaseModel):
     threshold_w: StrictFloat | None
     base_power_w: StrictFloat
     segments: list[IntervalSegmentRead]
+    rules: IntervalRulesRead | None = None
 
 
 class RecomputeQueued(BaseModel):

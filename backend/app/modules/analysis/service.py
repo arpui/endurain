@@ -934,6 +934,7 @@ def get_activity_intervals(
         shape=analysis.shape,
         threshold_w=analysis.threshold_w,
         base_power_w=analysis.base_power_w,
+        rules=analysis_schema.IntervalRulesRead(**analysis.rules) if analysis.rules else None,
         segments=[
             analysis_schema.IntervalSegmentRead(
                 kind=segment.kind,
