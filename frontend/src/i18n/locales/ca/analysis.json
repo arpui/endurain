@@ -131,6 +131,10 @@
     "colGrade": "pendent",
     "colDesnivel": "desnivell",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Pujades del recorregut",
+    "tcColRange": "tram",
+    "tcNote": "Les pujades es llegeixen del terreny, independentment de la potència; poden solapar-se amb la línia de temps i no se sumen amb ella. L'aRSS requereix potència.",
     "colContrast": "vs sessió",
     "rules": "Com es detecta aquí: en pla un tros compta com a interval només si manté ≥{effortIf}·CP; se'n obre un a {openW} W i es tanca per sota de {closeW} W; mínim {minS} s (sota {shortS} s cal {shortBase} la mediana de la sessió; sense recuperació real —≤{recoveryW} W—, {strongBase}); amb pendent >{climbGrade}% i IF<{climbIf} compta com a pujada."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Desenvolupament",
     "desnivel": "Desnivell",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS és la puntuació ponderada per intensitat que hi ha darrere la càrrega diària; les files sumen el total de la sessió."
   }
 }

@@ -131,6 +131,10 @@
     "colGrade": "pendente",
     "colDesnivel": "desnivel (+/−)",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Subidas do percorrido",
+    "tcColRange": "tramo",
+    "tcNote": "As subidas léense do terreo, independentemente da potencia; poden solaparse coa liña de tempo e non se suman con ela. O aRSS require potencia.",
     "colContrast": "vs sesión",
     "rules": "Como se detecta aquí: en chanzo un tramo conta como intervalo só se mantén ≥{effortIf}·CP; ábrese un esforzo a {openW} W e péchase por debaixo de {closeW} W; mínimo {minS} s (baixo {shortS} s require {shortBase} a mediana da sesión; sen recuperación real —≤{recoveryW} W—, {strongBase}); con pendente >{climbGrade}% e IF<{climbIf} conta como subida."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Desenvolvemento",
     "desnivel": "Desnivel (+/−)",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS é a puntuación ponderada pola intensidade que hai detrás da carga diaria; as filas suman o total da sesión."
   }
 }

@@ -131,6 +131,10 @@
     "colGrade": "stigning",
     "colDesnivel": "stigning / fall",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Bakker etter ruten",
+    "tcColRange": "strekning",
+    "tcNote": "Bakkene leses fra terrenget, uavhengig av effekt; de kan overlappe tidslinjen og summeres ikke med den. aRSS krever effektmåler.",
     "colContrast": "vs økt",
     "rules": "Slik oppdages det her: på flatt teller en strekning bare som intervall hvis den holder ≥{effortIf}·CP; en innsats åpnes ved {openW} W og lukkes under {closeW} W; minst {minS} s (under {shortS} s kreves {shortBase} av øktens median; uten skikkelig hvile —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} teller det som bakke."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Utveksling",
     "desnivel": "Stigning / fall",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS er den intensitetsvektede poengsummen bak den daglige belastningen; radene summeres til aktivitetens total."
   }
 }

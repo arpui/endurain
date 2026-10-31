@@ -55,6 +55,7 @@ const showCadence = computed(() => props.laps.some((lap) => lap.avgCadence !== n
 const showPower = computed(() => props.dynamics.some((row) => row.avgPowerW !== null))
 const showLength = computed(() => props.dynamics.some((row) => row.strideLengthM !== null))
 const showRss = computed(() => props.dynamics.some((row) => row.rss !== null))
+const showRssKm = computed(() => props.dynamics.some((row) => row.rssPerKm !== null))
 
 const activeSummary = computed(() => {
   if (!hasRest.value) {
@@ -103,6 +104,7 @@ interface LapRow {
   power: string
   length: string
   rss: string
+  rssKm: string
   isRest: boolean
 }
 
@@ -137,6 +139,7 @@ const rows = computed<LapRow[]>(() =>
           : `${Math.round(dynamics.avgPowerW)} W`,
       length: decimal(dynamics?.strideLengthM ?? null, 2),
       rss: decimal(dynamics?.rss ?? null, 1),
+      rssKm: decimal(dynamics?.rssPerKm ?? null, 1),
       isRest: entry.isRest,
     }
   }),
@@ -194,8 +197,11 @@ function elevationPair(dynamics: LapDynamics | undefined, lap: ActivityLap): str
               {{ t('analysis.laps.power') }}
             </th>
             <th v-if="showLength" class="py-2 pe-3 font-medium">{{ t(lengthLabelKey) }}</th>
-            <th v-if="showRss" class="py-2 font-medium">
+            <th v-if="showRss" class="py-2 pe-3 font-medium">
               {{ t('analysis.laps.rss') }}
+            </th>
+            <th v-if="showRssKm" class="py-2 font-medium">
+              {{ t('analysis.laps.rssKm') }}
             </th>
           </tr>
         </thead>
@@ -244,8 +250,11 @@ function elevationPair(dynamics: LapDynamics | undefined, lap: ActivityLap): str
             <td v-if="showLength" class="py-2 pe-3 tabular-nums text-muted-foreground">
               {{ row.length }}
             </td>
-            <td v-if="showRss" class="py-2 tabular-nums text-muted-foreground">
+            <td v-if="showRss" class="py-2 pe-3 tabular-nums text-muted-foreground">
               {{ row.rss }}
+            </td>
+            <td v-if="showRssKm" class="py-2 tabular-nums text-muted-foreground">
+              {{ row.rssKm }}
             </td>
           </tr>
         </tbody>

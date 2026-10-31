@@ -131,6 +131,10 @@
     "colGrade": "nagib",
     "colDesnivel": "uspon / spuštanje",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Usponi po ruti",
+    "tcColRange": "dionica",
+    "tcNote": "Usponi se čitaju iz terena, neovisno o snazi; mogu se preklapati s vremenskom crtom i ne zbrajaju se s njom. aRSS zahtijeva mjerač snage.",
     "colContrast": "vs sesija",
     "rules": "Kako se ovdje prepoznaje: na ravnom se dionica broji kao interval samo ako drži ≥{effortIf}·CP; napor se otvara pri {openW} W i zatvara ispod {closeW} W; najmanje {minS} s (ispod {shortS} s treba {shortBase} medijana sesije; bez pravog odmora —≤{recoveryW} W—, {strongBase}); uz nagib >{climbGrade}% i IF<{climbIf} broji se kao uspon."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Prijenos",
     "desnivel": "Uspon / spuštanje",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS je rezultat ponderiran intenzitetom koji stoji iza dnevnog opterećenja; retci zbrojeni daju ukupan zbroj aktivnosti."
   }
 }

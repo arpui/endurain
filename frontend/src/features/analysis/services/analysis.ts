@@ -23,6 +23,8 @@ import type {
   IntervalRulesDto,
   IntervalSegment,
   IntervalSegmentDto,
+  TerrainClimb,
+  TerrainClimbDto,
   LoadMethod,
   DurationPeak,
   DurationPeakDto,
@@ -281,10 +283,30 @@ function mapIntervalSegment(dto: IntervalSegmentDto): IntervalSegment {
     elevationGainM: dto.elevation_gain_m ?? null,
     elevationLossM: dto.elevation_loss_m ?? null,
     rss: dto.rss ?? null,
+    rssPerKm: dto.rss_per_km ?? null,
   }
 }
 
-/** Maps an interval-analysis DTO, filling an empty timeline. */
+/** Maps one terrain-climb DTO. */
+function mapTerrainClimb(dto: TerrainClimbDto): TerrainClimb {
+  return {
+    startM: dto.start_m,
+    endM: dto.end_m,
+    lengthM: dto.length_m,
+    startS: dto.start_s,
+    durationS: dto.duration_s,
+    elevationGainM: dto.elevation_gain_m,
+    elevationLossM: dto.elevation_loss_m,
+    avgGradePct: dto.avg_grade_pct,
+    avgPowerW: dto.avg_power_w ?? null,
+    intensityFactor: dto.intensity_factor ?? null,
+    contrast: dto.contrast ?? null,
+    rss: dto.rss ?? null,
+    rssPerKm: dto.rss_per_km ?? null,
+  }
+}
+
+/** Maps an interval-analysis DTO, filling an empty timeline and no climbs. */
 export function mapActivityIntervals(dto: ActivityIntervalsDto): ActivityIntervals {
   return {
     shape: dto.shape as ActivityIntervals['shape'],
@@ -292,6 +314,7 @@ export function mapActivityIntervals(dto: ActivityIntervalsDto): ActivityInterva
     basePowerW: dto.base_power_w,
     segments: (dto.segments ?? []).map(mapIntervalSegment),
     rules: dto.rules ? mapIntervalRules(dto.rules) : null,
+    climbs: (dto.climbs ?? []).map(mapTerrainClimb),
   }
 }
 
@@ -376,6 +399,7 @@ function mapLapDynamics(dto: LapDynamicsDto): LapDynamics {
     elevationGainM: dto.elevation_gain_m ?? null,
     elevationLossM: dto.elevation_loss_m ?? null,
     rss: dto.rss ?? null,
+    rssPerKm: dto.rss_per_km ?? null,
   }
 }
 

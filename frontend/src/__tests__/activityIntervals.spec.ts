@@ -21,6 +21,7 @@ function makeSegment(overrides: Partial<IntervalSegment> = {}): IntervalSegment 
     elevationGainM: 9.5,
     elevationLossM: 4,
     rss: 12.3,
+    rssPerKm: 17.6,
     ...overrides,
   }
 }
@@ -32,6 +33,7 @@ function makeIntervals(segment: IntervalSegment): ActivityIntervals {
     thresholdW: 350,
     basePowerW: 280,
     segments: [segment],
+    climbs: [],
     rules: {
       openW: 349,
       closeW: 314,
@@ -73,5 +75,92 @@ describe('ActivityIntervalTable tempo column', () => {
 
   it('dashes the tempo when the activity has no speed stream', () => {
     expect(tempoCell(makeSegment({ avgSpeedMs: null, distanceM: 0 }), 1)).toBe('--')
+  })
+})
+
+describe('ActivityIntervalTable terrain climbs', () => {
+  function mountWith(climbs: ActivityIntervals['climbs']) {
+    return mount(ActivityIntervalTable, {
+      props: {
+        intervals: { ...makeIntervals(makeSegment()), climbs },
+        activityType: 1,
+        units: 'metric',
+      },
+      global: { plugins: [i18n] },
+    })
+  }
+
+  it('lists the climbs the route shows, with their per-kilometre stress', () => {
+    const wrapper = mountWith([
+      {
+        startM: 100,
+        endM: 4200,
+        lengthM: 4100,
+        startS: 25,
+        durationS: 1025,
+        elevationGainM: 229,
+        elevationLossM: 22,
+        avgGradePct: 5.04,
+        avgPowerW: 390,
+        intensityFactor: 1.11,
+        contrast: 1.39,
+        rss: 60.2,
+        rssPerKm: 14.7,
+      },
+    ])
+    const rows = wrapper.findAll('tbody tr')
+    const climbRow = rows[rows.length - 1]
+    if (!climbRow) {
+      throw new Error('no climb row rendered')
+    }
+    expect(climbRow.text()).toMatch(/0[.,]1 - 4[.,]2 km/)
+    expect(climbRow.text()).toContain('+229')
+    expect(climbRow.text()).toContain('14.7')
+    expect(climbRow.text()).toContain('390 W')
+  })
+
+  it('shows nothing extra when the route has no climbs', () => {
+    const wrapper = mountWith([])
+    expect(wrapper.findAll('tbody tr').length).toBe(1) // just the timeline row
+  })
+
+  it('keeps the power columns dashed for an athlete without a power meter', () => {
+    const wrapper = mount(ActivityIntervalTable, {
+      props: {
+        intervals: {
+          shape: 'steady',
+          thresholdW: null,
+          basePowerW: 0,
+          segments: [],
+          climbs: [
+            {
+              startM: 0,
+              endM: 1200,
+              lengthM: 1200,
+              startS: 0,
+              durationS: 300,
+              elevationGainM: 80,
+              elevationLossM: 0,
+              avgGradePct: 6.7,
+              avgPowerW: null,
+              intensityFactor: null,
+              contrast: null,
+              rss: null,
+              rssPerKm: 22.0,
+            },
+          ],
+          rules: null,
+        },
+        activityType: 1,
+        units: 'metric',
+      },
+      global: { plugins: [i18n] },
+    })
+    const row = wrapper.findAll('tbody tr')[0]
+    if (!row) {
+      throw new Error('no climb row rendered')
+    }
+    expect(row.text()).toContain('--')
+    expect(row.text()).toContain('+80')
   })
 })

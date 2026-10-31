@@ -131,6 +131,10 @@
     "colGrade": "Steigung",
     "colDesnivel": "auf-/Abstieg",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Anstiege der Route",
+    "tcColRange": "Abschnitt",
+    "tcNote": "Anstiege werden aus dem Gelände gelesen, unabhängig von der Leistung; sie können sich mit der Zeitachse überschneiden und werden nicht mit ihr summiert. aRSS erfordert eine Leistungsmessung.",
     "colContrast": "vs Einheit",
     "rules": "So wird erkannt: auf flachem Grund zählt ein Abschnitt nur als Intervall, wenn er ≥{effortIf}·CP hält; ein Einsatz beginnt bei {openW} W und endet unter {closeW} W; mindestens {minS} s (unter {shortS} s braucht er {shortBase} des Einheiten-Medians; ohne echte Erholung —≤{recoveryW} W— {strongBase}); bei Steigung >{climbGrade}% und IF<{climbIf} zählt er als Anstieg."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Übersetzung",
     "desnivel": "Auf-/Abstieg",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS ist der intensivitätsgewichtete Wert hinter der Tagesbelastung; die Zeilen summieren sich zum Aktivitätsgesamt."
   }
 }

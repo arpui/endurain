@@ -84,7 +84,11 @@ const { data: intervals } = useActivityIntervalsQuery(
   computed(() => activityLoaded.value && isOwner.value),
 )
 const showIntervals = computed(
-  () => (intervals.value?.segments.length ?? 0) > 0 && intervals.value?.thresholdW != null,
+  () =>
+    ((intervals.value?.segments.length ?? 0) > 0 && intervals.value?.thresholdW != null) ||
+    // Terrain climbs need only altitude and speed: they answer for athletes
+    // without a power meter too.
+    (intervals.value?.climbs.length ?? 0) > 0,
 )
 // The analysis laps table replaces the plain one for the owner: same rows, plus
 // power, stride length, the lap's ascent-and-descent pair and its share of the aRSS.

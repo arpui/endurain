@@ -131,6 +131,10 @@
     "colGrade": "lutning",
     "colDesnivel": "höjdmeter (+/−)",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Stigningar efter rutten",
+    "tcColRange": "sträcka",
+    "tcNote": "Stigningar läses från terrängen, oavsett effekt; de kan överlappa tidslinjen och summeras inte med den. aRSS kräver effektmätning.",
     "colContrast": "vs pass",
     "rules": "Så upptäcks det här: på plant räknas en sträcka som intervall bara om den håller ≥{effortIf}·CP; en insats öppnas vid {openW} W och stängs under {closeW} W; minst {minS} s (under {shortS} s krävs {shortBase} passets median; utan riktig återhämtning —≤{recoveryW} W—, {strongBase}); med lutning >{climbGrade}% och IF<{climbIf} räknas det som backe."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Överväxling",
     "desnivel": "Höjdmeter (+/−)",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS är den intensitetsvikta poängen bakom den dagliga belastningen; raderna summerar till aktivitetens total."
   }
 }

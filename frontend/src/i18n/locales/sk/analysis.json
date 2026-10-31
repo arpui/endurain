@@ -131,6 +131,10 @@
     "colGrade": "stúpanie",
     "colDesnivel": "prevýšenie (+/−)",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Stúpania podľa trasy",
+    "tcColRange": "úsek",
+    "tcNote": "Stúpania sa čítajú z terénu, bez ohľadu na výkon; môžu sa prekrývať s časovou osou a nesčítavajú sa s ňou. aRSS vyžaduje meranie výkonu.",
     "colContrast": "vs aktivita",
     "rules": "Ako sa to detekuje: na rovine sa úsek počíta ako interval len pri ≥{effortIf}·CP; úsek sa otvára pri {openW} W a zatvára pod {closeW} W; minimum {minS} s (pod {shortS} s treba {shortBase} mediánu aktivity; bez skutočnej regenerácie —≤{recoveryW} W—, {strongBase}); so stúpaním >{climbGrade}% a IF<{climbIf} sa počíta ako stúpanie."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Prevod",
     "desnivel": "Prevýšenie (+/−)",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS je intenzitou vážené skóre za dennou záťažou; riadky sa sčítajú na celkový údaj aktivity."
   }
 }
