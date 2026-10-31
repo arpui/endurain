@@ -80,6 +80,15 @@ FIT_MIN_ACTIVITIES = 3
 #: mesocycle, with the decay still seeded from the athlete's first measured day.
 FITNESS_WINDOW_DEFAULT_DAYS = 90
 
+#: Activities offered on the power-duration response as W' balance candidates,
+#: newest first: enough to pick from without shipping the whole history.
+POWER_DURATION_SESSIONS_MAX = 50
+
+#: Upper bound of points transferred for one W' balance series. Charts do not
+#: render one point per second of a multi-hour activity, and the JSON should not
+#: carry them.
+WPRIME_POINTS_MAX = 600
+
 #: Longest gap (seconds) still treated as continuous sampling when deriving the
 #: stream's sample period. A larger median gap means the device recorded sparsely
 #: and the windows widen to match.

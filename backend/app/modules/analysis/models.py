@@ -25,6 +25,10 @@ class AnalysisSettings(Base, TimestampMixin):
         acute_days: Fatigue time constant, in days.
         chronic_days: Fitness time constant, in days.
         primary_method: Load formula used when a caller asks for one load.
+        fit_from_s: Shortest peak duration the critical-power fit uses; ``None``
+            leaves the module default.
+        fit_to_s: Longest peak duration the critical-power fit uses; ``None``
+            leaves the module default.
         resting_hr: Resting heart rate the athlete states, used by heart-rate
             impulse formulas; ``None`` leaves those formulas off.
         thresholds: Threshold document described above; empty when nothing is known.
@@ -69,6 +73,16 @@ class AnalysisSettings(Base, TimestampMixin):
         default=analysis_constants.PRIMARY_METHOD_DEFAULT,
         server_default=analysis_constants.PRIMARY_METHOD_DEFAULT,
         comment="Load formula used when one load is asked for",
+    )
+    fit_from_s: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+        comment="Shortest peak duration used by the critical-power fit, when not default",
+    )
+    fit_to_s: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+        comment="Longest peak duration used by the critical-power fit, when not default",
     )
     resting_hr: Mapped[int | None] = mapped_column(
         Integer,

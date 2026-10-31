@@ -15,6 +15,7 @@ import pytest
 
 import core.exceptions as core_exceptions
 import modules.analysis.constants as analysis_constants
+import modules.analysis.contracts as analysis_contracts
 import modules.analysis.schema as analysis_schema
 import modules.analysis.service as analysis_service
 
@@ -39,6 +40,7 @@ def _activity(
     normalized_power: int | None = 250,
     start_time: datetime | None = _T0_UTC,
     timezone: str | None = "Europe/Madrid",
+    name: str | None = "Morning run",
 ) -> SimpleNamespace:
     """Return an activity shaped like the activities module's read schema."""
     return SimpleNamespace(
@@ -47,6 +49,7 @@ def _activity(
         user_id=user_id,
         start_time=start_time,
         timezone=timezone,
+        name=name,
         total_timer_time=seconds,
         total_elapsed_time=seconds,
         average_hr=average_hr,
@@ -611,3 +614,215 @@ class TestSettingsClearing:
         ):
             analysis_service.update_settings(2, analysis_schema.AnalysisSettingsUpdate(resting_hr=None), db)
         assert stored[0].resting_hr is None
+
+
+class TestPowerDuration:
+    def _duration(self, peaks, activities, settings, **overrides):
+        db = _db()
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings),
+            patch(f"{_SVC}.analysis_crud.list_duration_peaks", return_value=peaks),
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+        ):
+            series = analysis_service.get_power_duration(2, "run", db, **overrides)
+        return series, db
+
+    def _peaks(self):
+        critical_power, w_prime = 250.0, 20_000.0
+        return [
+            analysis_contracts.PeakRecord(duration_s=duration, value=critical_power + w_prime / duration, activity_id=7)
+            for duration in (300, 420, 600, 900, 1200, 1800)
+        ]
+
+    def test_curve_and_fit_and_threshold_travel_together(self):
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=250.0,
+                    w_prime_j=20000.0,
+                    source=analysis_constants.ThresholdSource.AUTO,
+                    cv_pct=2.0,
+                )
+            }
+        )
+        series, _db = self._duration(self._peaks(), [_activity()], settings)
+        assert [point.duration_s for point in series.points] == [300, 420, 600, 900, 1200, 1800]
+        assert series.fit is not None
+        assert series.fit.critical_power_w == pytest.approx(250.0, rel=1e-3)
+        assert series.threshold is not None
+        assert series.threshold.value_w == 250.0
+        assert series.sessions[0].activity_id == 1
+
+    def test_preview_window_overrides_without_touching_settings(self):
+        """A request-scoped fit window answers for the preview; the stored threshold stays."""
+        series, _db = self._duration(self._peaks(), [_activity()], _settings(), fit_from_s=300, fit_to_s=1200)
+        assert series.fit is not None
+        assert (series.fit.fit_from_s, series.fit.fit_to_s) == (300, 1200)
+        assert series.threshold is None  # nothing stored; the preview does not store either
+
+    def test_stored_window_is_the_default_fit_window(self):
+        settings = _settings(fit_from_s=600, fit_to_s=1800)
+        series, _db = self._duration(self._peaks(), [], settings)
+        assert series.fit is not None
+        assert (series.fit.fit_from_s, series.fit.fit_to_s) == (600, 1800)
+
+    def test_only_power_activities_of_the_sport_are_offered_as_sessions(self):
+        activities = [
+            _activity(activity_id=1),
+            _activity(activity_id=2, activity_type=11),  # walk sport, no peak here
+            _activity(activity_id=3, normalized_power=None),  # no power
+        ]
+        series, _db = self._duration(self._peaks(), activities, _settings())
+        assert [session.activity_id for session in series.sessions] == [1]
+
+    def test_sessions_are_newest_first(self):
+        activities = [
+            _activity(activity_id=1, start_time=datetime(2026, 10, 1, tzinfo=UTC)),
+            _activity(activity_id=2, start_time=datetime(2026, 10, 20, tzinfo=UTC)),
+        ]
+        series, _db = self._duration(self._peaks(), activities, _settings())
+        assert [session.activity_id for session in series.sessions] == [2, 1]
+
+    def test_an_unknown_sport_is_refused(self):
+        with pytest.raises(core_exceptions.InvalidInputError):
+            analysis_service.get_power_duration(2, "kitesurfing", _db())
+
+    def test_an_inverted_preview_window_is_refused(self):
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            pytest.raises(core_exceptions.InvalidInputError),
+        ):
+            analysis_service.get_power_duration(2, "run", _db(), fit_from_s=1800, fit_to_s=300)
+
+
+class TestWprimeBalance:
+    _SETTINGS = _settings(
+        power_thresholds={
+            "run": analysis_schema.PowerThresholdRead(
+                value_w=250.0,
+                w_prime_j=1000.0,
+                source=analysis_constants.ThresholdSource.AUTO,
+                cv_pct=2.0,
+            )
+        }
+    )
+
+    def test_only_the_owner_reads_the_balance(self):
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=False),
+            pytest.raises(core_exceptions.NotFoundError),
+        ):
+            analysis_service.get_wprime_balance(5, 2, _db())
+
+    def test_a_powerful_activity_reports_totals_and_a_depleting_series(self):
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=self._SETTINGS),
+            patch(f"{_SVC}.activity_streams_integration.get_stream_for_derivation", return_value=_stream([300.0] * 30)),
+        ):
+            balance = analysis_service.get_wprime_balance(1, 2, db)
+        assert balance.cp_w == 250.0
+        assert balance.w_prime_j == 1000.0
+        assert balance.work_above_cp_j == pytest.approx(1500.0)
+        assert balance.time_above_cp_s == pytest.approx(30.0)
+        assert balance.points[0].remaining_j < 1000.0
+        assert balance.points[-1].remaining_j == pytest.approx(0.0)
+        assert balance.tau_s is not None
+
+    def test_without_a_threshold_nothing_is_measured(self):
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=_settings()),
+        ):
+            balance = analysis_service.get_wprime_balance(1, 2, db)
+        assert balance.cp_w is None
+        assert balance.points == []
+
+    def test_cp_without_capacity_still_reports_the_anaerobic_totals(self):
+        """A typed-in FTP gives no W', but time and work above it are still facts."""
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=250.0,
+                    w_prime_j=None,
+                    source=analysis_constants.ThresholdSource.MANUAL,
+                    cv_pct=None,
+                )
+            }
+        )
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings),
+            patch(f"{_SVC}.activity_streams_integration.get_stream_for_derivation", return_value=_stream([300.0] * 20)),
+        ):
+            balance = analysis_service.get_wprime_balance(1, 2, db)
+        assert balance.w_prime_j is None
+        assert balance.points == []
+        assert balance.work_above_cp_j == pytest.approx(1000.0)
+        assert balance.time_above_cp_s == pytest.approx(20.0)
+
+    def test_the_series_is_thinned_to_the_transfer_cap(self):
+        settings = self._SETTINGS
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings),
+            patch(
+                f"{_SVC}.activity_streams_integration.get_stream_for_derivation",
+                return_value=_stream([200.0] * 6000),
+            ),
+        ):
+            balance = analysis_service.get_wprime_balance(1, 2, db)
+        assert len(balance.points) <= analysis_constants.WPRIME_POINTS_MAX
+
+
+class TestFitWindowParameters:
+    """The critical-power fit range is the athlete's parameter, not a constant."""
+
+    def test_update_stores_the_window(self):
+        db = _db()
+        stored: list[analysis_schema.AnalysisSettingsRead] = []
+        payload = analysis_schema.AnalysisSettingsUpdate(fit_from_s=120, fit_to_s=900)
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.store_settings", side_effect=_capture_settings(stored)),
+        ):
+            analysis_service.update_settings(2, payload, db)
+        assert (stored[0].fit_from_s, stored[0].fit_to_s) == (120, 900)
+
+    def test_an_inverted_window_is_refused(self):
+        db = _db()
+        payload = analysis_schema.AnalysisSettingsUpdate(fit_from_s=1800, fit_to_s=600)
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.store_settings"),
+            pytest.raises(core_exceptions.InvalidInputError),
+        ):
+            analysis_service.update_settings(2, payload, db)
+
+    def test_the_stored_window_feeds_the_threshold_pass(self):
+        """Derivation and preview use one window, so what the chart shows is what gets stored."""
+        activities = [_activity(activity_id=index) for index in (1, 2, 3, 4)]
+        streams = {(index, 2): _stream([300.0] * 1800 + [200.0] * 1800) for index in (1, 2, 3, 4)}
+        settings = _settings(fit_from_s=600, fit_to_s=1800)
+        db = _db()
+        stored: list[analysis_schema.AnalysisSettingsRead] = []
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings),
+            patch(
+                f"{_SVC}.activity_streams_integration.get_stream_for_derivation",
+                side_effect=lambda activity_id, stream_type, _db: streams.get((activity_id, stream_type)),
+            ),
+            patch(f"{_SVC}.analysis_crud.replace_duration_peaks"),
+            patch(f"{_SVC}.analysis_crud.store_settings", side_effect=_capture_settings(stored)),
+        ):
+            analysis_service.refresh_thresholds(2, db)
+        assert stored[0].power_thresholds["run"].source is analysis_constants.ThresholdSource.AUTO

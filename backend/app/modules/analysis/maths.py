@@ -163,6 +163,94 @@ def ewf(values: Sequence[float], tau_days: float) -> list[float]:
     return series
 
 
+def work_above_threshold(
+    values: Sequence[float],
+    period_s: float,
+    threshold_w: float,
+) -> tuple[float, float]:
+    """Return the work and time spent above a threshold, ``(joules, seconds)``.
+
+    The direct anaerobic measure behind the ``W'`` bookkeeping: every sample over
+    the threshold contributes ``(P - threshold) · period`` of work and ``period``
+    of time. It is what the two-parameter model says cannot be sustained, so the
+    totals say how much of it an activity actually asked for.
+    """
+    array = np.asarray(values, dtype=float)
+    if array.size == 0:
+        return 0.0, 0.0
+    over = np.maximum(array - threshold_w, 0.0)
+    return float(np.sum(over) * period_s), float(np.count_nonzero(over) * period_s)
+
+
+def skiba_tau_s(cp_w: float, values: Sequence[float]) -> float:
+    """Return the W' repletion time constant of the Skiba 2012 model, in seconds.
+
+    ``tau = 546 * e^(-0.01 * DCP) + 316`` where ``DCP`` is the difference between
+    the critical power and the mean power of the samples below it -- one value per
+    activity, as the paper (and GoldenCheetah's ``WPrime.cpp``) computes it. A
+    stream with no samples below CP recovers with ``DCP = CP``.
+    """
+    array = np.asarray(values, dtype=float)
+    below = array[array < cp_w]
+    mean_below = float(np.mean(below)) if below.size else 0.0
+    return float(546.0 * exp(-0.01 * (cp_w - mean_below)) + 316.0)
+
+
+def wprime_balance(
+    values: Sequence[float],
+    period_s: float,
+    cp_w: float,
+    w_prime_j: float,
+    tau_s: float | None = None,
+) -> list[float]:
+    """Return W' remaining (joules) after each sample, per Skiba 2012's integral form.
+
+    ``W'bal(t) = W' - sum over u<=t of max(0, P(u) - CP) * e^(-(t-u)/tau) * period``.
+    Evaluated as a one-step recurrence -- expended work decays by ``e^(-period/tau)``
+    per sample and new work is added -- which reproduces the integral exactly at O(n)
+    (the optimisation GoldenCheetah makes for the same reason). The result is clamped
+    to ``[0, W']``: the model has no negative capacity and no over-supply.
+
+    Args:
+        values: Power samples in watts, zeros kept.
+        period_s: Seconds between samples.
+        cp_w: Critical power in watts.
+        w_prime_j: Anaerobic work capacity in joules.
+        tau_s: Repletion time constant; computed from the stream when omitted.
+
+    Returns:
+        One value per sample: W' remaining in joules.
+    """
+    array = np.asarray(values, dtype=float)
+    if array.size == 0 or cp_w <= 0 or w_prime_j <= 0:
+        return []
+    tau = tau_s if tau_s and tau_s > 0 else skiba_tau_s(cp_w, array)
+    decay = exp(-period_s / tau)
+    expended = 0.0
+    remaining: list[float] = []
+    for value in array:
+        over = value - cp_w
+        expended = expended * decay + (over if over > 0 else 0.0) * period_s
+        remaining.append(min(max(w_prime_j - expended, 0.0), w_prime_j))
+    return remaining
+
+
+def downsample(points: Sequence[tuple[float, float]], max_points: int) -> list[tuple[float, float]]:
+    """Return an evenly spaced subset of ``(x, y)`` points, keeping the last.
+
+    A one-second series of a five-hour ride is 18.000 points; charts do not render
+    that and JSON should not carry it. Striding with the final point kept preserves
+    the endpoint (often the most depleted moment) that a plain stride could drop.
+    """
+    if max_points <= 0 or len(points) <= max_points:
+        return list(points)
+    stride = len(points) / max_points
+    sampled = [points[int(index * stride)] for index in range(max_points)]
+    if sampled[-1] != points[-1]:
+        sampled[-1] = points[-1]
+    return sampled
+
+
 def fit_cp_wprime(
     peaks: Mapping[int, float],
     fit_from_s: float = analysis_constants.FIT_MIN_S,

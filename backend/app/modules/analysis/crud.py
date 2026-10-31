@@ -33,6 +33,8 @@ def _to_settings_read(row: analysis_models.AnalysisSettings) -> analysis_schema.
         acute_days=row.acute_days,
         chronic_days=row.chronic_days,
         primary_method=row.primary_method,
+        fit_from_s=row.fit_from_s,
+        fit_to_s=row.fit_to_s,
         resting_hr=row.resting_hr,
         power_thresholds=power,
         hr_threshold=analysis_schema.HeartRateThresholdRead(**heart_rate) if heart_rate else None,
@@ -79,6 +81,8 @@ def store_settings(
     row.acute_days = settings.acute_days
     row.chronic_days = settings.chronic_days
     row.primary_method = settings.primary_method.value
+    row.fit_from_s = settings.fit_from_s
+    row.fit_to_s = settings.fit_to_s
     row.resting_hr = settings.resting_hr
     row.thresholds = _threshold_document(settings)
     row.method_params = dict(settings.method_params)
@@ -257,3 +261,37 @@ def replace_duration_peaks(
         )
     db.flush()
     return len(records)
+
+
+def list_duration_peaks(
+    user_id: int,
+    sport: str,
+    db: Session,
+) -> list[analysis_contracts.PeakRecord]:
+    """Return one athlete's stored duration-intensity curve for a sport.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group the curve belongs to.
+        db: Database session.
+
+    Returns:
+        The stored curve points, shortest duration first, empty when the curve
+        was never computed.
+    """
+    stmt = (
+        select(
+            analysis_models.DurationPeak.duration_s,
+            analysis_models.DurationPeak.value,
+            analysis_models.DurationPeak.activity_id,
+        )
+        .where(
+            analysis_models.DurationPeak.user_id == user_id,
+            analysis_models.DurationPeak.sport == sport,
+        )
+        .order_by(analysis_models.DurationPeak.duration_s)
+    )
+    return [
+        analysis_contracts.PeakRecord(duration_s=int(duration), value=float(value), activity_id=activity_id)
+        for duration, value, activity_id in db.execute(stmt).all()
+    ]

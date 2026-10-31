@@ -58,6 +58,18 @@ def upgrade() -> None:
             comment="Load formula used when one load is asked for",
         ),
         sa.Column(
+            "fit_from_s",
+            sa.Integer(),
+            nullable=True,
+            comment="Shortest peak duration used by the critical-power fit, when not default",
+        ),
+        sa.Column(
+            "fit_to_s",
+            sa.Integer(),
+            nullable=True,
+            comment="Longest peak duration used by the critical-power fit, when not default",
+        ),
+        sa.Column(
             "resting_hr",
             sa.Integer(),
             nullable=True,

@@ -101,6 +101,12 @@ def update_settings(
         current.chronic_days = payload.chronic_days
     if payload.primary_method is not None:
         current.primary_method = payload.primary_method
+    if "fit_from_s" in provided:
+        current.fit_from_s = payload.fit_from_s
+    if "fit_to_s" in provided:
+        current.fit_to_s = payload.fit_to_s
+    if current.fit_from_s is not None and current.fit_to_s is not None and current.fit_from_s >= current.fit_to_s:
+        raise core_exceptions.InvalidInputError("'fit_from_s' must be shorter than 'fit_to_s'")
     if "resting_hr" in provided:
         current.resting_hr = payload.resting_hr
     if payload.method_params is not None:
@@ -320,6 +326,32 @@ def compute_loads_for_activity(activity_id: int, db: Session) -> int:
     return _store_loads(activity, db)
 
 
+def _effective_fit_window(
+    settings: analysis_schema.AnalysisSettingsRead,
+    *,
+    fit_from_s: int | None = None,
+    fit_to_s: int | None = None,
+) -> tuple[int, int]:
+    """Return the duration range a fit should use: request, then athlete, then default.
+
+    Raises:
+        InvalidInputError: If the resulting range is inverted.
+    """
+    from_s = (
+        fit_from_s
+        if fit_from_s is not None
+        else (settings.fit_from_s if settings.fit_from_s is not None else int(analysis_constants.FIT_MIN_S))
+    )
+    to_s = (
+        fit_to_s
+        if fit_to_s is not None
+        else (settings.fit_to_s if settings.fit_to_s is not None else int(analysis_constants.FIT_MAX_S))
+    )
+    if from_s >= to_s:
+        raise core_exceptions.InvalidInputError("fit window start must be shorter than its end")
+    return from_s, to_s
+
+
 def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSettingsRead:
     """Derive an athlete's thresholds from their own records, and cache their curves.
 
@@ -390,13 +422,14 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
         )
 
     derived = 0
+    fit_from_s, fit_to_s = _effective_fit_window(settings)
     for sport, peaks in peaks_by_sport.items():
         existing = settings.power_thresholds.get(sport)
         if existing is not None and existing.source is analysis_constants.ThresholdSource.MANUAL:
             continue
         if activities_by_sport.get(sport, 0) < analysis_constants.FIT_MIN_ACTIVITIES:
             continue
-        fit = analysis_maths.fit_cp_wprime(peaks)
+        fit = analysis_maths.fit_cp_wprime(peaks, float(fit_from_s), float(fit_to_s))
         if fit is None:
             continue
         critical_power, w_prime_j, cv_pct = fit
@@ -619,4 +652,170 @@ def get_fitness_series(
         chronic_days=tau_chronic,
         sport=sport,
         points=points,
+    )
+
+
+def get_power_duration(
+    user_id: int,
+    sport: str,
+    db: Session,
+    *,
+    fit_from_s: int | None = None,
+    fit_to_s: int | None = None,
+) -> analysis_schema.PowerDurationRead:
+    """Return an athlete's duration-intensity curve for one sport.
+
+    The points come from the cached peak table (the threshold pass writes them),
+    the fit is recomputed on read with the effective window so the athlete can
+    preview what a different window would give before refreshing thresholds, and
+    the threshold section reports what the loads of this sport are *actually*
+    measured against -- the loop the curve feeds: peaks -> CP -> IF -> TSS.
+
+    Activities whose samples built the curve are listed newest first so a client
+    can pick one to compute W' balance against.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group to read.
+        db: Database session.
+        fit_from_s: Preview override for the fit window start.
+        fit_to_s: Preview override for the fit window end.
+
+    Returns:
+        The curve, its fit, the stored threshold, and the contributing sessions.
+
+    Raises:
+        InvalidInputError: If the sport is unknown or the window is inverted.
+    """
+    if sport not in activity_constants.ACTIVITY_TYPES_BY_SPORT:
+        raise core_exceptions.InvalidInputError(f"Unknown sport '{sport}'")
+    settings = get_settings(user_id, db)
+    from_s, to_s = _effective_fit_window(settings, fit_from_s=fit_from_s, fit_to_s=fit_to_s)
+
+    peaks = analysis_crud.list_duration_peaks(user_id, sport, db)
+    peaks_map = {peak.duration_s: peak.value for peak in peaks}
+    fit = analysis_maths.fit_cp_wprime(peaks_map, float(from_s), float(to_s))
+
+    sessions: list[analysis_schema.PowerDurationSessionRead] = []
+    activities = activity_integration.list_user_activities(user_id, db)
+    for activity in sorted(activities, key=lambda item: item.start_time or datetime.min, reverse=True):
+        if sport_group(activity.activity_type) != sport or not activity.normalized_power:
+            continue
+        if len(sessions) >= analysis_constants.POWER_DURATION_SESSIONS_MAX:
+            break
+        sessions.append(
+            analysis_schema.PowerDurationSessionRead(
+                activity_id=activity.id,
+                name=activity.name or "",
+                start_time=activity.start_time.isoformat() if activity.start_time else None,
+            )
+        )
+
+    return analysis_schema.PowerDurationRead(
+        sport=sport,
+        points=[
+            analysis_schema.DurationPeakRead(duration_s=peak.duration_s, value=peak.value, activity_id=peak.activity_id)
+            for peak in peaks
+        ],
+        fit=(
+            analysis_schema.PowerDurationFitRead(
+                critical_power_w=round(fit[0], 1),
+                w_prime_j=round(fit[1], 1),
+                cv_pct=round(fit[2], 2),
+                fit_from_s=from_s,
+                fit_to_s=to_s,
+            )
+            if fit is not None
+            else None
+        ),
+        threshold=settings.power_thresholds.get(sport),
+        sessions=sessions,
+    )
+
+
+def get_wprime_balance(
+    activity_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> analysis_schema.WprimeBalanceRead:
+    """Return one activity's W' expenditure and balance, for its owner.
+
+    The balance is the Skiba 2012 integral model over the stored power stream:
+    work above CP is expended linearly and repleted exponentially with the
+    stream's own time constant. Without a threshold power for the sport there is
+    nothing to measure against; without a fitted W' there is no capacity to
+    balance -- either way the anaerobic totals (work and time above CP) are
+    still reported when CP exists, and the series simply stays empty.
+
+    Args:
+        activity_id: The activity to measure.
+        requester_user_id: The user asking.
+        db: Database session.
+
+    Returns:
+        The totals and the thinned balance series.
+
+    Raises:
+        NotFoundError: If the activity is not the requester's.
+    """
+    if not activity_integration.owns_activity(activity_id, requester_user_id, db):
+        raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
+    activity = activity_integration.get_activity_for_derivation(activity_id, db)
+    sport = sport_group(activity.activity_type) if activity is not None else None
+    settings = get_settings(requester_user_id, db)
+    threshold = settings.power_thresholds.get(sport) if sport else None
+
+    if activity is None or threshold is None:
+        return analysis_schema.WprimeBalanceRead(
+            cp_w=None,
+            w_prime_j=None,
+            tau_s=None,
+            work_above_cp_j=0.0,
+            time_above_cp_s=0.0,
+            points=[],
+        )
+
+    period_s, power_w = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_POWER,
+        "power",
+        db,
+        keep_zeros=True,
+    )
+    cp_w = float(threshold.value_w)
+    if not power_w or period_s <= 0:
+        return analysis_schema.WprimeBalanceRead(
+            cp_w=cp_w,
+            w_prime_j=float(threshold.w_prime_j) if threshold.w_prime_j else None,
+            tau_s=None,
+            work_above_cp_j=0.0,
+            time_above_cp_s=0.0,
+            points=[],
+        )
+
+    work_j, time_s = analysis_maths.work_above_threshold(power_w, period_s, cp_w)
+    if not threshold.w_prime_j:
+        return analysis_schema.WprimeBalanceRead(
+            cp_w=cp_w,
+            w_prime_j=None,
+            tau_s=None,
+            work_above_cp_j=round(work_j, 1),
+            time_above_cp_s=round(time_s, 1),
+            points=[],
+        )
+
+    w_prime_j = float(threshold.w_prime_j)
+    tau_s = analysis_maths.skiba_tau_s(cp_w, power_w)
+    balance = analysis_maths.wprime_balance(power_w, period_s, cp_w, w_prime_j, tau_s)
+    series = [(index * period_s, remaining) for index, remaining in enumerate(balance, start=1)]
+    return analysis_schema.WprimeBalanceRead(
+        cp_w=cp_w,
+        w_prime_j=w_prime_j,
+        tau_s=round(tau_s, 1),
+        work_above_cp_j=round(work_j, 1),
+        time_above_cp_s=round(time_s, 1),
+        points=[
+            analysis_schema.WprimePointRead(t_s=round(t, 1), remaining_j=round(remaining, 1))
+            for t, remaining in analysis_maths.downsample(series, analysis_constants.WPRIME_POINTS_MAX)
+        ],
     )

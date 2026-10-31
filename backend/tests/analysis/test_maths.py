@@ -179,3 +179,60 @@ class TestExponentiallyWeightedFunction:
 
     def test_the_series_keeps_the_input_length(self):
         assert len(analysis_maths.ewf([10.0, 20.0, 30.0], 7.0)) == 3
+
+
+class TestWorkAboveThreshold:
+    def test_only_samples_over_the_threshold_count(self):
+        work_j, time_s = analysis_maths.work_above_threshold([200.0, 300.0, 400.0], 1.0, 250.0)
+        assert time_s == pytest.approx(2.0)
+        assert work_j == pytest.approx(50.0 + 150.0)
+
+    def test_at_or_below_the_threshold_nothing_is_spent(self):
+        assert analysis_maths.work_above_threshold([250.0, 200.0], 2.0, 250.0) == (0.0, 0.0)
+
+
+class TestSkibaTau:
+    def test_the_time_constant_follows_the_published_constants(self):
+        values = [150.0, 150.0, 300.0]  # below-CP mean 150, CP 250 -> DCP 100
+        tau = analysis_maths.skiba_tau_s(250.0, values)
+        assert tau == pytest.approx(546.0 * exp(-0.01 * 100.0) + 316.0)
+
+    def test_a_stream_always_above_cp_recovers_slowly(self):
+        assert analysis_maths.skiba_tau_s(250.0, [300.0, 320.0]) > 316.0
+
+
+class TestWprimeBalance:
+    def test_a_constant_effort_above_cp_empties_the_capacity(self):
+        # CP 250, 50 W over -> 50 J/s; W' 1000 J empties in ~20 s (minus early repletion).
+        balance = analysis_maths.wprime_balance([300.0] * 60, 1.0, 250.0, 1000.0, tau_s=1e6)
+        assert balance[0] == pytest.approx(950.0)
+        assert balance[-1] == pytest.approx(0.0)
+
+    def test_below_cp_work_never_spends_and_never_overfills(self):
+        balance = analysis_maths.wprime_balance([200.0] * 30, 1.0, 250.0, 1000.0, tau_s=300.0)
+        assert balance == pytest.approx([1000.0] * 30)
+
+    def test_spent_work_repletes_exponentially(self):
+        """One second 100 W over CP, then silence: the debt decays by e^(-dt/tau)."""
+        tau = 100.0
+        balance = analysis_maths.wprime_balance([350.0] + [0.0] * 3, 1.0, 250.0, 1000.0, tau_s=tau)
+        debt = 100.0
+        for value in balance:
+            assert value == pytest.approx(1000.0 - debt)
+            debt *= exp(-1.0 / tau)
+
+    def test_a_missing_capacity_yields_no_series(self):
+        assert analysis_maths.wprime_balance([300.0] * 3, 1.0, 250.0, 0.0) == []
+
+
+class TestDownsample:
+    def test_short_series_pass_through(self):
+        points = [(float(i), float(i)) for i in range(5)]
+        assert analysis_maths.downsample(points, 10) == points
+
+    def test_the_endpoint_survives_the_stride(self):
+        points = [(float(i), float(i * 2)) for i in range(100)]
+        sampled = analysis_maths.downsample(points, 10)
+        assert len(sampled) == 10
+        assert sampled[-1] == points[-1]
+        assert sampled[0] == points[0]

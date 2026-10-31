@@ -191,3 +191,84 @@ class TestFitnessRoute:
         client = TestClient(_build_app(MagicMock()))
         response = client.get("/analysis/fitness", params={"acute_days": 0})
         assert response.status_code == 422
+
+
+class TestPowerDurationRoute:
+    def _read(self) -> analysis_schema.PowerDurationRead:
+        return analysis_schema.PowerDurationRead(
+            sport="run",
+            points=[analysis_schema.DurationPeakRead(duration_s=300, value=316.7, activity_id=7)],
+            fit=analysis_schema.PowerDurationFitRead(
+                critical_power_w=250.0,
+                w_prime_j=20000.0,
+                cv_pct=2.1,
+                fit_from_s=300,
+                fit_to_s=1800,
+            ),
+            threshold=None,
+            sessions=[
+                analysis_schema.PowerDurationSessionRead(
+                    activity_id=1,
+                    name="Morning run",
+                    start_time="2026-10-15T16:00:00+00:00",
+                )
+            ],
+        )
+
+    def test_the_curve_answers_with_points_fit_and_sessions(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.router.analysis_service.get_power_duration", return_value=self._read()):
+            response = client.get("/analysis/power-duration", params={"sport": "run"})
+        assert response.status_code == 200
+        body = response.json()
+        assert body["points"][0]["duration_s"] == 300
+        assert body["fit"]["critical_power_w"] == 250.0
+        assert body["sessions"][0]["activity_id"] == 1
+
+    def test_sport_and_preview_window_reach_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch(
+            "modules.analysis.router.analysis_service.get_power_duration", return_value=self._read()
+        ) as get_duration:
+            response = client.get("/analysis/power-duration", params={"sport": "bike", "fit_from": 120, "fit_to": 900})
+        assert response.status_code == 200
+        assert get_duration.call_args.args[1] == "bike"
+        assert get_duration.call_args.kwargs == {"fit_from_s": 120, "fit_to_s": 900}
+
+    def test_sport_is_required(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/power-duration")
+        assert response.status_code == 422
+
+    def test_an_out_of_range_window_is_refused_before_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/power-duration", params={"sport": "run", "fit_from": 5})
+        assert response.status_code == 422
+
+
+class TestWprimeRoute:
+    def _read(self) -> analysis_schema.WprimeBalanceRead:
+        return analysis_schema.WprimeBalanceRead(
+            cp_w=250.0,
+            w_prime_j=20000.0,
+            tau_s=819.5,
+            work_above_cp_j=4500.0,
+            time_above_cp_s=60.0,
+            points=[analysis_schema.WprimePointRead(t_s=1.0, remaining_j=19750.0)],
+        )
+
+    def test_the_owner_reads_the_balance(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.activity_router.analysis_service.get_wprime_balance", return_value=self._read()):
+            response = client.get("/activities/5/wprime")
+        assert response.status_code == 200
+        assert response.json()["cp_w"] == 250.0
+
+    def test_another_users_activity_is_not_found(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch(
+            "modules.analysis.activity_router.analysis_service.get_wprime_balance",
+            side_effect=core_exceptions.NotFoundError("Activity 5 not found"),
+        ):
+            response = client.get("/activities/5/wprime")
+        assert response.status_code == 404

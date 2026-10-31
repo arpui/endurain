@@ -85,6 +85,28 @@ def get_fitness_series(
     )
 
 
+@router.get(
+    "/power-duration",
+    response_model=analysis_schema.PowerDurationRead,
+)
+def get_power_duration(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+    sport: Annotated[str, Query(max_length=32)],
+    fit_from: Annotated[int | None, Query(ge=10, le=7200)] = None,
+    fit_to: Annotated[int | None, Query(ge=30, le=21600)] = None,
+) -> analysis_schema.PowerDurationRead:
+    """Return the caller's duration-intensity curve for one sport.
+
+    The points are the cached best sustained averages; the fit is recomputed for
+    the request, so ``fit_from``/``fit_to`` preview a different window without
+    changing anything. The response also reports the threshold the sport's loads
+    actually use and the sessions that built the curve.
+    """
+    return analysis_service.get_power_duration(token_user_id, sport, db, fit_from_s=fit_from, fit_to_s=fit_to)
+
+
 @router.post(
     "/thresholds/refresh",
     response_model=analysis_schema.RecomputeQueued,
