@@ -1018,10 +1018,17 @@ def get_activity_intervals(
         )
     sport = sport_group(activity.activity_type)
     data = _load_input(activity, sport, db)
-    _, power_values, power_stamps = _stream_samples(
+    power_period, power_values, power_stamps = _stream_samples(
         activity.id,
         activity_streams_constants.STREAM_TYPE_POWER,
         "power",
+        db,
+        keep_zeros=True,
+    )
+    speed_period, speeds, speed_stamps = _stream_samples(
+        activity.id,
+        activity_streams_constants.STREAM_TYPE_SPEED,
+        "vel",
         db,
         keep_zeros=True,
     )
@@ -1032,9 +1039,21 @@ def get_activity_intervals(
         db,
         keep_zeros=True,
     )
+    # One clock for the terrain read: the power samples when the device carried a
+    # power meter, otherwise the speed samples. Altitude aligns onto whichever wins.
+    if power_values and power_period > 0:
+        ground_period, ground_stamps = power_period, power_stamps
+        ground_speeds = _align_to_power(speeds, speed_stamps, ground_stamps, ground_period) if speeds else None
+        ground_power: tuple[float, ...] | None = power_values
+    elif speeds and speed_period > 0:
+        ground_period, ground_stamps = speed_period, speed_stamps
+        ground_speeds = speeds
+        ground_power = None
+    else:
+        ground_period, ground_stamps, ground_speeds, ground_power = 0.0, (), None, None
     altitudes_m = (
-        _align_to_power(elevations, elevation_stamps, power_stamps, data.period_s)
-        if elevations and power_values
+        _align_to_power(elevations, elevation_stamps, ground_stamps, ground_period)
+        if elevations and ground_stamps
         else None
     )
     analysis = analysis_intervals.analyse_activity(
@@ -1065,8 +1084,21 @@ def get_activity_intervals(
                 elevation_gain_m=segment.elevation_gain_m,
                 elevation_loss_m=segment.elevation_loss_m,
                 rss=segment.rss,
+                rss_per_km=segment.rss_per_km,
             )
             for segment in analysis.segments
+        ],
+        climbs=[
+            analysis_schema.TerrainClimbRead(**vars(climb))
+            for climb in analysis_intervals.terrain_climbs(
+                altitudes_m=altitudes_m,
+                speeds_ms=ground_speeds,
+                period_s=ground_period,
+                power_w=ground_power,
+                threshold_w=analysis.threshold_w,
+                base_power_w=analysis.base_power_w,
+                parameters=dict(data.parameters),
+            )
         ],
     )
 
@@ -1195,6 +1227,9 @@ def _apply_lap_rss(
             parameters,
         )
         entry.rss = round(score, 1) if score > 0 else None
+        distance_m = float(lap.total_distance or 0.0)
+        if entry.rss is not None and distance_m >= analysis_constants.RSS_PER_KM_MIN_DISTANCE_M:
+            entry.rss_per_km = round(entry.rss * 1000.0 / distance_m, 1)
 
 
 def _lap_sample_window(

@@ -316,6 +316,8 @@ class IntervalSegmentRead(BaseModel):
         elevation_loss_m: Ground fallen through, ``None`` without an altitude stream.
         rss: Shared-scale aRSS score of the stretch (same kernel as the daily
             rss_total), ``None`` when the sport has no threshold.
+        rss_per_km: That score per kilometre of ground, ``None`` when the stretch is
+            too short to scale up honestly or there is no score.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -332,6 +334,7 @@ class IntervalSegmentRead(BaseModel):
     elevation_gain_m: StrictFloat | None = None
     elevation_loss_m: StrictFloat | None = None
     rss: StrictFloat | None = None
+    rss_per_km: StrictFloat | None = None
 
 
 class IntervalRulesRead(BaseModel):
@@ -367,11 +370,49 @@ class IntervalRulesRead(BaseModel):
     climb_if: StrictFloat
 
 
+class TerrainClimbRead(BaseModel):
+    """One climb the route itself shows, read from the terrain not the power signal.
+
+    Attributes:
+        start_m: Ground position where the climb starts, from the start of the data.
+        end_m: Ground position where it ends.
+        length_m: Ground climbed over.
+        start_s: Seconds from the start of the sampled data.
+        duration_s: Time spent on the climb.
+        elevation_gain_m: Ground risen through.
+        elevation_loss_m: Ground let go inside the climb (dips that did not break it).
+        avg_grade_pct: Net grade over the whole climb.
+        avg_power_w: Mean power, ``None`` without a power stream.
+        intensity_factor: Mean power over the threshold, ``None`` without either.
+        contrast: Mean power over the session's median, ``None`` without either.
+        rss: Shared-scale aRSS score, ``None`` without power or threshold.
+        rss_per_km: That score per kilometre, ``None`` when too short to scale up.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    start_m: StrictFloat
+    end_m: StrictFloat
+    length_m: StrictFloat
+    start_s: StrictFloat
+    duration_s: StrictFloat
+    elevation_gain_m: StrictFloat
+    elevation_loss_m: StrictFloat
+    avg_grade_pct: StrictFloat
+    avg_power_w: StrictFloat | None
+    intensity_factor: StrictFloat | None
+    contrast: StrictFloat | None
+    rss: StrictFloat | None
+    rss_per_km: StrictFloat | None
+
+
 class ActivityIntervalsRead(BaseModel):
     """How one activity breaks down into efforts, for its owner.
 
-    An activity with no power stream answers ``steady`` with no segments: the split is
-    read from power, and nothing is guessed from heart rate alone.
+    An activity with no power stream answers ``steady`` with no segments: the split
+    is read from power, and nothing is guessed from heart rate alone. The terrain
+    climbs still answer in that case - they come from altitude and speed - only
+    their power and stress columns stay empty.
 
     Attributes:
         shape: How the session as a whole reads (intervals, continuous, terrain...).
@@ -379,6 +420,8 @@ class ActivityIntervalsRead(BaseModel):
         base_power_w: The session's own median power, the relative anchor used.
         segments: Contiguous segments covering the timeline, in order.
         rules: The effective numeric gates used, ``None`` when nothing was segmented.
+        climbs: Climb stretches the route shows, in order; independent of the segments
+            and possibly overlapping them, so never summed with them.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -388,6 +431,7 @@ class ActivityIntervalsRead(BaseModel):
     base_power_w: StrictFloat
     segments: list[IntervalSegmentRead]
     rules: IntervalRulesRead | None = None
+    climbs: list[TerrainClimbRead] = []
 
 
 class BestTimeRead(BaseModel):
@@ -444,6 +488,8 @@ class LapDynamicsRead(BaseModel):
         elevation_loss_m: Descent the device recorded for the lap.
         rss: Shared-scale aRSS score of the lap's window, ``None`` without a
             threshold or powered samples in it.
+        rss_per_km: That score per kilometre of the lap, ``None`` when the lap is
+            too short to scale up honestly or there is no score.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -454,6 +500,7 @@ class LapDynamicsRead(BaseModel):
     elevation_gain_m: StrictFloat | None = None
     elevation_loss_m: StrictFloat | None = None
     rss: StrictFloat | None = None
+    rss_per_km: StrictFloat | None = None
 
 
 class RecomputeQueued(BaseModel):

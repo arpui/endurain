@@ -980,6 +980,71 @@ class TestActivityIntervals:
             analysis_service.get_activity_intervals(1, 7, db)
 
 
+class TestTerrainClimbsService:
+    """The intervals route also answers with the climbs the route itself shows."""
+
+    @staticmethod
+    def _streams(alt_slope_after_s: int, with_power: bool):
+        """One hilly run: flat, then an 8 % ramp, then flat; 4 m/s throughout."""
+
+        def _fake(activity_id, stream_type, _key, _db, *, keep_zeros):
+            stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(1500))
+            speeds = tuple([4.0] * 1500)
+            alt = 0.0
+            eles = []
+            for i in range(1500):
+                if alt_slope_after_s <= i < alt_slope_after_s + 313:
+                    alt += 0.32  # 8 % at 4 m/s
+                eles.append(alt)
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                if not with_power:
+                    return 1.0, (), ()
+                return 1.0, tuple([300.0] * 600 + [400.0] * 313 + [300.0] * 587), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, speeds, stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple(eles), stamps
+            return 1.0, (), ()
+
+        return _fake
+
+    def _read(self, streams, *, with_power=True):
+        db = _db()
+        data = analysis_methods.LoadInput(
+            moving_seconds=1500.0,
+            power_w=tuple([300.0] * 1500) if with_power else None,
+            period_s=1.0,
+            speed_ms=tuple([4.0] * 1500),
+            power_threshold_w=350.0,
+        )
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}._load_input", return_value=data),
+            patch(f"{_SVC}._stream_samples", side_effect=streams),
+        ):
+            return analysis_service.get_activity_intervals(1, 2, db)
+
+    def test_the_route_answers_with_the_climb_it_shows(self):
+        read = self._read(self._streams(600, with_power=True))
+        assert len(read.climbs) == 1
+        climb = read.climbs[0]
+        assert 900.0 <= climb.length_m <= 1450.0  # the grade window rounds the foot and top
+        assert climb.avg_power_w is not None and climb.rss is not None
+        assert climb.rss_per_km is not None
+
+    def test_an_activity_without_power_still_gets_its_climbs(self):
+        read = self._read(self._streams(600, with_power=False), with_power=False)
+        assert len(read.climbs) == 1  # terrain needs only altitude and speed
+        climb = read.climbs[0]
+        assert climb.avg_power_w is None
+        assert climb.rss is None and climb.rss_per_km is None
+
+    def test_a_flat_route_answers_no_climbs(self):
+        read = self._read(self._streams(10**9, with_power=True))
+        assert read.climbs == []
+
+
 class TestBestTimes:
     def _streams(self, seconds: int, watts: float, speed: float, grade_pct: float):
         """Return a ``_stream_samples`` stand-in for one constant-effort run."""
@@ -1225,6 +1290,9 @@ class TestLapDynamics:
         whole = analysis_methods.rss_window_stress([400.0] * 600, 1.0, 350.0)
         assert rows[0].rss is not None and rows[1].rss is not None
         assert (rows[0].rss + rows[1].rss) == pytest.approx(whole, abs=0.3)
+        # each lap covers exactly 1000 m, so its score and its rate coincide
+        assert rows[0].rss_per_km == rows[0].rss
+        assert rows[1].rss_per_km == rows[1].rss
 
     def test_no_threshold_means_no_rss_column(self):
         lap = self._lap(30, distance=1000.0, elapsed=300.0, speed=3.3, cadence=80, power=400.0)
