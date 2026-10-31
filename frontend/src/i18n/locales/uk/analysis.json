@@ -104,7 +104,9 @@
     "timeAboveCp": "Час понад CP",
     "tau": "Стала відновлення",
     "seriesBalance": "W′ лишилось",
-    "balanceTitle": "W′ лишок у часі"
+    "balanceTitle": "W′ лишок у часі",
+    "overlayName": "{months} місяці",
+    "overlayCp": "CP нещодавніх періодів: {windows}"
   },
   "intervals": {
     "title": "Аналіз інтервалів",

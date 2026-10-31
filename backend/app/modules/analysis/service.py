@@ -12,7 +12,8 @@ threshold heart rate. A value the athlete typed in is never overwritten by a der
 one, and every stored load records the threshold it was divided by.
 """
 
-from datetime import date, datetime, timedelta
+import calendar
+from datetime import UTC, date, datetime, timedelta
 from statistics import mean as arithmetic_mean
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -720,6 +721,94 @@ def get_fitness_series(
     )
 
 
+def _months_ago(moment: datetime, months: int) -> datetime:
+    """Return ``moment`` shifted back a whole number of calendar months."""
+    total = moment.year * 12 + moment.month - 1 - months
+    year, month_index = divmod(total, 12)
+    day = min(moment.day, calendar.monthrange(year, month_index + 1)[1])
+    return moment.replace(year=year, month=month_index + 1, day=day)
+
+
+def _duration_overlays(
+    activities: list[activity_schema.ActivityRead],
+    sport: str,
+    db: Session,
+    *,
+    from_s: int,
+    to_s: int,
+) -> list[analysis_schema.PowerDurationOverlayRead]:
+    """Recompute the curve inside each recent window, from the activities' streams.
+
+    The cached peak table holds only all-time bests, so filtering its rows by date
+    would answer "which records happened to fall inside the window", not "what the
+    athlete can do now": a duration whose record is old would vanish even when a
+    strong recent effort exists. Recomputing per activity keeps each window honest;
+    the effort is the same block the threshold pass uses, over a slice of history.
+    """
+    now = datetime.now(UTC)
+    since_by_months = {months: _months_ago(now, months) for months in analysis_constants.PD_OVERLAY_MONTHS}
+    earliest = min(since_by_months.values())
+
+    peaks_by_months: dict[int, dict[int, float]] = {months: {} for months in analysis_constants.PD_OVERLAY_MONTHS}
+    holders: dict[tuple[int, int], int] = {}
+    for activity in activities:
+        if sport_group(activity.activity_type) != sport:
+            continue
+        started = activity.start_time
+        if started is None or started.tzinfo is None or started < earliest:
+            continue
+        period_s, power_w, _ = _stream_samples(
+            activity.id,
+            activity_streams_constants.STREAM_TYPE_POWER,
+            "power",
+            db,
+            keep_zeros=True,
+        )
+        if not power_w:
+            continue
+        means = analysis_maths.best_means(power_w, period_s)
+        for months, since in since_by_months.items():
+            if started < since:
+                continue
+            merged = peaks_by_months[months]
+            for duration, value in means.items():
+                if value >= merged.get(duration, 0.0):
+                    merged[duration] = value
+                    holders[(months, duration)] = activity.id
+
+    overlays: list[analysis_schema.PowerDurationOverlayRead] = []
+    for months in analysis_constants.PD_OVERLAY_MONTHS:
+        peaks = peaks_by_months[months]
+        if not peaks:
+            continue
+        fit = analysis_maths.fit_cp_wprime(peaks, float(from_s), float(to_s))
+        overlays.append(
+            analysis_schema.PowerDurationOverlayRead(
+                months=months,
+                points=[
+                    analysis_schema.DurationPeakRead(
+                        duration_s=duration,
+                        value=round(value, 1),
+                        activity_id=holders.get((months, duration)),
+                    )
+                    for duration, value in sorted(peaks.items())
+                ],
+                fit=(
+                    analysis_schema.PowerDurationFitRead(
+                        critical_power_w=round(fit[0], 1),
+                        w_prime_j=round(fit[1], 1),
+                        cv_pct=round(fit[2], 2),
+                        fit_from_s=from_s,
+                        fit_to_s=to_s,
+                    )
+                    if fit is not None
+                    else None
+                ),
+            )
+        )
+    return overlays
+
+
 def get_power_duration(
     user_id: int,
     sport: str,
@@ -763,6 +852,7 @@ def get_power_duration(
 
     sessions: list[analysis_schema.PowerDurationSessionRead] = []
     activities = activity_integration.list_user_activities(user_id, db)
+    overlays = _duration_overlays(activities, sport, db, from_s=from_s, to_s=to_s)
     for activity in sorted(activities, key=lambda item: item.start_time or datetime.min, reverse=True):
         if sport_group(activity.activity_type) != sport or not activity.normalized_power:
             continue
@@ -795,6 +885,7 @@ def get_power_duration(
         ),
         threshold=settings.power_thresholds.get(sport),
         sessions=sessions,
+        overlays=overlays,
     )
 
 

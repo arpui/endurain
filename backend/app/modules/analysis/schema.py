@@ -216,6 +216,23 @@ class PowerDurationSessionRead(BaseModel):
     start_time: StrictStr | None
 
 
+class PowerDurationOverlayRead(BaseModel):
+    """One rolling-window curve: the athlete's recent months against the record.
+
+    Attributes:
+        months: The window's length, months back from today.
+        points: Best sustained averages inside the window, shortest first.
+        fit: The hyperbolic fit of this window's curve, when it has enough points;
+            its own CP is what shows how the threshold has moved.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    months: StrictInt
+    points: list[DurationPeakRead]
+    fit: PowerDurationFitRead | None
+
+
 class PowerDurationRead(BaseModel):
     """Serialized duration-intensity curve of one athlete and sport.
 
@@ -228,6 +245,8 @@ class PowerDurationRead(BaseModel):
             against, or ``None`` when none is stored yet.
         sessions: Activities with power in this sport, newest first, so the
             client can pick one to compute W' balance against.
+        overlays: Curves recomputed from rolling recent windows, so the athlete
+            can watch where their form is going, not only where it peaked.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -237,6 +256,7 @@ class PowerDurationRead(BaseModel):
     fit: PowerDurationFitRead | None
     threshold: PowerThresholdRead | None
     sessions: list[PowerDurationSessionRead]
+    overlays: list[PowerDurationOverlayRead] = []
 
 
 class WprimePointRead(BaseModel):

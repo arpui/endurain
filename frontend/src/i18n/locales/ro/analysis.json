@@ -104,7 +104,9 @@
     "timeAboveCp": "Timp deasupra CP",
     "tau": "Constantă de refacere",
     "seriesBalance": "W′ rămas",
-    "balanceTitle": "W′ rămas în timp"
+    "balanceTitle": "W′ rămas în timp",
+    "overlayName": "{months} luni",
+    "overlayCp": "CP ferestre recente: {windows}"
   },
   "intervals": {
     "title": "Analiza intervalelor",

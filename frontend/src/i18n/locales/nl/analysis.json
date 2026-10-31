@@ -104,7 +104,9 @@
     "timeAboveCp": "Tijd boven CP",
     "tau": "Herstelconstante",
     "seriesBalance": "W′ over",
-    "balanceTitle": "W′ over de tijd"
+    "balanceTitle": "W′ over de tijd",
+    "overlayName": "{months} maanden",
+    "overlayCp": "CP van recente vensters: {windows}"
   },
   "intervals": {
     "title": "Intervalanalyse",

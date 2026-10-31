@@ -104,7 +104,9 @@
     "timeAboveCp": "Aeg üle CP",
     "tau": "Taastumiskonstant",
     "seriesBalance": "W′ alles",
-    "balanceTitle": "W′ alles ajas"
+    "balanceTitle": "W′ alles ajas",
+    "overlayName": "{months} kuud",
+    "overlayCp": "Viimaste akende CP: {windows}"
   },
   "intervals": {
     "title": "Intervallide analüüs",

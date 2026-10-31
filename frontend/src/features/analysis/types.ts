@@ -15,6 +15,7 @@ export type HeartRateThresholdDto = Schemas['HeartRateThresholdRead']
 export type PowerDurationDto = Schemas['PowerDurationRead']
 export type DurationPeakDto = Schemas['DurationPeakRead']
 export type PowerDurationFitDto = Schemas['PowerDurationFitRead']
+export type PowerDurationOverlayDto = Schemas['PowerDurationOverlayRead']
 export type PowerDurationSessionDto = Schemas['PowerDurationSessionRead']
 export type WprimeBalanceDto = Schemas['WprimeBalanceRead']
 export type WprimePointDto = Schemas['WprimePointRead']
@@ -151,6 +152,15 @@ export interface PowerDurationSession {
   startTime: string | null
 }
 
+/** One rolling-window curve (3 or 6 months back) overlaid on the record. */
+export interface PowerDurationOverlay {
+  /** Window length in months, back from today. */
+  months: number
+  points: DurationPeak[]
+  /** The window's own fit: its CP is what shows how form is moving. */
+  fit: PowerDurationFit | null
+}
+
 /** Duration-intensity curve of one athlete and sport. */
 export interface PowerDuration {
   sport: string
@@ -158,6 +168,7 @@ export interface PowerDuration {
   fit: PowerDurationFit | null
   threshold: PowerThreshold | null
   sessions: PowerDurationSession[]
+  overlays: PowerDurationOverlay[]
 }
 
 /** One sample of a W' balance series. */

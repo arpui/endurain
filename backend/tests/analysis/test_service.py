@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 import pytest
 
 import core.exceptions as core_exceptions
+import modules.activities.activity_streams.constants as activity_streams_constants
 import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
 import modules.analysis.intervals as analysis_intervals
@@ -672,6 +673,7 @@ class TestPowerDuration:
             patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings),
             patch(f"{_SVC}.analysis_crud.list_duration_peaks", return_value=peaks),
             patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}._stream_samples", return_value=(1.0, (), ())),
         ):
             series = analysis_service.get_power_duration(2, "run", db, **overrides)
         return series, db
@@ -701,6 +703,51 @@ class TestPowerDuration:
         assert series.threshold is not None
         assert series.threshold.value_w == 250.0
         assert series.sessions[0].activity_id == 1
+
+    def test_recent_windows_recompute_their_curves_from_streams(self):
+        """A window's curve answers what the athlete can do there and then.
+
+        Filtering the all-time table instead would drop the durations whose record
+        is old; recomputation keeps them, at the recent value.
+        """
+        now = datetime.now(UTC)
+        recent = _activity(start_time=now - timedelta(days=10))
+        older = _activity(9, start_time=now - timedelta(days=100))
+        activities = [recent, older]
+
+        def _streams(activity_id, stream_type, _key, _db, *, keep_zeros):
+            if stream_type != activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, (), ()
+            watts = 320.0 if activity_id == recent.id else 420.0
+            return 1.0, tuple([watts] * 1200), ()
+
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.analysis_crud.list_duration_peaks", return_value=[]),
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}._stream_samples", side_effect=_streams),
+        ):
+            series = analysis_service.get_power_duration(2, "run", _db())
+
+        by_months = {overlay.months: overlay for overlay in series.overlays}
+        assert set(by_months) == {3, 6}
+        assert all(point.value == 320.0 for point in by_months[3].points)
+        assert by_months[3].points[0].activity_id == recent.id
+        assert all(point.value == 420.0 for point in by_months[6].points)
+        assert by_months[6].points[0].activity_id == older.id
+        # the all-time curve stays the cached one, untouched by the overlays
+        assert series.points == []
+
+    def test_a_recent_window_without_activities_just_omits_itself(self):
+        old = _activity(start_time=datetime.now(UTC) - timedelta(days=400))
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.analysis_crud.list_duration_peaks", return_value=[]),
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[old]),
+            patch(f"{_SVC}._stream_samples", return_value=(1.0, tuple([250.0] * 600), ())),
+        ):
+            series = analysis_service.get_power_duration(2, "run", _db())
+        assert series.overlays == []
 
     def test_preview_window_overrides_without_touching_settings(self):
         """A request-scoped fit window answers for the preview; the stored threshold stays."""

@@ -18,8 +18,12 @@ import type {
   IntervalSegment,
   IntervalSegmentDto,
   LoadMethod,
+  DurationPeak,
+  DurationPeakDto,
   PowerDuration,
   PowerDurationDto,
+  PowerDurationFit,
+  PowerDurationFitDto,
   ThresholdSource,
   WprimeBalance,
   WprimeBalanceDto,
@@ -155,25 +159,13 @@ export async function queueLoadRecompute(): Promise<void> {
   })
 }
 
-/** Maps a power-duration DTO (curve, fit, threshold, sessions) to the domain model. */
+/** Maps a power-duration DTO (curve, fit, threshold, sessions, overlays) to the domain model. */
 export function mapPowerDuration(dto: PowerDurationDto): PowerDuration {
   const entry = dto.threshold
   return {
     sport: dto.sport,
-    points: (dto.points ?? []).map((point) => ({
-      durationS: point.duration_s,
-      value: point.value,
-      activityId: point.activity_id ?? null,
-    })),
-    fit: dto.fit
-      ? {
-          criticalPowerW: dto.fit.critical_power_w,
-          wPrimeJ: dto.fit.w_prime_j,
-          cvPct: dto.fit.cv_pct,
-          fitFromS: dto.fit.fit_from_s,
-          fitToS: dto.fit.fit_to_s,
-        }
-      : null,
+    points: (dto.points ?? []).map(mapDurationPeak),
+    fit: mapPowerDurationFit(dto.fit),
     threshold: entry
       ? {
           valueW: entry.value_w,
@@ -187,7 +179,34 @@ export function mapPowerDuration(dto: PowerDurationDto): PowerDuration {
       name: session.name,
       startTime: session.start_time ?? null,
     })),
+    overlays: (dto.overlays ?? []).map((overlay) => ({
+      months: overlay.months,
+      points: (overlay.points ?? []).map(mapDurationPeak),
+      fit: mapPowerDurationFit(overlay.fit),
+    })),
   }
+}
+
+/** Maps one duration-intensity point of a curve or a window overlay. */
+function mapDurationPeak(point: DurationPeakDto): DurationPeak {
+  return {
+    durationS: point.duration_s,
+    value: point.value,
+    activityId: point.activity_id ?? null,
+  }
+}
+
+/** Maps a hyperbolic fit payload, shared by the curve and its window overlays. */
+function mapPowerDurationFit(dto: PowerDurationFitDto | null | undefined): PowerDurationFit | null {
+  return dto
+    ? {
+        criticalPowerW: dto.critical_power_w,
+        wPrimeJ: dto.w_prime_j,
+        cvPct: dto.cv_pct,
+        fitFromS: dto.fit_from_s,
+        fitToS: dto.fit_to_s,
+      }
+    : null
 }
 
 /** Maps a W' balance DTO to the domain model. */

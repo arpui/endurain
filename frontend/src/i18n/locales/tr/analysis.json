@@ -104,7 +104,9 @@
     "timeAboveCp": "CP üzeri süre",
     "tau": "Yenilenme sabiti",
     "seriesBalance": "Kalan W′",
-    "balanceTitle": "Zaman içinde kalan W′"
+    "balanceTitle": "Zaman içinde kalan W′",
+    "overlayName": "{months} ay",
+    "overlayCp": "Son pencerelerin CP değeri: {windows}"
   },
   "intervals": {
     "title": "Interval analizi",

@@ -202,6 +202,7 @@ describe('power-duration and W-prime mappers', () => {
       },
       threshold: { value_w: 250, w_prime_j: 15000, source: 'auto', cv_pct: 2.5 },
       sessions: [{ activity_id: 1, name: 'Morning run', start_time: '2026-10-15T16:00:00+00:00' }],
+      overlays: [],
       ...overrides,
     }
   }

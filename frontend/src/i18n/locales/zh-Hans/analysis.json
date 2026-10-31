@@ -104,7 +104,9 @@
     "timeAboveCp": "高于 CP 的时间",
     "tau": "恢复时间常数",
     "seriesBalance": "剩余 W′",
-    "balanceTitle": "剩余 W′ 随时间变化"
+    "balanceTitle": "剩余 W′ 随时间变化",
+    "overlayName": "{months} 个月",
+    "overlayCp": "近期窗口 CP：{windows}"
   },
   "intervals": {
     "title": "间歇分析",

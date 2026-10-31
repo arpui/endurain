@@ -104,7 +104,9 @@
     "timeAboveCp": "Time above CP",
     "tau": "Recovery constant",
     "seriesBalance": "W′ remaining",
-    "balanceTitle": "W′ remaining over time"
+    "balanceTitle": "W′ remaining over time",
+    "overlayName": "{months} months",
+    "overlayCp": "Recent windows' CP: {windows}"
   },
   "intervals": {
     "title": "Interval analysis",

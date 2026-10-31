@@ -71,6 +71,10 @@ FIT_MAX_S = 1800.0
 #: Peak durations the fit needs before its slope means anything.
 FIT_MIN_PEAKS = 4
 
+#: Rolling windows, in months back from today, whose duration-intensity curves are
+#: overlaid on the full-history one: recent form read against the athlete's record.
+PD_OVERLAY_MONTHS: tuple[int, ...] = (3, 6)
+
 #: Activities that must contribute peaks before a derived threshold is trusted.
 #: One activity alone fits a curve through its own samples only, which invented a
 #: 202 W threshold from a single walk.
