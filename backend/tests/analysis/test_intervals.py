@@ -303,3 +303,81 @@ class TestSegmentElevationAndStress:
         power = [300.0] * 300
         analysis = analysis_intervals.analyse_activity(power_w=power, period_s=1.0, threshold_w=None)
         assert all(segment.rss is None for segment in analysis.segments)
+
+
+class TestTerrainClimbs:
+    """Climbs read from the route, whatever the athlete's power did on them."""
+
+    @staticmethod
+    def _run(speed_ms: float, grades: list[tuple[float, float]], period_s: float = 1.0):
+        """Build ``(altitudes, speeds)`` from ``(length_m, grade_pct)`` stretches."""
+        speeds: list[float] = []
+        alts: list[float] = []
+        alt = 0.0
+        for length, grade in grades:
+            for _ in range(int(length / speed_ms / period_s)):
+                alt += grade / 100.0 * speed_ms * period_s
+                alts.append(alt)
+                speeds.append(speed_ms)
+        return alts, speeds
+
+    def test_a_steady_hill_is_one_climb(self):
+        alts, speeds = self._run(4.0, [(250.0, 0.0), (1000.0, 8.0), (500.0, 0.0)])
+        climbs = analysis_intervals.terrain_climbs(alts, speeds, 1.0)
+        assert len(climbs) == 1
+        climb = climbs[0]
+        assert 900.0 <= climb.length_m <= 1100.0
+        assert climb.elevation_gain_m == pytest.approx(80.0, abs=10.0)
+        assert climb.avg_grade_pct == pytest.approx(8.0, abs=1.0)
+
+    def test_a_short_dip_inside_a_climb_does_not_cut_it(self):
+        # The 29/10 shape: two climbs separated by a shallow 200 m dip read as one.
+        alts, speeds = self._run(4.0, [(600.0, 8.0), (200.0, -4.0), (500.0, 8.0)])
+        climbs = analysis_intervals.terrain_climbs(alts, speeds, 1.0)
+        assert len(climbs) == 1
+        assert climbs[0].length_m == pytest.approx(1300.0, abs=80.0)
+        assert climbs[0].elevation_loss_m > 0.0  # the dip is reported, not hidden
+
+    def test_rolling_ground_that_gives_back_what_it_gains_is_not_a_climb(self):
+        alts, speeds = self._run(4.0, [(300.0, 5.0), (300.0, -5.0), (300.0, 5.0), (300.0, -5.0)])
+        climbs = analysis_intervals.terrain_climbs(alts, speeds, 1.0)
+        assert climbs == []  # merged across the dips, then killed by the whole-stretch grade
+
+    def test_a_pujadeta_counts_but_a_bump_does_not(self):
+        hill_alts, hill_speeds = self._run(4.0, [(400.0, 8.5)])  # +34 m
+        assert len(analysis_intervals.terrain_climbs(hill_alts, hill_speeds, 1.0)) == 1
+        bump_alts, bump_speeds = self._run(4.0, [(300.0, 6.0)])  # +18 m
+        assert analysis_intervals.terrain_climbs(bump_alts, bump_speeds, 1.0) == []
+
+    def test_without_power_the_climbs_still_answer_with_their_terrain(self):
+        alts, speeds = self._run(4.0, [(250.0, 0.0), (1000.0, 8.0), (500.0, 0.0)])
+        climbs = analysis_intervals.terrain_climbs(alts, speeds, 1.0)
+        assert len(climbs) == 1
+        assert climbs[0].avg_power_w is None
+        assert climbs[0].rss is None
+        assert climbs[0].rss_per_km is None
+        assert climbs[0].elevation_gain_m > 0.0  # the terrain read survives no power
+
+    def test_no_altitude_or_no_speed_answers_nothing_invented(self):
+        assert analysis_intervals.terrain_climbs(None, [4.0] * 500, 1.0) == []
+        assert analysis_intervals.terrain_climbs([0.0] * 500, None, 1.0) == []
+
+    def test_the_score_per_km_scales_the_short_window_up_exactly(self):
+        alts, speeds = self._run(4.0, [(500.0, 5.0)])  # 500 m climb
+        power = [400.0] * len(alts)
+        climbs = analysis_intervals.terrain_climbs(
+            alts, speeds, 1.0, power_w=power, threshold_w=350.0, base_power_w=300.0
+        )
+        assert len(climbs) == 1
+        assert climbs[0].rss is not None and climbs[0].rss_per_km is not None
+        assert climbs[0].rss_per_km == pytest.approx(climbs[0].rss * 2.0, rel=0.05)
+
+    def test_a_climb_shorter_than_the_scaling_floor_keeps_only_its_score(self):
+        alts, speeds = self._run(4.0, [(220.0, 10.0)])
+        power = [400.0] * len(alts)
+        climbs = analysis_intervals.terrain_climbs(
+            alts, speeds, 1.0, power_w=power, threshold_w=350.0, parameters={"iv_terrain_min_length_m": 100.0}
+        )
+        assert len(climbs) == 1 and climbs[0].length_m < 250.0
+        assert climbs[0].rss is not None
+        assert climbs[0].rss_per_km is None  # scaling a sub-quarter-km up would amplify noise

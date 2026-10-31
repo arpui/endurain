@@ -279,6 +279,7 @@ describe('activity interval analysis', () => {
       shape: 'intervals',
       threshold_w: 350,
       base_power_w: 280,
+      climbs: [],
       rules: {
         open_w: 384,
         close_w: 315,
@@ -305,6 +306,7 @@ describe('activity interval analysis', () => {
           elevation_gain_m: 9.5,
           elevation_loss_m: 4,
           rss: 12.3,
+          rss_per_km: 17.6,
         },
         {
           kind: 'recovery',
@@ -319,6 +321,7 @@ describe('activity interval analysis', () => {
           elevation_gain_m: null,
           elevation_loss_m: null,
           rss: null,
+          rss_per_km: null,
         },
       ],
       ...overrides,
@@ -350,7 +353,9 @@ describe('activity interval analysis', () => {
       elevationGainM: 9.5,
       elevationLossM: 4,
       rss: 12.3,
+      rssPerKm: 17.6,
     })
+    expect(intervals.climbs).toEqual([])
   })
 
   it('keeps absent grade and speed as null so the table can dash them', () => {

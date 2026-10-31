@@ -5655,8 +5655,10 @@ export interface components {
          * ActivityIntervalsRead
          * @description How one activity breaks down into efforts, for its owner.
          *
-         *     An activity with no power stream answers ``steady`` with no segments: the split is
-         *     read from power, and nothing is guessed from heart rate alone.
+         *     An activity with no power stream answers ``steady`` with no segments: the split
+         *     is read from power, and nothing is guessed from heart rate alone. The terrain
+         *     climbs still answer in that case - they come from altitude and speed - only
+         *     their power and stress columns stay empty.
          *
          *     Attributes:
          *         shape: How the session as a whole reads (intervals, continuous, terrain...).
@@ -5664,10 +5666,17 @@ export interface components {
          *         base_power_w: The session's own median power, the relative anchor used.
          *         segments: Contiguous segments covering the timeline, in order.
          *         rules: The effective numeric gates used, ``None`` when nothing was segmented.
+         *         climbs: Climb stretches the route shows, in order; independent of the segments
+         *             and possibly overlapping them, so never summed with them.
          */
         ActivityIntervalsRead: {
             /** Base Power W */
             base_power_w: number;
+            /**
+             * Climbs
+             * @default []
+             */
+            climbs: components["schemas"]["TerrainClimbRead"][];
             rules?: components["schemas"]["IntervalRulesRead"] | null;
             /** Segments */
             segments: components["schemas"]["IntervalSegmentRead"][];
@@ -9490,6 +9499,8 @@ export interface components {
          *         elevation_loss_m: Ground fallen through, ``None`` without an altitude stream.
          *         rss: Shared-scale aRSS score of the stretch (same kernel as the daily
          *             rss_total), ``None`` when the sport has no threshold.
+         *         rss_per_km: That score per kilometre of ground, ``None`` when the stretch is
+         *             too short to scale up honestly or there is no score.
          */
         IntervalSegmentRead: {
             /** Avg Grade Pct */
@@ -9513,6 +9524,8 @@ export interface components {
             kind: components["schemas"]["SegmentKind"];
             /** Rss */
             rss?: number | null;
+            /** Rss Per Km */
+            rss_per_km?: number | null;
             /** Start S */
             start_s: number;
         };
@@ -9572,6 +9585,8 @@ export interface components {
          *         elevation_loss_m: Descent the device recorded for the lap.
          *         rss: Shared-scale aRSS score of the lap's window, ``None`` without a
          *             threshold or powered samples in it.
+         *         rss_per_km: That score per kilometre of the lap, ``None`` when the lap is
+         *             too short to scale up honestly or there is no score.
          */
         LapDynamicsRead: {
             /** Avg Power W */
@@ -9584,6 +9599,8 @@ export interface components {
             lap_id: number;
             /** Rss */
             rss?: number | null;
+            /** Rss Per Km */
+            rss_per_km?: number | null;
             /** Stride Length M */
             stride_length_m: number | null;
         };
@@ -11174,6 +11191,53 @@ export interface components {
             client_id: number | null;
             /** Client Secret */
             client_secret: string | null;
+        };
+        /**
+         * TerrainClimbRead
+         * @description One climb the route itself shows, read from the terrain not the power signal.
+         *
+         *     Attributes:
+         *         start_m: Ground position where the climb starts, from the start of the data.
+         *         end_m: Ground position where it ends.
+         *         length_m: Ground climbed over.
+         *         start_s: Seconds from the start of the sampled data.
+         *         duration_s: Time spent on the climb.
+         *         elevation_gain_m: Ground risen through.
+         *         elevation_loss_m: Ground let go inside the climb (dips that did not break it).
+         *         avg_grade_pct: Net grade over the whole climb.
+         *         avg_power_w: Mean power, ``None`` without a power stream.
+         *         intensity_factor: Mean power over the threshold, ``None`` without either.
+         *         contrast: Mean power over the session's median, ``None`` without either.
+         *         rss: Shared-scale aRSS score, ``None`` without power or threshold.
+         *         rss_per_km: That score per kilometre, ``None`` when too short to scale up.
+         */
+        TerrainClimbRead: {
+            /** Avg Grade Pct */
+            avg_grade_pct: number;
+            /** Avg Power W */
+            avg_power_w: number | null;
+            /** Contrast */
+            contrast: number | null;
+            /** Duration S */
+            duration_s: number;
+            /** Elevation Gain M */
+            elevation_gain_m: number;
+            /** Elevation Loss M */
+            elevation_loss_m: number;
+            /** End M */
+            end_m: number;
+            /** Intensity Factor */
+            intensity_factor: number | null;
+            /** Length M */
+            length_m: number;
+            /** Rss */
+            rss: number | null;
+            /** Rss Per Km */
+            rss_per_km: number | null;
+            /** Start M */
+            start_m: number;
+            /** Start S */
+            start_s: number;
         };
         /**
          * ThresholdSource

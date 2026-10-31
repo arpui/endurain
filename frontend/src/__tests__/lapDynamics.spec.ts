@@ -49,6 +49,7 @@ describe('lap dynamics fetch', () => {
         elevation_gain_m: 10,
         elevation_loss_m: 8,
         rss: 26.4,
+        rss_per_km: 26.4,
       },
       {
         lap_id: 8,
@@ -57,6 +58,7 @@ describe('lap dynamics fetch', () => {
         elevation_gain_m: null,
         elevation_loss_m: null,
         rss: null,
+        rss_per_km: null,
       },
     ] satisfies Schemas['LapDynamicsRead'][])
     const rows = await fetchActivityLapDynamics(21)
@@ -68,6 +70,7 @@ describe('lap dynamics fetch', () => {
       elevationGainM: 10,
       elevationLossM: 8,
       rss: 26.4,
+      rssPerKm: 26.4,
     })
     expect(rows[1]).toEqual({
       lapId: 8,
@@ -76,6 +79,7 @@ describe('lap dynamics fetch', () => {
       elevationGainM: null,
       elevationLossM: null,
       rss: null,
+      rssPerKm: null,
     })
   })
 })
@@ -108,6 +112,7 @@ describe('LapDynamicsTable', () => {
             elevationGainM: 10,
             elevationLossM: 8,
             rss: 26.4,
+            rssPerKm: 33.0,
           },
         ],
       ),
@@ -115,6 +120,7 @@ describe('LapDynamicsTable', () => {
     expect(row).toContain('412 W')
     expect(row).toContain('+10 / \u22128 m')
     expect(row.some((value) => /^26[.,]4$/.test(value))).toBe(true)
+    expect(row.some((value) => /^33[.,]0$/.test(value))).toBe(true)
     expect(row.some((value) => /^3[.,]03$/.test(value))).toBe(true)
   })
 
@@ -129,6 +135,7 @@ describe('LapDynamicsTable', () => {
           elevationGainM: null,
           elevationLossM: null,
           rss: null,
+          rssPerKm: null,
         },
       ],
     )

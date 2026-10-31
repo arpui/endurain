@@ -131,6 +131,10 @@
     "colGrade": "nousu",
     "colDesnivel": "nousu / lasku",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Reitin nousut",
+    "tcColRange": "osuus",
+    "tcNote": "Nousut luetaan maastosta tehosta riippumatta; ne voivat päällekkäin aikajanan kanssa eivätkä summannaudu sen kanssa. aRSS vaatii tehomittarin.",
     "colContrast": "vs suoritus",
     "rules": "Näin havaitaan: tasangolla jakso on intervalli vain jos se pitää ≥{effortIf}·CP; suoritus avautuu {openW} W:issa ja sulkeutuu alle {closeW} W; vähintään {minS} s (alle {shortS} s vaaditaan {shortBase} session mediaanista; ilman kunnon palautusta —≤{recoveryW} W—, {strongBase}); yli {climbGrade}% nousulla ja IF<{climbIf} lasketaan nousuksi."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Vaihde",
     "desnivel": "Nousu / lasku",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS on intensiteettipainotettu pisteluku päivittäisen kuorman takana; rivit sumaantuvat harjoituksen kokonaisarvoksi."
   }
 }

@@ -226,6 +226,8 @@ export interface IntervalSegment {
   elevationLossM: number | null
   /** Shared-scale aRSS score of the stretch (same kernel as the daily rss_total). */
   rss: number | null
+  /** That score per kilometre of ground; null when too short to scale up honestly. */
+  rssPerKm: number | null
 }
 
 /** The effective numeric gates one session's split used, for the footnote. */
@@ -254,6 +256,33 @@ export interface ActivityIntervals {
   segments: IntervalSegment[]
   /** The numeric gates used, `null` when nothing was segmented. */
   rules: IntervalRules | null
+  /** Climbs the route itself shows; independent of the segments and never summed. */
+  climbs: TerrainClimb[]
+}
+
+export type TerrainClimbDto = Schemas['TerrainClimbRead']
+
+/** One climb the smoothed altitude profile shows along the route. */
+export interface TerrainClimb {
+  /** Ground position where the climb starts, metres from the start of the data. */
+  startM: number
+  endM: number
+  /** Ground climbed over. */
+  lengthM: number
+  /** Seconds from the start of the sampled data. */
+  startS: number
+  durationS: number
+  elevationGainM: number
+  /** Ground let go inside the climb (dips that did not break it). */
+  elevationLossM: number
+  /** Net grade over the whole climb, percent. */
+  avgGradePct: number
+  avgPowerW: number | null
+  intensityFactor: number | null
+  contrast: number | null
+  rss: number | null
+  /** The score per kilometre, the comparable figure across climbs. */
+  rssPerKm: number | null
 }
 
 export type BestTimesDto = Schemas['BestTimesRead']
@@ -294,4 +323,6 @@ export interface LapDynamics {
   elevationLossM: number | null
   /** Shared-scale aRSS score of the lap's window; the rows add up to the activity's. */
   rss: number | null
+  /** That score per kilometre of the lap; null when the lap is too short to scale up. */
+  rssPerKm: number | null
 }

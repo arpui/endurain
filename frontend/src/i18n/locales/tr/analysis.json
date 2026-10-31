@@ -131,6 +131,10 @@
     "colGrade": "eğim",
     "colDesnivel": "tırmanış / iniş",
     "colRss": "aRSS",
+    "colRssKm": "aRSS/km",
+    "tcTitle": "Rottaki tırmanışlar",
+    "tcColRange": "bölüm",
+    "tcNote": "Tırmanışlar araziden okunur, güçten bağımsız; zaman çizelgesiyle örtüşebilir ve onunla toplanmaz. aRSS güç ölçer gerektirir.",
     "colContrast": "vs seans",
     "rules": "Burada algılama: düz zeminde bir bölüm ancak ≥{effortIf}·CP sürdürürse interval sayılır; efor {openW} W'te açılır ve {closeW} W altında kapanır; asgari {minS} s ({shortS} s altındaysa seans medyanının {shortBase}'i gerekir; gerçek toparlanma olmadan —≤{recoveryW} W—, {strongBase}); >{climbGrade}% eğim ve IF<{climbIf} tırmanış sayılır."
   },
@@ -165,6 +169,7 @@
     "lengthRide": "Aktarım",
     "desnivel": "Tırmanış / iniş",
     "rss": "aRSS",
+    "rssKm": "aRSS/km",
     "rssNote": "aRSS, günlük yükün arkasındaki yoğunluk ağırlıklı puandır; satırlar etkinliğin toplamına ulaşır."
   }
 }

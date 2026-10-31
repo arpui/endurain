@@ -27,7 +27,7 @@ const props = defineProps<{
   units: Units
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 /** Effort kinds, so the summary can count them and the table can colour them. */
 const EFFORT_KINDS: IntervalSegmentKind[] = ['interval', 'climb', 'race']
@@ -46,7 +46,21 @@ interface SegmentRow {
   contrast: string
   desnivel: string
   rss: string
+  rssKm: string
   isEffort: boolean
+}
+
+/** One row of the terrain-climb table. */
+interface ClimbRow {
+  key: string
+  range: string
+  duration: string
+  desnivel: string
+  grade: string
+  power: string
+  intensityFactor: string
+  contrast: string
+  rssKm: string
 }
 
 const rows = computed<SegmentRow[]>(() =>
@@ -75,8 +89,31 @@ const rows = computed<SegmentRow[]>(() =>
       contrast: segment.contrast > 0 ? `×${segment.contrast.toFixed(2)}` : '--',
       desnivel: elevationPair(segment),
       rss: segment.rss === null ? '--' : segment.rss.toFixed(1),
+      rssKm: segment.rssPerKm === null ? '--' : segment.rssPerKm.toFixed(1),
       isEffort: EFFORT_KINDS.includes(segment.kind),
     })),
+)
+
+/** Kilometre marks of a climb's stretch: always metric, like the score per km. */
+function kmMark(meters: number): string {
+  return new Intl.NumberFormat(locale.value, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 2,
+  }).format(meters / 1000)
+}
+
+const climbRows = computed<ClimbRow[]>(() =>
+  props.intervals.climbs.map((climb) => ({
+    key: `${climb.startM}`,
+    range: `${kmMark(climb.startM)} - ${kmMark(climb.endM)}`,
+    duration: formatHmsDuration(climb.durationS),
+    desnivel: `+${climb.elevationGainM.toFixed(0)} / \u2212${climb.elevationLossM.toFixed(0)} m`,
+    grade: `${climb.avgGradePct.toFixed(1)} %`,
+    power: climb.avgPowerW === null ? '--' : `${Math.round(climb.avgPowerW)} W`,
+    intensityFactor: climb.intensityFactor === null ? '--' : climb.intensityFactor.toFixed(2),
+    contrast: climb.contrast === null ? '--' : `\u00d7${climb.contrast.toFixed(2)}`,
+    rssKm: climb.rssPerKm === null ? '--' : climb.rssPerKm.toFixed(1),
+  })),
 )
 
 /**
@@ -132,63 +169,106 @@ const rulesNote = computed(() => {
 
 <template>
   <div class="flex flex-col gap-3">
-    <div class="flex flex-wrap items-center gap-2">
-      <Badge variant="secondary">{{ summary.label }}</Badge>
-      <span class="text-meta text-muted-foreground">
-        {{ summary.efforts }} {{ summary.effortsLabel }}
-      </span>
-    </div>
+    <template v-if="rows.length > 0">
+      <div class="flex flex-wrap items-center gap-2">
+        <Badge variant="secondary">{{ summary.label }}</Badge>
+        <span class="text-meta text-muted-foreground">
+          {{ summary.efforts }} {{ summary.effortsLabel }}
+        </span>
+      </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full min-w-[34rem] border-collapse text-meta">
-        <thead>
-          <tr class="text-caption border-b border-border text-left">
-            <th class="py-2 pe-3 font-medium">{{ t('activities.laps.intensity') }}</th>
-            <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colStart') }}</th>
-            <th class="py-2 pe-3 font-medium">{{ t('activities.laps.time') }}</th>
-            <th class="py-2 pe-3 font-medium">{{ t('activities.laps.distance') }}</th>
-            <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
-            <th class="py-2 pe-3 font-medium">{{ t('activities.metrics.avgPower') }}</th>
-            <th class="py-2 pe-3 font-medium">IF</th>
-            <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colContrast') }}</th>
-            <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colGrade') }}</th>
-            <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colDesnivel') }}</th>
-            <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colRss') }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="row in rows"
-            :key="row.key"
-            class="border-b border-border last:border-0"
-            :class="row.isEffort ? 'text-foreground' : 'text-muted-foreground'"
-          >
-            <td class="py-2 pe-3">{{ t(`analysis.intervals.kind.${row.kind}`) }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.start }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.duration }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.distance }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.tempo }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.power }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.intensityFactor }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.contrast }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.grade }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.desnivel }}</td>
-            <td class="py-2 pe-3 tabular-nums">{{ row.rss }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[34rem] border-collapse text-meta">
+          <thead>
+            <tr class="text-caption border-b border-border text-left">
+              <th class="py-2 pe-3 font-medium">{{ t('activities.laps.intensity') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colStart') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('activities.laps.time') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('activities.laps.distance') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('activities.metrics.avgPower') }}</th>
+              <th class="py-2 pe-3 font-medium">IF</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colContrast') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colGrade') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colDesnivel') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colRss') }}</th>
+              <th class="py-2 font-medium">{{ t('analysis.intervals.colRssKm') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="row in rows"
+              :key="row.key"
+              class="border-b border-border last:border-0"
+              :class="row.isEffort ? 'text-foreground' : 'text-muted-foreground'"
+            >
+              <td class="py-2 pe-3">{{ t(`analysis.intervals.kind.${row.kind}`) }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.start }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.duration }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.distance }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.tempo }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.power }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.intensityFactor }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.contrast }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.grade }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.desnivel }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.rss }}</td>
+              <td class="py-2 tabular-nums">{{ row.rssKm }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <p class="text-caption text-muted-foreground">
-      {{
-        t('analysis.intervals.basis', {
-          threshold: summary.threshold === null ? '--' : `${summary.threshold} W`,
-          base: `${summary.base} W`,
-        })
-      }}
-    </p>
-    <p v-if="rulesNote" class="text-caption text-muted-foreground">
-      {{ rulesNote }}
-    </p>
+      <p class="text-caption text-muted-foreground">
+        {{
+          t('analysis.intervals.basis', {
+            threshold: summary.threshold === null ? '--' : `${summary.threshold} W`,
+            base: `${summary.base} W`,
+          })
+        }}
+      </p>
+      <p v-if="rulesNote" class="text-caption text-muted-foreground">
+        {{ rulesNote }}
+      </p>
+    </template>
+
+    <template v-if="climbRows.length > 0">
+      <h3 class="text-card-heading">{{ t('analysis.intervals.tcTitle') }}</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[30rem] border-collapse text-meta">
+          <thead>
+            <tr class="text-caption border-b border-border text-left">
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.tcColRange') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('activities.laps.time') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colDesnivel') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colGrade') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('activities.metrics.avgPower') }}</th>
+              <th class="py-2 pe-3 font-medium">IF</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colContrast') }}</th>
+              <th class="py-2 font-medium">{{ t('analysis.intervals.colRssKm') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="row in climbRows"
+              :key="row.key"
+              class="border-b border-border last:border-0"
+            >
+              <td class="py-2 pe-3 font-medium tabular-nums text-foreground">{{ row.range }} km</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.duration }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.desnivel }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.grade }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.power }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.intensityFactor }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.contrast }}</td>
+              <td class="py-2 tabular-nums">{{ row.rssKm }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-caption text-muted-foreground">
+        {{ t('analysis.intervals.tcNote') }}
+      </p>
+    </template>
   </div>
 </template>

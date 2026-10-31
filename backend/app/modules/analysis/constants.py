@@ -208,6 +208,42 @@ IV_EFFORT_IF = 1.05
 #: noise as climbing.
 IV_ELEV_MEDIAN_S = 30.0
 
+# --- Terrain climbs -------------------------------------------------------------
+# A climb the route itself shows, independent of how the athlete rode or ran it:
+# the smoothed altitude profile, not the power signal, decides. The numbers below
+# are defaults only: every one of them is an ``iv_terrain_*`` athlete override.
+
+#: Window (metres of ground) the open/close grade is measured over.
+IV_TERRAIN_WINDOW_M = 150.0
+
+#: Net grade over the window that starts a climb.
+IV_TERRAIN_OPEN_PCT = 2.5
+
+#: Below this net grade the climb is over; the gap between open and close is the
+#: hysteresis that keeps a steady climb in one piece.
+IV_TERRAIN_CLOSE_PCT = 0.5
+
+#: Shortest stretch still worth listing.
+IV_TERRAIN_MIN_LENGTH_M = 250.0
+
+#: Fewest metres climbed worth listing.
+IV_TERRAIN_MIN_GAIN_M = 20.0
+
+#: A stretch whose whole-profile grade stays below this is rolling ground, not a
+#: climb: it gained as much as it let go. Half the opening grade is enough to tell
+#: a climb with real dips apart from a rolling ridge that merely trends up.
+IV_TERRAIN_MIN_NET_PCT = 1.5
+
+#: A dip shorter than this (metres of ground) between two climbs does not end the
+#: first one.
+IV_TERRAIN_MERGE_GAP_M = 600.0
+
+#: A dip up to this deep (metres) is a false flat inside a climb, not a break.
+IV_TERRAIN_MERGE_DIP_M = 30.0
+
+#: Or a dip up to this share of what the climb had already gained.
+IV_TERRAIN_MERGE_DIP_FRAC = 0.35
+
 #: Minimum segments for the session to read as interval work rather than a single
 #: push.
 IV_MIN_REPS = 2
@@ -302,6 +338,10 @@ RSS_KERNEL_B = 0.363086
 #: Sum divisor: the kernel value one hour at threshold is normalized to, which puts
 #: the family on the shared scale (100 = one hour at threshold).
 RSS_NORM = 1.6
+
+#: Below this much ground there is no aRSS per km: scaling a 100 m window up to a
+#: kilometre amplifies its noise tenfold, so short windows keep only their score.
+RSS_PER_KM_MIN_DISTANCE_M = 250.0
 
 #: Grade (%) above which a second is a climb: it is measured by ``RSS_UP`` and
 #: never by the intensity bands, and the kernel gets its steepest floor.

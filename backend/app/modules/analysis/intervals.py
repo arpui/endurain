@@ -22,6 +22,7 @@ labelled ``interval``, ``climb``, ``race``, ``recovery`` or ``easy``, so a table
 explain the session end to end instead of listing only the hard parts.
 """
 
+from bisect import bisect_left
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
@@ -152,6 +153,9 @@ class Segment:
         elevation_loss_m: Ground fallen through in the stretch, ``None`` without altitude.
         rss: The shared-scale aRSS score of the stretch (same kernel as the daily
             rss_total), ``None`` when the sport has no threshold.
+        rss_per_km: That score per kilometre of ground, so stretches of different
+            length compare; ``None`` when the stretch is too short to scale up
+            honestly or there is no score to scale.
     """
 
     kind: SegmentKind
@@ -166,6 +170,7 @@ class Segment:
     elevation_gain_m: float | None = None
     elevation_loss_m: float | None = None
     rss: float | None = None
+    rss_per_km: float | None = None
 
 
 @dataclass(frozen=True)
@@ -192,6 +197,26 @@ class IntervalAnalysis:
 def _window_samples(period_s: float, window_s: float) -> int:
     """Return the odd number of samples a smoothing window spans at ``period_s``."""
     return max(3, 2 * (int(window_s / period_s) // 2) + 1)
+
+
+def _smooth_altitude(values: list[float], samples: int) -> list[float]:
+    """Median-smooth an altitude series without the clamped window dragging its ends.
+
+    A centred median at the series' ends reads only one side of the slope, so a
+    climb that runs straight into the first or last sample would lose its foot and
+    its summit to the filter. Extending both ends along their own slope first lets
+    the window see the same terrain on every sample.
+    """
+    if samples <= 1 or len(values) < 2:
+        return analysis_maths.moving_median(values, samples)
+    half = samples // 2
+    lead = min(half, len(values) - 1)
+    head_slope = (values[lead] - values[0]) / lead
+    tail_slope = (values[-1] - values[-1 - lead]) / lead
+    pad_head = [values[0] - head_slope * (half - k) for k in range(half)]
+    pad_tail = [values[-1] + tail_slope * (k + 1) for k in range(half)]
+    smoothed = analysis_maths.moving_median(pad_head + values + pad_tail, samples)
+    return smoothed[half : half + len(values)]
 
 
 def _runs_above(
@@ -487,11 +512,17 @@ def _segment(
         if threshold_w
         else None
     )
+    distance_m = speed * span * period_s
+    rss_per_km = (
+        round(rss * 1000.0 / distance_m, 1)
+        if rss is not None and distance_m >= analysis_constants.RSS_PER_KM_MIN_DISTANCE_M
+        else None
+    )
     return Segment(
         kind=kind,
         start_s=round(run[0] * period_s, 1),
         duration_s=round(span * period_s, 1),
-        distance_m=round(speed * span * period_s, 1),
+        distance_m=round(distance_m, 1),
         avg_power_w=round(power, 1),
         intensity_factor=round(power / threshold_w, 2) if threshold_w else 0.0,
         contrast=round(power / base, 2) if base else 0.0,
@@ -500,6 +531,7 @@ def _segment(
         elevation_gain_m=gain_m,
         elevation_loss_m=loss_m,
         rss=rss,
+        rss_per_km=rss_per_km,
     )
 
 
@@ -557,3 +589,177 @@ def _shape(
             if spread <= analysis_constants.IV_REGULAR_CV:
                 return SessionShape.INTERVALS
     return SessionShape.FARTLEK
+
+
+@dataclass(frozen=True)
+class TerrainClimb:
+    """One climb the route itself shows, whatever the athlete did on it.
+
+    Unlike the timeline's segments these are read from the terrain, not from the
+    power signal: a long steady ascent that never crossed the effort threshold is
+    still a climb, and several climbs joined by short dips are one climb. They are
+    an independent view, so they may overlap the timeline freely and are never
+    summed with it.
+
+    Attributes:
+        start_m: Ground position where the climb starts, from the start of the data.
+        end_m: Ground position where it ends.
+        length_m: Ground climbed over.
+        start_s: Seconds from the start of the sampled data.
+        duration_s: Time spent on the climb.
+        elevation_gain_m: Ground risen through.
+        elevation_loss_m: Ground let go inside the climb (dips that did not break it).
+        avg_grade_pct: Net grade over the whole climb.
+        avg_power_w: Mean power over the climb, ``None`` without a power stream.
+        intensity_factor: Mean power over the sport's threshold, ``None`` without either.
+        contrast: Mean power over the session's median, ``None`` without either.
+        rss: Shared-scale aRSS score of the climb, ``None`` without power or threshold.
+        rss_per_km: That score per kilometre, ``None`` when too short to scale up.
+    """
+
+    start_m: float
+    end_m: float
+    length_m: float
+    start_s: float
+    duration_s: float
+    elevation_gain_m: float
+    elevation_loss_m: float
+    avg_grade_pct: float
+    avg_power_w: float | None
+    intensity_factor: float | None
+    contrast: float | None
+    rss: float | None
+    rss_per_km: float | None
+
+
+def terrain_climbs(
+    altitudes_m: Sequence[float] | None,
+    speeds_ms: Sequence[float] | None,
+    period_s: float,
+    power_w: Sequence[float] | None = None,
+    threshold_w: float | None = None,
+    base_power_w: float = 0.0,
+    parameters: Mapping[str, float] | None = None,
+) -> list[TerrainClimb]:
+    """Return the climbs the smoothed altitude profile shows along the route.
+
+    A stretch opens as a climb when the net grade over ``iv_terrain_window_m`` reaches
+    ``iv_terrain_open_pct`` and stays one while it holds above ``iv_terrain_close_pct``
+    - the gap between the two is what keeps a steady ascent in one piece. A short dip
+    between two climbs (ground and depth bounded by ``iv_terrain_merge_*``) is a false
+    flat inside the climb, not its end. What survives must be long enough, have gained
+    enough, and have climbed more than it let go across the whole stretch - that last
+    filter is what keeps rolling ground off the list.
+
+    Nothing is invented: without an altitude or speed stream there are no climbs to
+    find, and without power or a threshold the climb is still listed, only its power
+    and stress columns read ``None``.
+    """
+    params = parameters or {}
+    if altitudes_m is None or speeds_ms is None or period_s <= 0:
+        return []
+    window_m = params.get("iv_terrain_window_m", analysis_constants.IV_TERRAIN_WINDOW_M)
+    open_pct = params.get("iv_terrain_open_pct", analysis_constants.IV_TERRAIN_OPEN_PCT)
+    close_pct = params.get("iv_terrain_close_pct", analysis_constants.IV_TERRAIN_CLOSE_PCT)
+    min_length_m = params.get("iv_terrain_min_length_m", analysis_constants.IV_TERRAIN_MIN_LENGTH_M)
+    min_gain_m = params.get("iv_terrain_min_gain_m", analysis_constants.IV_TERRAIN_MIN_GAIN_M)
+    min_net_pct = params.get("iv_terrain_min_net_pct", analysis_constants.IV_TERRAIN_MIN_NET_PCT)
+    merge_gap_m = params.get("iv_terrain_merge_gap_m", analysis_constants.IV_TERRAIN_MERGE_GAP_M)
+    merge_dip_m = params.get("iv_terrain_merge_dip_m", analysis_constants.IV_TERRAIN_MERGE_DIP_M)
+    merge_dip_frac = params.get("iv_terrain_merge_dip_frac", analysis_constants.IV_TERRAIN_MERGE_DIP_FRAC)
+
+    count = min(len(altitudes_m), len(speeds_ms))
+    if count < 2 or window_m <= 0:
+        return []
+    altitudes = _smooth_altitude(
+        [float(altitudes_m[i]) for i in range(count)], _window_samples(period_s, analysis_constants.IV_ELEV_MEDIAN_S)
+    )
+    dist: list[float] = [0.0] * count
+    for i in range(1, count):
+        dist[i] = dist[i - 1] + max(float(speeds_ms[i]), 0.0) * period_s
+    if dist[count - 1] < min_length_m:
+        return []
+
+    grades: list[float] = []
+    for i in range(count):
+        # At the end of the data the window simply runs short: a climb that ends at
+        # the last sample is still climbing there, so the truncated window judges it.
+        j = min(bisect_left(dist, dist[i] + window_m), count - 1)
+        span = dist[j] - dist[i]
+        grades.append((altitudes[j] - altitudes[i]) * 100.0 / span if span > 0 else 0.0)
+
+    runs: list[tuple[int, int]] = []
+    i = 0
+    while i < count:
+        if grades[i] >= open_pct:
+            start = i
+            while i < count and grades[i] >= close_pct:
+                i += 1
+            runs.append((start, max(i - 1, start)))
+        else:
+            i += 1
+
+    merged: list[list[int]] = []
+    for run in runs:
+        if merged:
+            gap = dist[run[0]] - dist[merged[-1][1]]
+            dip = max(0.0, altitudes[merged[-1][1]] - altitudes[run[0]])
+            gained = altitudes[merged[-1][1]] - altitudes[merged[-1][0]]
+            if gap <= merge_gap_m and dip <= max(merge_dip_m, merge_dip_frac * gained):
+                merged[-1][1] = run[1]
+                continue
+        merged.append([run[0], run[1]])
+
+    sample_grades = analysis_maths.grade_pct_series(altitudes, [float(s) for s in speeds_ms[:count]], period_s)
+    climbs: list[TerrainClimb] = []
+    for start, end in merged:
+        length_m = dist[end] - dist[start]
+        if length_m < min_length_m:
+            continue
+        gain_m = sum(max(0.0, altitudes[k + 1] - altitudes[k]) for k in range(start, end))
+        loss_m = sum(max(0.0, altitudes[k] - altitudes[k + 1]) for k in range(start, end))
+        if gain_m < min_gain_m:
+            continue
+        avg_grade = (altitudes[end] - altitudes[start]) * 100.0 / length_m
+        if avg_grade < min_net_pct:
+            continue
+        window = slice(start, end + 1)
+        avg_power: float | None = None
+        intensity: float | None = None
+        contrast: float | None = None
+        score: float | None = None
+        per_km: float | None = None
+        if power_w is not None and len(power_w) >= end + 1:
+            avg_power = round(fmean(power_w[window]), 1)
+            if threshold_w:
+                intensity = round(avg_power / threshold_w, 2)
+                score = round(
+                    analysis_methods.rss_window_stress(
+                        list(power_w[window]), period_s, threshold_w, sample_grades[window], params
+                    ),
+                    1,
+                )
+                if score <= 0:
+                    score = None
+                elif length_m >= analysis_constants.RSS_PER_KM_MIN_DISTANCE_M:
+                    per_km = round(score * 1000.0 / length_m, 1)
+            if base_power_w and avg_power is not None:
+                contrast = round(avg_power / base_power_w, 2)
+        climbs.append(
+            TerrainClimb(
+                start_m=round(dist[start], 1),
+                end_m=round(dist[end], 1),
+                length_m=round(length_m, 1),
+                start_s=round(start * period_s, 1),
+                duration_s=round((end - start + 1) * period_s, 1),
+                elevation_gain_m=round(gain_m, 1),
+                elevation_loss_m=round(loss_m, 1),
+                avg_grade_pct=round(avg_grade, 2),
+                avg_power_w=avg_power,
+                intensity_factor=intensity,
+                contrast=contrast,
+                rss=score,
+                rss_per_km=per_km,
+            )
+        )
+    return climbs
