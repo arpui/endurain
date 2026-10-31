@@ -16,6 +16,8 @@ import pytest
 import core.exceptions as core_exceptions
 import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
+import modules.analysis.intervals as analysis_intervals
+import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
 import modules.analysis.service as analysis_service
 
@@ -873,3 +875,57 @@ class TestFitWindowParameters:
         ):
             analysis_service.refresh_thresholds(2, db)
         assert stored[0].power_thresholds["run"].source is analysis_constants.ThresholdSource.AUTO
+
+
+class TestActivityIntervals:
+    def test_the_breakdown_reads_from_the_activity_samples(self):
+        db = _db()
+        data = analysis_methods.LoadInput(
+            moving_seconds=900.0,
+            power_w=tuple([250.0] * 300 + [430.0] * 120 + [120.0] * 120 + [250.0] * 300 + [250.0] * 60),
+            period_s=1.0,
+            speed_ms=tuple([4.0] * 900),
+            grade_pct=tuple([0.0] * 900),
+            power_threshold_w=350.0,
+        )
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}._load_input", return_value=data),
+        ):
+            read = analysis_service.get_activity_intervals(1, 2, db)
+        assert read.shape is analysis_intervals.SessionShape.STEADY or read.segments
+        assert read.threshold_w == 350.0
+        kinds = [segment.kind for segment in read.segments]
+        assert analysis_intervals.SegmentKind.INTERVAL in kinds
+        assert sum(segment.duration_s for segment in read.segments) == pytest.approx(900.0)
+
+    def test_an_activity_without_power_answers_steady_and_empty(self):
+        db = _db()
+        data = analysis_methods.LoadInput(moving_seconds=1800.0, average_hr=130.0)
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}._load_input", return_value=data),
+        ):
+            read = analysis_service.get_activity_intervals(1, 2, db)
+        assert read.shape is analysis_intervals.SessionShape.STEADY
+        assert read.segments == []
+
+    def test_a_deleted_activity_answers_steady(self):
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=None),
+        ):
+            read = analysis_service.get_activity_intervals(9, 2, db)
+        assert read.shape is analysis_intervals.SessionShape.STEADY
+        assert read.threshold_w is None
+
+    def test_reading_another_athlete_activity_is_not_found(self):
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=False),
+            pytest.raises(core_exceptions.NotFoundError),
+        ):
+            analysis_service.get_activity_intervals(1, 7, db)

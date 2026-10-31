@@ -14,6 +14,7 @@ import { queryKeys } from '@/services/queryKeys'
 import { useInvalidatingMutation } from '@/composables/useInvalidatingMutation'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import {
+  fetchActivityIntervals,
   fetchAnalysisSettings,
   fetchFitnessSeries,
   fetchPowerDuration,
@@ -142,5 +143,33 @@ export function useWprimeBalanceQuery(activityId: MaybeRefOrGetter<number | null
     queryKey: computed(() => queryKeys.analysis.wprime(id.value)),
     queryFn: ({ signal }) => fetchWprimeBalance(id.value, signal),
     enabled: computed(() => id.value > 0 && isAuthenticated.value),
+  })
+}
+
+/**
+ * How one activity breaks down into efforts: reps, climbs, the steady parts.
+ *
+ * Computed on read by the server from the activity's own samples against that
+ * athlete's own numbers, so it needs no stored rows and follows a threshold change
+ * at once. Only the activity's owner can read it, hence the authentication gate.
+ *
+ * @param activityId - Reactive activity id.
+ * @param enabled - Whether the parent activity has loaded.
+ * @returns The TanStack query result for the breakdown.
+ */
+export function useActivityIntervalsQuery(
+  activityId: MaybeRefOrGetter<number | null | undefined>,
+  enabled: MaybeRefOrGetter<boolean> = true,
+) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => {
+    const value = toValue(activityId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.intervals(id.value)),
+    queryFn: ({ signal }) => fetchActivityIntervals(id.value, signal),
+    enabled: computed(() => id.value > 0 && toValue(enabled) && isAuthenticated.value),
   })
 }

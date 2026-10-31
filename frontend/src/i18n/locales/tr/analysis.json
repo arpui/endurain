@@ -100,5 +100,28 @@
     "tau": "Yenilenme sabiti",
     "seriesBalance": "Kalan W′",
     "balanceTitle": "Zaman içinde kalan W′"
+  },
+  "intervals": {
+    "title": "Interval analizi",
+    "basis": "Her şey kendi değerlerine göre ölçülür: eşik {threshold} ve bu seansın medyanı {base}.",
+    "kind": {
+      "interval": "interval",
+      "climb": "tırmanış",
+      "race": "yarış temposu",
+      "recovery": "toparlanma",
+      "easy": "kolay"
+    },
+    "shape": {
+      "intervals": "düzenli intervalar",
+      "fartlek": "fartlek",
+      "continuous": "sürekli efor",
+      "terrain": "arazi (tırmanışlar)",
+      "steady": "dengeli tempo"
+    },
+    "effortsOne": "efor",
+    "effortsMany": "efor",
+    "colStart": "başlangıç",
+    "colGrade": "eğim",
+    "colContrast": "vs seans"
   }
 }

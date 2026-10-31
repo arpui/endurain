@@ -272,3 +272,46 @@ class TestWprimeRoute:
         ):
             response = client.get("/activities/5/wprime")
         assert response.status_code == 404
+
+
+class TestIntervalsRoute:
+    def _read(self) -> analysis_schema.ActivityIntervalsRead:
+        return analysis_schema.ActivityIntervalsRead(
+            shape="intervals",
+            threshold_w=350.0,
+            base_power_w=280.0,
+            segments=[
+                analysis_schema.IntervalSegmentRead(
+                    kind="interval",
+                    start_s=300.0,
+                    duration_s=180.0,
+                    distance_m=700.0,
+                    avg_power_w=410.0,
+                    intensity_factor=1.17,
+                    contrast=1.46,
+                    avg_grade_pct=0.4,
+                    avg_speed_ms=3.9,
+                )
+            ],
+        )
+
+    def test_the_owner_reads_the_breakdown(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch(
+            "modules.analysis.activity_router.analysis_service.get_activity_intervals", return_value=self._read()
+        ):
+            response = client.get("/activities/5/intervals")
+        assert response.status_code == 200
+        body = response.json()
+        assert body["shape"] == "intervals"
+        assert body["segments"][0]["kind"] == "interval"
+        assert body["segments"][0]["contrast"] == 1.46
+
+    def test_another_users_activity_is_not_found(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch(
+            "modules.analysis.activity_router.analysis_service.get_activity_intervals",
+            side_effect=core_exceptions.NotFoundError("Activity 5 not found"),
+        ):
+            response = client.get("/activities/5/intervals")
+        assert response.status_code == 404

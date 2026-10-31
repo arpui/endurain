@@ -5,10 +5,12 @@ import type { FitnessQuery } from '@/features/analysis/types'
 
 import { apiFetch } from '@/services/http'
 import {
+  fetchActivityIntervals,
   fetchAnalysisSettings,
   fetchFitnessSeries,
   fetchPowerDuration,
   fetchWprimeBalance,
+  mapActivityIntervals,
   mapFitnessSeries,
   mapSettings,
   queueLoadRecompute,
@@ -263,5 +265,85 @@ describe('power-duration and W-prime mappers', () => {
     const settings = mapSettings(dto)
     expect(settings.fitFromS).toBe(120)
     expect(settings.fitToS).toBe(900)
+  })
+})
+
+describe('activity interval analysis', () => {
+  /** Builds a full ActivityIntervalsRead wire payload. */
+  function makeIntervalsDto(
+    overrides: Partial<Schemas['ActivityIntervalsRead']> = {},
+  ): Schemas['ActivityIntervalsRead'] {
+    return {
+      shape: 'intervals',
+      threshold_w: 350,
+      base_power_w: 280,
+      segments: [
+        {
+          kind: 'interval',
+          start_s: 600,
+          duration_s: 180,
+          distance_m: 700,
+          avg_power_w: 410,
+          intensity_factor: 1.17,
+          contrast: 1.46,
+          avg_grade_pct: 0.4,
+          avg_speed_ms: 3.9,
+        },
+        {
+          kind: 'recovery',
+          start_s: 780,
+          duration_s: 120,
+          distance_m: 300,
+          avg_power_w: 120,
+          intensity_factor: 0.34,
+          contrast: 0.43,
+          avg_grade_pct: null,
+          avg_speed_ms: null,
+        },
+      ],
+      ...overrides,
+    }
+  }
+
+  it('fetches the breakdown from the activity route and maps every field', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(makeIntervalsDto())
+    const intervals = await fetchActivityIntervals(42)
+    expect(apiFetch).toHaveBeenCalledWith(
+      '/activities/42/intervals',
+      expect.objectContaining({ signal: undefined }),
+    )
+    expect(intervals.shape).toBe('intervals')
+    expect(intervals.thresholdW).toBe(350)
+    expect(intervals.basePowerW).toBe(280)
+    expect(intervals.segments[0]).toEqual({
+      kind: 'interval',
+      startS: 600,
+      durationS: 180,
+      distanceM: 700,
+      avgPowerW: 410,
+      intensityFactor: 1.17,
+      contrast: 1.46,
+      avgGradePct: 0.4,
+      avgSpeedMs: 3.9,
+    })
+  })
+
+  it('keeps absent grade and speed as null so the table can dash them', () => {
+    const mapped = mapActivityIntervals(makeIntervalsDto())
+    expect(mapped.segments[1]?.avgGradePct).toBeNull()
+    expect(mapped.segments[1]?.avgSpeedMs).toBeNull()
+  })
+
+  it('maps an activity without power to a steady, empty timeline', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      shape: 'steady',
+      threshold_w: null,
+      base_power_w: 0,
+      segments: [],
+    })
+    const intervals = await fetchActivityIntervals(7)
+    expect(intervals.shape).toBe('steady')
+    expect(intervals.thresholdW).toBeNull()
+    expect(intervals.segments).toEqual([])
   })
 })

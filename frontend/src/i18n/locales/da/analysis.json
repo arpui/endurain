@@ -100,5 +100,28 @@
     "tau": "Restitutionskonstant",
     "seriesBalance": "W′ tilbage",
     "balanceTitle": "W′ tilbage over tid"
+  },
+  "intervals": {
+    "title": "Intervalanalyse",
+    "basis": "Alt måles mod dine egne tal: tærskel {threshold} og sessionens median {base}.",
+    "kind": {
+      "interval": "interval",
+      "climb": "stigning",
+      "race": "løbetempo",
+      "recovery": "restitution",
+      "easy": "let"
+    },
+    "shape": {
+      "intervals": "regelmæssige intervaller",
+      "fartlek": "fartlek",
+      "continuous": "kontinuerlig anstrengelse",
+      "terrain": "teræn (stigninger)",
+      "steady": "jævn tempo"
+    },
+    "effortsOne": "anstrengelse",
+    "effortsMany": "anstrengelser",
+    "colStart": "start",
+    "colGrade": "stigning",
+    "colContrast": "vs session"
   }
 }

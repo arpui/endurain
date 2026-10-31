@@ -100,5 +100,28 @@
     "tau": "Herstelconstante",
     "seriesBalance": "W′ over",
     "balanceTitle": "W′ over de tijd"
+  },
+  "intervals": {
+    "title": "Intervalanalyse",
+    "basis": "Alles wordt aan je eigen getallen getoetst: drempel {threshold} en mediaan van deze sessie {base}.",
+    "kind": {
+      "interval": "interval",
+      "climb": "klim",
+      "race": "tempo",
+      "recovery": "herstel",
+      "easy": "licht"
+    },
+    "shape": {
+      "intervals": "regelmatige intervallen",
+      "fartlek": "fartlek",
+      "continuous": "continue inspanning",
+      "terrain": "terrein (stijgingen)",
+      "steady": "stabiel tempo"
+    },
+    "effortsOne": "inspanning",
+    "effortsMany": "inspanningen",
+    "colStart": "start",
+    "colGrade": "helling",
+    "colContrast": "vs sessie"
   }
 }

@@ -100,5 +100,28 @@
     "tau": "Taastumiskonstant",
     "seriesBalance": "W′ alles",
     "balanceTitle": "W′ alles ajas"
+  },
+  "intervals": {
+    "title": "Intervallide analüüs",
+    "basis": "Kõike mõõdetakse Sinu enda numbrite järgi: läve {threshold} ja sessioni mediaan {base}.",
+    "kind": {
+      "interval": "intervall",
+      "climb": "tõus",
+      "race": "võistlustempo",
+      "recovery": "taastumine",
+      "easy": "kerge"
+    },
+    "shape": {
+      "intervals": "regulaarsed intervallid",
+      "fartlek": "fartlek",
+      "continuous": "pidev koormus",
+      "terrain": "maaastik (tõusud)",
+      "steady": "ühtlane tempo"
+    },
+    "effortsOne": "koormus",
+    "effortsMany": "koormust",
+    "colStart": "algus",
+    "colGrade": "tõus",
+    "colContrast": "vs session"
   }
 }

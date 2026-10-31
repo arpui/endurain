@@ -100,5 +100,28 @@
     "tau": "Constant de recuperació",
     "seriesBalance": "W′ restant",
     "balanceTitle": "W′ restant en el temps"
+  },
+  "intervals": {
+    "title": "Anàlisi d'intervals",
+    "basis": "Tot es mesura amb els teus números: llindar {threshold} i mediana d'aquesta sessió {base}.",
+    "kind": {
+      "interval": "interval",
+      "climb": "pujada",
+      "race": "ritme de cursa",
+      "recovery": "recuperació",
+      "easy": "suau"
+    },
+    "shape": {
+      "intervals": "intervals regulars",
+      "fartlek": "fartlek",
+      "continuous": "esforç continu",
+      "terrain": "terreny (pendents)",
+      "steady": "ritme estable"
+    },
+    "effortsOne": "intent",
+    "effortsMany": "intents",
+    "colStart": "inici",
+    "colGrade": "pendent",
+    "colContrast": "vs sessió"
   }
 }

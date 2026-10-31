@@ -5,12 +5,16 @@
  */
 
 import type {
+  ActivityIntervals,
+  ActivityIntervalsDto,
   AnalysisSettings,
   AnalysisSettingsDto,
   AnalysisSettingsUpdateDto,
   FitnessQuery,
   FitnessSeries,
   FitnessSeriesDto,
+  IntervalSegment,
+  IntervalSegmentDto,
   LoadMethod,
   PowerDuration,
   PowerDurationDto,
@@ -233,4 +237,47 @@ export async function fetchWprimeBalance(
 ): Promise<WprimeBalance> {
   const dto = await apiFetch<WprimeBalanceDto>(`/activities/${activityId}/wprime`, { signal })
   return mapWprimeBalance(dto)
+}
+
+/** Maps one segment of the interval analysis to the domain model. */
+function mapIntervalSegment(dto: IntervalSegmentDto): IntervalSegment {
+  return {
+    kind: dto.kind as IntervalSegment['kind'],
+    startS: dto.start_s,
+    durationS: dto.duration_s,
+    distanceM: dto.distance_m,
+    avgPowerW: dto.avg_power_w,
+    intensityFactor: dto.intensity_factor,
+    contrast: dto.contrast,
+    avgGradePct: dto.avg_grade_pct ?? null,
+    avgSpeedMs: dto.avg_speed_ms ?? null,
+  }
+}
+
+/** Maps an interval-analysis DTO, filling an empty timeline. */
+export function mapActivityIntervals(dto: ActivityIntervalsDto): ActivityIntervals {
+  return {
+    shape: dto.shape as ActivityIntervals['shape'],
+    thresholdW: dto.threshold_w ?? null,
+    basePowerW: dto.base_power_w,
+    segments: (dto.segments ?? []).map(mapIntervalSegment),
+  }
+}
+
+/**
+ * Fetches how one activity breaks down into efforts (reps, climbs, the steady parts).
+ *
+ * @param activityId - The activity to split.
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns The session shape and its contiguous segments.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchActivityIntervals(
+  activityId: number,
+  signal?: AbortSignal,
+): Promise<ActivityIntervals> {
+  const dto = await apiFetch<ActivityIntervalsDto>(`/activities/${activityId}/intervals`, {
+    signal,
+  })
+  return mapActivityIntervals(dto)
 }

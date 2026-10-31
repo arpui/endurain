@@ -100,5 +100,28 @@
     "tau": "Constante de recuperação",
     "seriesBalance": "W′ restante",
     "balanceTitle": "W′ restante ao longo do tempo"
+  },
+  "intervals": {
+    "title": "Análise de intervalos",
+    "basis": "Tudo é medido pelos teus números: limiar {threshold} e mediana desta sessão {base}.",
+    "kind": {
+      "interval": "intervalo",
+      "climb": "subida",
+      "race": "ritmo de corrida",
+      "recovery": "recuperação",
+      "easy": "fácil"
+    },
+    "shape": {
+      "intervals": "intervalos regulares",
+      "fartlek": "fartlek",
+      "continuous": "esforço contínuo",
+      "terrain": "terreno (subidas)",
+      "steady": "ritmo estável"
+    },
+    "effortsOne": "esforço",
+    "effortsMany": "esforços",
+    "colStart": "início",
+    "colGrade": "inclinação",
+    "colContrast": "vs sessão"
   }
 }

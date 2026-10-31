@@ -100,5 +100,28 @@
     "tau": "Restitusjonskonstant",
     "seriesBalance": "W′ igjen",
     "balanceTitle": "W′ igjen over tid"
+  },
+  "intervals": {
+    "title": "Intervallanalyse",
+    "basis": "Alt måles mot dine egne tall: terskel {threshold} og øktens median {base}.",
+    "kind": {
+      "interval": "intervall",
+      "climb": "bakke",
+      "race": "løpetempo",
+      "recovery": "restitusjon",
+      "easy": "lett"
+    },
+    "shape": {
+      "intervals": "regelmessige intervaller",
+      "fartlek": "fartlek",
+      "continuous": "kontinuerlig innsats",
+      "terrain": "terreng (bakker)",
+      "steady": "jevn tempo"
+    },
+    "effortsOne": "innsats",
+    "effortsMany": "innsatser",
+    "colStart": "start",
+    "colGrade": "stigning",
+    "colContrast": "vs økt"
   }
 }

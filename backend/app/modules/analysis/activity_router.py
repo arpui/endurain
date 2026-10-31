@@ -57,3 +57,25 @@ def get_activity_wprime_balance(
     change is reflected immediately instead of needing a recompute pass.
     """
     return analysis_service.get_wprime_balance(activity_id, token_user_id, db)
+
+
+@router.get(
+    "/intervals",
+    response_model=analysis_schema.ActivityIntervalsRead,
+)
+def get_activity_intervals(
+    activity_id: activity_dependencies.ActivityId,
+    _check_scopes: Annotated[
+        Callable,
+        Security(auth_dependencies.check_scopes, scopes=["activities:read"]),
+    ],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.ActivityIntervalsRead:
+    """Return how this activity breaks down into efforts, for its owner.
+
+    Split on read from the activity's own samples against the athlete's own numbers
+    (their threshold and the session's median power), so the segmentation never
+    assumes a general population's idea of hard.
+    """
+    return analysis_service.get_activity_intervals(activity_id, token_user_id, db)

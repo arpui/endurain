@@ -416,6 +416,11 @@ export const queryKeys = {
      * @returns A W' balance query key for one activity.
      */
     wprime: (id: number) => ['analysis', 'wprime', id] as const,
+    /**
+     * @param id - Activity whose effort breakdown is keyed.
+     * @returns An interval-analysis query key for one activity.
+     */
+    intervals: (id: number) => ['analysis', 'intervals', id] as const,
   },
 
   /**

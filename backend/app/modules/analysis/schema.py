@@ -6,6 +6,7 @@ from datetime import date as date_type
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 
 import modules.analysis.constants as analysis_constants
+import modules.analysis.intervals as analysis_intervals
 
 
 class ActivityLoadRead(BaseModel):
@@ -276,6 +277,55 @@ class WprimeBalanceRead(BaseModel):
     work_above_cp_j: StrictFloat
     time_above_cp_s: StrictFloat
     points: list[WprimePointRead]
+
+
+class IntervalSegmentRead(BaseModel):
+    """One stretch of an activity's timeline, as the interval analysis read it.
+
+    Attributes:
+        kind: What the stretch was (interval, climb, race, recovery, easy).
+        start_s: Seconds from the start of the sampled data.
+        duration_s: Length of the stretch.
+        distance_m: Ground covered in it (0 without a speed stream).
+        avg_power_w: Mean power over the stretch.
+        intensity_factor: Mean power over the athlete's threshold for the sport.
+        contrast: Mean power over the session's own median, the relative anchor.
+        avg_grade_pct: Mean grade, ``None`` when no track was recorded.
+        avg_speed_ms: Mean speed, ``None`` when the activity carries none.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: analysis_intervals.SegmentKind
+    start_s: StrictFloat
+    duration_s: StrictFloat
+    distance_m: StrictFloat
+    avg_power_w: StrictFloat
+    intensity_factor: StrictFloat
+    contrast: StrictFloat
+    avg_grade_pct: StrictFloat | None
+    avg_speed_ms: StrictFloat | None
+
+
+class ActivityIntervalsRead(BaseModel):
+    """How one activity breaks down into efforts, for its owner.
+
+    An activity with no power stream answers ``steady`` with no segments: the split is
+    read from power, and nothing is guessed from heart rate alone.
+
+    Attributes:
+        shape: How the session as a whole reads (intervals, continuous, terrain...).
+        threshold_w: The threshold the intensities were divided by, if the athlete has one.
+        base_power_w: The session's own median power, the relative anchor used.
+        segments: Contiguous segments covering the timeline, in order.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    shape: analysis_intervals.SessionShape
+    threshold_w: StrictFloat | None
+    base_power_w: StrictFloat
+    segments: list[IntervalSegmentRead]
 
 
 class RecomputeQueued(BaseModel):

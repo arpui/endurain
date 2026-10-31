@@ -100,5 +100,28 @@
     "tau": "Atjaunošanās konstante",
     "seriesBalance": "W′ atlicis",
     "balanceTitle": "W′ atlikušais laikā"
+  },
+  "intervals": {
+    "title": "Intervalu analīze",
+    "basis": "Viss tiek mērīts pēc taviem skaitļiem: slieksnis {threshold} un sesijas mediāna {base}.",
+    "kind": {
+      "interval": "intervāls",
+      "climb": "kāpiens",
+      "race": "sacīkšu temps",
+      "recovery": "atjaunošanās",
+      "easy": "viegls"
+    },
+    "shape": {
+      "intervals": "regulāri intervāli",
+      "fartlek": "fartlek",
+      "continuous": "nepārtraukta slodze",
+      "terrain": "terens (kāpieni)",
+      "steady": "viendabīgs temps"
+    },
+    "effortsOne": "slodze",
+    "effortsMany": "slodzes",
+    "colStart": "sākums",
+    "colGrade": "slīpums",
+    "colContrast": "vs sesija"
   }
 }

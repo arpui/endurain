@@ -381,6 +381,30 @@ export interface paths {
         patch: operations["edit_activity_api_v1_activities__activity_id__patch"];
         trace?: never;
     };
+    "/api/v1/activities/{activity_id}/intervals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Activity Intervals
+         * @description Return how this activity breaks down into efforts, for its owner.
+         *
+         *     Split on read from the activity's own samples against the athlete's own numbers
+         *     (their threshold and the session's median power), so the segmentation never
+         *     assumes a general population's idea of hard.
+         */
+        get: operations["get_activity_intervals_api_v1_activities__activity_id__intervals_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/activities/{activity_id}/laps": {
         parameters: {
             query?: never;
@@ -5580,6 +5604,28 @@ export interface components {
             updated_at: string;
         };
         /**
+         * ActivityIntervalsRead
+         * @description How one activity breaks down into efforts, for its owner.
+         *
+         *     An activity with no power stream answers ``steady`` with no segments: the split is
+         *     read from power, and nothing is guessed from heart rate alone.
+         *
+         *     Attributes:
+         *         shape: How the session as a whole reads (intervals, continuous, terrain...).
+         *         threshold_w: The threshold the intensities were divided by, if the athlete has one.
+         *         base_power_w: The session's own median power, the relative anchor used.
+         *         segments: Contiguous segments covering the timeline, in order.
+         */
+        ActivityIntervalsRead: {
+            /** Base Power W */
+            base_power_w: number;
+            /** Segments */
+            segments: components["schemas"]["IntervalSegmentRead"][];
+            shape: components["schemas"]["SessionShape"];
+            /** Threshold W */
+            threshold_w: number | null;
+        };
+        /**
          * ActivityLapsRead
          * @description Schema for reading activity laps.
          *
@@ -9295,6 +9341,40 @@ export interface components {
          */
         "Interval-Output": "daily" | "weekly" | "monthly" | "yearly";
         /**
+         * IntervalSegmentRead
+         * @description One stretch of an activity's timeline, as the interval analysis read it.
+         *
+         *     Attributes:
+         *         kind: What the stretch was (interval, climb, race, recovery, easy).
+         *         start_s: Seconds from the start of the sampled data.
+         *         duration_s: Length of the stretch.
+         *         distance_m: Ground covered in it (0 without a speed stream).
+         *         avg_power_w: Mean power over the stretch.
+         *         intensity_factor: Mean power over the athlete's threshold for the sport.
+         *         contrast: Mean power over the session's own median, the relative anchor.
+         *         avg_grade_pct: Mean grade, ``None`` when no track was recorded.
+         *         avg_speed_ms: Mean speed, ``None`` when the activity carries none.
+         */
+        IntervalSegmentRead: {
+            /** Avg Grade Pct */
+            avg_grade_pct: number | null;
+            /** Avg Power W */
+            avg_power_w: number;
+            /** Avg Speed Ms */
+            avg_speed_ms: number | null;
+            /** Contrast */
+            contrast: number;
+            /** Distance M */
+            distance_m: number;
+            /** Duration S */
+            duration_s: number;
+            /** Intensity Factor */
+            intensity_factor: number;
+            kind: components["schemas"]["SegmentKind"];
+            /** Start S */
+            start_s: number;
+        };
+        /**
          * Language
          * @description Supported application languages.
          *
@@ -10331,6 +10411,20 @@ export interface components {
             source: components["schemas"]["SegmentSource"];
         };
         /**
+         * SegmentKind
+         * @description What one stretch of an activity was.
+         *
+         *     Attributes:
+         *         INTERVAL: A sustained effort above the athlete's threshold, kept separate from
+         *             the next one by a real recovery or by clearly standing above the session.
+         *         CLIMB: A sustained effort explained by the gradient rather than taken as a rep.
+         *         RACE: One effort holding most of the session: a race or a long tempo block.
+         *         RECOVERY: An easy stretch between two efforts, deep enough to be a rest.
+         *         EASY: Anything else: warm-up, cooldown, the flat part between pushes.
+         * @enum {string}
+         */
+        SegmentKind: "interval" | "climb" | "race" | "recovery" | "easy";
+        /**
          * SegmentListItemRead
          * @description Serialized segment as the library list shows it.
          *
@@ -10765,6 +10859,19 @@ export interface components {
              */
             units: components["schemas"]["Units"];
         };
+        /**
+         * SessionShape
+         * @description How the session as a whole reads.
+         *
+         *     Attributes:
+         *         INTERVALS: Several efforts separated by recoveries, of similar length.
+         *         FARTLEK: Several efforts of unlike length.
+         *         CONTINUOUS: One sustained effort with no real recovery in it.
+         *         TERRAIN: The hard moments are climbs, not chosen reps.
+         *         STEADY: Nothing rose to an effort: an easy or endurance day.
+         * @enum {string}
+         */
+        SessionShape: "intervals" | "fartlek" | "continuous" | "terrain" | "steady";
         /**
          * SignUpConfirm
          * @description Request schema for confirming a sign-up.
@@ -13672,6 +13779,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ActivityRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_activity_intervals_api_v1_activities__activity_id__intervals_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityIntervalsRead"];
                 };
             };
             /** @description Validation Error */

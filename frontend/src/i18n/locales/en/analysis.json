@@ -100,5 +100,28 @@
     "tau": "Recovery constant",
     "seriesBalance": "W′ remaining",
     "balanceTitle": "W′ remaining over time"
+  },
+  "intervals": {
+    "title": "Interval analysis",
+    "basis": "Everything is measured against your own numbers: threshold {threshold} and this session's median {base}.",
+    "kind": {
+      "interval": "interval",
+      "climb": "climb",
+      "race": "race pace",
+      "recovery": "recovery",
+      "easy": "easy"
+    },
+    "shape": {
+      "intervals": "regular intervals",
+      "fartlek": "fartlek",
+      "continuous": "continuous effort",
+      "terrain": "terrain (climbs)",
+      "steady": "steady pace"
+    },
+    "effortsOne": "effort",
+    "effortsMany": "efforts",
+    "colStart": "start",
+    "colGrade": "grade",
+    "colContrast": "vs session"
   }
 }

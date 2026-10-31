@@ -100,5 +100,28 @@
     "tau": "恢復時間常數",
     "seriesBalance": "剩餘 W′",
     "balanceTitle": "剩餘 W′ 隨時間變化"
+  },
+  "intervals": {
+    "title": "間歇分析",
+    "basis": "一切按你自己的數據衡量：閾值 {threshold}，本次中位數 {base}。",
+    "kind": {
+      "interval": "間歇",
+      "climb": "爬坡",
+      "race": "比賽配速",
+      "recovery": "恢復",
+      "easy": "輕鬆"
+    },
+    "shape": {
+      "intervals": "規律間歇",
+      "fartlek": "法特萊克",
+      "continuous": "持續負荷",
+      "terrain": "地形（爬坡）",
+      "steady": "穩定節奏"
+    },
+    "effortsOne": "個強度段",
+    "effortsMany": "個強度段",
+    "colStart": "開始",
+    "colGrade": "坡度",
+    "colContrast": "對比本次"
   }
 }
