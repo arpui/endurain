@@ -131,5 +131,28 @@
     "colGrade": "stigning",
     "colContrast": "vs økt",
     "rules": "Slik oppdages det her: på flatt teller en strekning bare som intervall hvis den holder ≥{effortIf}·CP; en innsats åpnes ved {openW} W og lukkes under {closeW} W; minst {minS} s (under {shortS} s kreves {shortBase} av øktens median; uten skikkelig hvile —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} teller det som bakke."
+  },
+  "sectionBest": "Bestetider",
+  "bestTimes": {
+    "title": "Bestetider",
+    "subtitle": "Dine raskeste splits over klassiske distanser, funnet i hver aktivitetens samples, med effekt på partiet og en lenke til dagen.",
+    "period": {
+      "label": "Periode",
+      "30": "30 dager",
+      "60": "60 dager",
+      "90": "90 dager",
+      "180": "180 dager",
+      "365": "1 år",
+      "all": "Alle"
+    },
+    "colDistance": "Distanse",
+    "colTime": "Tid",
+    "colPower": "Effekt",
+    "colDay": "Dag",
+    "empty": {
+      "title": "Ingen gyldige splits",
+      "description": "Ingen parti i vinduet består stigningsfilteret, eller ingen aktivitet har effekt."
+    },
+    "note": "Splits med netto stigning under −1 % (−2 % under 800 m) forkastes: en utfor er ikke pers."
   }
 }

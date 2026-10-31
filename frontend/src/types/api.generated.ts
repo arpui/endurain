@@ -691,6 +691,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/best-times": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Best Times
+         * @description Return the caller's best splits over the canonical race distances.
+         *
+         *     The splits are found in the activities' own samples, and a split running
+         *     downhill more than the bound for its length is discarded, so the table shows
+         *     what the athlete actually ran rather than what gravity lent them.
+         */
+        get: operations["get_best_times_api_v1_analysis_best_times_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/fitness": {
         parameters: {
             query?: never;
@@ -6225,6 +6249,47 @@ export interface components {
         BackfillQueued: {
             /** Queued */
             queued: boolean;
+        };
+        /**
+         * BestTimeRead
+         * @description Serialized best time the athlete has run over one race distance.
+         *
+         *     Attributes:
+         *         distance_m: Distance the split covered, in metres.
+         *         time_s: Time it took, in seconds.
+         *         avg_power_w: Mean power across the split, in watts.
+         *         activity_id: Activity in which the split was run.
+         *         start_time: Start of that activity, so the record can link to its day.
+         */
+        BestTimeRead: {
+            /** Activity Id */
+            activity_id: number;
+            /** Avg Power W */
+            avg_power_w: number;
+            /** Distance M */
+            distance_m: number;
+            /** Start Time */
+            start_time: string | null;
+            /** Time S */
+            time_s: number;
+        };
+        /**
+         * BestTimesRead
+         * @description Serialized table of one athlete's best splits over a set of distances.
+         *
+         *     Attributes:
+         *         sport: The sport group read.
+         *         months: The window applied, months back from today; ``None`` for all history.
+         *         records: Best split per distance achieved, shortest first; a distance with no
+         *             valid split (too long, or only ever run downhill) simply does not appear.
+         */
+        BestTimesRead: {
+            /** Months */
+            months: number | null;
+            /** Records */
+            records: components["schemas"]["BestTimeRead"][];
+            /** Sport */
+            sport: string;
         };
         /** Body_create_activity_media_api_v1_activities__activity_id__media_post */
         Body_create_activity_media_api_v1_activities__activity_id__media_post: {
@@ -14436,6 +14501,47 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WprimeBalanceRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_best_times_api_v1_analysis_best_times_get: {
+        parameters: {
+            query?: {
+                sport?: string;
+                months?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BestTimesRead"];
                 };
             };
             /** @description Validation Error */

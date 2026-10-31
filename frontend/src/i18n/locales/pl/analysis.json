@@ -131,5 +131,28 @@
     "colGrade": "nachylenie",
     "colContrast": "vs sesja",
     "rules": "Jak to wykrywać: na płaskim odcinek liczy się jako interwał tylko, jeśli utrzymuje ≥{effortIf}·CP; akcent otwiera się przy {openW} W i zamyka poniżej {closeW} W; minimum {minS} s (poniżej {shortS} s wymaga {shortBase} mediany sesji; bez prawdziwej regeneracji —≤{recoveryW} W—, {strongBase}); nachylenie >{climbGrade}% z IF<{climbIf} liczy się jako podbieg."
+  },
+  "sectionBest": "Najlepsze czasy",
+  "bestTimes": {
+    "title": "Najlepsze czasy",
+    "subtitle": "Twój najszybszy split na klasycznych dystansach, szukany w próbkach aktywności, z mocą odcinka i linkiem do dnia.",
+    "period": {
+      "label": "Okres",
+      "30": "30 dni",
+      "60": "60 dni",
+      "90": "90 dni",
+      "180": "180 dni",
+      "365": "1 rok",
+      "all": "Wszystko"
+    },
+    "colDistance": "Dystans",
+    "colTime": "Czas",
+    "colPower": "Moc",
+    "colDay": "Dzień",
+    "empty": {
+      "title": "Brak poprawnych splitów",
+      "description": "Żaden odcinek w oknie nie przechodzi filtra nachylenia, albo żadna aktywność nie ma mocy."
+    },
+    "note": "Odcinki o nachyleniu netto poniżej −1 % (−2 % poniżej 800 m) są odrzucane: zjazd nie jest rekordem."
   }
 }

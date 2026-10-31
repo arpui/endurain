@@ -131,5 +131,28 @@
     "colGrade": "stigning",
     "colContrast": "vs session",
     "rules": "Så detekteres det her: på fladt tæller en strækning kun som interval, hvis den holder ≥{effortIf}·CP; en anstrengelse åbner ved {openW} W og lukker under {closeW} W; mindst {minS} s (under {shortS} s kræves {shortBase} af sessionens median; uden rigtig restitution —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} tæller det som stigning."
+  },
+  "sectionBest": "Bedste tider",
+  "bestTimes": {
+    "title": "Bedste tider",
+    "subtitle": "Dine hurtigste splits over klassiske distancer, fundet i hver aktivitets samples, med effekt på strækningen og et link til dagen.",
+    "period": {
+      "label": "Periode",
+      "30": "30 dage",
+      "60": "60 dage",
+      "90": "90 dage",
+      "180": "180 dage",
+      "365": "1 år",
+      "all": "Alt"
+    },
+    "colDistance": "Distance",
+    "colTime": "Tid",
+    "colPower": "Effekt",
+    "colDay": "Dag",
+    "empty": {
+      "title": "Ingen gyldige splits",
+      "description": "Ingen strækning i vinduet består stigningsfiltret, eller ingen aktivitet har effekt."
+    },
+    "note": "Splits med netto stigning under −1 % (−2 % under 800 m) kasseres: en nedkørsel er ingen PR."
   }
 }

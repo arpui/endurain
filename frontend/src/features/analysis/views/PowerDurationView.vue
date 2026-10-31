@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import AnalysisSectionsNav from '@/features/analysis/components/AnalysisSectionsNav.vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RouterLink, useRoute } from 'vue-router'
 
 import type { WprimePoint } from '@/features/analysis/types'
 
-import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
@@ -24,7 +23,6 @@ import PowerDurationChart from '@/features/analysis/components/PowerDurationChar
 import WprimeBalanceChart from '@/features/analysis/components/WprimeBalanceChart.vue'
 
 const { t, locale } = useI18n()
-const route = useRoute()
 
 const sport = ref('run')
 const fitFrom = ref('')
@@ -79,28 +77,7 @@ const sessionOptions = computed(() =>
       <p class="text-body">{{ t('analysis.power.subtitle') }}</p>
     </header>
 
-    <nav class="flex gap-1" :aria-label="t('analysis.sections')">
-      <RouterLink v-slot="{ href, navigate }" :to="{ name: 'analysis' }" custom>
-        <Button
-          as="a"
-          :href="href"
-          :variant="route.name === 'analysis' ? 'default' : 'ghost'"
-          @click="navigate"
-        >
-          {{ t('analysis.sectionLoad') }}
-        </Button>
-      </RouterLink>
-      <RouterLink v-slot="{ href, navigate }" :to="{ name: 'analysis-power' }" custom>
-        <Button
-          as="a"
-          :href="href"
-          :variant="route.name === 'analysis-power' ? 'default' : 'ghost'"
-          @click="navigate"
-        >
-          {{ t('analysis.sectionPower') }}
-        </Button>
-      </RouterLink>
-    </nav>
+    <AnalysisSectionsNav />
 
     <div class="flex flex-wrap items-end gap-2">
       <Select v-model="sport" :aria-label="t('analysis.sport.label')" class="w-40">

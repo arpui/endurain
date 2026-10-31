@@ -421,6 +421,11 @@ export const queryKeys = {
      * @returns An interval-analysis query key for one activity.
      */
     intervals: (id: number) => ['analysis', 'intervals', id] as const,
+    /**
+     * @param months - Window in months back from today, `null` for all history.
+     * @returns A best-splits query key for one window.
+     */
+    bestTimes: (months: number | null) => ['analysis', 'best-times', months] as const,
   },
 
   /**

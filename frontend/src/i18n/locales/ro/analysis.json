@@ -131,5 +131,28 @@
     "colGrade": "pantă",
     "colContrast": "vs ședință",
     "rules": "Cum se detectează aici: pe plat un trakt contează ca interval doar dacă menține ≥{effortIf}·CP; un efort se deschide la {openW} W și se închide sub {closeW} W; minimum {minS} s (sub {shortS} s cere {shortBase} din mediana ședinței; fără recuperare reală —≤{recoveryW} W—, {strongBase}); pantă >{climbGrade}% cu IF<{climbIf} contează ca urcare."
+  },
+  "sectionBest": "Timpi de referință",
+  "bestTimes": {
+    "title": "Timpi de referință",
+    "subtitle": "Cel mai rapid split pe distanțe clasice, căutat în eșantioanele activităților, cu puterea porțiunii și linkul zilei.",
+    "period": {
+      "label": "Perioadă",
+      "30": "30 zile",
+      "60": "60 zile",
+      "90": "90 zile",
+      "180": "180 zile",
+      "365": "1 an",
+      "all": "Tot"
+    },
+    "colDistance": "Distanță",
+    "colTime": "Timp",
+    "colPower": "Putere",
+    "colDay": "Zi",
+    "empty": {
+      "title": "Fără splituri valide",
+      "description": "Nicio porțiune din fereastră nu trece filtrul de pantă sau nicio activitate are putere."
+    },
+    "note": "Porțiunile cu pantă netă sub −1 % (−2 % sub 800 m) sunt eliminate: coborâșul nu e record personal."
   }
 }

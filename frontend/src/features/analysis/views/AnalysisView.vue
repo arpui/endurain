@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import AnalysisSectionsNav from '@/features/analysis/components/AnalysisSectionsNav.vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RouterLink, useRoute } from 'vue-router'
 
 import type { FitnessQuery, FitnessPoint, LoadMethod } from '@/features/analysis/types'
 
-import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
@@ -21,7 +20,6 @@ import AnalysisPmcChart from '@/features/analysis/components/AnalysisPmcChart.vu
 import AnalysisSettingsCard from '@/features/analysis/components/AnalysisSettingsCard.vue'
 
 const { t } = useI18n()
-const route = useRoute()
 
 /** Selectable history windows, in days, in display order. */
 const WINDOW_OPTIONS = [30, 90, 365]
@@ -126,28 +124,7 @@ const seriesParams = computed(() => ({
       <p class="text-body">{{ t('analysis.subtitle') }}</p>
     </header>
 
-    <nav class="flex gap-1" :aria-label="t('analysis.sections')">
-      <RouterLink v-slot="{ href, navigate }" :to="{ name: 'analysis' }" custom>
-        <Button
-          as="a"
-          :href="href"
-          :variant="route.name === 'analysis' ? 'default' : 'ghost'"
-          @click="navigate"
-        >
-          {{ t('analysis.sectionLoad') }}
-        </Button>
-      </RouterLink>
-      <RouterLink v-slot="{ href, navigate }" :to="{ name: 'analysis-power' }" custom>
-        <Button
-          as="a"
-          :href="href"
-          :variant="route.name === 'analysis-power' ? 'default' : 'ghost'"
-          @click="navigate"
-        >
-          {{ t('analysis.sectionPower') }}
-        </Button>
-      </RouterLink>
-    </nav>
+    <AnalysisSectionsNav />
 
     <div class="flex flex-wrap items-center gap-2">
       <Select

@@ -131,5 +131,28 @@
     "colGrade": "Steigung",
     "colContrast": "vs Einheit",
     "rules": "So wird erkannt: auf flachem Grund zählt ein Abschnitt nur als Intervall, wenn er ≥{effortIf}·CP hält; ein Einsatz beginnt bei {openW} W und endet unter {closeW} W; mindestens {minS} s (unter {shortS} s braucht er {shortBase} des Einheiten-Medians; ohne echte Erholung —≤{recoveryW} W— {strongBase}); bei Steigung >{climbGrade}% und IF<{climbIf} zählt er als Anstieg."
+  },
+  "sectionBest": "Bestzeiten",
+  "bestTimes": {
+    "title": "Bestzeiten",
+    "subtitle": "Deine schnellste Splitzeit über klassische Distanzen, gesucht in den Samples jeder Aktivität, mit Leistung des Abschnitts und Link zum Tag.",
+    "period": {
+      "label": "Zeitraum",
+      "30": "30 Tage",
+      "60": "60 Tage",
+      "90": "90 Tage",
+      "180": "180 Tage",
+      "365": "1 Jahr",
+      "all": "Gesamt"
+    },
+    "colDistance": "Distanz",
+    "colTime": "Zeit",
+    "colPower": "Leistung",
+    "colDay": "Tag",
+    "empty": {
+      "title": "Keine gültigen Splits",
+      "description": "Kein Abschnitt im Fenster besteht den Gefällefilter, oder keine Aktivität hat Leistungsdaten."
+    },
+    "note": "Abschnitte mit Netto-Gefälle unter −1 % (−2 % unter 800 m) werden verworfen: eine Abfahrt ist keine Bestzeit."
   }
 }

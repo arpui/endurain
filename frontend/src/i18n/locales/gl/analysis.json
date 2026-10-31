@@ -131,5 +131,28 @@
     "colGrade": "pendente",
     "colContrast": "vs sesión",
     "rules": "Como se detecta aquí: en chanzo un tramo conta como intervalo só se mantén ≥{effortIf}·CP; ábrese un esforzo a {openW} W e péchase por debaixo de {closeW} W; mínimo {minS} s (baixo {shortS} s require {shortBase} a mediana da sesión; sen recuperación real —≤{recoveryW} W—, {strongBase}); con pendente >{climbGrade}% e IF<{climbIf} conta como subida."
+  },
+  "sectionBest": "Mellores tempos",
+  "bestTimes": {
+    "title": "Mellores tempos",
+    "subtitle": "O teu mellor parcial sobre distancias clásicas, buscado nas mostras de cada actividade, coa potencia do tramo e a ligazón ao día.",
+    "period": {
+      "label": "Período",
+      "30": "30 días",
+      "60": "60 días",
+      "90": "90 días",
+      "180": "180 días",
+      "365": "1 ano",
+      "all": "Todo"
+    },
+    "colDistance": "Distancia",
+    "colTime": "Tempo",
+    "colPower": "Potencia",
+    "colDay": "Día",
+    "empty": {
+      "title": "Sen parciais válidos",
+      "description": "Ningún tramo da xanela pasa o filtro de pendente, ou ningunha actividade ten potencia."
+    },
+    "note": "Descártanse os tramos con pendente neta por debaixo de −1 % (−2 % baixo 800 m): unha baixada non é unha marca persoal."
   }
 }

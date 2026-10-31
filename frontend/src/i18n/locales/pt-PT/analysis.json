@@ -131,5 +131,28 @@
     "colGrade": "inclinação",
     "colContrast": "vs sessão",
     "rules": "Como é detetado aqui: em plano um troço conta como intervalo só se mantiver ≥{effortIf}·CP; abre-se um esforço a {openW} W e fecha abaixo de {closeW} W; mínimo {minS} s (abaixo de {shortS} s exige {shortBase} a mediana da sessão; sem recuperação real —≤{recoveryW} W—, {strongBase}); com inclinação >{climbGrade}% e IF<{climbIf} conta como subida."
+  },
+  "sectionBest": "Melhores tempos",
+  "bestTimes": {
+    "title": "Melhores tempos",
+    "subtitle": "O teu melhor split sobre distâncias clássicas, procurado nas amostras de cada atividade, com a potência do troço e a ligação ao dia.",
+    "period": {
+      "label": "Período",
+      "30": "30 dias",
+      "60": "60 dias",
+      "90": "90 dias",
+      "180": "180 dias",
+      "365": "1 ano",
+      "all": "Tudo"
+    },
+    "colDistance": "Distância",
+    "colTime": "Tempo",
+    "colPower": "Potência",
+    "colDay": "Dia",
+    "empty": {
+      "title": "Sem splits válidos",
+      "description": "Nenhum troço na janela passa o filtro de inclinação, ou nenhuma atividade tem potência."
+    },
+    "note": "Troços com inclinação líquida abaixo de −1 % (−2 % abaixo de 800 m) são descartados: uma descida não é um recorde pessoal."
   }
 }

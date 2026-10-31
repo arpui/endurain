@@ -249,3 +249,26 @@ export interface ActivityIntervals {
   /** The numeric gates used, `null` when nothing was segmented. */
   rules: IntervalRules | null
 }
+
+export type BestTimesDto = Schemas['BestTimesRead']
+export type BestTimeDto = Schemas['BestTimeRead']
+
+/** One best split over a canonical race distance. */
+export interface BestTime {
+  /** Distance the split covered, in metres. */
+  distanceM: number
+  /** Time it took, in seconds. */
+  timeS: number
+  /** Mean power across the split, in watts. */
+  avgPowerW: number
+  activityId: number
+  /** Start of the activity holding the split, for the link to its day. */
+  startTime: string | null
+}
+
+/** One athlete's best-splits table. */
+export interface BestTimes {
+  sport: string
+  months: number | null
+  records: BestTime[]
+}

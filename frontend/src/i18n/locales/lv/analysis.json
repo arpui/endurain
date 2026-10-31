@@ -131,5 +131,28 @@
     "colGrade": "slīpums",
     "colContrast": "vs sesija",
     "rules": "Kā šeit nosaka: plakanie posmā atkarums skaitas par intervālu tikai, ja tas saglabā ≥{effortIf}·CP; slodze sākas pie {openW} W un beidzas zem {closeW} W; minimums {minS} s (zem {shortS} s nepieciešams {shortBase} no sesijas mediānas; bez īsta atpūtas —≤{recoveryW} W—, {strongBase}); ar slīpumu >{climbGrade}% un IF<{climbIf} skaitas kā kāpiens."
+  },
+  "sectionBest": "Labākie laiki",
+  "bestTimes": {
+    "title": "Labākie laiki",
+    "subtitle": "Tavs ātrākais posmis klasiskajās distancēs, meklēts katras aktivitātes paraugos, ar jaudu un saiti uz dienu.",
+    "period": {
+      "label": "Periods",
+      "30": "30 dienas",
+      "60": "60 dienas",
+      "90": "90 dienas",
+      "180": "180 dienas",
+      "365": "1 gads",
+      "all": "Visu laiku"
+    },
+    "colDistance": "Distances",
+    "colTime": "Laiks",
+    "colPower": "Jauda",
+    "colDay": "Diena",
+    "empty": {
+      "title": "Nav derīgu posmu",
+      "description": "Neviens posms logā neiztur slīpuma filtru, vai nevai aktivitātei nav jaudas."
+    },
+    "note": "Posmi ar neto slīpumu zem −1 % (zem −2 % īsākiem par 800 m) tiek atmesti: nobraukums nav rekords."
   }
 }

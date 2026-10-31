@@ -131,5 +131,28 @@
     "colGrade": "pendenza",
     "colContrast": "vs sessione",
     "rules": "Rilevazione qui: in piano un tratto conta come intervallo solo se mantiene ≥{effortIf}·CP; uno sforzo si apre a {openW} W e si chiude sotto {closeW} W; minimo {minS} s (sotto {shortS} s serve {shortBase} la mediana della sessione; senza recupero reale —≤{recoveryW} W—, {strongBase}); con pendenza >{climbGrade}% e IF<{climbIf} conta come salita."
+  },
+  "sectionBest": "Tempi migliori",
+  "bestTimes": {
+    "title": "Tempi migliori",
+    "subtitle": "Il tuo miglior parziali sulle distanze classiche, cercato nei campioni di ogni attività, con la potenza del tratto e il link al giorno.",
+    "period": {
+      "label": "Periodo",
+      "30": "30 giorni",
+      "60": "60 giorni",
+      "90": "90 giorni",
+      "180": "180 giorni",
+      "365": "1 anno",
+      "all": "Tutto"
+    },
+    "colDistance": "Distanza",
+    "colTime": "Tempo",
+    "colPower": "Potenza",
+    "colDay": "Giorno",
+    "empty": {
+      "title": "Nessun parziale valido",
+      "description": "Nessun tratto della finestra supera il filtro di pendenza, o nessuna attività ha potenza."
+    },
+    "note": "I tratti con pendenza netta sotto −1 % (−2 % sotto 800 m) scartati: una discesa non è un primato personale."
   }
 }

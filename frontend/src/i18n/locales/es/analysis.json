@@ -131,5 +131,28 @@
     "colGrade": "pendiente",
     "colContrast": "vs sesión",
     "rules": "Cómo se detecta aquí: en llano un tramo cuenta como intervalo solo si mantiene ≥{effortIf}·CP; se abre uno a {openW} W y se cierra por debajo de {closeW} W; mínimo {minS} s (bajo {shortS} s hace falta {shortBase} la mediana de la sesión; sin recuperación real —≤{recoveryW} W—, {strongBase}); con pendiente >{climbGrade}% e IF<{climbIf} cuenta como subida."
+  },
+  "sectionBest": "Mejores tiempos",
+  "bestTimes": {
+    "title": "Mejores tiempos",
+    "subtitle": "Tu mejor parcial sobre distancias clásicas, buscado en las muestras de cada actividad, con la potencia del tramo y un enlace al día.",
+    "period": {
+      "label": "Periodo",
+      "30": "30 días",
+      "60": "60 días",
+      "90": "90 días",
+      "180": "180 días",
+      "365": "1 año",
+      "all": "Todo"
+    },
+    "colDistance": "Distancia",
+    "colTime": "Tiempo",
+    "colPower": "Potencia",
+    "colDay": "Día",
+    "empty": {
+      "title": "Sin parciales válidos",
+      "description": "Ningún tramo de la ventana supera el filtro de pendiente, o ninguna actividad tiene potencia."
+    },
+    "note": "Se descartan los tramos con pendiente neta por debajo de −1 % (−2 % bajo 800 m): una bajada no es una marca personal."
   }
 }

@@ -131,5 +131,28 @@
     "colGrade": "pendent",
     "colContrast": "vs sessió",
     "rules": "Com es detecta aquí: en pla un tros compta com a interval només si manté ≥{effortIf}·CP; se'n obre un a {openW} W i es tanca per sota de {closeW} W; mínim {minS} s (sota {shortS} s cal {shortBase} la mediana de la sessió; sense recuperació real —≤{recoveryW} W—, {strongBase}); amb pendent >{climbGrade}% i IF<{climbIf} compta com a pujada."
+  },
+  "sectionBest": "Millors temps",
+  "bestTimes": {
+    "title": "Millors temps",
+    "subtitle": "Els te millor split sobre distàncies clàssiques, buscat en les mostres de cada activitat, amb la potència del tram i l'enllaç al dia que el vas fer.",
+    "period": {
+      "label": "Període",
+      "30": "30 dies",
+      "60": "60 dies",
+      "90": "90 dies",
+      "180": "180 dies",
+      "365": "1 any",
+      "all": "Tot"
+    },
+    "colDistance": "Distància",
+    "colTime": "Temps",
+    "colPower": "Potència",
+    "colDay": "Dia",
+    "empty": {
+      "title": "Cap split vàlid",
+      "description": "No hi ha cap tram a la finestra que superi el filtre de desnivell, o cap activitat amb potència."
+    },
+    "note": "Els trams amb desnivell net per sota de −1 % (−2 % per sota de 800 m) es descarten: una baixada no és una marca personal."
   }
 }

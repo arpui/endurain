@@ -131,5 +131,28 @@
     "colGrade": "strmina",
     "colContrast": "vs seja",
     "rules": "Kako je zaznano: na ravnem šteje odsek kot interval samo, če drži ≥{effortIf}·CP; naprezanje se odpre pri {openW} W in zapre pod {closeW} W; najmanj {minS} s (pod {shortS} s je potrebnih {shortBase} mediane seje; brez pravega počitka —≤{recoveryW} W—, {strongBase}); s strmino >{climbGrade}% in IF<{climbIf} šteje kot vzpon."
+  },
+  "sectionBest": "Najboljši časi",
+  "bestTimes": {
+    "title": "Najboljši časi",
+    "subtitle": "Tvoj najhitrejši split na klasičnih razdaljah, najdeni v vzorcih aktivnosti, s močjo odseka in povezavo do dneva.",
+    "period": {
+      "label": "Obdobje",
+      "30": "30 dni",
+      "60": "60 dni",
+      "90": "90 dni",
+      "180": "180 dni",
+      "365": "1 leto",
+      "all": "Vse"
+    },
+    "colDistance": "Razdalja",
+    "colTime": "Čas",
+    "colPower": "Moč",
+    "colDay": "Dan",
+    "empty": {
+      "title": "Ni veljavnih splitov",
+      "description": "Noben odsek v oknu ne preide filtra klancu, ali nobena aktivnost nima moči."
+    },
+    "note": "Odseki z neto naklonom pod −1 % (−2 % pod 800 m) se zavrnejo: spust ni rekord."
   }
 }

@@ -131,5 +131,28 @@
     "colGrade": "坡度",
     "colContrast": "对比本次",
     "rules": "此处的判定方式：平路上只有维持 ≥{effortIf}·CP 的段落才算间歇；强度段在 {openW} W 开启、低于 {closeW} W 结束；最短 {minS} 秒（低于 {shortS} 秒需达到本次中位数的 {shortBase}；无真正恢复——≤{recoveryW} W——时需 {strongBase}）；坡度 >{climbGrade}% 且 IF<{climbIf} 计为爬坡。"
+  },
+  "sectionBest": "最佳成绩",
+  "bestTimes": {
+    "title": "最佳成绩",
+    "subtitle": "在各项活动的采样数据中搜寻你在经典距离上的最快分段，附分段功率与当日链接。",
+    "period": {
+      "label": "时间段",
+      "30": "30 天",
+      "60": "60 天",
+      "90": "90 天",
+      "180": "180 天",
+      "365": "1 年",
+      "all": "全部"
+    },
+    "colDistance": "距离",
+    "colTime": "时间",
+    "colPower": "功率",
+    "colDay": "日期",
+    "empty": {
+      "title": "无有效分段",
+      "description": "窗口内没有任何段落通过坡度过滤，或活动没有功率数据。"
+    },
+    "note": "净坡度低于 −1%（800 m 以下 −2%）的段落会被剔除：下坡不算个人纪录。"
   }
 }

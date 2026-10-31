@@ -16,6 +16,7 @@ import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
   fetchAnalysisSettings,
+  fetchBestTimes,
   fetchFitnessSeries,
   fetchPowerDuration,
   fetchWprimeBalance,
@@ -171,5 +172,24 @@ export function useActivityIntervalsQuery(
     queryKey: computed(() => queryKeys.analysis.intervals(id.value)),
     queryFn: ({ signal }) => fetchActivityIntervals(id.value, signal),
     enabled: computed(() => id.value > 0 && toValue(enabled) && isAuthenticated.value),
+  })
+}
+
+/**
+ * The athlete's best splits over the canonical race distances.
+ *
+ * Computed on read from the activities' own samples, so the window can move
+ * without any stored table behind it.
+ *
+ * @param months - Reactive window in months back from today; ``null`` for all history.
+ * @returns The TanStack query result for the best-splits table.
+ */
+export function useBestTimesQuery(months: MaybeRefOrGetter<number | null>) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.bestTimes(toValue(months))),
+    queryFn: ({ signal }) => fetchBestTimes(toValue(months), signal),
+    enabled: computed(() => isAuthenticated.value),
   })
 }

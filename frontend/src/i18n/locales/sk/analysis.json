@@ -131,5 +131,28 @@
     "colGrade": "stúpanie",
     "colContrast": "vs aktivita",
     "rules": "Ako sa to detekuje: na rovine sa úsek počíta ako interval len pri ≥{effortIf}·CP; úsek sa otvára pri {openW} W a zatvára pod {closeW} W; minimum {minS} s (pod {shortS} s treba {shortBase} mediánu aktivity; bez skutočnej regenerácie —≤{recoveryW} W—, {strongBase}); so stúpaním >{climbGrade}% a IF<{climbIf} sa počíta ako stúpanie."
+  },
+  "sectionBest": "Najlepšie časy",
+  "bestTimes": {
+    "title": "Najlepšie časy",
+    "subtitle": "Tvoj najrýchlejší split na klasických vzdialenostiach, hľadaný vo vzorkách aktivít, s výkonom úseku a odkazom na deň.",
+    "period": {
+      "label": "Obdobie",
+      "30": "30 dní",
+      "60": "60 dní",
+      "90": "90 dní",
+      "180": "180 dní",
+      "365": "1 rok",
+      "all": "Všetko"
+    },
+    "colDistance": "Vzdialenosť",
+    "colTime": "Čas",
+    "colPower": "Výkon",
+    "colDay": "Deň",
+    "empty": {
+      "title": "Žiadne platné splity",
+      "description": "Žiadny úsek v okne neprejde filtrom stúpania, alebo žiadna aktivita nemá výkon."
+    },
+    "note": "Úseky s čistým stúpaním pod −1 % (−2 % pod 800 m) sa zamietajú: zjazd nie je rekord."
   }
 }
