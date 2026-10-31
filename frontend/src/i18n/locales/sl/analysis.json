@@ -100,5 +100,28 @@
     "tau": "Konstanta obnavljanja",
     "seriesBalance": "W′ ostalo",
     "balanceTitle": "W′ ostalo skozi čas"
+  },
+  "intervals": {
+    "title": "Analiza intervalov",
+    "basis": "Vse se meri glede na vaše številke: prag {threshold} in median seje {base}.",
+    "kind": {
+      "interval": "interval",
+      "climb": "vzpon",
+      "race": "tekmovalni tempo",
+      "recovery": "obnova",
+      "easy": "lažen"
+    },
+    "shape": {
+      "intervals": "redovni intervali",
+      "fartlek": "fartlek",
+      "continuous": "neprekinjen napor",
+      "terrain": "teren (vzponi)",
+      "steady": "enakomeren tempo"
+    },
+    "effortsOne": "naprezanje",
+    "effortsMany": "naprezanj",
+    "colStart": "začetek",
+    "colGrade": "strmina",
+    "colContrast": "vs seja"
   }
 }

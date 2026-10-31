@@ -183,3 +183,39 @@ export interface WprimeBalance {
   /** Balance series, evenly thinned for transfer. */
   points: WprimePoint[]
 }
+
+export type ActivityIntervalsDto = Schemas['ActivityIntervalsRead']
+export type IntervalSegmentDto = Schemas['IntervalSegmentRead']
+
+/** What one stretch of an activity was, as the server read it. */
+export type IntervalSegmentKind = 'interval' | 'climb' | 'race' | 'recovery' | 'easy'
+
+/** How the session as a whole reads. */
+export type IntervalSessionShape = 'intervals' | 'fartlek' | 'continuous' | 'terrain' | 'steady'
+
+/** One stretch of an activity's timeline. */
+export interface IntervalSegment {
+  kind: IntervalSegmentKind
+  /** Seconds from the start of the sampled data. */
+  startS: number
+  durationS: number
+  /** Ground covered; 0 when the activity carries no speed stream. */
+  distanceM: number
+  avgPowerW: number
+  /** Mean power over the athlete's threshold for the sport. */
+  intensityFactor: number
+  /** Mean power over the session's own median. */
+  contrast: number
+  avgGradePct: number | null
+  avgSpeedMs: number | null
+}
+
+/** How one activity breaks down into efforts. */
+export interface ActivityIntervals {
+  shape: IntervalSessionShape
+  /** Threshold the intensities were divided by, `null` when the sport has none. */
+  thresholdW: number | null
+  /** The session's own median power, the relative anchor the split used. */
+  basePowerW: number
+  segments: IntervalSegment[]
+}

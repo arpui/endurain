@@ -100,5 +100,28 @@
     "tau": "Константа обнове",
     "seriesBalance": "W′ преостало",
     "balanceTitle": "W′ преостало кроз време"
+  },
+  "intervals": {
+    "title": "Анализа интервала",
+    "basis": "Све се мери по твојим бројевима: праг {threshold} и медијан ове активности {base}.",
+    "kind": {
+      "interval": "интервал",
+      "climb": "успон",
+      "race": "тркачки темпо",
+      "recovery": "опоравак",
+      "easy": "лагођан"
+    },
+    "shape": {
+      "intervals": "редовни интервали",
+      "fartlek": "фартлек",
+      "continuous": "континуирани напор",
+      "terrain": "терен (успони)",
+      "steady": "умерен темпо"
+    },
+    "effortsOne": "напор",
+    "effortsMany": "напора",
+    "colStart": "почетак",
+    "colGrade": "нагиб",
+    "colContrast": "vs сесија"
   }
 }

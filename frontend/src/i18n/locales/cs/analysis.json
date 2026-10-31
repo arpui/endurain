@@ -100,5 +100,28 @@
     "tau": "Konstanta obnovy",
     "seriesBalance": "W′ zbývá",
     "balanceTitle": "W′ zbývající v čase"
+  },
+  "intervals": {
+    "title": "Analýza intervalů",
+    "basis": "Vše se počítá podle tvých čísel: práh {threshold} a medián této aktivity {base}.",
+    "kind": {
+      "interval": "interval",
+      "climb": "stoupání",
+      "race": "tempo závoda",
+      "recovery": "regenerace",
+      "easy": "lehký"
+    },
+    "shape": {
+      "intervals": "pravidelné intervaly",
+      "fartlek": "fartlek",
+      "continuous": "soustavný výkon",
+      "terrain": "terén (stoupání)",
+      "steady": "stálé tempo"
+    },
+    "effortsOne": "úsek",
+    "effortsMany": "úseky",
+    "colStart": "začátek",
+    "colGrade": "stoupání",
+    "colContrast": "vs aktivita"
   }
 }

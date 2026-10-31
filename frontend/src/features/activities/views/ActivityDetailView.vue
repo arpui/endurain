@@ -14,6 +14,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
 import ActivityDetailHeader from '@/features/activities/components/ActivityDetailHeader.vue'
+import ActivityIntervalTable from '@/features/analysis/components/ActivityIntervalTable.vue'
+import { useActivityIntervalsQuery } from '@/features/analysis/composables/useAnalysis'
 import ActivityGallery from '@/features/activities/components/ActivityGallery.vue'
 import ActivityGearCard from '@/features/activities/components/ActivityGearCard.vue'
 import ActivityHrZones from '@/features/activities/components/ActivityHrZones.vue'
@@ -69,6 +71,16 @@ const currentUserId = computed(() => currentUser.value?.id ?? null)
 // gear card.
 const isOwner = computed(
   () => !!activity.value && isActivityOwner(activity.value, currentUserId.value),
+)
+
+// The interval breakdown is measured against this athlete's own thresholds, so only
+// they see it, and the query is not issued at all for public viewers.
+const { data: intervals } = useActivityIntervalsQuery(
+  activityId,
+  computed(() => activityLoaded.value && isOwner.value),
+)
+const showIntervals = computed(
+  () => (intervals.value?.segments.length ?? 0) > 0 && intervals.value?.thresholdW != null,
 )
 
 const ownerQuery = useActivityOwnerQuery(activity)
@@ -357,6 +369,17 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
             :exercise-titles="exerciseTitles ?? []"
           />
         </template>
+      </Card>
+
+      <!-- The athlete's own effort breakdown, computed on read by the analysis
+           module: owners only, because it is measured against their thresholds. -->
+      <Card v-if="showIntervals" class="flex flex-col gap-3">
+        <h2 class="text-card-heading">{{ t('analysis.intervals.title') }}</h2>
+        <ActivityIntervalTable
+          :intervals="intervals!"
+          :activity-type="activity?.activityType ?? 0"
+          :units="units"
+        />
       </Card>
 
       <Card v-if="showSegments" class="flex flex-col gap-3">

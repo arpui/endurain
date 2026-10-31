@@ -100,5 +100,28 @@
     "tau": "Återhämtningskonstant",
     "seriesBalance": "W′ kvar",
     "balanceTitle": "W′ kvar över tid"
+  },
+  "intervals": {
+    "title": "Intervallanalys",
+    "basis": "Allt mäts mot dina egna värden: tröskel {threshold} och sessionens median {base}.",
+    "kind": {
+      "interval": "intervall",
+      "climb": "backe",
+      "race": "löpningstempo",
+      "recovery": "återhämtning",
+      "easy": "lätt"
+    },
+    "shape": {
+      "intervals": "regelmässiga intervall",
+      "fartlek": "fartlek",
+      "continuous": "kontinuerlig insats",
+      "terrain": "terräng (backar)",
+      "steady": "jämnt tempo"
+    },
+    "effortsOne": "insats",
+    "effortsMany": "insatser",
+    "colStart": "start",
+    "colGrade": "lutning",
+    "colContrast": "vs pass"
   }
 }

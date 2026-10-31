@@ -100,5 +100,28 @@
     "tau": "Helyreállítási állandó",
     "seriesBalance": "W′ maradék",
     "balanceTitle": "W′ maradék idővel"
+  },
+  "intervals": {
+    "title": "Intervallumelemzés",
+    "basis": "Mindent a saját számaiddal mérünk: küszöb {threshold} és az edzés mediánja {base}.",
+    "kind": {
+      "interval": "intervallum",
+      "climb": "emelkedő",
+      "race": "versenytempó",
+      "recovery": "regeneráció",
+      "easy": "könnyű"
+    },
+    "shape": {
+      "intervals": "szabályos intervallumok",
+      "fartlek": "fartlek",
+      "continuous": "folyamatos terhelés",
+      "terrain": "térerő (emelkedők)",
+      "steady": "egyenletes tempó"
+    },
+    "effortsOne": "terhelés",
+    "effortsMany": "terhelés",
+    "colStart": "kezdés",
+    "colGrade": "emelkedő",
+    "colContrast": "vs edzés"
   }
 }

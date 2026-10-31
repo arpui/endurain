@@ -100,5 +100,28 @@
     "tau": "Palautumisvakio",
     "seriesBalance": "W′ jäljellä",
     "balanceTitle": "W′ jäljellä ajan mittaan"
+  },
+  "intervals": {
+    "title": "Intervallianalyysi",
+    "basis": "Kaikki mitataan omilla luvuillasi: kynnys {threshold} ja session mediaani {base}.",
+    "kind": {
+      "interval": "intervalli",
+      "climb": "nousu",
+      "race": "kilpailutempo",
+      "recovery": "palautuminen",
+      "easy": "kevyt"
+    },
+    "shape": {
+      "intervals": "säännölliset intervallit",
+      "fartlek": "fartlek",
+      "continuous": "jatkuva suoritus",
+      "terrain": "maasto (nousut)",
+      "steady": "tasainen vauhti"
+    },
+    "effortsOne": "suoritus",
+    "effortsMany": "suoritusta",
+    "colStart": "alku",
+    "colGrade": "nousu",
+    "colContrast": "vs suoritus"
   }
 }

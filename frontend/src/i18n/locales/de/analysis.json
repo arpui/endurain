@@ -100,5 +100,28 @@
     "tau": "Erholungskonstante",
     "seriesBalance": "W′ verbleibend",
     "balanceTitle": "W′-Rest über die Zeit"
+  },
+  "intervals": {
+    "title": "Intervallanalyse",
+    "basis": "Alles wird an deinen eigenen Zahlen gemessen: Schwelle {threshold} und Median dieser Einheit {base}.",
+    "kind": {
+      "interval": "Intervall",
+      "climb": "Anstieg",
+      "race": "Rennpace",
+      "recovery": "Erholung",
+      "easy": "locker"
+    },
+    "shape": {
+      "intervals": "regelmäßige Intervalle",
+      "fartlek": "Fartlek",
+      "continuous": "kontinuierliche Belastung",
+      "terrain": "Gelände (Anstiege)",
+      "steady": "gleichmäßiges Tempo"
+    },
+    "effortsOne": "Belastung",
+    "effortsMany": "Belastungen",
+    "colStart": "Beginn",
+    "colGrade": "Steigung",
+    "colContrast": "vs Einheit"
   }
 }

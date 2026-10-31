@@ -100,5 +100,28 @@
     "tau": "Stała regeneracji",
     "seriesBalance": "W′ pozostało",
     "balanceTitle": "W′ pozostałe w czasie"
+  },
+  "intervals": {
+    "title": "Analiza interwałów",
+    "basis": "Wszystko mierzone twoimi liczbami: próg {threshold} i mediana tej sesji {base}.",
+    "kind": {
+      "interval": "interwał",
+      "climb": "podbieg",
+      "race": "tempo wyścigowe",
+      "recovery": "regeneracja",
+      "easy": "lekki"
+    },
+    "shape": {
+      "intervals": "regularne interwały",
+      "fartlek": "fartlek",
+      "continuous": "wysiłek ciągły",
+      "terrain": "teren (podbiegi)",
+      "steady": "równe tempo"
+    },
+    "effortsOne": "akcent",
+    "effortsMany": "akcenty",
+    "colStart": "start",
+    "colGrade": "nachylenie",
+    "colContrast": "vs sesja"
   }
 }

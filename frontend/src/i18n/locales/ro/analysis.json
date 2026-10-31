@@ -100,5 +100,28 @@
     "tau": "Constantă de refacere",
     "seriesBalance": "W′ rămas",
     "balanceTitle": "W′ rămas în timp"
+  },
+  "intervals": {
+    "title": "Analiza intervalelor",
+    "basis": "Totul se măsoară cu cifrele tale: prag {threshold} și mediana ședinței {base}.",
+    "kind": {
+      "interval": "interval",
+      "climb": "urcare",
+      "race": "ritm de cursă",
+      "recovery": "recuperare",
+      "easy": "ușor"
+    },
+    "shape": {
+      "intervals": "intervale regulate",
+      "fartlek": "fartlek",
+      "continuous": "efort continu",
+      "terrain": "teren (urcări)",
+      "steady": "ritm constant"
+    },
+    "effortsOne": "efort",
+    "effortsMany": "eforturi",
+    "colStart": "start",
+    "colGrade": "pantă",
+    "colContrast": "vs ședință"
   }
 }

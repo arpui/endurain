@@ -100,5 +100,28 @@
     "tau": "Atsigavimo konstanta",
     "seriesBalance": "W′ likę",
     "balanceTitle": "W′ likutis laikui bėgant"
+  },
+  "intervals": {
+    "title": "Intervalų analizė",
+    "basis": "Viskas vertinama pagal tavo skaičius: slenkstis {threshold} ir šios sesijos mediana {base}.",
+    "kind": {
+      "interval": "intervalas",
+      "climb": "įkalnė",
+      "race": "lenktynių tempas",
+      "recovery": "atsistatymas",
+      "easy": "lengvas"
+    },
+    "shape": {
+      "intervals": "tolygūs intervalai",
+      "fartlek": "fartlek",
+      "continuous": "tolydi krūvis",
+      "terrain": "reljefas (įkalnės)",
+      "steady": "pastovus tempas"
+    },
+    "effortsOne": "krūvis",
+    "effortsMany": "krūviai",
+    "colStart": "pradžia",
+    "colGrade": "nuolydis",
+    "colContrast": "vs sesija"
   }
 }
