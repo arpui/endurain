@@ -129,6 +129,8 @@
     "effortsMany": "efforts",
     "colStart": "start",
     "colGrade": "grade",
+    "colDesnivel": "ascent / descent",
+    "colRss": "aRSS",
     "colContrast": "vs session",
     "rules": "How it is detected here: on the flat a stretch counts as an interval only if it holds ≥{effortIf}·CP; an effort opens at {openW} W and closes below {closeW} W; minimum {minS} s (under {shortS} s it needs {shortBase} the session median; with no real recovery —≤{recoveryW} W—, {strongBase}); a grade above {climbGrade}% with IF<{climbIf} counts as a climb."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Stride length",
     "lengthSwim": "Distance per stroke",
     "lengthRide": "Development",
-    "economy": "Economy",
-    "economyNote": "Economy = ground per cycle at relative intensity, referenced to the session's first solid effort; below ×1.00 form is drifting."
+    "desnivel": "Ascent / descent",
+    "rss": "aRSS",
+    "rssNote": "aRSS is the intensity-weighted score behind the daily load; the rows add up to the activity's total."
   }
 }

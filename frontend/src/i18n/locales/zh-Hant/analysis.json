@@ -129,6 +129,8 @@
     "effortsMany": "個強度段",
     "colStart": "開始",
     "colGrade": "坡度",
+    "colDesnivel": "爬升/下降",
+    "colRss": "aRSS",
     "colContrast": "對比本次",
     "rules": "此處的判定方式：平路上只有維持 ≥{effortIf}·CP 的段落才算間歇；強度段在 {openW} W 開啟、低於 {closeW} W 結束；最短 {minS} 秒（低於 {shortS} 秒需達到本次中位數的 {shortBase}；無真正恢復——≤{recoveryW} W——時需 {strongBase}）；坡度 >{climbGrade}% 且 IF<{climbIf} 計為爬坡。"
   },
@@ -161,7 +163,8 @@
     "lengthRun": "步幅",
     "lengthSwim": "划距",
     "lengthRide": "齒比發展",
-    "economy": "經濟性",
-    "economyNote": "經濟性 = 相對強度下每循環前進距離，以本次首個扎實段為基準；低於 ×1.00 表示動作經濟性下降。"
+    "desnivel": "爬升/下降",
+    "rss": "aRSS",
+    "rssNote": "aRSS 是構成每日訓練負荷的強度加權分值；各行相加即為該活動的總分。"
   }
 }

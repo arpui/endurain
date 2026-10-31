@@ -87,7 +87,7 @@ const showIntervals = computed(
   () => (intervals.value?.segments.length ?? 0) > 0 && intervals.value?.thresholdW != null,
 )
 // The analysis laps table replaces the plain one for the owner: same rows, plus
-// power, stride length and an economy drift read against their own threshold.
+// power, stride length, the lap's ascent-and-descent pair and its share of the aRSS.
 const { data: lapDynamics } = useLapDynamicsQuery(
   activityId,
   computed(() => activityLoaded.value && isOwner.value),

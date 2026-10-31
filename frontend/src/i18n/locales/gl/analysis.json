@@ -129,6 +129,8 @@
     "effortsMany": "intentos",
     "colStart": "inicio",
     "colGrade": "pendente",
+    "colDesnivel": "desnivel (+/−)",
+    "colRss": "aRSS",
     "colContrast": "vs sesión",
     "rules": "Como se detecta aquí: en chanzo un tramo conta como intervalo só se mantén ≥{effortIf}·CP; ábrese un esforzo a {openW} W e péchase por debaixo de {closeW} W; mínimo {minS} s (baixo {shortS} s require {shortBase} a mediana da sesión; sen recuperación real —≤{recoveryW} W—, {strongBase}); con pendente >{climbGrade}% e IF<{climbIf} conta como subida."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Long. gambada",
     "lengthSwim": "Dist. brazada",
     "lengthRide": "Desenvolvemento",
-    "economy": "Economía",
-    "economyNote": "Economía = lonxitude por ciclo á intensidade relativa, referida á primeira passada sólida; por debaixo de ×1,00 a forma decae."
+    "desnivel": "Desnivel (+/−)",
+    "rss": "aRSS",
+    "rssNote": "aRSS é a puntuación ponderada pola intensidade que hai detrás da carga diaria; as filas suman o total da sesión."
   }
 }

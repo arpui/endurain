@@ -129,6 +129,8 @@
     "effortsMany": "inspanningen",
     "colStart": "start",
     "colGrade": "helling",
+    "colDesnivel": "stijging / daling",
+    "colRss": "aRSS",
     "colContrast": "vs sessie",
     "rules": "Detectie hier: op vlakke weg telt een stuk alleen als interval als het ≥{effortIf}·CP houdt; een inspanning opent bij {openW} W en sluit onder {closeW} W; minimaal {minS} s (onder {shortS} s is {shortBase} van het sessie-mediaan nodig; zonder echt herstel —≤{recoveryW} W—, {strongBase}); met stijging >{climbGrade}% en IF<{climbIf} telt het als klim."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Passenlengte",
     "lengthSwim": "Afstand/slag",
     "lengthRide": "Overbrenging",
-    "economy": "Economisch",
-    "economyNote": "Economie = grond per cyclus bij relatieve intensiteit, relatives de eerste solide inspanning; onder ×1,00 vat de vorm af."
+    "desnivel": "Stijging / daling",
+    "rss": "aRSS",
+    "rssNote": "aRSS is de intensiteit-gewogen score achter de dagelijkse belasting; de rijen tellen op tot het totaal van de activiteit."
   }
 }

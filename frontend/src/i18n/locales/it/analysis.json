@@ -129,6 +129,8 @@
     "effortsMany": "sforzi",
     "colStart": "inizio",
     "colGrade": "pendenza",
+    "colDesnivel": "dislivello (+/−)",
+    "colRss": "aRSS",
     "colContrast": "vs sessione",
     "rules": "Rilevazione qui: in piano un tratto conta come intervallo solo se mantiene ≥{effortIf}·CP; uno sforzo si apre a {openW} W e si chiude sotto {closeW} W; minimo {minS} s (sotto {shortS} s serve {shortBase} la mediana della sessione; senza recupero reale —≤{recoveryW} W—, {strongBase}); con pendenza >{climbGrade}% e IF<{climbIf} conta come salita."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Lunghezza falcata",
     "lengthSwim": "Dist. bracciata",
     "lengthRide": "Sviluppo",
-    "economy": "Economia",
-    "economyNote": "Economia = lunghezza per ciclo a intensità relativa, riferita alla prima prova solida; sotto ×1,00 la forma cala."
+    "desnivel": "Dislivello (+/−)",
+    "rss": "aRSS",
+    "rssNote": "aRSS è il punteggio ponderato per intensità alla base del carico giornaliero; le righe sommano il totale dell'attività."
   }
 }

@@ -196,9 +196,9 @@ export function useBestTimesQuery(months: MaybeRefOrGetter<number | null>) {
 }
 
 /**
- * Per-lap dynamics of one activity: power, stride length and economy drift.
+ * Per-lap dynamics of one activity: power, stride length, elevation split and aRSS.
  *
- * The owner's view of the laps table: the economy reference is their own
+ * The owner's view of the laps table: the aRSS column is referenced to their own
  * threshold, so the query is not issued for other viewers.
  *
  * @param activityId - Reactive activity id.

@@ -302,6 +302,9 @@ describe('activity interval analysis', () => {
           contrast: 1.46,
           avg_grade_pct: 0.4,
           avg_speed_ms: 3.9,
+          elevation_gain_m: 9.5,
+          elevation_loss_m: 4,
+          rss: 12.3,
         },
         {
           kind: 'recovery',
@@ -313,6 +316,9 @@ describe('activity interval analysis', () => {
           contrast: 0.43,
           avg_grade_pct: null,
           avg_speed_ms: null,
+          elevation_gain_m: null,
+          elevation_loss_m: null,
+          rss: null,
         },
       ],
       ...overrides,
@@ -341,6 +347,9 @@ describe('activity interval analysis', () => {
       contrast: 1.46,
       avgGradePct: 0.4,
       avgSpeedMs: 3.9,
+      elevationGainM: 9.5,
+      elevationLossM: 4,
+      rss: 12.3,
     })
   })
 
@@ -348,6 +357,8 @@ describe('activity interval analysis', () => {
     const mapped = mapActivityIntervals(makeIntervalsDto())
     expect(mapped.segments[1]?.avgGradePct).toBeNull()
     expect(mapped.segments[1]?.avgSpeedMs).toBeNull()
+    expect(mapped.segments[1]?.elevationGainM).toBeNull()
+    expect(mapped.segments[1]?.rss).toBeNull()
   })
 
   it('maps an activity without power to a steady, empty timeline', async () => {

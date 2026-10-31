@@ -129,6 +129,8 @@
     "effortsMany": "anstrengelser",
     "colStart": "start",
     "colGrade": "stigning",
+    "colDesnivel": "stigning / fald",
+    "colRss": "aRSS",
     "colContrast": "vs session",
     "rules": "Så detekteres det her: på fladt tæller en strækning kun som interval, hvis den holder ≥{effortIf}·CP; en anstrengelse åbner ved {openW} W og lukker under {closeW} W; mindst {minS} s (under {shortS} s kræves {shortBase} af sessionens median; uden rigtig restitution —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} tæller det som stigning."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Skridtlængde",
     "lengthSwim": "Dist./tag",
     "lengthRide": "Gearlængde",
-    "economy": "Økonomi",
-    "economyNote": "Økonomi = grund pr. cyklus ved relativ intensitet, i forhold til den første solide indsats; under ×1,00 svigter formen."
+    "desnivel": "Stigning / fald",
+    "rss": "aRSS",
+    "rssNote": "aRSS er den intensitetsvægtede score bag den daglige belastning; rækkerne lægges sammen til aktivitetens total."
   }
 }

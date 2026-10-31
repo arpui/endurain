@@ -220,6 +220,12 @@ export interface IntervalSegment {
   contrast: number
   avgGradePct: number | null
   avgSpeedMs: number | null
+  /** Ground risen through; null when the activity carries no altitude stream. */
+  elevationGainM: number | null
+  /** Ground fallen through; null when the activity carries no altitude stream. */
+  elevationLossM: number | null
+  /** Shared-scale aRSS score of the stretch (same kernel as the daily rss_total). */
+  rss: number | null
 }
 
 /** The effective numeric gates one session's split used, for the footnote. */
@@ -282,6 +288,10 @@ export interface LapDynamics {
   avgPowerW: number | null
   /** Ground covered per cycle, in metres, when cadence or cycles allow it. */
   strideLengthM: number | null
-  /** Stride per unit of relative intensity, relative to the first solid effort. */
-  economy: number | null
+  /** Ascent the device recorded for the lap. */
+  elevationGainM: number | null
+  /** Descent the device recorded for the lap, kept apart from the ascent. */
+  elevationLossM: number | null
+  /** Shared-scale aRSS score of the lap's window; the rows add up to the activity's. */
+  rss: number | null
 }

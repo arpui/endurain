@@ -129,6 +129,8 @@
     "effortsMany": "intents",
     "colStart": "inici",
     "colGrade": "pendent",
+    "colDesnivel": "desnivell",
+    "colRss": "aRSS",
     "colContrast": "vs sessió",
     "rules": "Com es detecta aquí: en pla un tros compta com a interval només si manté ≥{effortIf}·CP; se'n obre un a {openW} W i es tanca per sota de {closeW} W; mínim {minS} s (sota {shortS} s cal {shortBase} la mediana de la sessió; sense recuperació real —≤{recoveryW} W—, {strongBase}); amb pendent >{climbGrade}% i IF<{climbIf} compta com a pujada."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Long. gambada",
     "lengthSwim": "Dist. braçada",
     "lengthRide": "Desenvolupament",
-    "economy": "Economia",
-    "economyNote": "Economia = longitud per cicle segons la intensitat relativa, referida a la primera passa sòlida de la sessió; per sota de ×1,00 la forma decau."
+    "desnivel": "Desnivell",
+    "rss": "aRSS",
+    "rssNote": "aRSS és la puntuació ponderada per intensitat que hi ha darrere la càrrega diària; les files sumen el total de la sessió."
   }
 }

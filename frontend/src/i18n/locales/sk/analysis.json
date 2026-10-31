@@ -129,6 +129,8 @@
     "effortsMany": "úseky",
     "colStart": "začiatok",
     "colGrade": "stúpanie",
+    "colDesnivel": "prevýšenie (+/−)",
+    "colRss": "aRSS",
     "colContrast": "vs aktivita",
     "rules": "Ako sa to detekuje: na rovine sa úsek počíta ako interval len pri ≥{effortIf}·CP; úsek sa otvára pri {openW} W a zatvára pod {closeW} W; minimum {minS} s (pod {shortS} s treba {shortBase} mediánu aktivity; bez skutočnej regenerácie —≤{recoveryW} W—, {strongBase}); so stúpaním >{climbGrade}% a IF<{climbIf} sa počíta ako stúpanie."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Dĺžka kroku",
     "lengthSwim": "Vzdialenosť/záber",
     "lengthRide": "Prevod",
-    "economy": "Ekonomika",
-    "economyNote": "Ekonomika = vzdialenosť na cyklus pri relatívnej intenzite, vzťahované k prvému solidnému úseku; pod ×1,00 forma upadá."
+    "desnivel": "Prevýšenie (+/−)",
+    "rss": "aRSS",
+    "rssNote": "aRSS je intenzitou vážené skóre za dennou záťažou; riadky sa sčítajú na celkový údaj aktivity."
   }
 }

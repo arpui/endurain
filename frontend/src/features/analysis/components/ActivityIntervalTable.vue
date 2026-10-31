@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import {
   combineMetric,
   formatDistance,
+  formatElevation,
   formatHmsDuration,
 } from '@/features/activities/utils/format'
 import { formatLapTempo } from '@/features/activities/utils/metrics'
@@ -43,6 +44,8 @@ interface SegmentRow {
   intensityFactor: string
   grade: string
   contrast: string
+  desnivel: string
+  rss: string
   isEffort: boolean
 }
 
@@ -70,9 +73,24 @@ const rows = computed<SegmentRow[]>(() =>
       intensityFactor: segment.intensityFactor > 0 ? segment.intensityFactor.toFixed(2) : '--',
       grade: segment.avgGradePct === null ? '--' : `${segment.avgGradePct.toFixed(1)} %`,
       contrast: segment.contrast > 0 ? `×${segment.contrast.toFixed(2)}` : '--',
+      desnivel: elevationPair(segment),
+      rss: segment.rss === null ? '--' : segment.rss.toFixed(1),
       isEffort: EFFORT_KINDS.includes(segment.kind),
     })),
 )
+
+/**
+ * Ascent and descent of a stretch as one pair (`+10 / −8 m`), never netted; the
+ * altitude came from the smoothed track, so GPS jitter does not read as climbing.
+ */
+function elevationPair(segment: ActivityIntervals['segments'][number]): string {
+  if (segment.elevationGainM === null && segment.elevationLossM === null) {
+    return '--'
+  }
+  const ascent = formatElevation(segment.elevationGainM, props.units)
+  const descent = formatElevation(segment.elevationLossM, props.units)
+  return `+${ascent.value} / \u2212${descent.value} ${ascent.unit}`
+}
 
 /** What the session as a whole read as, and how many efforts it contained. */
 const summary = computed(() => {
@@ -134,6 +152,8 @@ const rulesNote = computed(() => {
             <th class="py-2 pe-3 font-medium">IF</th>
             <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colContrast') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colGrade') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colDesnivel') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colRss') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -152,6 +172,8 @@ const rulesNote = computed(() => {
             <td class="py-2 pe-3 tabular-nums">{{ row.intensityFactor }}</td>
             <td class="py-2 pe-3 tabular-nums">{{ row.contrast }}</td>
             <td class="py-2 pe-3 tabular-nums">{{ row.grade }}</td>
+            <td class="py-2 pe-3 tabular-nums">{{ row.desnivel }}</td>
+            <td class="py-2 pe-3 tabular-nums">{{ row.rss }}</td>
           </tr>
         </tbody>
       </table>

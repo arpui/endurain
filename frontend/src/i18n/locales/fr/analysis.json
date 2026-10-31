@@ -129,6 +129,8 @@
     "effortsMany": "efforts",
     "colStart": "départ",
     "colGrade": "pente",
+    "colDesnivel": "dénivelé (+/−)",
+    "colRss": "aRSS",
     "colContrast": "vs séance",
     "rules": "Détection ici : sur le plat, un segment ne compte comme intervalle que s'il tient ≥{effortIf}·CP ; un effort s'ouvre à {openW} W et se ferme sous {closeW} W ; minimum {minS} s (sous {shortS} s, il faut {shortBase} la médiane de la séance ; sans récupération réelle —≤{recoveryW} W—, {strongBase}) ; une pente >{climbGrade}% avec IF<{climbIf} compte comme côte."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Longueur foulée",
     "lengthSwim": "Dist. par brassée",
     "lengthRide": "Développement",
-    "economy": "Économie",
-    "economyNote": "Économie = distance par cycle à intensité relative, référencée au premier effort solide ; sous ×1,00 la forme fléchit."
+    "desnivel": "Dénivelé (+/−)",
+    "rss": "aRSS",
+    "rssNote": "l'aRSS est le score pondéré par l'intensité qui sous-tend la charge quotidienne ; les lignes additionnent le total de la séance."
   }
 }

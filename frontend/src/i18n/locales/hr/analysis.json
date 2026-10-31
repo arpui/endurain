@@ -129,6 +129,8 @@
     "effortsMany": "napora",
     "colStart": "početak",
     "colGrade": "nagib",
+    "colDesnivel": "uspon / spuštanje",
+    "colRss": "aRSS",
     "colContrast": "vs sesija",
     "rules": "Kako se ovdje prepoznaje: na ravnom se dionica broji kao interval samo ako drži ≥{effortIf}·CP; napor se otvara pri {openW} W i zatvara ispod {closeW} W; najmanje {minS} s (ispod {shortS} s treba {shortBase} medijana sesije; bez pravog odmora —≤{recoveryW} W—, {strongBase}); uz nagib >{climbGrade}% i IF<{climbIf} broji se kao uspon."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Duljina koraka",
     "lengthSwim": "Udaljenost/zahvat",
     "lengthRide": "Prijenos",
-    "economy": "Ekonomičnost",
-    "economyNote": "Ekonomičnost = tlo po ciklu pri relativnom intenzitetu, u odnosu na prvi čvrsti napor; ispod ×1,00 forma opada."
+    "desnivel": "Uspon / spuštanje",
+    "rss": "aRSS",
+    "rssNote": "aRSS je rezultat ponderiran intenzitetom koji stoji iza dnevnog opterećenja; retci zbrojeni daju ukupan zbroj aktivnosti."
   }
 }
