@@ -79,6 +79,8 @@ interface StatRow {
   key: string
   value: number | undefined
   color: string
+  /** The three curves are what the chart is read for; the rest is context. */
+  emphasis: boolean
 }
 
 /** Latest reading of each curve, shown as a compact numeric summary. */
@@ -87,10 +89,26 @@ const stats = computed<StatRow[]>(() => [
     key: 'analysis.pmc.seriesFitness',
     value: latest.value?.chronic,
     color: 'var(--color-brand-mid)',
+    emphasis: true,
   },
-  { key: 'analysis.pmc.seriesFatigue', value: latest.value?.acute, color: 'var(--color-hr)' },
-  { key: 'analysis.pmc.seriesForm', value: latest.value?.balance, color: 'var(--color-info)' },
-  { key: 'analysis.stats.dailyAvg', value: dailyAverage.value, color: 'var(--color-brand)' },
+  {
+    key: 'analysis.pmc.seriesFatigue',
+    value: latest.value?.acute,
+    color: 'var(--color-hr)',
+    emphasis: true,
+  },
+  {
+    key: 'analysis.pmc.seriesForm',
+    value: latest.value?.balance,
+    color: 'var(--color-info)',
+    emphasis: true,
+  },
+  {
+    key: 'analysis.stats.dailyAvg',
+    value: dailyAverage.value,
+    color: 'var(--color-brand)',
+    emphasis: false,
+  },
 ])
 
 /** Parameters the server actually used, so the chart can label itself. */
@@ -178,7 +196,11 @@ const seriesParams = computed(() => ({
             {{ t(stat.key) }}
           </span>
           <Skeleton v-if="fitnessQuery.isPending.value" class="h-6 w-16" />
-          <span v-else class="text-card-heading tabular-nums">
+          <span
+            v-else
+            class="tabular-nums"
+            :class="stat.emphasis ? 'text-3xl font-semibold' : 'text-body text-muted-foreground'"
+          >
             {{ stat.value === undefined ? '—' : Math.round(stat.value) }}
           </span>
         </div>

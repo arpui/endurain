@@ -60,9 +60,11 @@ const paramsLabel = computed(() =>
 )
 
 /**
- * One mixed chart (the performance-management chart): daily load as bars with
- * fitness, fatigue and TSB as line overlays above them. Lines come first in the
- * series list so Chart.js paints them over the bars.
+ * One mixed chart (the performance-management chart): fitness, fatigue and TSB as
+ * line overlays over the daily-load bars. Lines come first in the series list so
+ * Chart.js paints them on top (the first dataset is the top-most), the curves fill
+ * down to zero so a stretch of fatigue reads as a body of work, and the bars sit on
+ * the secondary axis: a 170-point day would otherwise squash curves that live near 50.
  */
 const chartRender = computed<ChartRenderOptions>(() => {
   const labels = props.points.map((point) => formatMediumDate(point.date, locale.value))
@@ -74,14 +76,17 @@ const chartRender = computed<ChartRenderOptions>(() => {
         data: props.points.map((point) => Math.round(point.chronic)),
         color: FITNESS_COLOR,
         line: true,
+        area: true,
       },
       {
         label: t('analysis.pmc.seriesFatigue'),
         data: props.points.map((point) => Math.round(point.acute)),
         color: FATIGUE_COLOR,
         line: true,
+        area: true,
       },
       {
+        // TSB crosses zero; filling it would shade both sides of the axis.
         label: t('analysis.pmc.seriesForm'),
         data: props.points.map((point) => Math.round(point.balance)),
         color: FORM_COLOR,
@@ -91,6 +96,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
         label: t('analysis.daily.series'),
         data: props.points.map((point) => Math.round(point.load)),
         color: loadColor.value,
+        axis: 'secondary',
       },
     ],
     labels,

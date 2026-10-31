@@ -33,6 +33,21 @@ export interface ChartSeries {
    * where every series is already a line.
    */
   line?: boolean
+  /**
+   * Fills the area between a line series and the zero line, in a translucent
+   * shade of the series colour — the integral of the curve, so a stretch of
+   * fatigue reads as a body of work rather than a hairline. Only meaningful on
+   * line series; a series that crosses zero gets a fill on both sides of it.
+   */
+  area?: boolean
+  /**
+   * Which y-axis the series is measured on. ``secondary`` puts the series on a
+   * second, independently scaled axis on the right, with its own grid hidden:
+   * the way a bar series of a different magnitude (daily load peaking at 170)
+   * stops squashing the curves it is read against (fitness near 50). Defaults
+   * to ``primary``, the axis every chart already has.
+   */
+  axis?: 'primary' | 'secondary'
 }
 
 /** Options controlling a single chart render. */

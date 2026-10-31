@@ -61,6 +61,23 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 /**
+ * Returns a colour with a new alpha, whether it arrives as a hex token or as an
+ * `rgb()`/`rgba()` string, so an area fill can be derived from the line it belongs
+ * to instead of asking every chart to carry a second colour.
+ */
+function withAlpha(color: string, alpha: number): string {
+  if (color.startsWith('#')) {
+    return hexToRgba(color, alpha)
+  }
+  const channels = color.match(/^rgba?\(([^)]+)\)$/i)?.[1]
+  if (!channels) {
+    return color
+  }
+  const [r, g, b] = channels.split(',').map((channel) => channel.trim())
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
+/**
  * Opacity of the flat fill under line/area charts. A calm translucent tint
  * rather than a gradient, per the design system's "flat fills with opacity"
  * rule.
@@ -83,21 +100,23 @@ export function buildChartConfiguration(
 
   const datasets: ChartDataset<'line' | 'bar'>[] = options.series.map((series, index) => {
     const color = colorFor(index, series.color, palette)
+    const yAxisID = series.axis === 'secondary' ? 'y1' : 'y'
     // A dashed series is a reference/target line: render it as a dashed line
     // overlay regardless of the chart's geometry, so it sits on top of bars as a
     // mixed bar/line chart — mirroring v1's dashed target lines. A `line` series
     // is the same overlay without the dash: a curve (PMC, trend) read against
-    // bars (daily values).
+    // bars (daily values). With `area` the curve also fills down to zero.
     if (series.dashed || series.line) {
       return {
         type: 'line',
         label: series.label,
         data: series.data,
+        yAxisID,
         borderColor: color,
-        backgroundColor: color,
+        backgroundColor: series.area ? withAlpha(color, AREA_FILL_ALPHA) : color,
         borderWidth: 2,
         borderDash: series.dashed ? [6, 6] : undefined,
-        fill: false,
+        fill: series.area ? 'origin' : false,
         tension: series.dashed ? 0 : 0.3,
         pointRadius: 0,
       }
@@ -108,14 +127,17 @@ export function buildChartConfiguration(
     return {
       label: series.label,
       data: series.data,
+      yAxisID,
       borderColor: color,
-      backgroundColor: filled ? hexToRgba(color, AREA_FILL_ALPHA) : color,
+      backgroundColor: filled ? withAlpha(color, AREA_FILL_ALPHA) : color,
       borderWidth: 2,
       fill: filled,
       tension: 0.3,
       pointRadius: 0,
     }
   })
+
+  const usesSecondaryAxis = options.series.some((series) => series.axis === 'secondary')
 
   return {
     type,
@@ -174,6 +196,22 @@ export function buildChartConfiguration(
             ? { callback: (value) => options.valueFormat?.(Number(value)) ?? String(value) }
             : {},
         },
+        // A secondary axis is a different magnitude read against the first (daily
+        // load against the fitness curves), so it gets its own scale from zero and
+        // no grid lines: two grids on one plot is unreadable.
+        ...(usesSecondaryAxis
+          ? {
+              y1: {
+                display: true,
+                position: 'right' as const,
+                beginAtZero: true,
+                grid: { drawOnChartArea: false },
+                ticks: options.valueFormat
+                  ? { callback: (value) => options.valueFormat?.(Number(value)) ?? String(value) }
+                  : {},
+              },
+            }
+          : {}),
       },
     },
   }

@@ -87,6 +87,70 @@ describe('buildChartConfiguration', () => {
     expect(datasets[1]?.type).toBeUndefined()
   })
 
+  it('puts a secondary-axis series on its own right-hand scale', () => {
+    const config = buildChartConfiguration({
+      kind: 'bar',
+      series: [
+        { label: 'Fitness', data: [40, 44], line: true },
+        { label: 'Load', data: [90, 170], axis: 'secondary' },
+      ],
+    })
+
+    const scales = config.options?.scales as Record<string, Record<string, unknown>>
+    const datasets = config.data.datasets as unknown as Record<string, unknown>[]
+    // The curves keep the left axis; the bars get their own, so a 170-point day
+    // does not squash a 44-point fitness reading.
+    expect(datasets[0]?.yAxisID).toBe('y')
+    expect(datasets[1]?.yAxisID).toBe('y1')
+    const y1 = scales.y1 as Record<string, unknown>
+    expect(y1.position).toBe('right')
+    expect(y1.beginAtZero).toBe(true)
+    // Two grids on one plot is unreadable: the extra axis draws no grid.
+    expect((y1.grid as Record<string, unknown>).drawOnChartArea).toBe(false)
+    expect(scales.y?.display).toBe(true)
+  })
+
+  it('adds no second axis when every series shares one scale', () => {
+    const config = buildChartConfiguration({
+      kind: 'line',
+      series: [{ label: 'Pace', data: [300, 295] }],
+    })
+
+    const scales = config.options?.scales as Record<string, unknown>
+    expect(scales.y1).toBeUndefined()
+    const datasets = config.data.datasets as unknown as Record<string, unknown>[]
+    expect(datasets[0]?.yAxisID).toBe('y')
+  })
+
+  it('fills an area series down to zero in a shade of its own colour', () => {
+    const config = buildChartConfiguration({
+      kind: 'bar',
+      series: [
+        { label: 'Fatigue', data: [60, 65], line: true, area: true, color: '#e24b4a' },
+        { label: 'Form', data: [-10, -20], line: true, color: '#378add' },
+      ],
+    })
+
+    const datasets = config.data.datasets as unknown as Record<string, unknown>[]
+    expect(datasets[0]?.fill).toBe('origin')
+    expect(datasets[0]?.backgroundColor).toBe('rgba(226, 75, 74, 0.15)')
+    // A line without `area` stays a plain stroke.
+    expect(datasets[1]?.fill).toBe(false)
+  })
+
+  it('derives the area shade from an rgba colour too', () => {
+    const config = buildChartConfiguration({
+      kind: 'line',
+      series: [{ label: 'Load', data: [1, 2], color: 'rgba(29, 158, 117, 0.4)' }],
+    })
+
+    const datasets = config.data.datasets as unknown as Record<string, unknown>[]
+    // A line/area chart fills by default, and the fill keeps the colour's own
+    // channels at the area alpha whether it arrived as hex or as rgba().
+    expect(datasets[0]?.fill).toBe(true)
+    expect(datasets[0]?.backgroundColor).toBe('rgba(29, 158, 117, 0.15)')
+  })
+
   it('enables a shared crosshair tooltip only when asked', () => {
     const withShared = buildChartConfiguration({
       kind: 'bar',
