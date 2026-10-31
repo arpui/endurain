@@ -1240,6 +1240,28 @@ class TestLapDynamics:
         assert rows[0].rss is None
         assert rows[0].stride_length_m is not None  # the rest of the view stays
 
+    def test_streams_without_a_utc_offset_still_locate_the_laps(self):
+        """Waypoint times arrive naive while lap start times are aware: one shared UTC clock.
+
+        The live streams of a device-written activity carry no offset, and a naive
+        stamp compared against the database's aware lap start raised a TypeError;
+        the window must still find its samples.
+        """
+        lap = self._lap(40, distance=1000.0, elapsed=300.0, speed=3.3, cadence=80, power=400.0)
+
+        def naive_streams(activity_id, stream_type, _key, _db, *, keep_zeros):
+            stamps = tuple((_T0_UTC + timedelta(seconds=i)).replace(tzinfo=None) for i in range(600))
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, tuple([400.0] * 600), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([4.0] * 600), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([0.0] * 600), stamps
+            return 1.0, (), ()
+
+        rows = self._read([lap], streams=naive_streams)
+        assert rows[0].rss is not None
+
     def test_another_athletes_activity_is_not_found(self):
         db = _db()
         with (

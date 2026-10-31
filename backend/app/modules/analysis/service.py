@@ -1153,6 +1153,13 @@ def _apply_lap_rss(
     )
     if not power_values or period_s <= 0:
         return
+
+    # Device-written waypoint times carry no offset while the database hands back
+    # aware lap starts: put both clocks in UTC before any comparison.
+    def _utc(stamps: tuple[datetime, ...]) -> tuple[datetime, ...]:
+        return tuple(stamp if stamp.tzinfo else stamp.replace(tzinfo=UTC) for stamp in stamps)
+
+    power_stamps = _utc(power_stamps)
     _, speeds, speed_stamps = _stream_samples(
         activity_id,
         activity_streams_constants.STREAM_TYPE_SPEED,
@@ -1167,8 +1174,8 @@ def _apply_lap_rss(
         db,
         keep_zeros=True,
     )
-    speed_ms = _align_to_power(speeds, speed_stamps, power_stamps, period_s)
-    altitude_m = _align_to_power(elevations, elevation_stamps, power_stamps, period_s)
+    speed_ms = _align_to_power(speeds, _utc(speed_stamps), power_stamps, period_s)
+    altitude_m = _align_to_power(elevations, _utc(elevation_stamps), power_stamps, period_s)
     grade_pct = (
         analysis_maths.grade_pct_series(altitude_m, speed_ms, period_s)
         if altitude_m is not None and speed_ms is not None
