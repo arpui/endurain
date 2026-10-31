@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Derinimas nuo (s)",
-    "fitToS": "Derinimas iki (s)"
+    "fitToS": "Derinimas iki (s)",
+    "ivEnterBase": "Int. ×pagr.",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Įkalnė (%)",
+    "ivHint": "Intervalų parametrai lyginami su tavo skaičiais (slenkstis ir sesijos mediana). Tuščia = numatyta reikšmė."
   },
   "actions": {
     "refreshThresholds": "Atnaujinti slenksčius",

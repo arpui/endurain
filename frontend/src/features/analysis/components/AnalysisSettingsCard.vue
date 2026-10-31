@@ -28,6 +28,9 @@ const props = defineProps<{
 const { t } = useI18n()
 const toasts = useToasts()
 
+/** Knobs of the per-activity interval split, all relative to the athlete's numbers. */
+const INTERVAL_KEYS = ['iv_enter_base', 'iv_min_segment_s', 'iv_climb_grade_pct'] as const
+
 const parameters = reactive({
   acuteDays: String(props.settings.acuteDays),
   chronicDays: String(props.settings.chronicDays),
@@ -36,6 +39,18 @@ const parameters = reactive({
   fitToS: props.settings.fitToS === null ? '' : String(props.settings.fitToS),
   restingHr: props.settings.restingHr === null ? '' : String(props.settings.restingHr),
 })
+
+/** The athlete's interval knobs; empty means the server's default applies. */
+const intervals = reactive<Record<string, string>>(
+  Object.fromEntries(
+    INTERVAL_KEYS.map((key) => [
+      key,
+      props.settings.methodParams[key] === undefined
+        ? ''
+        : String(props.settings.methodParams[key]),
+    ]),
+  ),
+)
 
 /** Re-seed the form when the server-side settings change underneath it. */
 watch(
@@ -47,6 +62,9 @@ watch(
     parameters.fitFromS = next.fitFromS === null ? '' : String(next.fitFromS)
     parameters.fitToS = next.fitToS === null ? '' : String(next.fitToS)
     parameters.restingHr = next.restingHr === null ? '' : String(next.restingHr)
+    for (const key of INTERVAL_KEYS) {
+      intervals[key] = next.methodParams[key] === undefined ? '' : String(next.methodParams[key])
+    }
   },
 )
 
@@ -73,6 +91,34 @@ const parametersDirty = computed(
       (props.settings.restingHr === null ? '' : String(props.settings.restingHr)),
 )
 
+/** The interval knobs as a full parameter document, keeping the other formulas' keys. */
+function buildMethodParams(): Record<string, number> {
+  const merged: Record<string, number> = { ...props.settings.methodParams }
+  for (const key of INTERVAL_KEYS) {
+    const raw = intervals[key]
+    if (raw === '') {
+      delete merged[key]
+      continue
+    }
+    const parsed = Number(raw)
+    if (Number.isFinite(parsed) && parsed > 0) {
+      merged[key] = parsed
+    }
+  }
+  return merged
+}
+
+/** True when the interval knobs deviate from what is stored. */
+const intervalsDirty = computed(() =>
+  INTERVAL_KEYS.some(
+    (key) =>
+      intervals[key] !==
+      (props.settings.methodParams[key] === undefined
+        ? ''
+        : String(props.settings.methodParams[key])),
+  ),
+)
+
 /** Writes the time constants, formula, fit window and resting heart rate. */
 function saveParameters(): void {
   const payload: AnalysisSettingsUpdateDto = {
@@ -82,6 +128,7 @@ function saveParameters(): void {
     fit_from_s: parameters.fitFromS === '' ? null : Number(parameters.fitFromS),
     fit_to_s: parameters.fitToS === '' ? null : Number(parameters.fitToS),
     resting_hr: parameters.restingHr === '' ? null : Number(parameters.restingHr),
+    method_params: buildMethodParams(),
   }
   saveMutation.mutate(payload, {
     onSuccess: () => toasts.success(t('analysis.settings.saved')),
@@ -222,9 +269,51 @@ function queueRecompute(): void {
           </Select>
         </template>
       </FormField>
-      <Button :disabled="!parametersDirty || saveMutation.isPending.value" @click="saveParameters">
+      <Button
+        :disabled="(!parametersDirty && !intervalsDirty) || saveMutation.isPending.value"
+        @click="saveParameters"
+      >
         {{ t('analysis.settings.save') }}
       </Button>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+      <FormField :label="t('analysis.settings.ivEnterBase')" class="w-24">
+        <template #default="{ fieldId }">
+          <Input
+            :id="fieldId"
+            v-model="intervals.iv_enter_base"
+            type="number"
+            step="0.05"
+            min="1"
+            max="3"
+          />
+        </template>
+      </FormField>
+      <FormField :label="t('analysis.settings.ivMinSegmentS')" class="w-20">
+        <template #default="{ fieldId }">
+          <Input
+            :id="fieldId"
+            v-model="intervals.iv_min_segment_s"
+            type="number"
+            min="5"
+            max="600"
+          />
+        </template>
+      </FormField>
+      <FormField :label="t('analysis.settings.ivClimbGrade')" class="w-20">
+        <template #default="{ fieldId }">
+          <Input
+            :id="fieldId"
+            v-model="intervals.iv_climb_grade_pct"
+            type="number"
+            step="0.5"
+            min="1"
+            max="25"
+          />
+        </template>
+      </FormField>
+      <p class="text-xs text-muted-foreground">{{ t('analysis.settings.ivHint') }}</p>
     </div>
 
     <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-4">

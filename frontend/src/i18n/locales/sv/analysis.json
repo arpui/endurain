@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Anpassning från (s)",
-    "fitToS": "Anpassning till (s)"
+    "fitToS": "Anpassning till (s)",
+    "ivEnterBase": "Int. ×bas",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Backe (%)",
+    "ivHint": "Intervallvärden jämförs med dina egna värden (tröskel och passets median). Tomt = standard."
   },
   "actions": {
     "refreshThresholds": "Uppdatera trösklar",

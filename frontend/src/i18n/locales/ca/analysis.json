@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Ajust des de (s)",
-    "fitToS": "Ajust fins a (s)"
+    "fitToS": "Ajust fins a (s)",
+    "ivEnterBase": "Int. ×base",
+    "ivMinSegmentS": "Int. mín (s)",
+    "ivClimbGrade": "Pujada (%)",
+    "ivHint": "Els paràmetres d'interval es comparen amb els teus números (llindar i mediana de cada sessió). Buit = valor per defecte."
   },
   "actions": {
     "refreshThresholds": "Actualitza els llindars",

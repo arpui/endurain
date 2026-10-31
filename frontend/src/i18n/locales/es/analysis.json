@@ -63,7 +63,11 @@
       "bpmPlaceholder": "ppm"
     },
     "fitFromS": "Ajuste desde (s)",
-    "fitToS": "Ajuste hasta (s)"
+    "fitToS": "Ajuste hasta (s)",
+    "ivEnterBase": "Int. ×base",
+    "ivMinSegmentS": "Int. mín (s)",
+    "ivClimbGrade": "Subida (%)",
+    "ivHint": "Los parámetros de intervalo se comparan con tus números (umbral y mediana de cada sesión). Vacío = valor por defecto."
   },
   "actions": {
     "refreshThresholds": "Actualizar umbrales",

@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Prilagoditev od (s)",
-    "fitToS": "Prilagoditev do (s)"
+    "fitToS": "Prilagoditev do (s)",
+    "ivEnterBase": "Int. ×osnova",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Vzpon (%)",
+    "ivHint": "Parametri intervalov se primerjajo z vašimi številkami (prag in median seje). Prazno = privzeto."
   },
   "actions": {
     "refreshThresholds": "Osveži pragove",

@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Tilpasning fra (s)",
-    "fitToS": "Tilpasning til (s)"
+    "fitToS": "Tilpasning til (s)",
+    "ivEnterBase": "Int. ×base",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Bakke (%)",
+    "ivHint": "Intervallparametre sammenlignes med dine egne tall (terskel og øktens median). Tomt = standard."
   },
   "actions": {
     "refreshThresholds": "Oppdater terskler",

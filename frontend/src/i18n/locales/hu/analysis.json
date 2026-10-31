@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Illesztés innen (s)",
-    "fitToS": "Illesztés eddig (s)"
+    "fitToS": "Illesztés eddig (s)",
+    "ivEnterBase": "Int. ×alap",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Emelkedő (%)",
+    "ivHint": "Az intervallum paraméterek a saját számaiddal hasonlítjuk össze (küszöb és az edzés mediánja). Üres = alapértelmezett."
   },
   "actions": {
     "refreshThresholds": "Küszöbértékek frissítése",

@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Prispôsobenie od (s)",
-    "fitToS": "Prispôsobenie do (s)"
+    "fitToS": "Prispôsobenie do (s)",
+    "ivEnterBase": "Int. ×základ",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Stúpanie (%)",
+    "ivHint": "Parametre intervalov sa porovnávajú s tvojimi číslami (prah a medián aktivity). Prázdne = predvolené."
   },
   "actions": {
     "refreshThresholds": "Obnoviť prahy",

@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Uydurma başlangıcı (s)",
-    "fitToS": "Uydurma bitişi (s)"
+    "fitToS": "Uydurma bitişi (s)",
+    "ivEnterBase": "Int. ×taban",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Tırmanış (%)",
+    "ivHint": "Interval parametreleri kendi değerlerinle karşılaştırılır (eşik ve seans medyanı). Boş = varsayılan."
   },
   "actions": {
     "refreshThresholds": "Eşikleri yenile",

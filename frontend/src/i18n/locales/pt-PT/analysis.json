@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Ajuste de (s)",
-    "fitToS": "Ajuste até (s)"
+    "fitToS": "Ajuste até (s)",
+    "ivEnterBase": "Int. ×base",
+    "ivMinSegmentS": "Int. mín (s)",
+    "ivClimbGrade": "Subida (%)",
+    "ivHint": "Os parâmetros de intervalo comparam-se com os teus números (limiar e mediana da sessão). Vazio = predefinido."
   },
   "actions": {
     "refreshThresholds": "Atualizar limiares",

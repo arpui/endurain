@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Tilpasning fra (s)",
-    "fitToS": "Tilpasning til (s)"
+    "fitToS": "Tilpasning til (s)",
+    "ivEnterBase": "Int. ×base",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Stigning (%)",
+    "ivHint": "Intervalparametre sammenlignes med dine egne tal (tærskel og sessionens median). Tomt = standard."
   },
   "actions": {
     "refreshThresholds": "Opdater tærskler",

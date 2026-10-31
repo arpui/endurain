@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Dopasowanie od (s)",
-    "fitToS": "Dopasowanie do (s)"
+    "fitToS": "Dopasowanie do (s)",
+    "ivEnterBase": "Int. ×baza",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Podbieg (%)",
+    "ivHint": "Parametry interwałów odnoszą się do twoich liczb (próg i mediana sesji). Pusto = wartość domyślna."
   },
   "actions": {
     "refreshThresholds": "Odśwież progi",

@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Ajustement de (s)",
-    "fitToS": "Ajustement à (s)"
+    "fitToS": "Ajustement à (s)",
+    "ivEnterBase": "Int. ×base",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Côte (%)",
+    "ivHint": "Les réglages d'intervalle se comparent à vos chiffres (seuil et médiane de la séance). Vide = valeur par défaut."
   },
   "actions": {
     "refreshThresholds": "Actualiser les seuils",
