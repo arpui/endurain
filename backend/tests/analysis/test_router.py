@@ -377,14 +377,17 @@ class TestLapDynamicsRoute:
                 lap_id=7,
                 avg_power_w=400.0,
                 stride_length_m=2.9,
-                economy=0.96,
+                elevation_gain_m=10.0,
+                elevation_loss_m=8.0,
+                rss=26.4,
             )
         ]
         with patch("modules.analysis.activity_router.analysis_service.get_activity_lap_dynamics", return_value=rows):
             response = client.get("/activities/5/lap-dynamics")
         assert response.status_code == 200
         assert response.json()[0]["lap_id"] == 7
-        assert response.json()[0]["economy"] == 0.96
+        assert response.json()[0]["rss"] == 26.4
+        assert response.json()[0]["elevation_loss_m"] == 8.0
 
     def test_another_users_activity_is_not_found(self):
         client = TestClient(_build_app(MagicMock()))

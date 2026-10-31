@@ -312,6 +312,10 @@ class IntervalSegmentRead(BaseModel):
         contrast: Mean power over the session's own median, the relative anchor.
         avg_grade_pct: Mean grade, ``None`` when no track was recorded.
         avg_speed_ms: Mean speed, ``None`` when the activity carries none.
+        elevation_gain_m: Ground risen through, ``None`` without an altitude stream.
+        elevation_loss_m: Ground fallen through, ``None`` without an altitude stream.
+        rss: Shared-scale aRSS score of the stretch (same kernel as the daily
+            rss_total), ``None`` when the sport has no threshold.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -325,6 +329,9 @@ class IntervalSegmentRead(BaseModel):
     contrast: StrictFloat
     avg_grade_pct: StrictFloat | None
     avg_speed_ms: StrictFloat | None
+    elevation_gain_m: StrictFloat | None = None
+    elevation_loss_m: StrictFloat | None = None
+    rss: StrictFloat | None = None
 
 
 class IntervalRulesRead(BaseModel):
@@ -424,16 +431,19 @@ class LapDynamicsRead(BaseModel):
     """Serialized per-lap dynamics, computed from the lap's own recorded numbers.
 
     Cadence and power are what the device reported; stride length is derived
-    (speed over cadence, falling back to distance over cycles), and the economy
-    value is that stride per unit of relative intensity, normalized to the first
-    solid effort of the session: it drifts below 1 as form degrades under fatigue.
+    (speed over cadence, falling back to distance over cycles), the ascent and the
+    descent are reported as a pair so a rolling lap reads honestly, and the aRSS is
+    the daily-load kernel summed over the lap's window - the rows add back up to the
+    activity's total.
 
     Attributes:
         lap_id: The lap these dynamics belong to.
         avg_power_w: Mean power over the lap, when the device recorded one.
         stride_length_m: Ground covered per cycle, when cadence or cycles exist.
-        economy: Stride per unit of relative intensity, relative to the session's
-            first solid effort; ``None`` when there is not enough data.
+        elevation_gain_m: Ascent the device recorded for the lap.
+        elevation_loss_m: Descent the device recorded for the lap.
+        rss: Shared-scale aRSS score of the lap's window, ``None`` without a
+            threshold or powered samples in it.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -441,7 +451,9 @@ class LapDynamicsRead(BaseModel):
     lap_id: StrictInt
     avg_power_w: StrictFloat | None
     stride_length_m: StrictFloat | None
-    economy: StrictFloat | None
+    elevation_gain_m: StrictFloat | None = None
+    elevation_loss_m: StrictFloat | None = None
+    rss: StrictFloat | None = None
 
 
 class RecomputeQueued(BaseModel):

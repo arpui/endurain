@@ -69,7 +69,7 @@ def get_activity_lap_dynamics(
     token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
     db: Annotated[Session, Depends(core_database.get_db)],
 ) -> list[analysis_schema.LapDynamicsRead]:
-    """Return per-lap dynamics (power, stride length, fatigue-referenced economy).
+    """Return per-lap dynamics: power, stride length, elevation split and aRSS.
 
     Computed for the activity's owner from the laps the device recorded and the
     athlete's own threshold, so the drift of form under fatigue reads against

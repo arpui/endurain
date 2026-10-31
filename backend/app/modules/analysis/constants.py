@@ -203,6 +203,11 @@ IV_STEADY_IF = 1.15
 #: Grade-driven pushes are exempt; the climb rule already weighs what the terrain justifies.
 IV_EFFORT_IF = 1.05
 
+#: Median window (seconds) for the elevation a segment reports: raw GPS altitude
+#: jitters a couple of metres per sample, and a plain sum of deltas would read that
+#: noise as climbing.
+IV_ELEV_MEDIAN_S = 30.0
+
 #: Minimum segments for the session to read as interval work rather than a single
 #: push.
 IV_MIN_REPS = 2

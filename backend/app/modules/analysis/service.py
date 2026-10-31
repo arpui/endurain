@@ -13,6 +13,8 @@ one, and every stored load records the threshold it was divided by.
 """
 
 import calendar
+from bisect import bisect_left
+from collections.abc import Mapping
 from datetime import UTC, date, datetime, timedelta
 from itertools import accumulate
 from statistics import mean as arithmetic_mean
@@ -1016,12 +1018,32 @@ def get_activity_intervals(
         )
     sport = sport_group(activity.activity_type)
     data = _load_input(activity, sport, db)
+    _, power_values, power_stamps = _stream_samples(
+        activity.id,
+        activity_streams_constants.STREAM_TYPE_POWER,
+        "power",
+        db,
+        keep_zeros=True,
+    )
+    _, elevations, elevation_stamps = _stream_samples(
+        activity.id,
+        activity_streams_constants.STREAM_TYPE_ELEVATION,
+        "ele",
+        db,
+        keep_zeros=True,
+    )
+    altitudes_m = (
+        _align_to_power(elevations, elevation_stamps, power_stamps, data.period_s)
+        if elevations and power_values
+        else None
+    )
     analysis = analysis_intervals.analyse_activity(
         power_w=data.power_w or (),
         period_s=data.period_s,
         threshold_w=data.power_threshold_w,
         speeds_ms=data.speed_ms,
         grades_pct=data.grade_pct,
+        altitudes_m=altitudes_m,
         parameters=dict(data.parameters),
     )
     return analysis_schema.ActivityIntervalsRead(
@@ -1040,6 +1062,9 @@ def get_activity_intervals(
                 contrast=segment.contrast,
                 avg_grade_pct=segment.avg_grade_pct,
                 avg_speed_ms=segment.avg_speed_ms,
+                elevation_gain_m=segment.elevation_gain_m,
+                elevation_loss_m=segment.elevation_loss_m,
+                rss=segment.rss,
             )
             for segment in analysis.segments
         ],
@@ -1051,12 +1076,13 @@ def get_activity_lap_dynamics(
     requester_user_id: int,
     db: Session,
 ) -> list[analysis_schema.LapDynamicsRead]:
-    """Return per-lap dynamics: power, stride length and a fatigue-referenced economy.
+    """Return per-lap dynamics: power, cadence-derived stride, elevation split and aRSS.
 
-    The columns come from what the device already recorded per lap; the economy
-    number is the athlete's own reference frame - stride per unit of relative
-    intensity, normalized to the first solid effort of the session - so a drift
-    below 1 reads as form degrading under fatigue, whatever the absolute pace was.
+    The columns come from what the device already recorded per lap; the stride is
+    derived (speed over cadence, falling back to distance over cycles), the ascent
+    and descent are reported as a pair so a puja-i-baixa lap reads honestly, and
+    the aRSS is the daily-load kernel summed over the lap's own window of samples -
+    which is why the rows add back up to the activity's rss_total in the PMC.
 
     Args:
         activity_id: The activity to analyze.
@@ -1074,24 +1100,116 @@ def get_activity_lap_dynamics(
     activity = activity_integration.get_activity_for_derivation(activity_id, db)
     if activity is None:
         return []
-    threshold = get_settings(requester_user_id, db).power_thresholds.get(sport_group(activity.activity_type))
+    sport = sport_group(activity.activity_type)
+    settings = get_settings(requester_user_id, db)
+    threshold = settings.power_thresholds.get(sport)
     threshold_w = threshold.value_w if threshold else None
 
+    laps = activity_laps_integration.list_laps_for_derivation(activity_id, db)
     dynamics: list[analysis_schema.LapDynamicsRead] = []
-    for lap in activity_laps_integration.list_laps_for_derivation(activity_id, db):
+    for lap in laps:
         stride_m = _lap_stride_length_m(lap)
-        power_w = float(lap.avg_power) if lap.avg_power else None
+        gain = lap.total_ascent if lap.total_ascent is not None else None
+        loss = lap.total_descent if lap.total_descent is not None else None
         dynamics.append(
             analysis_schema.LapDynamicsRead(
                 lap_id=lap.id,
-                avg_power_w=power_w,
+                avg_power_w=float(lap.avg_power) if lap.avg_power else None,
                 stride_length_m=round(stride_m, 2) if stride_m else None,
-                economy=None,
+                elevation_gain_m=float(gain) if gain is not None else None,
+                elevation_loss_m=float(loss) if loss is not None else None,
+                rss=None,
             )
         )
 
-    _normalize_lap_economy(dynamics, threshold_w)
+    _apply_lap_rss(
+        lap_windows=laps,
+        dynamics=dynamics,
+        activity_id=activity_id,
+        db=db,
+        threshold_w=threshold_w,
+        parameters=settings.method_params,
+    )
     return dynamics
+
+
+def _apply_lap_rss(
+    lap_windows: list[activity_laps_schema.ActivityLapsRead],
+    dynamics: list[analysis_schema.LapDynamicsRead],
+    activity_id: int,
+    threshold_w: float | None,
+    parameters: Mapping[str, float],
+    db: Session,
+) -> None:
+    """Fill each lap's aRSS from the activity's own power and grade samples."""
+    if not threshold_w or not lap_windows:
+        return
+    period_s, power_values, power_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_POWER,
+        "power",
+        db,
+        keep_zeros=True,
+    )
+    if not power_values or period_s <= 0:
+        return
+    _, speeds, speed_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_SPEED,
+        "vel",
+        db,
+        keep_zeros=True,
+    )
+    _, elevations, elevation_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_ELEVATION,
+        "ele",
+        db,
+        keep_zeros=True,
+    )
+    speed_ms = _align_to_power(speeds, speed_stamps, power_stamps, period_s)
+    altitude_m = _align_to_power(elevations, elevation_stamps, power_stamps, period_s)
+    grade_pct = (
+        analysis_maths.grade_pct_series(altitude_m, speed_ms, period_s)
+        if altitude_m is not None and speed_ms is not None
+        else None
+    )
+    parameters = dict(parameters)
+    for lap, entry in zip(lap_windows, dynamics, strict=True):
+        window = _lap_sample_window(power_stamps, lap.start_time, float(lap.total_elapsed_time or 0.0))
+        if window is None:
+            continue
+        start, stop = window
+        score = analysis_methods.rss_window_stress(
+            power_values[start:stop],
+            period_s,
+            threshold_w,
+            grade_pct[start:stop] if grade_pct is not None else None,
+            parameters,
+        )
+        entry.rss = round(score, 1) if score > 0 else None
+
+
+def _lap_sample_window(
+    power_stamps: tuple[datetime, ...],
+    lap_start: datetime | None,
+    elapsed_s: float,
+) -> tuple[int, int] | None:
+    """Return the [start, stop) sample range a lap covers, or ``None``.
+
+    Laps are located by timestamp inside the power stream: their recorded start plus
+    elapsed time is the same clock the stream samples carry, so the slice needs no
+    resampling, and consecutive laps partition the powered seconds the daily load sums.
+    """
+    if lap_start is None or elapsed_s <= 0 or not power_stamps:
+        return None
+    start_stamp = lap_start if lap_start.tzinfo else lap_start.replace(tzinfo=UTC)
+    end_stamp = start_stamp + timedelta(seconds=elapsed_s)
+    start = bisect_left(power_stamps, start_stamp)
+    stop = bisect_left(power_stamps, end_stamp)
+    if start >= len(power_stamps) or stop <= start:
+        return None
+    return start, stop
 
 
 def _lap_stride_length_m(lap: activity_laps_schema.ActivityLapsRead) -> float | None:
@@ -1109,40 +1227,6 @@ def _lap_stride_length_m(lap: activity_laps_schema.ActivityLapsRead) -> float | 
     if lap.total_cycles and distance > 0:
         return distance / float(lap.total_cycles)
     return None
-
-
-def _normalize_lap_economy(
-    dynamics: list[analysis_schema.LapDynamicsRead],
-    threshold_w: float | None,
-) -> None:
-    """Set each lap's economy relative to the session's first solid effort.
-
-    Economy is stride per unit of intensity: the same stride at lower relative
-    power is better form. The first lap that worked (a power above this athlete's
-    easy level, when they have one) is the baseline, and a value under 1 says the
-    later laps needed more intensity for less ground per cycle - the drift fatigue
-    shows before pace does.
-    """
-    baseline = None
-    for entry in dynamics:
-        if entry.stride_length_m is None or entry.avg_power_w is None or entry.avg_power_w <= 0:
-            continue
-        if threshold_w is not None and entry.avg_power_w < 0.70 * threshold_w:
-            continue
-        intensity = entry.avg_power_w / threshold_w if threshold_w else 1.0
-        baseline = entry.stride_length_m / intensity
-        break
-    if baseline is None or baseline <= 0:
-        return
-    for entry in dynamics:
-        if entry.stride_length_m is None or entry.avg_power_w is None or entry.avg_power_w <= 0:
-            continue
-        # a recovery cycle carries no useful form signal: at walking intensity the
-        # ratio only measures how little power was applied, so those laps read blank
-        if threshold_w is not None and entry.avg_power_w < 0.70 * threshold_w:
-            continue
-        intensity = entry.avg_power_w / threshold_w if threshold_w else 1.0
-        entry.economy = round(entry.stride_length_m / intensity / baseline, 2)
 
 
 def get_best_times(
