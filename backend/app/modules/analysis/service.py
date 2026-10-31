@@ -28,6 +28,7 @@ import modules.activities.activity_streams.integration_service as activity_strea
 import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
 import modules.analysis.crud as analysis_crud
+import modules.analysis.intervals as analysis_intervals
 import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
@@ -881,5 +882,70 @@ def get_wprime_balance(
         points=[
             analysis_schema.WprimePointRead(t_s=round(t, 1), remaining_j=round(remaining, 1))
             for t, remaining in analysis_maths.downsample(series, analysis_constants.WPRIME_POINTS_MAX)
+        ],
+    )
+
+
+def get_activity_intervals(
+    activity_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> analysis_schema.ActivityIntervalsRead:
+    """Return how one activity breaks down into efforts: reps, climbs, the steady parts.
+
+    Computed on read from the activity's own samples, against that athlete's threshold
+    and the session's own median power, so the same shape parameters separate a race
+    pushed for 4 km from five reps without any general-population number entering. An
+    activity with no power stream answers ``steady`` with no segments: the split reads
+    power, and nothing is guessed from heart rate alone.
+
+    Args:
+        activity_id: The activity to split.
+        requester_user_id: The athlete asking; only their own activity answers.
+        db: Database session.
+
+    Returns:
+        The session shape and the contiguous segments covering its timeline.
+
+    Raises:
+        NotFoundError: If the activity is not the requester's.
+    """
+    if not activity_integration.owns_activity(activity_id, requester_user_id, db):
+        raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
+    activity = activity_integration.get_activity_for_derivation(activity_id, db)
+    if activity is None:
+        return analysis_schema.ActivityIntervalsRead(
+            shape=analysis_intervals.SessionShape.STEADY,
+            threshold_w=None,
+            base_power_w=0.0,
+            segments=[],
+        )
+    sport = sport_group(activity.activity_type)
+    data = _load_input(activity, sport, db)
+    analysis = analysis_intervals.analyse_activity(
+        power_w=data.power_w or (),
+        period_s=data.period_s,
+        threshold_w=data.power_threshold_w,
+        speeds_ms=data.speed_ms,
+        grades_pct=data.grade_pct,
+        parameters=dict(data.parameters),
+    )
+    return analysis_schema.ActivityIntervalsRead(
+        shape=analysis.shape,
+        threshold_w=analysis.threshold_w,
+        base_power_w=analysis.base_power_w,
+        segments=[
+            analysis_schema.IntervalSegmentRead(
+                kind=segment.kind,
+                start_s=segment.start_s,
+                duration_s=segment.duration_s,
+                distance_m=segment.distance_m,
+                avg_power_w=segment.avg_power_w,
+                intensity_factor=segment.intensity_factor,
+                contrast=segment.contrast,
+                avg_grade_pct=segment.avg_grade_pct,
+                avg_speed_ms=segment.avg_speed_ms,
+            )
+            for segment in analysis.segments
         ],
     )

@@ -99,6 +99,75 @@ MAX_SAMPLE_PERIOD_S = 10.0
 #: steep hill where the athlete was flat out.
 GRADE_MEDIAN_WINDOW_S = 15.0
 
+# --- Interval analysis of one activity -----------------------------------------
+#
+# The activity's own timeline is split into effort segments. The defaults below are
+# tunable per athlete through ``analysis_settings.method_params`` (keys named here),
+# because how hard a rep has to be, and how short it can be, changes with the athlete
+# and the discipline. Two anchors are used together on purpose: the athlete's
+# threshold (what the effort means physiologically) and the session's own median
+# power (what was hard *that day*), which is what tells a 4 km surge in a 10 km race
+# apart from a race run all the way through.
+
+#: Samples are median-filtered over this window before segmentation, so a handful of
+#: noisy seconds do not open and close a segment.
+IV_SMOOTH_WINDOW_S = 12.0
+
+#: A segment starts at ``IV_ENTER_CP · threshold`` and at least ``IV_ENTER_BASE ·``
+#: the session median, and ends when power falls to ``IV_EXIT_CP · threshold`` or
+#: ``IV_EXIT_BASE ·`` the median, whichever is higher.
+IV_ENTER_CP = 1.00
+IV_ENTER_BASE = 1.15
+IV_EXIT_CP = 0.90
+IV_EXIT_BASE = 1.02
+
+#: Shortest run (seconds) kept as a segment; anything briefer is a stride.
+IV_MIN_SEGMENT_S = 20.0
+
+#: A segment shorter than this is only counted when it stands much further above the
+#: session median, so brief surges inside an easy run are not called intervals.
+IV_SHORT_SEGMENT_S = 60.0
+IV_SHORT_BASE = 1.30
+
+#: Above the session median by this much, a segment counts on its own even without a
+#: recovery in front of it (a race's opening surge, a solo tempo push).
+IV_STRONG_BASE = 1.22
+
+#: The gap between two segments counts as a real recovery when its average stays at
+#: or below this fraction of the threshold.
+IV_RECOVERY_CP = 0.80
+
+#: A gap no longer than this (seconds), or this share of the effort before it, is the
+#: same effort interrupted by a wobble rather than a rest between two.
+IV_MERGE_GAP_S = 60.0
+IV_MERGE_SHARE = 0.25
+
+#: A segment is a climb (terrain, not a chosen rep) when its mean grade is above this
+#: percent and its intensity stays below ``IV_CLIMB_IF``.
+IV_CLIMB_GRADE_PCT = 3.5
+IV_CLIMB_IF = 1.25
+
+#: A long segment covering this share of the measured time is the session's steady
+#: effort (a race, a tempo run), not one interval among several.
+IV_STEADY_SHARE = 0.50
+
+#: Intensity below which that session-long effort reads as steady rather than as one
+#: long rep: holding 1,2x threshold for half an hour is an interval, holding 0,95x is
+#: a tempo or a race.
+IV_STEADY_IF = 1.15
+
+#: Minimum segments for the session to read as interval work rather than a single
+#: push.
+IV_MIN_REPS = 2
+
+#: With no segment standing out, a session whose own median already sits this high
+#: over the threshold still reads as one sustained effort (a race, a tempo run)
+#: rather than an easy day.
+IV_CONTINUOUS_BASE = 0.85
+
+#: Spread (std/mean of durations) under which reps read as a planned set.
+IV_REGULAR_CV = 0.55
+
 
 class LoadMethod(StrEnum):
     """How one activity's training load was measured.

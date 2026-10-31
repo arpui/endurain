@@ -15,6 +15,7 @@ count), while callers drop heart-rate zeros first because they mean "no signal".
 from collections.abc import Mapping, Sequence
 from datetime import datetime
 from math import exp
+from statistics import median
 
 import numpy as np
 
@@ -75,11 +76,7 @@ def grade_pct_series(
         gain = elevations_m[index] - elevations_m[index - 1]
         raw.append(max(-100.0, min(100.0, 100.0 * gain / distance)))
     half = max(1, int(analysis_constants.GRADE_MEDIAN_WINDOW_S // max(period_s, 1.0)) // 2)
-    smoothed: list[float] = []
-    for index in range(count):
-        window = sorted(raw[max(0, index - half) : min(count, index + half + 1)])
-        smoothed.append(window[len(window) // 2])
-    return tuple(smoothed)
+    return tuple(moving_median(raw, 2 * half + 1))
 
 
 def window_samples(period_s: float, window_s: float) -> int:
@@ -100,6 +97,28 @@ def moving_average(values: Sequence[float], samples: int) -> np.ndarray:
         return array
     kernel = np.ones(samples) / samples
     return np.convolve(array, kernel, mode="valid")
+
+
+def moving_median(values: Sequence[float], samples: int) -> list[float]:
+    """Return each value replaced by the median of the window centred on it.
+
+    A median, not a mean, because the streams this reads carry single-sample spikes
+    (a stray GPS altitude, one dropped power sample) that a mean would smear across
+    its neighbours. Windows are clamped at both ends, so the output has the same
+    length as the input; ``samples`` below 2 returns the input unchanged.
+
+    Args:
+        values: Samples in order.
+        samples: Width of the centred window, in samples.
+
+    Returns:
+        The filtered values, one per input sample.
+    """
+    data = list(values)
+    if samples <= 1 or not data:
+        return data
+    half = samples // 2
+    return [median(data[max(0, index - half) : min(len(data), index + half + 1)]) for index in range(len(data))]
 
 
 def normalized_power(
