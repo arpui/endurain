@@ -272,5 +272,16 @@
     "inlineSkating": "Rolanje",
     "hiit": "HIIT",
     "jumpRope": "Preskakanje užeta"
+  },
+  "segments": {
+    "title": "Dionice",
+    "segment": "Dionica",
+    "length": "Dužina",
+    "time": "Vrijeme",
+    "tempo": "Tempo / Brzina",
+    "reverse": "Obrnuti smjer",
+    "pass": "Prolazak {number}",
+    "best": "Najbolji",
+    "slowerThanBest": "{delta} sporije"
   }
 }

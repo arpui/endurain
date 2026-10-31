@@ -9,10 +9,12 @@ import { useRenderProvidersReady } from '@/providers'
 
 const props = withDefaults(
   defineProps<{
-    /** Ordered GPS coordinates forming the route polyline. */
+    /** Ordered coordinates forming the route polyline. */
     points: GeoPoint[]
     /** Whether the map responds to pan/zoom. */
     interactive?: boolean
+    /** Accessible description of the drawn track (feature-specific wording). */
+    label: string
   }>(),
   { interactive: true },
 )
@@ -68,19 +70,19 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <!-- Fills its parent, which controls the height (e.g. a gallery slide).
-       `isolate` creates a stacking context so Leaflet's internal panes and
-       controls (z-index up to 1000) stay contained and never paint over the
-       sticky navbar (z-40) or bottom nav while scrolling. -->
+  <!-- Fills its parent, which controls the height (e.g. a gallery slide or a
+       detail card). `isolate` creates a stacking context so Leaflet's internal
+       panes and controls (z-index up to 1000) stay contained and never paint
+       over the sticky navbar (z-40) or bottom nav while scrolling. -->
   <div class="relative isolate size-full overflow-hidden bg-muted">
-    <div ref="container" class="size-full" role="img" :aria-label="$t('activities.map.label')" />
+    <div ref="container" class="size-full" role="img" :aria-label="label" />
     <!-- z above Leaflet's controls (z-1000) so it stays clickable. -->
     <button
       v-if="interactive && points.length > 0"
       type="button"
       class="absolute top-3 right-3 z-[1100] flex size-9 items-center justify-center rounded-full bg-card/80 text-foreground backdrop-blur transition-colors hover:bg-card"
-      :aria-label="$t('activities.map.recenter')"
-      :title="$t('activities.map.recenter')"
+      :aria-label="$t('app.map.recenter')"
+      :title="$t('app.map.recenter')"
       @click="recenter"
     >
       <LocateFixed class="size-4" />

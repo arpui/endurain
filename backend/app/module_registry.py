@@ -35,6 +35,8 @@ import modules.analysis.subscriber_registry as analysis_subscriber_registry
 import modules.auth.password_reset_tokens.subscriber_registry as password_reset_tokens_subscriber_registry
 import modules.auth.sign_up_tokens.subscriber_registry as sign_up_tokens_subscriber_registry
 import modules.notifications.subscriber_registry as notifications_subscriber_registry
+import modules.segments.scheduled_jobs as segments_scheduled_jobs
+import modules.segments.subscriber_registry as segments_subscriber_registry
 
 logger = core_logger.get_logger(__name__)
 
@@ -222,6 +224,20 @@ MODULES: tuple[RuntimeModule, ...] = (
                 "reconcile_analysis_loads",
                 "Scheduling training-load reconciliation",
                 analysis_scheduled_jobs.schedule_analysis_reconcile,
+            ),
+        ),
+    ),
+    RuntimeModule(
+        name="segments",
+        register_bus=segments_subscriber_registry.register_bus_subscribers,
+        register_durable=segments_subscriber_registry.register_durable_handlers,
+        nets=segments_subscriber_registry.DURABLE_SUBSCRIBER_NETS,
+        recurring_jobs=segments_scheduled_jobs.recurring_jobs,
+        startup_tasks=(
+            StartupTask(
+                "reconcile_segment_efforts",
+                "Scheduling segment effort reconciliation",
+                segments_scheduled_jobs.schedule_segments_reconcile,
             ),
         ),
     ),

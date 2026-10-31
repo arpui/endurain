@@ -18,5 +18,6 @@
   "preferences": "Tercihler",
   "updateAvailable": "Güncelleme mevcut",
   "updateAvailableTitle": "{version} sürümü mevcut",
-  "updateViewRelease": "Sürüm notlarını görüntüle"
+  "updateViewRelease": "Sürüm notlarını görüntüle",
+  "segments": "Segmentler"
 }

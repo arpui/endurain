@@ -272,5 +272,16 @@
     "inlineSkating": "Inlineskaten",
     "hiit": "HIIT",
     "jumpRope": "Springseil"
+  },
+  "segments": {
+    "title": "Segmente",
+    "segment": "Segment",
+    "length": "Länge",
+    "time": "Zeit",
+    "tempo": "Tempo / Geschwindigkeit",
+    "reverse": "Gegenrichtung",
+    "pass": "Passage {number}",
+    "best": "Beste",
+    "slowerThanBest": "{delta} langsamer"
   }
 }

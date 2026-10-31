@@ -35,5 +35,8 @@
     "edit": "Modifier",
     "supported": "Markdown pris en charge",
     "empty": "Rien à afficher"
+  },
+  "map": {
+    "recenter": "Recentrer la carte"
   }
 }

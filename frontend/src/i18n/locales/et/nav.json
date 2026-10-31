@@ -18,5 +18,6 @@
   "preferences": "Eelistused",
   "updateAvailable": "Saadaval on uuendus",
   "updateAvailableTitle": "Saadaval on versioon {version}",
-  "updateViewRelease": "Vaata versiooni märkmeid"
+  "updateViewRelease": "Vaata versiooni märkmeid",
+  "segments": "Lõigud"
 }

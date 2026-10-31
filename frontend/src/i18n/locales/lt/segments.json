@@ -1,0 +1,83 @@
+{
+  "title": "Atkarpos",
+  "subtitle": "Maršruto atkarpos, matuojamos tavo veiklose.",
+  "loading": "Įkeliama atkarpos…",
+  "sourceStrava": "iš Strava",
+  "sourceManual": "apibrėžta čia",
+  "elevation": "Aukščio pokytis",
+  "map": {
+    "label": "Atkarpos maršrutas žemėlapyje"
+  },
+  "error": {
+    "title": "Nepavyko įkelti atkarpų",
+    "description": "Patikrinkite ryšį ir bandykite dar kartą."
+  },
+  "empty": {
+    "title": "Atkarpų dar nėra",
+    "description": "Importuokite atkarpą iš GPX failo arba iš JSON, kurį eksportuoja išgavimo scenarijus."
+  },
+  "rescan": {
+    "button": "Perskaičiuoti įdėjimus",
+    "queued": "Įdėjimų perskaičiavimas surikiuotas.",
+    "failed": "Nepavyko surikiuoti perskaičiavimo."
+  },
+  "profile": {
+    "title": "Aukščio profilis",
+    "unavailable": "Ši atkarpa neturi aukščio duomenų, todėl profilio nėra."
+  },
+  "efforts": {
+    "title": "Jūsų įdėjimai",
+    "includeReverse": "Įtraukti pravažius priešinga kryptimi",
+    "rank": "Nr.",
+    "activity": "Veikla",
+    "date": "Data",
+    "time": "Laikas",
+    "speed": "Grebis",
+    "best": "Geriausias",
+    "reverse": "Priešinga kryptis",
+    "activityLabel": "Veikla {id}",
+    "empty": {
+      "title": "Įdėjimų dar nėra",
+      "description": "Perskaičiuokite įdėjimus, kad būtų palygintos esamos veiklos su šia atkarpa."
+    }
+  },
+  "import": {
+    "button": "Importuoti atkarpą",
+    "title": "Importuoti atkarpą",
+    "description": "Pasirinkite GPX failą arba įklijuokite JSON, kurį eksportuoja Strava išgavimo scenarijus.",
+    "file": "GPX arba JSON failas",
+    "fileHint": "GPX pėdsakas (arba maršrutas) duoda poliliniją ir, jei yra, aukščius.",
+    "chooseFile": "Pasirinkti failą",
+    "chosenFile": "{file} įkeltas",
+    "json": "Arba įklijuokite JSON",
+    "jsonPlaceholder": "segment_id, name ir latlng masyvus, kaip juos eksportuoja scenarijus",
+    "parseJson": "Apdoroti įklijuotą JSON",
+    "name": "Pavadinimas",
+    "id": "Atkarpos id",
+    "idPlaceholder": "Privaloma rankiniu būdu apibrėžtai atkarpai",
+    "parsed": "{points} taškų · {distance}",
+    "submit": "Importuoti",
+    "cancel": "Atšaukti",
+    "close": "Uždaryti",
+    "done": "„{name}“ importuota; įdėjimai perskaičiuojami.",
+    "duplicate": "Ši atkarpa jau bibliotekoje.",
+    "failed": "Importas nepavyko.",
+    "badJson": "Tai neteisingas JSON.",
+    "badGpx": "Tai neskaitomas GPX failas.",
+    "tooFewPoints": "Polilinijai reikia bent dviejų taškų.",
+    "lengthMismatch": "Aukštis arba atstumas neatitinka taškų skaičiaus.",
+    "needName": "Suteikite atkarpai pavadinimą.",
+    "needId": "Suteikite atkarpai skaitmeninį id."
+  },
+  "delete": {
+    "button": "Ištrinti",
+    "title": "Ištrinti atkarpą",
+    "body": "Ar tikrai norite ištrinti „{name}“? Kartu bus ištrinti ir šio atkarpos įdėjimai. Šio veiksmo atšaukti negalima.",
+    "confirm": "Ištrinti",
+    "cancel": "Atšaukti",
+    "close": "Uždaryti",
+    "success": "Atkarpa ištrinta",
+    "error": "Nepavyko ištrinti atkarpos. Bandykite dar kartą."
+  },
+  "effortCount": "{count} įdėjimų"
+}

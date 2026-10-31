@@ -18,5 +18,6 @@
   "preferences": "Postavke",
   "updateAvailable": "Dostupno ažuriranje",
   "updateAvailableTitle": "Verzija {version} je dostupna",
-  "updateViewRelease": "Pogledaj napomene uz izdanje"
+  "updateViewRelease": "Pogledaj napomene uz izdanje",
+  "segments": "Dionice"
 }

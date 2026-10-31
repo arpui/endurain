@@ -18,5 +18,6 @@
   "preferences": "Voorkeuren",
   "updateAvailable": "Update beschikbaar",
   "updateAvailableTitle": "Versie {version} is beschikbaar",
-  "updateViewRelease": "Release-opmerkingen bekijken"
+  "updateViewRelease": "Release-opmerkingen bekijken",
+  "segments": "Segmenten"
 }

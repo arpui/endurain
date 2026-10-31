@@ -1,0 +1,83 @@
+{
+  "title": "Lõigud",
+  "subtitle": "Maršruudi lõigud, mida mõõdetakse sinu tegevustes.",
+  "loading": "Lõikude laadimine…",
+  "sourceStrava": "Stravast",
+  "sourceManual": "määratletud siin",
+  "elevation": "Tõus",
+  "map": {
+    "label": "Lõigu marsruut kaardil"
+  },
+  "error": {
+    "title": "Lõikude laadimine ei õnnestunud",
+    "description": "Kontrolli ühendust ja proovi uuesti."
+  },
+  "empty": {
+    "title": "Lõike pole veel",
+    "description": "Impordi lõik GPX-failist või ekstraheerimisskripti eksporditud JSON-ist."
+  },
+  "rescan": {
+    "button": "Arvuta pingutused uuesti",
+    "queued": "Pingutuste ülearvutus on järjekorras.",
+    "failed": "Ülearvutust ei õnnestunud järjekorda panna."
+  },
+  "profile": {
+    "title": "Kõrgusprofiil",
+    "unavailable": "Sellel lõigul pole kõrgusandmeid, seega profiili pole."
+  },
+  "efforts": {
+    "title": "Sinu pingutused",
+    "includeReverse": "Kaasa vastassuunas läbimised",
+    "rank": "Nr",
+    "activity": "Tegevus",
+    "date": "Kuupäev",
+    "time": "Aeg",
+    "speed": "Kiirus",
+    "best": "Parim",
+    "reverse": "Vastassuund",
+    "activityLabel": "Tegevus {id}",
+    "empty": {
+      "title": "Pingutusi pole veel",
+      "description": "Arvuta pingutused uuesti, et võrrelda olemasolevaid tegevusi selle lõiguga."
+    }
+  },
+  "import": {
+    "button": "Impordi lõik",
+    "title": "Impordi lõik",
+    "description": "Vali GPX-fail või kleebi Strava ekstraheerimisskripti JSON.",
+    "file": "GPX- või JSON-fail",
+    "fileHint": "GPX-rad (või marsruut) annab polüjoone ja vajadusel ka kõrgused.",
+    "chooseFile": "Vali fail",
+    "chosenFile": "{file} laaditud",
+    "json": "Või kleebi JSON",
+    "jsonPlaceholder": "segment_id, name ja latlng massiivid, nagu skript need ekspordib",
+    "parseJson": "Töötle kleebitud JSON",
+    "name": "Nimi",
+    "id": "Lõigu id",
+    "idPlaceholder": "Käsitse määratletud lõigu puhul nõutav",
+    "parsed": "{points} punkti · {distance}",
+    "submit": "Impordi",
+    "cancel": "Tühista",
+    "close": "Sulge",
+    "done": "„{name}” imporditud; pingutusi arvutatakse uuesti.",
+    "duplicate": "See lõik on teegis juba olemas.",
+    "failed": "Import ebaõnnestus.",
+    "badJson": "See ei ole kehtiv JSON.",
+    "badGpx": "See ei ole loetav GPX-fail.",
+    "tooFewPoints": "Polüjoone jaoks on vaja vähemalt kahte punkti.",
+    "lengthMismatch": "Kõrgus või vahemaa ei vasta punktide arvule.",
+    "needName": "Anna lõigule nimi.",
+    "needId": "Anna lõigule numbriline id."
+  },
+  "delete": {
+    "button": "Kustuta",
+    "title": "Kustuta lõik",
+    "body": "Kas oled kindel, et soovid kustutada „{name}“? Selle pingutused kustutatakse koos sellega. Seda ei saa tagasi võtta.",
+    "confirm": "Kustuta",
+    "cancel": "Tühista",
+    "close": "Sulge",
+    "success": "Lõik kustutatud",
+    "error": "Lõiku ei õnnestunud kustutada. Palun proovi uuesti."
+  },
+  "effortCount": "{count} pingutust"
+}

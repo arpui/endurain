@@ -272,5 +272,16 @@
     "inlineSkating": "Rolanje",
     "hiit": "HIIT",
     "jumpRope": "Preskakanje vijače"
+  },
+  "segments": {
+    "title": "Deonice",
+    "segment": "Deonica",
+    "length": "Dužina",
+    "time": "Vreme",
+    "tempo": "Tempo / Brzina",
+    "reverse": "Suprotan smer",
+    "pass": "Prolazak {number}",
+    "best": "Najbolji",
+    "slowerThanBest": "{delta} sporije"
   }
 }

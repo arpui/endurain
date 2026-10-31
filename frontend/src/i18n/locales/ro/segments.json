@@ -1,0 +1,83 @@
+{
+  "title": "Segment",
+  "subtitle": "Porțiuni de traseu măsurate în activitățile tale.",
+  "loading": "Se încarcă segmentele…",
+  "sourceStrava": "din Strava",
+  "sourceManual": "definit aici",
+  "elevation": "Diferență de nivel",
+  "map": {
+    "label": "Traseul segmentului pe hartă"
+  },
+  "error": {
+    "title": "Nu am putut încărca segmentele",
+    "description": "Verifică conexiunea și încearcă din nou."
+  },
+  "empty": {
+    "title": "Încă nu există segmente",
+    "description": "Importă un segment dintr-un fișier GPX sau din JSON-ul exportat de scriptul de extracție."
+  },
+  "rescan": {
+    "button": "Recalculează eforturile",
+    "queued": "Recalcularea eforturilor a fost pusă în coadă.",
+    "failed": "Nu am putut pune recalcularea în coadă."
+  },
+  "profile": {
+    "title": "Profil de altitudine",
+    "unavailable": "Acest segment nu are date de altitudine, deci nu există profil."
+  },
+  "efforts": {
+    "title": "Eforturile tale",
+    "includeReverse": "Include trecerile în sens invers",
+    "rank": "Nr.",
+    "activity": "Activitate",
+    "date": "Dată",
+    "time": "Timp",
+    "speed": "Viteză",
+    "best": "Cel mai bun",
+    "reverse": "Sens invers",
+    "activityLabel": "Activitate {id}",
+    "empty": {
+      "title": "Încă nu există eforturi",
+      "description": "Recalculează eforturile pentru a compara activitățile existente cu acest segment."
+    }
+  },
+  "import": {
+    "button": "Importă segment",
+    "title": "Importă un segment",
+    "description": "Alege un fișier GPX sau lipește JSON-ul exportat de scriptul de extracție Strava.",
+    "file": "Fișier GPX sau JSON",
+    "fileHint": "Un traseu GPX (sau rută) oferă polilinia și, dacă există, altitudinile.",
+    "chooseFile": "Alege un fișier",
+    "chosenFile": "{file} încărcat",
+    "json": "Sau lipește JSON",
+    "jsonPlaceholder": "segment_id, name și matricele latlng, așa le exportă scriptul de extracție",
+    "parseJson": "Analizează JSON-ul lipit",
+    "name": "Nume",
+    "id": "Id segment",
+    "idPlaceholder": "Obligatoriu pentru un segment definit manual",
+    "parsed": "{points} puncte · {distance}",
+    "submit": "Importă",
+    "cancel": "Anulează",
+    "close": "Închide",
+    "done": "„{name}” importat; eforturile se recalculează.",
+    "duplicate": "Acest segment este deja în bibliotecă.",
+    "failed": "Importul a eșuat.",
+    "badJson": "Acela nu este JSON valid.",
+    "badGpx": "Acela nu este un fișier GPX lizibil.",
+    "tooFewPoints": "Polilinia are nevoie de cel puțin două puncte.",
+    "lengthMismatch": "Altitudinea sau distanța nu corespunde numărului de puncte.",
+    "needName": "Dă segmentului un nume.",
+    "needId": "Dă segmentului un id numeric."
+  },
+  "delete": {
+    "button": "Șterge",
+    "title": "Șterge segmentul",
+    "body": "Sigur dorești să ștergi „{name}”? Eforturile aferente vor fi șterse și ele. Acțiunea nu poate fi anulată.",
+    "confirm": "Șterge",
+    "cancel": "Anulează",
+    "close": "Închide",
+    "success": "Segment șters",
+    "error": "Nu am putut șterge segmentul. Te rugăm să încerci din nou."
+  },
+  "effortCount": "{count} eforturi"
+}

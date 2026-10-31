@@ -23,6 +23,7 @@ source_modules =
     core
     modules.followers
     modules.analysis
+    modules.segments
     modules.garmin
     modules.gears
     modules.health

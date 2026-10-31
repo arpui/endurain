@@ -1,0 +1,83 @@
+{
+  "title": "Sekcie",
+  "subtitle": "Úseky trate merané naprieč tvojimi aktivitami.",
+  "loading": "Načítam sekcie…",
+  "sourceStrava": "zo Stravy",
+  "sourceManual": "definované tu",
+  "elevation": "Prevýšenie",
+  "map": {
+    "label": "Trasa sekcie na mape"
+  },
+  "error": {
+    "title": "Sekcie sa nepodarilo načítať",
+    "description": "Skontroluj pripojenie a skús to znova."
+  },
+  "empty": {
+    "title": "Zatiaľ žiadne sekcie",
+    "description": "Importuj sekciu zo súboru GPX alebo z JSONu, ktorý vyváža extrakčný skript."
+  },
+  "rescan": {
+    "button": "Prepočítať výkony",
+    "queued": "Prepočet výkonov zaradený do fronty.",
+    "failed": "Prepočet sa nepodarilo zaradiť do fronty."
+  },
+  "profile": {
+    "title": "Výškový profil",
+    "unavailable": "Táto sekcia nemá výškové údaje, profil teda nie je."
+  },
+  "efforts": {
+    "title": "Tvoje výkony",
+    "includeReverse": "Zahrnúť prejety opačným smerom",
+    "rank": "#",
+    "activity": "Aktivita",
+    "date": "Dátum",
+    "time": "Čas",
+    "speed": "Rýchlosť",
+    "best": "Najlepší",
+    "reverse": "Opačný smer",
+    "activityLabel": "Aktivita {id}",
+    "empty": {
+      "title": "Zatiaľ žiadne výkony",
+      "description": "Prepočítaj výkony, aby sa porovnali s tvojimi existujúcimi aktivitami."
+    }
+  },
+  "import": {
+    "button": "Importovať sekciu",
+    "title": "Importovať sekciu",
+    "description": "Vyber súbor GPX alebo vlož JSON z extrakčného skriptu Stravy.",
+    "file": "Súbor GPX alebo JSON",
+    "fileHint": "Stopa GPX (alebo trať) dáva polylíniu a prípadne aj výšky.",
+    "chooseFile": "Vybrať súbor",
+    "chosenFile": "{file} načítaný",
+    "json": "Alebo vlož JSON",
+    "jsonPlaceholder": "segment_id, name a polia latlng, ako ich vyváža extrakčný skript",
+    "parseJson": "Spracovať vložený JSON",
+    "name": "Názov",
+    "id": "ID sekcie",
+    "idPlaceholder": "Povinné pri sekcii definovanej ručne",
+    "parsed": "{points} bodov · {distance}",
+    "submit": "Importovať",
+    "cancel": "Zrušiť",
+    "close": "Zavrieť",
+    "done": "Sekcia „{name}“ importovaná; výkony sa prepočítavajú.",
+    "duplicate": "Táto sekcia už v knižnici je.",
+    "failed": "Import sa nepodaril.",
+    "badJson": "To nie je platný JSON.",
+    "badGpx": "To nie je čitateľný súbor GPX.",
+    "tooFewPoints": "Polylínia potrebuje aspoň dva body.",
+    "lengthMismatch": "Výška alebo vzdialenosť nezodpovedá počtu bodov.",
+    "needName": "Daj sekcii názov.",
+    "needId": "Daj sekcii číselné ID."
+  },
+  "delete": {
+    "button": "Odstrániť",
+    "title": "Odstrániť sekciu",
+    "body": "Naozaj chcete odstrániť „{name}“? Súvisiace výkony budú tiež odstránené. Túto akciu nie je možné vrátiť späť.",
+    "confirm": "Odstrániť",
+    "cancel": "Zrušiť",
+    "close": "Zavrieť",
+    "success": "Sekcia odstránená",
+    "error": "Sekciu sa nepodarilo odstrániť. Skúste to znova."
+  },
+  "effortCount": "{count} výkonov"
+}

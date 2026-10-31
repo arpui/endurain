@@ -18,5 +18,6 @@
   "preferences": "Postavke",
   "updateAvailable": "Dostupno ažuriranje",
   "updateAvailableTitle": "Verzija {version} je dostupna",
-  "updateViewRelease": "Pogledaj napomene o izdanju"
+  "updateViewRelease": "Pogledaj napomene o izdanju",
+  "segments": "Deonice"
 }

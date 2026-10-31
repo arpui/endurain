@@ -272,5 +272,16 @@
     "inlineSkating": "Ролкови кънки",
     "hiit": "HIIT",
     "jumpRope": "Скачане на въже"
+  },
+  "segments": {
+    "title": "Сегменти",
+    "segment": "Сегмент",
+    "length": "Дължина",
+    "time": "Време",
+    "tempo": "Темпо / Скорост",
+    "reverse": "Обратна посока",
+    "pass": "Минаване {number}",
+    "best": "Най-добро",
+    "slowerThanBest": "{delta} по-бавно"
   }
 }

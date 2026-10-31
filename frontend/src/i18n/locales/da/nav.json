@@ -18,5 +18,6 @@
   "preferences": "Præferencer",
   "updateAvailable": "Opdatering tilgængelig",
   "updateAvailableTitle": "Version {version} er tilgængelig",
-  "updateViewRelease": "Se udgivelsesnoter"
+  "updateViewRelease": "Se udgivelsesnoter",
+  "segments": "Segmenter"
 }

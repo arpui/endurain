@@ -35,5 +35,8 @@
     "edit": "编辑",
     "supported": "支持 Markdown",
     "empty": "暂无预览内容"
+  },
+  "map": {
+    "recenter": "重新居中地图"
   }
 }

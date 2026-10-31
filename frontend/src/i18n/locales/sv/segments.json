@@ -1,0 +1,83 @@
+{
+  "title": "Segment",
+  "subtitle": "Västräckor mätta över dina aktiviteter.",
+  "loading": "Laddar segment…",
+  "sourceStrava": "från Strava",
+  "sourceManual": "definierad här",
+  "elevation": "Höjdmeter",
+  "map": {
+    "label": "Segmentets rutt på kartan"
+  },
+  "error": {
+    "title": "Kunde inte ladda segment",
+    "description": "Kontrollera anslutningen och försök igen."
+  },
+  "empty": {
+    "title": "Inga segment ännu",
+    "description": "Importera ett segment från en GPX-fil eller från JSON:en som extraktionsskriptet exporterar."
+  },
+  "rescan": {
+    "button": "Räkna om insatser",
+    "queued": "Omräkning av insatser köad.",
+    "failed": "Kunde inte köa omräkningen."
+  },
+  "profile": {
+    "title": "Höjdprofil",
+    "unavailable": "Det här segmentet har inga höjdata, så ingen profil."
+  },
+  "efforts": {
+    "title": "Dina insatser",
+    "includeReverse": "Inkludera passager i motsatt riktning",
+    "rank": "#",
+    "activity": "Aktivitet",
+    "date": "Datum",
+    "time": "Tid",
+    "speed": "Hastighet",
+    "best": "Bästa",
+    "reverse": "Motsatt riktning",
+    "activityLabel": "Aktivitet {id}",
+    "empty": {
+      "title": "Inga insatser ännu",
+      "description": "Räkna om insatser för att jämföra dina befintliga aktiviteter med det här segmentet."
+    }
+  },
+  "import": {
+    "button": "Importera segment",
+    "title": "Importera ett segment",
+    "description": "Välj en GPX-fil eller klistra in JSON:en som Strava-extraktionsskriptet exporterar.",
+    "file": "GPX- eller JSON-fil",
+    "fileHint": "En GPX-slinga (eller rutt) ger polylinjen och, om de finns, höjderna.",
+    "chooseFile": "Välj en fil",
+    "chosenFile": "{file} har lästs",
+    "json": "Eller klistra in JSON",
+    "jsonPlaceholder": "segment_id, name och latlng-arrayer, som extraktionsskriptet exporterar dem",
+    "parseJson": "Tolka inklistrad JSON",
+    "name": "Namn",
+    "id": "Segment-id",
+    "idPlaceholder": "Krävs för ett manuellt definierat segment",
+    "parsed": "{points} punkter · {distance}",
+    "submit": "Importera",
+    "cancel": "Avbryt",
+    "close": "Stäng",
+    "done": "”{name}” importerad; insatserna räknas om.",
+    "duplicate": "Det segmentet finns redan i biblioteket.",
+    "failed": "Importen misslyckades.",
+    "badJson": "Det är inte giltig JSON.",
+    "badGpx": "Det är inte en läsbar GPX-fil.",
+    "tooFewPoints": "Polylinjen behöver minst två punkter.",
+    "lengthMismatch": "Höjd eller distans matchar inte antalet punkter.",
+    "needName": "Ge segmentet ett namn.",
+    "needId": "Ge segmentet ett numeriskt id."
+  },
+  "delete": {
+    "button": "Ta bort",
+    "title": "Ta bort segment",
+    "body": "Är du säker på att du vill ta bort \"{name}\"? Också insatserna på segmentet tas bort. Det kan inte ångras.",
+    "confirm": "Ta bort",
+    "cancel": "Avbryt",
+    "close": "Stäng",
+    "success": "Segment borttaget",
+    "error": "Kunde inte ta bort segmentet. Försök igen."
+  },
+  "effortCount": "{count} insatser"
+}

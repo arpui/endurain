@@ -272,5 +272,16 @@
     "inlineSkating": "Rullskridskoåkning",
     "hiit": "HIIT",
     "jumpRope": "Hopprep"
+  },
+  "segments": {
+    "title": "Segment",
+    "segment": "Segment",
+    "length": "Längd",
+    "time": "Tid",
+    "tempo": "Tempo / Hastighet",
+    "reverse": "Motsatt riktning",
+    "pass": "Passage {number}",
+    "best": "Bästa",
+    "slowerThanBest": "{delta} långsammare"
   }
 }

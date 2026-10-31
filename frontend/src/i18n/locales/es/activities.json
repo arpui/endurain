@@ -114,6 +114,17 @@
     "hr": "Frecuencia cardíaca",
     "activeSummary": "Total activo"
   },
+  "segments": {
+    "title": "Segmentos",
+    "segment": "Segmento",
+    "length": "Longitud",
+    "time": "Tiempo",
+    "tempo": "Ritmo / Velocidad",
+    "reverse": "Sentido inverso",
+    "pass": "Pass {number}",
+    "best": "Mejor",
+    "slowerThanBest": "{delta} más lento"
+  },
   "workout": {
     "title": "Entrenamiento",
     "stepsTitle": "Pasos",

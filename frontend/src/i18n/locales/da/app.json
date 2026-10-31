@@ -35,5 +35,8 @@
     "edit": "Redigér",
     "supported": "Markdown understøttes",
     "empty": "Intet at forhåndsvise"
+  },
+  "map": {
+    "recenter": "Centrér kort igen"
   }
 }

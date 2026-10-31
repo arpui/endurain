@@ -1,0 +1,83 @@
+{
+  "title": "Segmenten",
+  "subtitle": "Routestukken gemeten over je activiteiten.",
+  "loading": "Segmenten laden…",
+  "sourceStrava": "van Strava",
+  "sourceManual": "hier gedefinieerd",
+  "elevation": "Hoogte",
+  "map": {
+    "label": "Segmentroute op de kaart"
+  },
+  "error": {
+    "title": "Kan segmenten niet laden",
+    "description": "Controleer de verbinding en probeer het opnieuw."
+  },
+  "empty": {
+    "title": "Nog geen segmenten",
+    "description": "Importeer een segment uit een GPX-bestand of uit de JSON die het extractiescript exporteert."
+  },
+  "rescan": {
+    "button": "Inspanningen herberekenen",
+    "queued": "Herberekening van inspanningen in de wachtrij.",
+    "failed": "Kon de herberekening niet inplannen."
+  },
+  "profile": {
+    "title": "Hoogteprofiel",
+    "unavailable": "Dit segment heeft geen hoogtede gegevens, dus er is geen profiel."
+  },
+  "efforts": {
+    "title": "Jouw inspanningen",
+    "includeReverse": "Teruggerichte doorgangen tonen",
+    "rank": "#",
+    "activity": "Activiteit",
+    "date": "Datum",
+    "time": "Tijd",
+    "speed": "Snelheid",
+    "best": "Beste",
+    "reverse": "Terugrichting",
+    "activityLabel": "Activiteit {id}",
+    "empty": {
+      "title": "Nog geen inspanningen",
+      "description": "Herbereken de inspanningen om je bestaande activiteiten met dit segment te vergelijken."
+    }
+  },
+  "import": {
+    "button": "Segment importeren",
+    "title": "Segment importeren",
+    "description": "Kies een GPX-bestand of plak de JSON die het Strava-extractiescript exporteert.",
+    "file": "GPX- of JSON-bestand",
+    "fileHint": "Een GPX-track (of route) geeft de polylijn en, indien aanwezig, de hoogtes.",
+    "chooseFile": "Bestand kiezen",
+    "chosenFile": "{file} geladen",
+    "json": "Of plak JSON",
+    "jsonPlaceholder": "segment_id, name en latlng-reeksen, zoals het extractiescript ze exporteert",
+    "parseJson": "Geplakte JSON verwerken",
+    "name": "Naam",
+    "id": "Segment-id",
+    "idPlaceholder": "Verplicht voor een handmatig gedefinieerd segment",
+    "parsed": "{points} punten · {distance}",
+    "submit": "Importeren",
+    "cancel": "Annuleren",
+    "close": "Sluiten",
+    "done": "“{name}” geïmporteerd; de inspanningen worden herberekend.",
+    "duplicate": "Dat segment staat al in de bibliotheek.",
+    "failed": "Het importeren is mislukt.",
+    "badJson": "Dat is geen geldige JSON.",
+    "badGpx": "Dat is geen leesbaar GPX-bestand.",
+    "tooFewPoints": "De polylijn heeft minimaal twee punten nodig.",
+    "lengthMismatch": "Hoogte of afstand komt niet overeen met het aantal punten.",
+    "needName": "Geef het segment een naam.",
+    "needId": "Geef het segment een numerieke id."
+  },
+  "delete": {
+    "button": "Verwijderen",
+    "title": "Segment verwijderen",
+    "body": "Weet je zeker dat je \"{name}\" wilt verwijderen? De bijbehorende inspanningen worden ook verwijderd. Dit kan niet ongedaan worden gemaakt.",
+    "confirm": "Verwijderen",
+    "cancel": "Annuleren",
+    "close": "Sluiten",
+    "success": "Segment verwijderd",
+    "error": "Segment kon niet worden verwijderd. Probeer het opnieuw."
+  },
+  "effortCount": "{count} inspanningen"
+}

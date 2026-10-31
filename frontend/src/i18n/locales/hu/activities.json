@@ -272,5 +272,16 @@
     "inlineSkating": "Görkorcsolyázás",
     "hiit": "HIIT",
     "jumpRope": "Ugrókötél"
+  },
+  "segments": {
+    "title": "Szakaszok",
+    "segment": "Szakasz",
+    "length": "Hossz",
+    "time": "Idő",
+    "tempo": "Tempó / Sebesség",
+    "reverse": "Ellentétes irány",
+    "pass": "Áthaladás {number}",
+    "best": "Legjobb",
+    "slowerThanBest": "{delta} lassabb"
   }
 }

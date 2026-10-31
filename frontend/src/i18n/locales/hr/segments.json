@@ -1,0 +1,83 @@
+{
+  "title": "Dionice",
+  "subtitle": "Dionice rute mjerene kroz vaše aktivnosti.",
+  "loading": "Učitavanje dionica…",
+  "sourceStrava": "sa Strave",
+  "sourceManual": "definirano ovdje",
+  "elevation": "Visinska razlika",
+  "map": {
+    "label": "Ruta dionice na karti"
+  },
+  "error": {
+    "title": "Dionice se nisu mogle učitati",
+    "description": "Provjerite vezu i pokušajte ponovno."
+  },
+  "empty": {
+    "title": "Još nema dionica",
+    "description": "Uvezite dionicu iz GPX datoteke ili iz JSON-a koji generira skripta za izvlačenje."
+  },
+  "rescan": {
+    "button": "Ponovno izračunaj napore",
+    "queued": "Ponovni izračun napora je u redu.",
+    "failed": "Ponovni izračun nije mogao biti stavljen u red."
+  },
+  "profile": {
+    "title": "Visinski profil",
+    "unavailable": "Ova dionica nema podatke o visini, pa nema ni profila."
+  },
+  "efforts": {
+    "title": "Vaši napori",
+    "includeReverse": "Uključi prolazke u obrnutom smjeru",
+    "rank": "Br.",
+    "activity": "Aktivnost",
+    "date": "Datum",
+    "time": "Vrijeme",
+    "speed": "Brzina",
+    "best": "Najbolji",
+    "reverse": "Obrnuti smjer",
+    "activityLabel": "Aktivnost {id}",
+    "empty": {
+      "title": "Još nema napora",
+      "description": "Ponovno izračunaj napore kako bi se usporedili s vašim postojećim aktivnostima."
+    }
+  },
+  "import": {
+    "button": "Uvezi dionicu",
+    "title": "Uvezi dionicu",
+    "description": "Odaberite GPX datoteku ili zalijepite JSON koji generira skripta za izvlačenje sa Strave.",
+    "file": "GPX ili JSON datoteka",
+    "fileHint": "GPX trag (ili ruta) daje poliliniju i, ako postoje, visine.",
+    "chooseFile": "Odaberi datoteku",
+    "chosenFile": "{file} je učitan",
+    "json": "Ili zalijepi JSON",
+    "jsonPlaceholder": "segment_id, name i polja latlng, u obliku u kojem ih generira skripta",
+    "parseJson": "Obrađuj zalijepljeni JSON",
+    "name": "Naziv",
+    "id": "ID dionice",
+    "idPlaceholder": "Obavezno za ručno definiranu dionicu",
+    "parsed": "{points} točaka · {distance}",
+    "submit": "Uvezi",
+    "cancel": "Odustani",
+    "close": "Zatvori",
+    "done": "Dionica „{name}“ uvezena; napori se ponovno računaju.",
+    "duplicate": "Ta dionica je već u knjižnici.",
+    "failed": "Uvoz nije uspio.",
+    "badJson": "To nije valjani JSON.",
+    "badGpx": "To nije čitljiva GPX datoteka.",
+    "tooFewPoints": "Polilinija treba barem dvije točke.",
+    "lengthMismatch": "Visina ili udaljenost ne odgovaraju broju točaka.",
+    "needName": "Dajte dionici naziv.",
+    "needId": "Dajte dionici brojčani ID."
+  },
+  "delete": {
+    "button": "Izbriši",
+    "title": "Izbriši dionicu",
+    "body": "Jeste li sigurni da želite izbrisati „{name}”? Njezini napori brišu se zajedno s njom. To se ne može poništiti.",
+    "confirm": "Izbriši",
+    "cancel": "Odustani",
+    "close": "Zatvori",
+    "success": "Dionica izbrisana",
+    "error": "Nije moguće izbrisati dionicu. Pokušajte ponovno."
+  },
+  "effortCount": "{count} napora"
+}

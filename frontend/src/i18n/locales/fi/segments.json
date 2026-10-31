@@ -1,0 +1,83 @@
+{
+  "title": "Osiot",
+  "subtitle": "Reittiosuuksia, mitattuna aktiviteeteissasi.",
+  "loading": "Ladataan osioita…",
+  "sourceStrava": "Stravasta",
+  "sourceManual": "määritelty täällä",
+  "elevation": "Nousu",
+  "map": {
+    "label": "Osion reitti kartalla"
+  },
+  "error": {
+    "title": "Osioita ei voitu ladata",
+    "description": "Tarkista yhteys ja yritä uudelleen."
+  },
+  "empty": {
+    "title": "Ei osioita vielä",
+    "description": "Tuo osio GPX-tiedostosta tai poimintaskriptin viemästä JSONista."
+  },
+  "rescan": {
+    "button": "Laske suoritukset uudelleen",
+    "queued": "Suoritusten uudelleenlasku jonossa.",
+    "failed": "Uudelleenlaskua ei voitu laittaa jonoon."
+  },
+  "profile": {
+    "title": "Korkeusprofiili",
+    "unavailable": "Tällä osiolla ei ole korkeustietoja, joten profiilia ei ole."
+  },
+  "efforts": {
+    "title": "Sinun suorituksesi",
+    "includeReverse": "Näytä myös vastasuunnan ohitukset",
+    "rank": "Nro",
+    "activity": "Aktiviteetti",
+    "date": "Päivämäärä",
+    "time": "Aika",
+    "speed": "Nopeus",
+    "best": "Paras",
+    "reverse": "Vastasuunta",
+    "activityLabel": "Aktiviteetti {id}",
+    "empty": {
+      "title": "Ei suorituksia vielä",
+      "description": "Laske suoritukset uudelleen, jotta olemassa olevat aktiviteetit vertaillaan tähän osioon."
+    }
+  },
+  "import": {
+    "button": "Tuo osio",
+    "title": "Tuo osio",
+    "description": "Valitse GPX-tiedosto tai liitä Stravan poimintaskriptin viemä JSON.",
+    "file": "GPX- tai JSON-tiedosto",
+    "fileHint": "GPX-reitti (tai reitti) antaa polylinjan ja mahdolliset korkeudet.",
+    "chooseFile": "Valitse tiedosto",
+    "chosenFile": "{file} ladattu",
+    "json": "Tai liitä JSON",
+    "jsonPlaceholder": "segment_id, name ja latlng-taulukot, kuten poimintaskripti vie ne",
+    "parseJson": "Käsittele liitetty JSON",
+    "name": "Nimi",
+    "id": "Osion tunniste",
+    "idPlaceholder": "Pakollinen käsin määritellylle osiolle",
+    "parsed": "{points} pistettä · {distance}",
+    "submit": "Tuo",
+    "cancel": "Peruuta",
+    "close": "Sulje",
+    "done": "„{name}” tuotu; suorituksia lasketaan uudelleen.",
+    "duplicate": "Tämä osio on jo kirjastossa.",
+    "failed": "Tuonti epäonnistui.",
+    "badJson": "Tuo ei ole kelvollinen JSON.",
+    "badGpx": "Tuo ei ole luettava GPX-tiedosto.",
+    "tooFewPoints": "Polylinja tarvitsee vähintään kaksi pistettä.",
+    "lengthMismatch": "Korkeus tai matka ei vastaa pisteiden määrää.",
+    "needName": "Anna osiolle nimi.",
+    "needId": "Anna osiolle numeerinen tunniste."
+  },
+  "delete": {
+    "button": "Poista",
+    "title": "Poista osio",
+    "body": "Haluatko varmasti poistaa osion \"{name}\"? Myös sen suoritukset poistetaan. Tätä ei voi kumota.",
+    "confirm": "Poista",
+    "cancel": "Peruuta",
+    "close": "Sulje",
+    "success": "Osio poistettu",
+    "error": "Osion poisto ei onnistunut. Yritä uudelleen."
+  },
+  "effortCount": "{count} suoritusta"
+}

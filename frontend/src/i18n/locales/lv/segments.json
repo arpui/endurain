@@ -1,0 +1,83 @@
+{
+  "title": "Posmi",
+  "subtitle": "Maršruta posmi, mērīti tavās aktivitātēs.",
+  "loading": "Ielādē posmus…",
+  "sourceStrava": "no Strava",
+  "sourceManual": "definēts šeit",
+  "elevation": "Augstuma ieguvums",
+  "map": {
+    "label": "Posma maršruts kartē"
+  },
+  "error": {
+    "title": "Neizdevās ielādēt posmus",
+    "description": "Pārbaudi savienojumu un mēģini vēlreiz."
+  },
+  "empty": {
+    "title": "Posmu vēl nav",
+    "description": "Importē posmu no GPX faila vai no JSON, ko eksportē ekstrakcijas skripts."
+  },
+  "rescan": {
+    "button": "Pārrēķināt piepūles",
+    "queued": "Piepūļu pārrēķins ievietots rindā.",
+    "failed": "Neizdevās ievietot pārrēķinu rindā."
+  },
+  "profile": {
+    "title": "Augstuma profils",
+    "unavailable": "Šim posmam nav augstuma datu, tāpēc profila nav."
+  },
+  "efforts": {
+    "title": "Tavas piepūles",
+    "includeReverse": "Iekļaut braucienus pretējā virzienā",
+    "rank": "Nr.",
+    "activity": "Aktivitāte",
+    "date": "Datums",
+    "time": "Laiks",
+    "speed": "Ātrums",
+    "best": "Labākais",
+    "reverse": "Pretējs virziens",
+    "activityLabel": "Aktivitāte {id}",
+    "empty": {
+      "title": "Piepūļu vēl nav",
+      "description": "Pārrēķini piepūles, lai salīdzinātu esošās aktivitātes ar šo posmu."
+    }
+  },
+  "import": {
+    "button": "Importēt posmu",
+    "title": "Importēt posmu",
+    "description": "Izvēlies GPX failu vai ielīmē JSON, ko eksportē Strava ekstrakcijas skripts.",
+    "file": "GPX vai JSON fails",
+    "fileHint": "GPX trase (vai maršruts) dod polilīniju un, ja ir, augstumus.",
+    "chooseFile": "Izvēlēties failu",
+    "chosenFile": "{file} ielādēts",
+    "json": "Vai ielīmē JSON",
+    "jsonPlaceholder": "segment_id, name un latlng masīvi, kā tos eksportē ekstrakcijas skripts",
+    "parseJson": "Apstrādāt ielīmēto JSON",
+    "name": "Nosaukums",
+    "id": "Posma id",
+    "idPlaceholder": "Obligāts manuāli definētam posmam",
+    "parsed": "{points} punkti · {distance}",
+    "submit": "Importēt",
+    "cancel": "Atcelt",
+    "close": "Aizvērt",
+    "done": "„{name}“ importēts; piepūles tiek pārrēķinātas.",
+    "duplicate": "Šis posms bibliotēkā jau ir.",
+    "failed": "Importēšana neizdevās.",
+    "badJson": "Tas nav derīgs JSON.",
+    "badGpx": "Tas nav lasāms GPX fails.",
+    "tooFewPoints": "Polilīnijai vajadzīgi vismaz divi punkti.",
+    "lengthMismatch": "Augstums vai attālums neatbilst punktu skaitam.",
+    "needName": "Dod posmam nosaukumu.",
+    "needId": "Dod posmam skaitlisku id."
+  },
+  "delete": {
+    "button": "Dzēst",
+    "title": "Dzēst posmu",
+    "body": "Vai tiešām vēlaties dzēst \"{name}\"? Tās piepūles tiks dzēstas kopā ar to. Šo nevar atsaukt.",
+    "confirm": "Dzēst",
+    "cancel": "Atcelt",
+    "close": "Aizvērt",
+    "success": "Posms dzēsts",
+    "error": "Neizdevās dzēst posmu. Lūdzu, mēģiniet vēlreiz."
+  },
+  "effortCount": "{count} piepūles"
+}

@@ -35,5 +35,8 @@
     "edit": "Redigera",
     "supported": "Markdown stöds",
     "empty": "Inget att förhandsgranska"
+  },
+  "map": {
+    "recenter": "Centrera kartan igen"
   }
 }

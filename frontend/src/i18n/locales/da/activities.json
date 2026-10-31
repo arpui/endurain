@@ -272,5 +272,16 @@
     "inlineSkating": "Rulleskøjteløb",
     "hiit": "HIIT",
     "jumpRope": "Sjipning"
+  },
+  "segments": {
+    "title": "Segmenter",
+    "segment": "Segment",
+    "length": "Længde",
+    "time": "Tid",
+    "tempo": "Tempo / Hastighed",
+    "reverse": "Modsat retning",
+    "pass": "Passage {number}",
+    "best": "Bedste",
+    "slowerThanBest": "{delta} langsommere"
   }
 }

@@ -272,5 +272,16 @@
     "inlineSkating": "Rulluisutamine",
     "hiit": "HIIT",
     "jumpRope": "Nööri hüpamine"
+  },
+  "segments": {
+    "title": "Lõigud",
+    "segment": "Lõik",
+    "length": "Pikkus",
+    "time": "Aeg",
+    "tempo": "Tempo / Kiirus",
+    "reverse": "Vastassuund",
+    "pass": "Läbimine {number}",
+    "best": "Parim",
+    "slowerThanBest": "{delta} aeglasem"
   }
 }

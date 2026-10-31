@@ -1,0 +1,83 @@
+{
+  "title": "Odcinki",
+  "subtitle": "Fragmenty trasy mierzone w Twoich aktywnościach.",
+  "loading": "Wczytywanie odcinków…",
+  "sourceStrava": "ze Stravy",
+  "sourceManual": "zdefiniowany tutaj",
+  "elevation": "Przewyższenie",
+  "map": {
+    "label": "Trasa odcinka na mapie"
+  },
+  "error": {
+    "title": "Nie udało się wczytać odcinków",
+    "description": "Sprawdź połączenie i spróbuj ponownie."
+  },
+  "empty": {
+    "title": "Jeszcze nie ma odcinków",
+    "description": "Zaimportuj odcinek z pliku GPX lub z JSON-a wyeksportowanego przez skrypt ekstrakcji."
+  },
+  "rescan": {
+    "button": "Przelicz starania",
+    "queued": "Przeliczenie starań dodane do kolejki.",
+    "failed": "Nie udało się dodać przeliczenia do kolejki."
+  },
+  "profile": {
+    "title": "Profil wysokości",
+    "unavailable": "Ten odcinek nie ma danych o wysokości, więc nie ma profilu."
+  },
+  "efforts": {
+    "title": "Twoje starania",
+    "includeReverse": "Uwzględnij przejazdy w odwrotnym kierunku",
+    "rank": "Lp.",
+    "activity": "Aktywność",
+    "date": "Data",
+    "time": "Czas",
+    "speed": "Prędkość",
+    "best": "Najlepszy",
+    "reverse": "Odwrotny kierunek",
+    "activityLabel": "Aktywność {id}",
+    "empty": {
+      "title": "Jeszcze nie ma starań",
+      "description": "Przelicz starania, aby porównać istniejące aktywności z tym odcinkiem."
+    }
+  },
+  "import": {
+    "button": "Zaimportuj odcinek",
+    "title": "Zaimportuj odcinek",
+    "description": "Wybierz plik GPX lub wklej JSON wyeksportowany przez skrypt ekstrakcji Stravy.",
+    "file": "Plik GPX lub JSON",
+    "fileHint": "Ślad GPX (lub trasa) daje polilinię i, jeśli są, wysokości.",
+    "chooseFile": "Wybierz plik",
+    "chosenFile": "{file} wczytany",
+    "json": "Albo wklej JSON",
+    "jsonPlaceholder": "segment_id, name i tablice latlng, tak jak eksportuje je skrypt ekstrakcji",
+    "parseJson": "Przeanalizuj wklejony JSON",
+    "name": "Nazwa",
+    "id": "Id odcinka",
+    "idPlaceholder": "Wymagane dla odcinka zdefiniowanego ręcznie",
+    "parsed": "{points} punktów · {distance}",
+    "submit": "Zaimportuj",
+    "cancel": "Anuluj",
+    "close": "Zamknij",
+    "done": "Odcinek „{name}” zaimportowany; starania są przeliczane.",
+    "duplicate": "Ten odcinek jest już w bibliotece.",
+    "failed": "Import nie powiódł się.",
+    "badJson": "To nie jest poprawny JSON.",
+    "badGpx": "To nie jest czytelny plik GPX.",
+    "tooFewPoints": "Polilinia wymaga co najmniej dwóch punktów.",
+    "lengthMismatch": "Wysokość lub dystans nie zgadza się z liczbą punktów.",
+    "needName": "Nadaj odcinkowi nazwę.",
+    "needId": "Nadaj odcinkowi liczbowe id."
+  },
+  "delete": {
+    "button": "Usuń",
+    "title": "Usuń odcinek",
+    "body": "Czy na pewno chcesz usunąć \"{name}\"? Związane z nim starania również zostaną usunięte. Tej operacji nie można cofnąć.",
+    "confirm": "Usuń",
+    "cancel": "Anuluj",
+    "close": "Zamknij",
+    "success": "Odcinek usunięty",
+    "error": "Nie udało się usunąć odcinka. Spróbuj ponownie."
+  },
+  "effortCount": "{count} starań"
+}

@@ -1,0 +1,83 @@
+{
+  "title": "Deonice",
+  "subtitle": "Delovi rute mereni kroz vaše aktivnosti.",
+  "loading": "Učitavanje deonica…",
+  "sourceStrava": "sa Strave",
+  "sourceManual": "definisan ovde",
+  "elevation": "Visinska razlika",
+  "map": {
+    "label": "Ruta deonice na karti"
+  },
+  "error": {
+    "title": "Deonice nije bilo moguće učitati",
+    "description": "Proverite vezu i pokušajte ponovo."
+  },
+  "empty": {
+    "title": "Još nema deonica",
+    "description": "Uvezite deonicu iz GPX datoteke ili iz JSON-a koji generiše skripta za izdvajanje."
+  },
+  "rescan": {
+    "button": "Ponovo izračunaj napore",
+    "queued": "Ponovni izračun napora je u redu.",
+    "failed": "Ponovni izračun nije mogao biti stavljen u red."
+  },
+  "profile": {
+    "title": "Visinski profil",
+    "unavailable": "Ova deonica nema podatke o visini, pa nema profila."
+  },
+  "efforts": {
+    "title": "Vaši napori",
+    "includeReverse": "Uključi prolaske u suprotnom smeru",
+    "rank": "Br.",
+    "activity": "Aktivnost",
+    "date": "Datum",
+    "time": "Vreme",
+    "speed": "Brzina",
+    "best": "Najbolji",
+    "reverse": "Suprotan smer",
+    "activityLabel": "Aktivnost {id}",
+    "empty": {
+      "title": "Još nema napora",
+      "description": "Ponovo izračunaj napore da se uporede sa vašim postojećim aktivnostima."
+    }
+  },
+  "import": {
+    "button": "Uvezi deonicu",
+    "title": "Uvezi deonicu",
+    "description": "Izaberite GPX datoteku ili nalepite JSON koji generiše skripta za izdvajanje sa Strave.",
+    "file": "GPX ili JSON datoteka",
+    "fileHint": "GPX trag (ili ruta) daje poliliniju i, ako postoje, visine.",
+    "chooseFile": "Odaberi datoteku",
+    "chosenFile": "{file} je učitan",
+    "json": "Ili nalepi JSON",
+    "jsonPlaceholder": "segment_id, name i polja latlng, u obliku u kojem ih generiše skripta",
+    "parseJson": "Obradi nalepljeni JSON",
+    "name": "Naziv",
+    "id": "ID deonice",
+    "idPlaceholder": "Obavezno za ručno definisanu deonicu",
+    "parsed": "{points} tačaka · {distance}",
+    "submit": "Uvezi",
+    "cancel": "Otkaži",
+    "close": "Zatvori",
+    "done": "Deonica „{name}“ je uvezena; napori se ponovo računaju.",
+    "duplicate": "Ta deonica je već u biblioteci.",
+    "failed": "Uvoz nije uspeo.",
+    "badJson": "To nije važeći JSON.",
+    "badGpx": "To nije čitljiva GPX datoteka.",
+    "tooFewPoints": "Polilinija zahteva bar dve tačke.",
+    "lengthMismatch": "Visina ili udaljenost ne odgovaraju broju tačaka.",
+    "needName": "Dajte deonici naziv.",
+    "needId": "Dajte deonici brojčani ID."
+  },
+  "delete": {
+    "button": "Obriši",
+    "title": "Obriši deonicu",
+    "body": "Da li ste sigurni da želite da obrišete \"{name}\"? Njeni napori se brišu zajedno s njom. Ovo se ne može poništiti.",
+    "confirm": "Obriši",
+    "cancel": "Otkaži",
+    "close": "Zatvori",
+    "success": "Deonica obrisana",
+    "error": "Nije moguće obrisati deonicu. Pokušajte ponovo."
+  },
+  "effortCount": "{count} napora"
+}

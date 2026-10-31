@@ -27,6 +27,7 @@ import {
   fetchActivityExerciseTitles,
   fetchActivityLaps,
   fetchActivitySets,
+  fetchActivitySegments,
   fetchActivityStreams,
   fetchActivityWorkoutSteps,
   setActivityGear,
@@ -128,6 +129,29 @@ export function useActivityLapsQuery(
     queryFn: ({ signal }) =>
       fetchActivityLaps(resolveId(id), { authenticated: auth.isAuthenticated, signal }),
     enabled: computed(() => resolveId(id) > 0 && toValue(enabled)),
+    staleTime: 5 * 60_000,
+  })
+}
+
+/**
+ * Loads the segments one activity traversed. Unlike the other activity reads it
+ * also requires an authenticated viewer: the backend only exposes segment
+ * efforts on the authenticated route, so an anonymous share shows none.
+ *
+ * @param id - Reactive activity id.
+ * @param enabled - Reactive gate (typically "activity loaded").
+ * @returns The TanStack query result for the segments.
+ */
+export function useActivitySegmentsQuery(
+  id: MaybeRefOrGetter<number | null>,
+  enabled: MaybeRefOrGetter<boolean>,
+) {
+  const auth = useAuthStore()
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.activities.segments(resolveId(id))),
+    queryFn: ({ signal }) => fetchActivitySegments(resolveId(id), { authenticated: true, signal }),
+    enabled: computed(() => resolveId(id) > 0 && toValue(enabled) && auth.isAuthenticated),
     staleTime: 5 * 60_000,
   })
 }

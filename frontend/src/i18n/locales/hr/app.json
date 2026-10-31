@@ -35,5 +35,8 @@
     "edit": "Uredi",
     "supported": "Markdown podržan",
     "empty": "Nema ničega za pregled"
+  },
+  "map": {
+    "recenter": "Ponovno centriraj kartu"
   }
 }

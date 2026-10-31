@@ -1,0 +1,83 @@
+{
+  "title": "Segmente",
+  "subtitle": "Streckenabschnitte, gemessen über deine Aktivitäten.",
+  "loading": "Segmente werden geladen …",
+  "sourceStrava": "von Strava",
+  "sourceManual": "hier definiert",
+  "elevation": "Höhe",
+  "map": {
+    "label": "Segmentverlauf auf der Karte"
+  },
+  "error": {
+    "title": "Segmente konnten nicht geladen werden",
+    "description": "Verbindung prüfen und erneut versuchen."
+  },
+  "empty": {
+    "title": "Noch keine Segmente",
+    "description": "Importiere ein Segment aus einer GPX-Datei oder aus dem JSON des Extraktionsskripts."
+  },
+  "rescan": {
+    "button": "Aufwände neu berechnen",
+    "queued": "Neuberechnung der Aufwände eingeplant.",
+    "failed": "Neuberechnung konnte nicht eingeplant werden."
+  },
+  "profile": {
+    "title": "Höhenprofil",
+    "unavailable": "Dieses Segment hat keine Höhendaten, daher gibt es kein Profil."
+  },
+  "efforts": {
+    "title": "Deine Aufwände",
+    "includeReverse": "Passagen in Gegenrichtung einbeziehen",
+    "rank": "#",
+    "activity": "Aktivität",
+    "date": "Datum",
+    "time": "Zeit",
+    "speed": "Geschwindigkeit",
+    "best": "Beste",
+    "reverse": "Gegenrichtung",
+    "activityLabel": "Aktivität {id}",
+    "empty": {
+      "title": "Noch keine Aufwände",
+      "description": "Berechne die Aufwände neu, damit deine vorhandenen Aktivitäten diesem Segment zugeordnet werden."
+    }
+  },
+  "import": {
+    "button": "Segment importieren",
+    "title": "Segment importieren",
+    "description": "Wähle eine GPX-Datei oder füge das JSON des Strava-Extraktionsskripts ein.",
+    "file": "GPX- oder JSON-Datei",
+    "fileHint": "Eine GPX-Strecke (oder Route) liefert die Polyline und, falls vorhanden, die Höhen.",
+    "chooseFile": "Datei auswählen",
+    "chosenFile": "{file} geladen",
+    "json": "Oder JSON einfügen",
+    "jsonPlaceholder": "segment_id, name und latlng-Felder, wie das Extraktionsskript sie exportiert",
+    "parseJson": "Eingefügtes JSON auswerten",
+    "name": "Name",
+    "id": "Segment-ID",
+    "idPlaceholder": "Für ein manuell definiertes Segment erforderlich",
+    "parsed": "{points} Punkte · {distance}",
+    "submit": "Importieren",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "done": "„{name}“ importiert; die Aufwände werden neu berechnet.",
+    "duplicate": "Dieses Segment ist bereits in der Bibliothek.",
+    "failed": "Der Import ist fehlgeschlagen.",
+    "badJson": "Das ist kein gültiges JSON.",
+    "badGpx": "Das ist keine lesbare GPX-Datei.",
+    "tooFewPoints": "Die Polyline braucht mindestens zwei Punkte.",
+    "lengthMismatch": "Höhe oder Distanz passt nicht zur Punktezahl.",
+    "needName": "Gib dem Segment einen Namen.",
+    "needId": "Gib dem Segment eine numerische ID."
+  },
+  "delete": {
+    "button": "Löschen",
+    "title": "Segment löschen",
+    "body": "Bist du sicher, dass du \"{name}\" löschen möchtest? Die zugehörigen Aufwände werden ebenfalls gelöscht. Dies kann nicht rückgängig gemacht werden.",
+    "confirm": "Löschen",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "success": "Segment gelöscht",
+    "error": "Segment konnte nicht gelöscht werden. Bitte versuche es erneut."
+  },
+  "effortCount": "{count} Aufwände"
+}

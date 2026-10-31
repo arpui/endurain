@@ -6,6 +6,7 @@ from importlib import import_module
 import modules.activities.model_registry as activities_model_registry
 import modules.analysis.model_registry as analysis_model_registry
 import modules.followers.model_registry as follower_models
+import modules.segments.model_registry as segments_models_registry
 
 _APP_ROOT = pathlib.Path(__file__).resolve().parent
 _MODULES_ROOT = _APP_ROOT / "modules"
@@ -15,6 +16,7 @@ _CONVERTED_MODEL_MODULES = frozenset(
         *activities_model_registry.MODEL_MODULES,
         *analysis_model_registry.MODEL_MODULES,
         *follower_models.MODEL_MODULES,
+        *segments_models_registry.MODEL_MODULES,
     )
 )
 

@@ -1,0 +1,83 @@
+{
+  "title": "Odseki",
+  "subtitle": "Deoni poti, merjeni po svojih aktivnostih.",
+  "loading": "Nalaganje odsekov…",
+  "sourceStrava": "iz Strave",
+  "sourceManual": "določen tukaj",
+  "elevation": "Višinska razlika",
+  "map": {
+    "label": "Pot odseka na zemljevidu"
+  },
+  "error": {
+    "title": "Odsekov ni bilo mogoče naložiti",
+    "description": "Preveri povezavo in poskusi znova."
+  },
+  "empty": {
+    "title": "Še ni odsekov",
+    "description": "Uvozi odsek iz datoteke GPX ali iz JSON-a, ki ga izvozi ekstrakcijski skript."
+  },
+  "rescan": {
+    "button": "Ponovno izračunaj prizadevanja",
+    "queued": "Ponovni izračun prizadevanj je v vrsti.",
+    "failed": "Ponovnega izračuna ni bilo mogoče uvrstiti v vrsto."
+  },
+  "profile": {
+    "title": "Višinski profil",
+    "unavailable": "Ta odsek nima višinskih podatkov, zato ni profila."
+  },
+  "efforts": {
+    "title": "Vaša prizadevanja",
+    "includeReverse": "Vključi prehode v nasprotni smeri",
+    "rank": "Št.",
+    "activity": "Aktivnost",
+    "date": "Datum",
+    "time": "Čas",
+    "speed": "Hitrost",
+    "best": "Najboljši",
+    "reverse": "Nasprotna smer",
+    "activityLabel": "Aktivnost {id}",
+    "empty": {
+      "title": "Še ni prizadevanj",
+      "description": "Ponovno izračunaj prizadevanja, da se primerjajo s svojimi obstoječimi aktivnostmi."
+    }
+  },
+  "import": {
+    "button": "Uvozi odsek",
+    "title": "Uvozi odsek",
+    "description": "Izberi datoteko GPX ali prilepi JSON, ki ga izvozi ekstrakcijski skript Strave.",
+    "file": "Datoteka GPX ali JSON",
+    "fileHint": "Sled GPX (ali pot) da polilinijo in, če so na voljo, višine.",
+    "chooseFile": "Izberi datoteko",
+    "chosenFile": "{file} naložen",
+    "json": "Ali prilepi JSON",
+    "jsonPlaceholder": "segment_id, name in polja latlng, kot jih izvozi ekstrakcijski skript",
+    "parseJson": "Razčleni prilepljen JSON",
+    "name": "Ime",
+    "id": "ID odseka",
+    "idPlaceholder": "Obvezno za ročno določen odsek",
+    "parsed": "{points} točk · {distance}",
+    "submit": "Uvozi",
+    "cancel": "Prekliči",
+    "close": "Zapri",
+    "done": "Odsek „{name}“ uvožen; prizadevanja se ponovno izračunavajo.",
+    "duplicate": "Ta odsek je že v knjižnici.",
+    "failed": "Uvoz ni uspel.",
+    "badJson": "To ni veljaven JSON.",
+    "badGpx": "To ni berljiva datoteka GPX.",
+    "tooFewPoints": "Polilinija potrebuje vsaj dve točki.",
+    "lengthMismatch": "Višina ali razdalja ne ustreza številu točk.",
+    "needName": "Odseku daj ime.",
+    "needId": "Odseku daj številski ID."
+  },
+  "delete": {
+    "button": "Izbriši",
+    "title": "Izbriši odsek",
+    "body": "Ali si prepričan/a, da želiš izbrisati \"{name}\"? Tudi prizadevanja na tem odseku bodo izbrisana. Tega ni mogoče razveljaviti.",
+    "confirm": "Izbriši",
+    "cancel": "Prekliči",
+    "close": "Zapri",
+    "success": "Odsek izbrisan",
+    "error": "Odseka ni bilo mogoče izbrisati. Prosim, poskusi znova."
+  },
+  "effortCount": "{count} prizadevanj"
+}

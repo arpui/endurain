@@ -17,6 +17,7 @@ import modules.activities.contributor_registry as activities_contributor_registr
 import modules.activities.model_registry as activities_model_registry
 import modules.analysis.model_registry as analysis_model_registry
 import modules.followers.model_registry as followers_model_registry
+import modules.segments.model_registry as segments_model_registry
 
 _MODULES_DIR = Path(__file__).resolve().parents[2] / "app" / "modules"
 _APP_DIR = _MODULES_DIR.parent
@@ -67,6 +68,12 @@ _NO_CROSS_MODULE_SURFACE: dict[str, str] = {
         "events and a schedule (wired by app/module_registry.py), and answers its own "
         "routes (/analysis/* and /activities/{activity_id}/loads, mounted by app/api.py). "
         "No other module needs a load or a threshold from it yet."
+    ),
+    "segments": (
+        "Leaf module wired only through app composition: its subscribers and scheduled "
+        "jobs are registered by app/module_registry.py and its routers are mounted by "
+        "app/api.py. It consumes other modules (activities) but no other module calls "
+        "into it, so it exposes no cross-module operation yet."
     ),
 }
 
@@ -121,8 +128,12 @@ def test_model_registries_collect_every_converted_model() -> None:
     assert set(activities_model_registry.MODEL_MODULES) == expected_activities
     assert set(followers_model_registry.MODEL_MODULES) == {"modules.followers.models"}
     assert set(analysis_model_registry.MODEL_MODULES) == {"modules.analysis.models"}
+    assert set(segments_model_registry.MODEL_MODULES) == {"modules.segments.models"}
     assert (
-        expected_activities | set(followers_model_registry.MODEL_MODULES) | set(analysis_model_registry.MODEL_MODULES)
+        expected_activities
+        | set(followers_model_registry.MODEL_MODULES)
+        | set(analysis_model_registry.MODEL_MODULES)
+        | set(segments_model_registry.MODEL_MODULES)
         == app_model_registry._CONVERTED_MODEL_MODULES
     )
 

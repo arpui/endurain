@@ -18,5 +18,6 @@
   "preferences": "Innstillinger",
   "updateAvailable": "Oppdatering tilgjengelig",
   "updateAvailableTitle": "Versjon {version} er tilgjengelig",
-  "updateViewRelease": "Vis utgivelsesnotater"
+  "updateViewRelease": "Vis utgivelsesnotater",
+  "segments": "Segmenter"
 }

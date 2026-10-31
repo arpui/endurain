@@ -272,5 +272,16 @@
     "inlineSkating": "Πατινάζ με ρόλερ",
     "hiit": "HIIT",
     "jumpRope": "Σχοινάκι"
+  },
+  "segments": {
+    "title": "Τμήματα",
+    "segment": "Τμήμα",
+    "length": "Μήκος",
+    "time": "Χρόνος",
+    "tempo": "Ρυθμός / Ταχύτητα",
+    "reverse": "Αντίθετη κατεύθυνση",
+    "pass": "Διέλευση {number}",
+    "best": "Καλύτερη",
+    "slowerThanBest": "{delta} πιο αργά"
   }
 }

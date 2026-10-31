@@ -272,5 +272,16 @@
     "inlineSkating": "Skrituļslidošana",
     "hiit": "HIIT",
     "jumpRope": "Ložu trauciens"
+  },
+  "segments": {
+    "title": "Posmi",
+    "segment": "Posms",
+    "length": "Garums",
+    "time": "Laiks",
+    "tempo": "Temps / Ātrums",
+    "reverse": "Pretējs virziens",
+    "pass": "Brauciens {number}",
+    "best": "Labākais",
+    "slowerThanBest": "{delta} lēnāk"
   }
 }

@@ -35,5 +35,8 @@
     "edit": "Modifica",
     "supported": "Markdown supportato",
     "empty": "Nessuna anteprima disponibile"
+  },
+  "map": {
+    "recenter": "Reimposta la mappa"
   }
 }

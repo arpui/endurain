@@ -10,7 +10,7 @@ import type { ActivityMedia } from '@/features/activities/types'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Image } from '@/components/ui/image'
 import { Skeleton } from '@/components/ui/skeleton'
-import ActivityMap from '@/features/activities/components/ActivityMap.vue'
+import RouteMap from '@/components/RouteMap.vue'
 import { useToasts } from '@/composables/useToasts'
 import {
   useActivityMediaQuery,
@@ -188,7 +188,7 @@ async function confirmDelete(): Promise<void> {
         :class="heightClass"
         :aria-hidden="index !== current"
       >
-        <ActivityMap v-if="slide.kind === 'map'" :points="points" />
+        <RouteMap v-if="slide.kind === 'map'" :points="points" :label="t('activities.map.label')" />
         <component
           :is="thumbnailTo ? RouterLink : 'div'"
           v-else-if="slide.kind === 'thumbnail'"

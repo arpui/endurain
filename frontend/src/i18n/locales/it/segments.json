@@ -1,0 +1,83 @@
+{
+  "title": "Segmenti",
+  "subtitle": "Tratti di percorso misurati nelle tue attività.",
+  "loading": "Caricamento segmenti…",
+  "sourceStrava": "da Strava",
+  "sourceManual": "definito qui",
+  "elevation": "Dislivello",
+  "map": {
+    "label": "Percorso del segmento sulla mappa"
+  },
+  "error": {
+    "title": "Impossibile caricare i segmenti",
+    "description": "Controlla la connessione e riprova."
+  },
+  "empty": {
+    "title": "Ancora nessun segmento",
+    "description": "Importa un segmento da un file GPX o dal JSON esportato dallo script di estrazione."
+  },
+  "rescan": {
+    "button": "Ricalcola gli sforzi",
+    "queued": "Ricalcolo degli sforzi in coda.",
+    "failed": "Impossibile mettere in coda il ricalcolo."
+  },
+  "profile": {
+    "title": "Profilo altimetrico",
+    "unavailable": "Questo segmento non ha dati di quota, quindi non c’è profilo."
+  },
+  "efforts": {
+    "title": "I tuoi sforzi",
+    "includeReverse": "Includi passaggi in senso inverso",
+    "rank": "N.",
+    "activity": "Attività",
+    "date": "Data",
+    "time": "Tempo",
+    "speed": "Velocità",
+    "best": "Migliore",
+    "reverse": "Senso inverso",
+    "activityLabel": "Attività {id}",
+    "empty": {
+      "title": "Ancora nessuno sforzo",
+      "description": "Ricalcola gli sforzi per confrontare le attività esistenti con questo segmento."
+    }
+  },
+  "import": {
+    "button": "Importa segmento",
+    "title": "Importa un segmento",
+    "description": "Scegli un file GPX o incolla il JSON esportato dallo script di estrazione di Strava.",
+    "file": "File GPX o JSON",
+    "fileHint": "Una traccia GPX (o un percorso) fornisce la polilinea e, se presenti, le quote.",
+    "chooseFile": "Scegli un file",
+    "chosenFile": "{file} caricato",
+    "json": "Oppure incolla JSON",
+    "jsonPlaceholder": "segment_id, name e matrici latlng, come li esporta lo script di estrazione",
+    "parseJson": "Analizza l’JSON incollato",
+    "name": "Nome",
+    "id": "ID segmento",
+    "idPlaceholder": "Obbligatorio per un segmento definito a mano",
+    "parsed": "{points} punti · {distance}",
+    "submit": "Importa",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "done": "«{name}» importato; gli sforzi vengono ricalcolati.",
+    "duplicate": "Questo segmento è già nella libreria.",
+    "failed": "L’importazione non è riuscita.",
+    "badJson": "Non è JSON valido.",
+    "badGpx": "Non è un file GPX leggibile.",
+    "tooFewPoints": "La polilinea richiede almeno due punti.",
+    "lengthMismatch": "Quota o distanza non corrispondono al numero di punti.",
+    "needName": "Dai un nome al segmento.",
+    "needId": "Dai un ID numerico al segmento."
+  },
+  "delete": {
+    "button": "Elimina",
+    "title": "Elimina segmento",
+    "body": "Sei sicuro di voler eliminare \"{name}\"? Anche i suoi sforzi verranno eliminati. Non sarà possibile annullare l'operazione.",
+    "confirm": "Elimina",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "success": "Segmento eliminato",
+    "error": "Impossibile eliminare il segmento. Riprova."
+  },
+  "effortCount": "{count} sforzi"
+}

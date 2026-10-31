@@ -35,5 +35,8 @@
     "edit": "編輯",
     "supported": "支援 Markdown",
     "empty": "無內容可預覽"
+  },
+  "map": {
+    "recenter": "重新置中地圖"
   }
 }

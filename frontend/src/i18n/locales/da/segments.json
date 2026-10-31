@@ -1,0 +1,83 @@
+{
+  "title": "Segmenter",
+  "subtitle": "Rutestrækninger målt på tværs af dine aktiviteter.",
+  "loading": "Indlæser segmenter…",
+  "sourceStrava": "fra Strava",
+  "sourceManual": "defineret her",
+  "elevation": "Højdemeter",
+  "map": {
+    "label": "Segmentets rute på kortet"
+  },
+  "error": {
+    "title": "Kunne ikke indlæse segmenter",
+    "description": "Tjek forbindelse og prøv igen."
+  },
+  "empty": {
+    "title": "Ingen segmenter endnu",
+    "description": "Importér et segment fra en GPX-fil eller fra JSON’en som ekstraktionsskriptet eksporterer."
+  },
+  "rescan": {
+    "button": "Beregn indsatser igen",
+    "queued": "Genberegning af indsatser i kø.",
+    "failed": "Kunne ikke lægge genberegning i kø."
+  },
+  "profile": {
+    "title": "Højdeprofil",
+    "unavailable": "Dette segment har ingen højdedata, så der er intet profil."
+  },
+  "efforts": {
+    "title": "Dine indsatser",
+    "includeReverse": "Medtag passager i modsat retning",
+    "rank": "#",
+    "activity": "Aktivitet",
+    "date": "Dato",
+    "time": "Tid",
+    "speed": "Hastighed",
+    "best": "Bedste",
+    "reverse": "Modsat retning",
+    "activityLabel": "Aktivitet {id}",
+    "empty": {
+      "title": "Ingen indsatser endnu",
+      "description": "Beregn indsatserne igen for at sammenligne dine eksisterende aktiviteter med dette segment."
+    }
+  },
+  "import": {
+    "button": "Importér segment",
+    "title": "Importér et segment",
+    "description": "Vælg en GPX-fil eller indsæt JSON’en som Strava-ekstraktionsskriptet eksporterer.",
+    "file": "GPX- eller JSON-fil",
+    "fileHint": "Et GPX-spor (eller rute) giver polyline og, hvis til stede, højderne.",
+    "chooseFile": "Vælg en fil",
+    "chosenFile": "{file} indlæst",
+    "json": "Eller indsæt JSON",
+    "jsonPlaceholder": "segment_id, name og latlng-arrays, som ekstraktionsskriptet eksporterer dem",
+    "parseJson": "Fortolk indsat JSON",
+    "name": "Navn",
+    "id": "Segment-id",
+    "idPlaceholder": "Kræves for et manuelt defineret segment",
+    "parsed": "{points} punkter · {distance}",
+    "submit": "Importér",
+    "cancel": "Annullér",
+    "close": "Luk",
+    "done": "„{name}“ importeret; indsatserne beregnes igen.",
+    "duplicate": "Det segment er allerede i biblioteket.",
+    "failed": "Importen mislykkedes.",
+    "badJson": "Det er ikke gyldig JSON.",
+    "badGpx": "Det er ikke en læsbar GPX-fil.",
+    "tooFewPoints": "Polylinjen skal bruge mindst to punkter.",
+    "lengthMismatch": "Højde eller distance matcher ikke antallet af punkter.",
+    "needName": "Giv segmentet et navn.",
+    "needId": "Giv segmentet et numerisk id."
+  },
+  "delete": {
+    "button": "Slet",
+    "title": "Slet segment",
+    "body": "Er du sikker på, at du vil slette \"{name}\"? Alle indsatser på segmentet slettes også. Dette kan ikke fortrydes.",
+    "confirm": "Slet",
+    "cancel": "Annullér",
+    "close": "Luk",
+    "success": "Segment slettet",
+    "error": "Kunne ikke slette segmentet. Prøv venligst igen."
+  },
+  "effortCount": "{count} indsatser"
+}

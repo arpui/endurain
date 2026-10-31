@@ -18,5 +18,6 @@
   "preferences": "Preferences",
   "updateAvailable": "Pieejams atjauninājums",
   "updateAvailableTitle": "Pieejama versija {version}",
-  "updateViewRelease": "Skatīt laidiena piezīmes"
+  "updateViewRelease": "Skatīt laidiena piezīmes",
+  "segments": "Posmi"
 }

@@ -272,5 +272,16 @@
     "inlineSkating": "Катання на роликах",
     "hiit": "HIIT",
     "jumpRope": "Стрибки зі скакалкою"
+  },
+  "segments": {
+    "title": "Відрізки",
+    "segment": "Відрізок",
+    "length": "Довжина",
+    "time": "Час",
+    "tempo": "Темп / Швидкість",
+    "reverse": "Зворотний напрям",
+    "pass": "Прохід {number}",
+    "best": "Найкраще",
+    "slowerThanBest": "{delta} повільніше"
   }
 }

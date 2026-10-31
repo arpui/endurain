@@ -272,5 +272,16 @@
     "inlineSkating": "轮滑",
     "hiit": "HIIT",
     "jumpRope": "跳绳"
+  },
+  "segments": {
+    "title": "路段",
+    "segment": "路段",
+    "length": "长度",
+    "time": "用时",
+    "tempo": "配速 / 速度",
+    "reverse": "反向",
+    "pass": "第 {number} 次通过",
+    "best": "最佳",
+    "slowerThanBest": "慢 {delta}"
   }
 }

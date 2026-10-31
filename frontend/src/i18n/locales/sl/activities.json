@@ -272,5 +272,16 @@
     "inlineSkating": "Rolkanje",
     "hiit": "HIIT",
     "jumpRope": "Skakanje s kolebnico"
+  },
+  "segments": {
+    "title": "Odseki",
+    "segment": "Odsek",
+    "length": "Dolžina",
+    "time": "Čas",
+    "tempo": "Tempo / Hitrost",
+    "reverse": "Nasprotna smer",
+    "pass": "Prehod {number}",
+    "best": "Najboljši",
+    "slowerThanBest": "{delta} počasnejši"
   }
 }

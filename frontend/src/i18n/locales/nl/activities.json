@@ -272,5 +272,16 @@
     "inlineSkating": "Inline skaten",
     "hiit": "HIIT",
     "jumpRope": "Springtouw"
+  },
+  "segments": {
+    "title": "Segmenten",
+    "segment": "Segment",
+    "length": "Lengte",
+    "time": "Tijd",
+    "tempo": "Tempo / Snelheid",
+    "reverse": "Terugrichting",
+    "pass": "Doorgang {number}",
+    "best": "Beste",
+    "slowerThanBest": "{delta} langzamer"
   }
 }

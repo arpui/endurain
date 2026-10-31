@@ -35,5 +35,8 @@
     "edit": "Edita",
     "supported": "Markdown compatible",
     "empty": "Res per previsualitzar"
+  },
+  "map": {
+    "recenter": "Recentra el mapa"
   }
 }

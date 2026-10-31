@@ -1,0 +1,83 @@
+{
+  "title": "Segmentos",
+  "subtitle": "Tramos de ruta medidos nas túas actividades.",
+  "loading": "Cargando segmentos…",
+  "sourceStrava": "de Strava",
+  "sourceManual": "definido aquí",
+  "elevation": "Desnivel",
+  "map": {
+    "label": "Ruta do segmento no mapa"
+  },
+  "error": {
+    "title": "Non se puideron cargar os segmentos",
+    "description": "Comproba a conexión e téntao de novo."
+  },
+  "empty": {
+    "title": "Aínda non hai segmentos",
+    "description": "Importa un segmento desde un ficheiro GPX ou desde o JSON que exporta o script de extracción."
+  },
+  "rescan": {
+    "button": "Recalcular esforzos",
+    "queued": "Recálculo dos esforzos en cola.",
+    "failed": "Non se puido meter o recálculo na cola."
+  },
+  "profile": {
+    "title": "Perfil de elevación",
+    "unavailable": "Este segmento non ten datos de altitude, así que non hai perfil."
+  },
+  "efforts": {
+    "title": "Os teus esforzos",
+    "includeReverse": "Incluír pasadas en sentido inverso",
+    "rank": "Núm.",
+    "activity": "Actividade",
+    "date": "Data",
+    "time": "Tempo",
+    "speed": "Velocidade",
+    "best": "Mellor",
+    "reverse": "Sentido inverso",
+    "activityLabel": "Actividade {id}",
+    "empty": {
+      "title": "Aínda non hai esforzos",
+      "description": "Recalcula os esforzos para comparar as actividades existentes con este segmento."
+    }
+  },
+  "import": {
+    "button": "Importar segmento",
+    "title": "Importar un segmento",
+    "description": "Escolle un ficheiro GPX ou pega o JSON que exporta o script de extracción de Strava.",
+    "file": "Ficheiro GPX ou JSON",
+    "fileHint": "Unha pista GPX (ou ruta) dá a poliliña e, se as hai, as altitudes.",
+    "chooseFile": "Escolher un ficheiro",
+    "chosenFile": "{file} cargado",
+    "json": "Ou pega JSON",
+    "jsonPlaceholder": "segment_id, name e matrices latlng, tal como as exporta o script de extracción",
+    "parseJson": "Analizar o JSON pegado",
+    "name": "Nome",
+    "id": "Id do segmento",
+    "idPlaceholder": "Obrigatorio para un segmento definido a man",
+    "parsed": "{points} puntos · {distance}",
+    "submit": "Importar",
+    "cancel": "Cancelar",
+    "close": "Pechar",
+    "done": "«{name}» importado; os esforzos están a recalcularse.",
+    "duplicate": "Ese segmento xa está na biblioteca.",
+    "failed": "A importación fallou.",
+    "badJson": "Iso non é JSON válido.",
+    "badGpx": "Iso non é un ficheiro GPX lexible.",
+    "tooFewPoints": "A poliliña necesita polo menos dous puntos.",
+    "lengthMismatch": "A altitude ou a distancia non coincide co número de puntos.",
+    "needName": "Dálle un nome ao segmento.",
+    "needId": "Dálle un id numérico ao segmento."
+  },
+  "delete": {
+    "button": "Eliminar",
+    "title": "Eliminar segmento",
+    "body": "Tes a certeza de que queres eliminar \"{name}\"? Os seus esforzos elimínanse xunto con el. Esta acción non se pode desfacer.",
+    "confirm": "Eliminar",
+    "cancel": "Cancelar",
+    "close": "Pechar",
+    "success": "Segmento eliminado",
+    "error": "Non se puido eliminar o segmento. Por favor, téntao de novo."
+  },
+  "effortCount": "{count} esforzos"
+}

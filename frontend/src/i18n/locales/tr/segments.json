@@ -1,0 +1,83 @@
+{
+  "title": "Segmentler",
+  "subtitle": "Etkinliklerinde ölçülen rota bölümleri.",
+  "loading": "Segmentler yükleniyor…",
+  "sourceStrava": "Strava'dan",
+  "sourceManual": "burada tanımlandı",
+  "elevation": "Yükselme",
+  "map": {
+    "label": "Haritada segment rotası"
+  },
+  "error": {
+    "title": "Segmentler yüklenemedi",
+    "description": "Bağlantıyı denetleyip yeniden deneyin."
+  },
+  "empty": {
+    "title": "Henüz segment yok",
+    "description": "Bir GPX dosyasından veya çıkarma betiğinin dışa aktardığı JSON'dan segment içe aktarın."
+  },
+  "rescan": {
+    "button": "Eforları yeniden hesapla",
+    "queued": "Efor yeniden hesabı sıraya alındı.",
+    "failed": "Yeniden hesaplama sıraya alınamadı."
+  },
+  "profile": {
+    "title": "İrtifa profili",
+    "unavailable": "Bu segmentin irtifa verisi yok, bu yüzden profil yok."
+  },
+  "efforts": {
+    "title": "Eforların",
+    "includeReverse": "Ters yöndeki geçişleri dahil et",
+    "rank": "No",
+    "activity": "Etkinlik",
+    "date": "Tarih",
+    "time": "Süre",
+    "speed": "Hız",
+    "best": "En iyi",
+    "reverse": "Ters yön",
+    "activityLabel": "Etkinlik {id}",
+    "empty": {
+      "title": "Henüz efor yok",
+      "description": "Mevcut etkinlikleri bu segmentle karşılaştırmak için eforları yeniden hesaplayın."
+    }
+  },
+  "import": {
+    "button": "Segment içe aktar",
+    "title": "Segment içe aktar",
+    "description": "Bir GPX dosyası seçin veya Strava çıkarma betiğinin JSON'unu yapıştırın.",
+    "file": "GPX veya JSON dosyası",
+    "fileHint": "Bir GPX parkuru (veya rota) çoklu çizgiyi ve varsa irtifaları verir.",
+    "chooseFile": "Bir dosya seç",
+    "chosenFile": "{file} yüklendi",
+    "json": "Veya JSON yapıştırın",
+    "jsonPlaceholder": "segment_id, name ve latlng dizileri, çıkarma betiğinin dışa aktardığı biçimde",
+    "parseJson": "Yapıştırılan JSON'u çözümle",
+    "name": "Ad",
+    "id": "Segment kimliği",
+    "idPlaceholder": "Elle tanımlanan segment için zorunlu",
+    "parsed": "{points} nokta · {distance}",
+    "submit": "İçe aktar",
+    "cancel": "İptal",
+    "close": "Kapat",
+    "done": "“{name}” içe aktarıldı; eforlar yeniden hesaplanıyor.",
+    "duplicate": "Bu segment zaten kitaplıkta.",
+    "failed": "İçe aktarma başarısız oldu.",
+    "badJson": "Bu geçerli JSON değil.",
+    "badGpx": "Bu okunabilir bir GPX dosyası değil.",
+    "tooFewPoints": "Çoklu çizgi en az iki nokta gerektirir.",
+    "lengthMismatch": "İrtifa veya mesafe nokta sayısıyla uyuşmuyor.",
+    "needName": "Segmente bir ad verin.",
+    "needId": "Segmente sayısal bir kimlik verin."
+  },
+  "delete": {
+    "button": "Sil",
+    "title": "Segmenti sil",
+    "body": "\"{name}\" öğesini silmek istediğinizden emin misiniz? Bu segmente ait eforlar da silinir. Bu işlem geri alınamaz.",
+    "confirm": "Sil",
+    "cancel": "İptal",
+    "close": "Kapat",
+    "success": "Segment silindi",
+    "error": "Segment silinemedi. Lütfen tekrar deneyin."
+  },
+  "effortCount": "{count} efor"
+}

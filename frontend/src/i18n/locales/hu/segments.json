@@ -1,0 +1,83 @@
+{
+  "title": "Szakaszok",
+  "subtitle": "Útvonal-szakaszok, amelyeket a tevékenységeidben mérsz.",
+  "loading": "Szakaszok betöltése…",
+  "sourceStrava": "Stravából",
+  "sourceManual": "itt definiálva",
+  "elevation": "Szintemelkedés",
+  "map": {
+    "label": "A szakasz útvonala a térképen"
+  },
+  "error": {
+    "title": "Nem sikerült betölteni a szakaszokat",
+    "description": "Ellenőrizd a kapcsolatot, és próbáld újra."
+  },
+  "empty": {
+    "title": "Még nincs szakasz",
+    "description": "Importálj szakaszt GPX-fájlból vagy a kinyerő szkript által exportált JSON-ból."
+  },
+  "rescan": {
+    "button": "Erőfeszítések újraszámítása",
+    "queued": "Az erőfeszítések újraszámítása sorban van.",
+    "failed": "Nem sikerült sorba állítani az újraszámítást."
+  },
+  "profile": {
+    "title": "Magasságprofil",
+    "unavailable": "Ennek a szakasznak nincs magassági adata, ezért nincs profil."
+  },
+  "efforts": {
+    "title": "Saját erőfeszítések",
+    "includeReverse": "Ellentétes irányú áthaladások megjelenítése",
+    "rank": "#",
+    "activity": "Tevékenység",
+    "date": "Dátum",
+    "time": "Idő",
+    "speed": "Sebesség",
+    "best": "Legjobb",
+    "reverse": "Ellentétes irány",
+    "activityLabel": "Tevékenység {id}",
+    "empty": {
+      "title": "Még nincs erőfeszítés",
+      "description": "Számold újra az erőfeszítéseket, hogy a meglévő tevékenységeid is összehasonlításra kerüljenek."
+    }
+  },
+  "import": {
+    "button": "Szakasz importálása",
+    "title": "Szakasz importálása",
+    "description": "Válassz GPX-fájlt, vagy illeszd be a Strava kinyerő szkriptjének JSON-ját.",
+    "file": "GPX- vagy JSON-fájl",
+    "fileHint": "Egy GPX-pálya (vagy útvonal) megadja a poligont és, ha vannak, a magasságokat.",
+    "chooseFile": "Fájl kiválasztása",
+    "chosenFile": "{file} betöltve",
+    "json": "Vagy illessz be JSON-t",
+    "jsonPlaceholder": "segment_id, name és latlng tömbök, ahogy a kinyerő szkript exportálja",
+    "parseJson": "Beillesztett JSON feldolgozása",
+    "name": "Név",
+    "id": "Szakasz azonosítója",
+    "idPlaceholder": "Kézzel definiált szakasz esetén kötelező",
+    "parsed": "{points} pont · {distance}",
+    "submit": "Importálás",
+    "cancel": "Mégse",
+    "close": "Bezárás",
+    "done": "„{name}” importálva; az erőfeszítések újraszámítása folyamatban.",
+    "duplicate": "Ez a szakasz már szerepel a könyvtárban.",
+    "failed": "Az importálás nem sikerült.",
+    "badJson": "Ez nem érvényes JSON.",
+    "badGpx": "Ez nem olvasható GPX-fájl.",
+    "tooFewPoints": "A poligonnak legalább két pontra van szüksége.",
+    "lengthMismatch": "A magasság vagy a távolság nem egyezik a pontok számával.",
+    "needName": "Adj nevet a szakasznak.",
+    "needId": "Adj a szakasznak numerikus azonosítót."
+  },
+  "delete": {
+    "button": "Törlés",
+    "title": "Szakasz törlése",
+    "body": "Biztosan törölni szeretnéd a(z) „{name}” szakaszt? A hozzá tartozó erőfeszítések is törlődnek. Ezt nem lehet visszavonni.",
+    "confirm": "Törlés",
+    "cancel": "Mégse",
+    "close": "Bezárás",
+    "success": "Szakasz törölve",
+    "error": "Nem sikerült törölni a szakaszt. Kérjük, próbáld újra."
+  },
+  "effortCount": "{count} erőfeszítés"
+}

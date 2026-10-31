@@ -1,0 +1,83 @@
+{
+  "title": "路段",
+  "subtitle": "在你的活動中測量的路段。",
+  "loading": "正在載入路段…",
+  "sourceStrava": "來自 Strava",
+  "sourceManual": "在此定義",
+  "elevation": "海拔",
+  "map": {
+    "label": "地圖上的路段路線"
+  },
+  "error": {
+    "title": "無法載入路段",
+    "description": "請檢查連線後再試一次。"
+  },
+  "empty": {
+    "title": "還沒有路段",
+    "description": "從 GPX 檔案或擷取腳本輸出的 JSON 匯入路段。"
+  },
+  "rescan": {
+    "button": "重新計算用時",
+    "queued": "重新計算用時已排入佇列。",
+    "failed": "無法將重新計算排入佇列。"
+  },
+  "profile": {
+    "title": "海拔剖面",
+    "unavailable": "此路段沒有海拔資料，因此沒有剖面圖。"
+  },
+  "efforts": {
+    "title": "你的用時",
+    "includeReverse": "顯示反向通過",
+    "rank": "名次",
+    "activity": "活動",
+    "date": "日期",
+    "time": "用時",
+    "speed": "速度",
+    "best": "最佳",
+    "reverse": "反向",
+    "activityLabel": "活動 {id}",
+    "empty": {
+      "title": "還沒有用時",
+      "description": "重新計算用時，以比對現有活動與此路段。"
+    }
+  },
+  "import": {
+    "button": "匯入路段",
+    "title": "匯入路段",
+    "description": "選擇 GPX 檔案，或貼上 Strava 擷取腳本輸出的 JSON。",
+    "file": "GPX 或 JSON 檔案",
+    "fileHint": "GPX 軌跡（或路線）提供折線與（若有）海拔。",
+    "chooseFile": "選擇檔案",
+    "chosenFile": "已讀取 {file}",
+    "json": "或貼上 JSON",
+    "jsonPlaceholder": "segment_id、name 與 latlng 陣列，依擷取腳本輸出的格式",
+    "parseJson": "解析貼上的 JSON",
+    "name": "名稱",
+    "id": "路段編號",
+    "idPlaceholder": "手動定義的路段必須填寫",
+    "parsed": "{points} 個點 · {distance}",
+    "submit": "匯入",
+    "cancel": "取消",
+    "close": "關閉",
+    "done": "已匯入「{name}」；正在重新計算用時。",
+    "duplicate": "該路段已在庫中。",
+    "failed": "匯入失敗。",
+    "badJson": "這不是有效的 JSON。",
+    "badGpx": "這不是可讀取的 GPX 檔案。",
+    "tooFewPoints": "折線至少需要兩個點。",
+    "lengthMismatch": "海拔或距離與點數不一致。",
+    "needName": "請為該路段命名。",
+    "needId": "請為該路段提供數字編號。"
+  },
+  "delete": {
+    "button": "刪除",
+    "title": "刪除路段",
+    "body": "確定要刪除「{name}」嗎？該路段的用時也會一併刪除。此操作無法復原。",
+    "confirm": "刪除",
+    "cancel": "取消",
+    "close": "關閉",
+    "success": "路段已刪除",
+    "error": "無法刪除路段。請再試一次。"
+  },
+  "effortCount": "{count} 次用時"
+}

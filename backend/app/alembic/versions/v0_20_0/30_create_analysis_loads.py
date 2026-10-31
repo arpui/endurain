@@ -1,7 +1,7 @@
-"""28: create analysis settings, activity loads and duration peaks
+"""30: create analysis settings, activity loads and duration peaks
 
 Revision ID: b7f3c2194da6
-Revises: d54bdd779392
+Revises: 4a7e1b93c8d2
 Create Date: 2026-10-30 00:00:00.000000
 
 Training-load analysis stores three things. ``analysis_settings`` is one row per
@@ -24,7 +24,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "b7f3c2194da6"
-down_revision: str | None = "d54bdd779392"
+down_revision: str | None = "4a7e1b93c8d2"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

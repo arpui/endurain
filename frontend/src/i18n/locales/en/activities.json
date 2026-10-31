@@ -114,6 +114,17 @@
     "hr": "Heart rate",
     "activeSummary": "Active total"
   },
+  "segments": {
+    "title": "Segments",
+    "segment": "Segment",
+    "length": "Length",
+    "time": "Time",
+    "tempo": "Pace / Speed",
+    "reverse": "Reverse",
+    "pass": "Pass {number}",
+    "best": "Best",
+    "slowerThanBest": "{delta} slower"
+  },
   "workout": {
     "title": "Workout",
     "stepsTitle": "Steps",
