@@ -67,7 +67,8 @@
     "ivEnterBase": "Rep ×base",
     "ivMinSegmentS": "Rep min (s)",
     "ivClimbGrade": "Climb (%)",
-    "ivHint": "Interval knobs are compared with your own numbers (threshold and each session's median). Blank means the default."
+    "ivHint": "Interval knobs are compared with your own numbers (threshold and each session's median). Blank means the default.",
+    "ivEffortIf": "Effort ×CP"
   },
   "actions": {
     "refreshThresholds": "Refresh thresholds",
@@ -126,6 +127,7 @@
     "effortsMany": "efforts",
     "colStart": "start",
     "colGrade": "grade",
-    "colContrast": "vs session"
+    "colContrast": "vs session",
+    "rules": "How it is detected here: on the flat a stretch counts as an interval only if it holds ≥{effortIf}·CP; an effort opens at {openW} W and closes below {closeW} W; minimum {minS} s (under {shortS} s it needs {shortBase} the session median; with no real recovery —≤{recoveryW} W—, {strongBase}); a grade above {climbGrade}% with IF<{climbIf} counts as a climb."
   }
 }

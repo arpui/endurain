@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×base",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Côte (%)",
-    "ivHint": "Les réglages d'intervalle se comparent à vos chiffres (seuil et médiane de la séance). Vide = valeur par défaut."
+    "ivHint": "Les réglages d'intervalle se comparent à vos chiffres (seuil et médiane de la séance). Vide = valeur par défaut.",
+    "ivEffortIf": "Effort ×CP"
   },
   "actions": {
     "refreshThresholds": "Actualiser les seuils",
@@ -126,6 +127,7 @@
     "effortsMany": "efforts",
     "colStart": "départ",
     "colGrade": "pente",
-    "colContrast": "vs séance"
+    "colContrast": "vs séance",
+    "rules": "Détection ici : sur le plat, un segment ne compte comme intervalle que s'il tient ≥{effortIf}·CP ; un effort s'ouvre à {openW} W et se ferme sous {closeW} W ; minimum {minS} s (sous {shortS} s, il faut {shortBase} la médiane de la séance ; sans récupération réelle —≤{recoveryW} W—, {strongBase}) ; une pente >{climbGrade}% avec IF<{climbIf} compte comme côte."
   }
 }

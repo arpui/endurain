@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×taban",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Tırmanış (%)",
-    "ivHint": "Interval parametreleri kendi değerlerinle karşılaştırılır (eşik ve seans medyanı). Boş = varsayılan."
+    "ivHint": "Interval parametreleri kendi değerlerinle karşılaştırılır (eşik ve seans medyanı). Boş = varsayılan.",
+    "ivEffortIf": "Efor ×CP"
   },
   "actions": {
     "refreshThresholds": "Eşikleri yenile",
@@ -126,6 +127,7 @@
     "effortsMany": "efor",
     "colStart": "başlangıç",
     "colGrade": "eğim",
-    "colContrast": "vs seans"
+    "colContrast": "vs seans",
+    "rules": "Burada algılama: düz zeminde bir bölüm ancak ≥{effortIf}·CP sürdürürse interval sayılır; efor {openW} W'te açılır ve {closeW} W altında kapanır; asgari {minS} s ({shortS} s altındaysa seans medyanının {shortBase}'i gerekir; gerçek toparlanma olmadan —≤{recoveryW} W—, {strongBase}); >{climbGrade}% eğim ve IF<{climbIf} tırmanış sayılır."
   }
 }

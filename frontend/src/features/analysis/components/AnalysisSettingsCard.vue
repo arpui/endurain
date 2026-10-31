@@ -29,7 +29,12 @@ const { t } = useI18n()
 const toasts = useToasts()
 
 /** Knobs of the per-activity interval split, all relative to the athlete's numbers. */
-const INTERVAL_KEYS = ['iv_enter_base', 'iv_min_segment_s', 'iv_climb_grade_pct'] as const
+const INTERVAL_KEYS = [
+  'iv_enter_base',
+  'iv_effort_if',
+  'iv_min_segment_s',
+  'iv_climb_grade_pct',
+] as const
 
 const parameters = reactive({
   acuteDays: String(props.settings.acuteDays),
@@ -287,6 +292,18 @@ function queueRecompute(): void {
             step="0.05"
             min="1"
             max="3"
+          />
+        </template>
+      </FormField>
+      <FormField :label="t('analysis.settings.ivEffortIf')" class="w-24">
+        <template #default="{ fieldId }">
+          <Input
+            :id="fieldId"
+            v-model="intervals.iv_effort_if"
+            type="number"
+            step="0.01"
+            min="1"
+            max="1.5"
           />
         </template>
       </FormField>

@@ -5615,10 +5615,12 @@ export interface components {
          *         threshold_w: The threshold the intensities were divided by, if the athlete has one.
          *         base_power_w: The session's own median power, the relative anchor used.
          *         segments: Contiguous segments covering the timeline, in order.
+         *         rules: The effective numeric gates used, ``None`` when nothing was segmented.
          */
         ActivityIntervalsRead: {
             /** Base Power W */
             base_power_w: number;
+            rules?: components["schemas"]["IntervalRulesRead"] | null;
             /** Segments */
             segments: components["schemas"]["IntervalSegmentRead"][];
             shape: components["schemas"]["SessionShape"];
@@ -9340,6 +9342,47 @@ export interface components {
          * @enum {string}
          */
         "Interval-Output": "daily" | "weekly" | "monthly" | "yearly";
+        /**
+         * IntervalRulesRead
+         * @description The effective numeric gates the split used for one session.
+         *
+         *     Exposed so an athlete can read back why a stretch was called what it was: every
+         *     value is in this athlete's own terms (their threshold, this session's median).
+         *
+         *     Attributes:
+         *         open_w: Smoothed power at which an effort begins.
+         *         close_w: Smoothed power at which it ends.
+         *         min_segment_s: Shortest stretch that counts at all.
+         *         short_segment_s: Under this length, the short-effort contrast rule applies.
+         *         short_base: Contrast a short effort needs over the session median.
+         *         strong_base: Contrast needed when the gap before was not a real recovery.
+         *         recovery_w: At or below this, a gap counts as a recovery.
+         *         effort_if: Average intensity a flat effort must hold to be an interval.
+         *         climb_grade_pct: Mean grade above which terrain explains the effort.
+         *         climb_if: Above this intensity even a graded effort is a rep, not a climb.
+         */
+        IntervalRulesRead: {
+            /** Climb Grade Pct */
+            climb_grade_pct: number;
+            /** Climb If */
+            climb_if: number;
+            /** Close W */
+            close_w: number;
+            /** Effort If */
+            effort_if: number;
+            /** Min Segment S */
+            min_segment_s: number;
+            /** Open W */
+            open_w: number;
+            /** Recovery W */
+            recovery_w: number;
+            /** Short Base */
+            short_base: number;
+            /** Short Segment S */
+            short_segment_s: number;
+            /** Strong Base */
+            strong_base: number;
+        };
         /**
          * IntervalSegmentRead
          * @description One stretch of an activity's timeline, as the interval analysis read it.

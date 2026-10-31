@@ -186,6 +186,7 @@ export interface WprimeBalance {
 
 export type ActivityIntervalsDto = Schemas['ActivityIntervalsRead']
 export type IntervalSegmentDto = Schemas['IntervalSegmentRead']
+export type IntervalRulesDto = Schemas['IntervalRulesRead']
 
 /** What one stretch of an activity was, as the server read it. */
 export type IntervalSegmentKind = 'interval' | 'climb' | 'race' | 'recovery' | 'easy'
@@ -210,6 +211,22 @@ export interface IntervalSegment {
   avgSpeedMs: number | null
 }
 
+/** The effective numeric gates one session's split used, for the footnote. */
+export interface IntervalRules {
+  /** Smoothed power (W) at which an effort begins. */
+  openW: number
+  /** Smoothed power (W) at which it ends. */
+  closeW: number
+  minSegmentS: number
+  shortSegmentS: number
+  shortBase: number
+  strongBase: number
+  recoveryW: number
+  effortIf: number
+  climbGradePct: number
+  climbIf: number
+}
+
 /** How one activity breaks down into efforts. */
 export interface ActivityIntervals {
   shape: IntervalSessionShape
@@ -218,4 +235,6 @@ export interface ActivityIntervals {
   /** The session's own median power, the relative anchor the split used. */
   basePowerW: number
   segments: IntervalSegment[]
+  /** The numeric gates used, `null` when nothing was segmented. */
+  rules: IntervalRules | null
 }

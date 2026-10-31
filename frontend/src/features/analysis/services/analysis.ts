@@ -13,6 +13,8 @@ import type {
   FitnessQuery,
   FitnessSeries,
   FitnessSeriesDto,
+  IntervalRules,
+  IntervalRulesDto,
   IntervalSegment,
   IntervalSegmentDto,
   LoadMethod,
@@ -261,6 +263,7 @@ export function mapActivityIntervals(dto: ActivityIntervalsDto): ActivityInterva
     thresholdW: dto.threshold_w ?? null,
     basePowerW: dto.base_power_w,
     segments: (dto.segments ?? []).map(mapIntervalSegment),
+    rules: dto.rules ? mapIntervalRules(dto.rules) : null,
   }
 }
 
@@ -280,4 +283,20 @@ export async function fetchActivityIntervals(
     signal,
   })
   return mapActivityIntervals(dto)
+}
+
+/** Maps the numeric gates the server used for one session. */
+function mapIntervalRules(dto: IntervalRulesDto): IntervalRules {
+  return {
+    openW: dto.open_w,
+    closeW: dto.close_w,
+    minSegmentS: dto.min_segment_s,
+    shortSegmentS: dto.short_segment_s,
+    shortBase: dto.short_base,
+    strongBase: dto.strong_base,
+    recoveryW: dto.recovery_w,
+    effortIf: dto.effort_if,
+    climbGradePct: dto.climb_grade_pct,
+    climbIf: dto.climb_if,
+  }
 }

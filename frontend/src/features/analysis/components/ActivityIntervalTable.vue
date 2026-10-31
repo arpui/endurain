@@ -87,6 +87,29 @@ const summary = computed(() => {
     base: Math.round(props.intervals.basePowerW),
   }
 })
+
+/**
+ * The detection rules as one caption, with the real numbers this session used:
+ * what a reader needs when a stretch looks mislabelled.
+ */
+const rulesNote = computed(() => {
+  const rules = props.intervals.rules
+  if (!rules) {
+    return null
+  }
+  return t('analysis.intervals.rules', {
+    effortIf: rules.effortIf.toFixed(2),
+    openW: Math.round(rules.openW),
+    closeW: Math.round(rules.closeW),
+    minS: Math.round(rules.minSegmentS),
+    shortS: Math.round(rules.shortSegmentS),
+    shortBase: `×${rules.shortBase.toFixed(2)}`,
+    strongBase: `×${rules.strongBase.toFixed(2)}`,
+    recoveryW: Math.round(rules.recoveryW),
+    climbGrade: rules.climbGradePct.toFixed(1),
+    climbIf: rules.climbIf.toFixed(2),
+  })
+})
 </script>
 
 <template>
@@ -141,6 +164,9 @@ const summary = computed(() => {
           base: `${summary.base} W`,
         })
       }}
+    </p>
+    <p v-if="rulesNote" class="text-caption text-muted-foreground">
+      {{ rulesNote }}
     </p>
   </div>
 </template>

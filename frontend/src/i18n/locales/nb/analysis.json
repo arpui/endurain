@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×base",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Bakke (%)",
-    "ivHint": "Intervallparametre sammenlignes med dine egne tall (terskel og øktens median). Tomt = standard."
+    "ivHint": "Intervallparametre sammenlignes med dine egne tall (terskel og øktens median). Tomt = standard.",
+    "ivEffortIf": "Innsats ×CP"
   },
   "actions": {
     "refreshThresholds": "Oppdater terskler",
@@ -126,6 +127,7 @@
     "effortsMany": "innsatser",
     "colStart": "start",
     "colGrade": "stigning",
-    "colContrast": "vs økt"
+    "colContrast": "vs økt",
+    "rules": "Slik oppdages det her: på flatt teller en strekning bare som intervall hvis den holder ≥{effortIf}·CP; en innsats åpnes ved {openW} W og lukkes under {closeW} W; minst {minS} s (under {shortS} s kreves {shortBase} av øktens median; uten skikkelig hvile —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} teller det som bakke."
   }
 }

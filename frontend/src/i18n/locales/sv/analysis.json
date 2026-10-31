@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×bas",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Backe (%)",
-    "ivHint": "Intervallvärden jämförs med dina egna värden (tröskel och passets median). Tomt = standard."
+    "ivHint": "Intervallvärden jämförs med dina egna värden (tröskel och passets median). Tomt = standard.",
+    "ivEffortIf": "Insats ×CP"
   },
   "actions": {
     "refreshThresholds": "Uppdatera trösklar",
@@ -126,6 +127,7 @@
     "effortsMany": "insatser",
     "colStart": "start",
     "colGrade": "lutning",
-    "colContrast": "vs pass"
+    "colContrast": "vs pass",
+    "rules": "Så upptäcks det här: på plant räknas en sträcka som intervall bara om den håller ≥{effortIf}·CP; en insats öppnas vid {openW} W och stängs under {closeW} W; minst {minS} s (under {shortS} s krävs {shortBase} passets median; utan riktig återhämtning —≤{recoveryW} W—, {strongBase}); med lutning >{climbGrade}% och IF<{climbIf} räknas det som backe."
   }
 }

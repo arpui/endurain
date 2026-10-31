@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×pamatv.",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Kāpiens (%)",
-    "ivHint": "Intervalu parametri tiek salīdzināti ar taviem skaitļiem (slieksnis un sesijas mediāna). Tukšs = noklusējums."
+    "ivHint": "Intervalu parametri tiek salīdzināti ar taviem skaitļiem (slieksnis un sesijas mediāna). Tukšs = noklusējums.",
+    "ivEffortIf": "Slodze ×CP"
   },
   "actions": {
     "refreshThresholds": "Atjaunināt sliekšņus",
@@ -126,6 +127,7 @@
     "effortsMany": "slodzes",
     "colStart": "sākums",
     "colGrade": "slīpums",
-    "colContrast": "vs sesija"
+    "colContrast": "vs sesija",
+    "rules": "Kā šeit nosaka: plakanie posmā atkarums skaitas par intervālu tikai, ja tas saglabā ≥{effortIf}·CP; slodze sākas pie {openW} W un beidzas zem {closeW} W; minimums {minS} s (zem {shortS} s nepieciešams {shortBase} no sesijas mediānas; bez īsta atpūtas —≤{recoveryW} W—, {strongBase}); ar slīpumu >{climbGrade}% un IF<{climbIf} skaitas kā kāpiens."
   }
 }

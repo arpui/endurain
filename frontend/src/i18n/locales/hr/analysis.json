@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×baza",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Uspon (%)",
-    "ivHint": "Parametri intervala uspoređuju se s tvojim brojevima (prag i medijan sesije). Prazno = zadano."
+    "ivHint": "Parametri intervala uspoređuju se s tvojim brojevima (prag i medijan sesije). Prazno = zadano.",
+    "ivEffortIf": "Napor ×CP"
   },
   "actions": {
     "refreshThresholds": "Osvježi pragove",
@@ -126,6 +127,7 @@
     "effortsMany": "napora",
     "colStart": "početak",
     "colGrade": "nagib",
-    "colContrast": "vs sesija"
+    "colContrast": "vs sesija",
+    "rules": "Kako se ovdje prepoznaje: na ravnom se dionica broji kao interval samo ako drži ≥{effortIf}·CP; napor se otvara pri {openW} W i zatvara ispod {closeW} W; najmanje {minS} s (ispod {shortS} s treba {shortBase} medijana sesije; bez pravog odmora —≤{recoveryW} W—, {strongBase}); uz nagib >{climbGrade}% i IF<{climbIf} broji se kao uspon."
   }
 }

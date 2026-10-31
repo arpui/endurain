@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×základ",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Stúpanie (%)",
-    "ivHint": "Parametre intervalov sa porovnávajú s tvojimi číslami (prah a medián aktivity). Prázdne = predvolené."
+    "ivHint": "Parametre intervalov sa porovnávajú s tvojimi číslami (prah a medián aktivity). Prázdne = predvolené.",
+    "ivEffortIf": "Úsek ×CP"
   },
   "actions": {
     "refreshThresholds": "Obnoviť prahy",
@@ -126,6 +127,7 @@
     "effortsMany": "úseky",
     "colStart": "začiatok",
     "colGrade": "stúpanie",
-    "colContrast": "vs aktivita"
+    "colContrast": "vs aktivita",
+    "rules": "Ako sa to detekuje: na rovine sa úsek počíta ako interval len pri ≥{effortIf}·CP; úsek sa otvára pri {openW} W a zatvára pod {closeW} W; minimum {minS} s (pod {shortS} s treba {shortBase} mediánu aktivity; bez skutočnej regenerácie —≤{recoveryW} W—, {strongBase}); so stúpaním >{climbGrade}% a IF<{climbIf} sa počíta ako stúpanie."
   }
 }

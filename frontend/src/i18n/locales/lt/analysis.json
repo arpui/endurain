@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×pagr.",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Įkalnė (%)",
-    "ivHint": "Intervalų parametrai lyginami su tavo skaičiais (slenkstis ir sesijos mediana). Tuščia = numatyta reikšmė."
+    "ivHint": "Intervalų parametrai lyginami su tavo skaičiais (slenkstis ir sesijos mediana). Tuščia = numatyta reikšmė.",
+    "ivEffortIf": "Krūvis ×CP"
   },
   "actions": {
     "refreshThresholds": "Atnaujinti slenksčius",
@@ -126,6 +127,7 @@
     "effortsMany": "krūviai",
     "colStart": "pradžia",
     "colGrade": "nuolydis",
-    "colContrast": "vs sesija"
+    "colContrast": "vs sesija",
+    "rules": "Kaip čia nustatoma: lygioje atkarpoje intervalu skaičiuojama tik laikantis ≥{effortIf}·CP; krūvis prasideda {openW} W ir baigiasi žemiau {closeW} W; minimumas {minS} s (trumpiau nei {shortS} s reikia {shortBase} seanso medianos; be tikro atsigavimo —≤{recoveryW} W—, {strongBase}); įkalnė >{climbGrade}% su IF<{climbIf} skaičiuojama kaip įkalnė."
   }
 }

@@ -67,7 +67,8 @@
     "ivEnterBase": "Int. ×taso",
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Nousu (%)",
-    "ivHint": "Intervalliarvot vertaillaan omiin lukuihisi (kynnys ja session mediaani). Tyhjä = oletus."
+    "ivHint": "Intervalliarvot vertaillaan omiin lukuihisi (kynnys ja session mediaani). Tyhjä = oletus.",
+    "ivEffortIf": "Suoritus ×CP"
   },
   "actions": {
     "refreshThresholds": "Päivitä kynnykset",
@@ -126,6 +127,7 @@
     "effortsMany": "suoritusta",
     "colStart": "alku",
     "colGrade": "nousu",
-    "colContrast": "vs suoritus"
+    "colContrast": "vs suoritus",
+    "rules": "Näin havaitaan: tasangolla jakso on intervalli vain jos se pitää ≥{effortIf}·CP; suoritus avautuu {openW} W:issa ja sulkeutuu alle {closeW} W; vähintään {minS} s (alle {shortS} s vaaditaan {shortBase} session mediaanista; ilman kunnon palautusta —≤{recoveryW} W—, {strongBase}); yli {climbGrade}% nousulla ja IF<{climbIf} lasketaan nousuksi."
   }
 }
