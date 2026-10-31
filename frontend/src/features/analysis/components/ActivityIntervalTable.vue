@@ -58,7 +58,14 @@ const rows = computed<SegmentRow[]>(() =>
         segment.distanceM > 0
           ? combineMetric(formatDistance(segment.distanceM, props.activityType, props.units))
           : '--',
-      tempo: formatLapTempo(null, segment.avgSpeedMs, props.activityType, props.units),
+      // The segments carry mean speed (the same value distance comes from); pace is
+      // derived from it so running rows show min/km like the laps table does.
+      tempo: formatLapTempo(
+        segment.avgSpeedMs && segment.avgSpeedMs > 0 ? 1 / segment.avgSpeedMs : null,
+        segment.avgSpeedMs,
+        props.activityType,
+        props.units,
+      ),
       power: segment.avgPowerW > 0 ? `${Math.round(segment.avgPowerW)} W` : '--',
       intensityFactor: segment.intensityFactor > 0 ? segment.intensityFactor.toFixed(2) : '--',
       grade: segment.avgGradePct === null ? '--' : `${segment.avgGradePct.toFixed(1)} %`,
