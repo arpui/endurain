@@ -23,10 +23,10 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 
-// Daily-load bars in translucent brand teal: soft mint on light cards, a faint
-// dark tint on dark cards — background context either way, never louder than
-// the fitness/fatigue/TSB lines.
-const LOAD_COLOR = themeColorAlpha('--color-brand', 0.15)
+// Daily-load bars in very dark translucent gray: a barely-there shadow on the
+// dark card, a pale gray on the light one. One theme-agnostic colour because
+// canvas colours resolve at mount time; the lines stay the readable layer.
+const LOAD_COLOR = themeColorAlpha('--color-ink', 0.14)
 const FITNESS_COLOR = themeColor('--color-brand-mid')
 const FATIGUE_COLOR = themeColor('--color-hr')
 const FORM_COLOR = themeColor('--color-info')

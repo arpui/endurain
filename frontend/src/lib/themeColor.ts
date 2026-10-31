@@ -15,6 +15,7 @@ export type ThemeColorToken =
   | '--color-brand-mid'
   | '--color-effort'
   | '--color-hr'
+  | '--color-ink'
   | '--color-info'
   | '--color-goal'
 
@@ -27,6 +28,7 @@ const TOKEN_FALLBACKS: Record<ThemeColorToken, string> = {
   '--color-brand-mid': '#0f6e56',
   '--color-effort': '#ef9f27',
   '--color-hr': '#e24b4a',
+  '--color-ink': '#2c2c2a',
   '--color-info': '#378add',
   '--color-goal': '#639922',
 }
