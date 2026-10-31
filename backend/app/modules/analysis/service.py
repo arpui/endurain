@@ -1115,6 +1115,11 @@ def get_best_times(
         if not speed_ms:
             continue
         altitude_m = _align_to_power(elevations, elevation_stamps, power_stamps, period_s)
+        # alignment copies the nearest sample across dropouts, which can repeat a GPS
+        # speed spike second after second and invent distance; the median erases those
+        # copies while leaving any honest fast stretch (longer than half the window) as it ran
+        median_window = 2 * (int(analysis_constants.BT_SPEED_MEDIAN_S / period_s) // 2) + 1
+        speed_ms = tuple(analysis_maths.moving_median(speed_ms, median_window))
 
         count = len(power_w)
         elapsed_s = [index * period_s for index in range(count)]

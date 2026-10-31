@@ -1066,6 +1066,38 @@ class TestBestTimes:
             read = analysis_service.get_best_times(2, "run", db)
         assert read.records == []
 
+    def test_a_repeated_gps_spike_does_not_become_a_split(self):
+        """Alignment copies the last speed across a dropout; six copies fake a 100 m sprint.
+
+        Raw, the copied spike covers 100 m in ~13 s and even clears the average-speed
+        ceiling (the window trims its own edges). The speed median erases copies
+        shorter than half its window, and the honest distance stands: 3 m/s for 100 m.
+        """
+        seconds = 400
+        speeds = [3.0] * seconds
+        for index in range(200, 206):  # a dropout repeating one 16,7 m/s sample
+            speeds[index] = 16.66
+
+        def streams(activity_id, stream_type, _key, _db, *, keep_zeros):
+            stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(seconds))
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, tuple([210.0] * seconds), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple(speeds), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([0.0] * seconds), stamps
+            return 1.0, (), ()
+
+        activity = _activity(1, start_time=datetime.now(UTC))
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[activity]),
+            patch(f"{_SVC}._stream_samples", side_effect=streams),
+        ):
+            read = analysis_service.get_best_times(2, "run", db)
+        by_distance = {record.distance_m: record for record in read.records}
+        assert by_distance[100].time_s >= 30.0  # the real pace, not the 13 s artifact
+
     def test_an_unknown_sport_is_rejected(self):
         db = _db()
         with pytest.raises(core_exceptions.InvalidInputError):
