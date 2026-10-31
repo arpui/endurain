@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Sobitamine alates (s)",
-    "fitToS": "Sobitamine kuni (s)"
+    "fitToS": "Sobitamine kuni (s)",
+    "ivEnterBase": "Int. ×alus",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Tõus (%)",
+    "ivHint": "Intervalli parameetrid võrreldakse Sinu enda numbritega (läve ja sessioni mediaan). Tühi = vaikeväärtus."
   },
   "actions": {
     "refreshThresholds": "Värskenda läveid",

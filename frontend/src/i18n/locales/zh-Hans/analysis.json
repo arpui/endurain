@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "拟合起点 (s)",
-    "fitToS": "拟合终点 (s)"
+    "fitToS": "拟合终点 (s)",
+    "ivEnterBase": "间歇 ×基准",
+    "ivMinSegmentS": "间歇 最短(秒)",
+    "ivClimbGrade": "爬坡 (%)",
+    "ivHint": "间歇参数按你自己的数据比较（阈值与各次中位数）。留空 = 默认值。"
   },
   "actions": {
     "refreshThresholds": "刷新阈值",

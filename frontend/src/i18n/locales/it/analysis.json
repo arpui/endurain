@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit da (s)",
-    "fitToS": "Fit a (s)"
+    "fitToS": "Fit a (s)",
+    "ivEnterBase": "Int. ×base",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Salita (%)",
+    "ivHint": "I parametri degli intervalli si confrontano con i tuoi numeri (soglia e mediana della sessione). Vuoto = predefinito."
   },
   "actions": {
     "refreshThresholds": "Aggiorna soglie",

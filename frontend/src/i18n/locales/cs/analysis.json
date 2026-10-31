@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Přizpůsobení od (s)",
-    "fitToS": "Přizpůsobení do (s)"
+    "fitToS": "Přizpůsobení do (s)",
+    "ivEnterBase": "Int. ×základ",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Stoupání (%)",
+    "ivHint": "Parametry intervalů se porovnávají s tvými čísly (prah a medián aktivity). Prázdné = výchozí."
   },
   "actions": {
     "refreshThresholds": "Obnovit prahy",

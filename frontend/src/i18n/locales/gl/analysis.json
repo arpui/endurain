@@ -63,7 +63,11 @@
       "bpmPlaceholder": "ppm"
     },
     "fitFromS": "Axuste desde (s)",
-    "fitToS": "Axuste ata (s)"
+    "fitToS": "Axuste ata (s)",
+    "ivEnterBase": "Int. ×base",
+    "ivMinSegmentS": "Int. mín (s)",
+    "ivClimbGrade": "Subida (%)",
+    "ivHint": "Os parámetros de intervalo compáranse cos teus números (umbral e mediana de cada sesión). Baleiro = predeterminado."
   },
   "actions": {
     "refreshThresholds": "Actualizar umbrais",

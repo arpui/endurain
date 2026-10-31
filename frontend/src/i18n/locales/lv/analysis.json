@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Pielāgošana no (s)",
-    "fitToS": "Pielāgošana līdz (s)"
+    "fitToS": "Pielāgošana līdz (s)",
+    "ivEnterBase": "Int. ×pamatv.",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Kāpiens (%)",
+    "ivHint": "Intervalu parametri tiek salīdzināti ar taviem skaitļiem (slieksnis un sesijas mediāna). Tukšs = noklusējums."
   },
   "actions": {
     "refreshThresholds": "Atjaunināt sliekšņus",

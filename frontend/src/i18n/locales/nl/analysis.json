@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit vanaf (s)",
-    "fitToS": "Fit tot (s)"
+    "fitToS": "Fit tot (s)",
+    "ivEnterBase": "Int. ×basis",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Klim (%)",
+    "ivHint": "Intervalparameters worden vergeleken met je eigen getallen (drempel en mediaan van de sessie). Leeg = standaard."
   },
   "actions": {
     "refreshThresholds": "Drempels vernieuwen",

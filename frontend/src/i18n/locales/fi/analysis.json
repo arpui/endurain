@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Sovituksesta (s)",
-    "fitToS": "Sovitukseen (s)"
+    "fitToS": "Sovitukseen (s)",
+    "ivEnterBase": "Int. ×taso",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Nousu (%)",
+    "ivHint": "Intervalliarvot vertaillaan omiin lukuihisi (kynnys ja session mediaani). Tyhjä = oletus."
   },
   "actions": {
     "refreshThresholds": "Päivitä kynnykset",

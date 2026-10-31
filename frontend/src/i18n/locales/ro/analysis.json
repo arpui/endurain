@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Potrivire de la (s)",
-    "fitToS": "Potrivire până la (s)"
+    "fitToS": "Potrivire până la (s)",
+    "ivEnterBase": "Int. ×bază",
+    "ivMinSegmentS": "Int. min (s)",
+    "ivClimbGrade": "Urcare (%)",
+    "ivHint": "Parametrii de interval sunt comparați cu cifrele tale (prag și mediana ședinței). Gol = implicit."
   },
   "actions": {
     "refreshThresholds": "Actualizează pragurile",

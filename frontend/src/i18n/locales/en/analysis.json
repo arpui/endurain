@@ -63,7 +63,11 @@
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit from (s)",
-    "fitToS": "Fit to (s)"
+    "fitToS": "Fit to (s)",
+    "ivEnterBase": "Rep ×base",
+    "ivMinSegmentS": "Rep min (s)",
+    "ivClimbGrade": "Climb (%)",
+    "ivHint": "Interval knobs are compared with your own numbers (threshold and each session's median). Blank means the default."
   },
   "actions": {
     "refreshThresholds": "Refresh thresholds",
