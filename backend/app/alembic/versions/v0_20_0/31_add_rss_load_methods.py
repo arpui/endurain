@@ -23,8 +23,7 @@ depends_on: str | Sequence[str] | None = None
 
 _ORIGINAL_METHODS = "('coggan_tss', 'skiba_score', 'hr_load', 'trimp')"
 _WIDER_METHODS = (
-    "('coggan_tss', 'skiba_score', 'hr_load', 'trimp', "
-    "'rss_total', 'rss_up', 'rss_high', 'rss_mid', 'rss_low')"
+    "('coggan_tss', 'skiba_score', 'hr_load', 'trimp', 'rss_total', 'rss_up', 'rss_high', 'rss_mid', 'rss_low')"
 )
 
 
