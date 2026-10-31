@@ -131,5 +131,28 @@
     "colGrade": "grade",
     "colContrast": "vs session",
     "rules": "How it is detected here: on the flat a stretch counts as an interval only if it holds ≥{effortIf}·CP; an effort opens at {openW} W and closes below {closeW} W; minimum {minS} s (under {shortS} s it needs {shortBase} the session median; with no real recovery —≤{recoveryW} W—, {strongBase}); a grade above {climbGrade}% with IF<{climbIf} counts as a climb."
+  },
+  "sectionBest": "Best times",
+  "bestTimes": {
+    "title": "Best times",
+    "subtitle": "Your fastest split over classic race distances, found in each activity's samples, with the split's power and a link to the day you ran it.",
+    "period": {
+      "label": "Period",
+      "30": "30 days",
+      "60": "60 days",
+      "90": "90 days",
+      "180": "180 days",
+      "365": "1 year",
+      "all": "All time"
+    },
+    "colDistance": "Distance",
+    "colTime": "Time",
+    "colPower": "Power",
+    "colDay": "Day",
+    "empty": {
+      "title": "No valid splits",
+      "description": "No stretch in the window passes the grade filter, or no activity has power."
+    },
+    "note": "Splits whose net grade falls below −1 % (−2 % under 800 m) are discarded: a downhill is not a personal best."
   }
 }

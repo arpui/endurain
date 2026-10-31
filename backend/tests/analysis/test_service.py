@@ -976,3 +976,97 @@ class TestActivityIntervals:
             pytest.raises(core_exceptions.NotFoundError),
         ):
             analysis_service.get_activity_intervals(1, 7, db)
+
+
+class TestBestTimes:
+    def _streams(self, seconds: int, watts: float, speed: float, grade_pct: float):
+        """Return a ``_stream_samples`` stand-in for one constant-effort run."""
+
+        def _fake(activity_id, stream_type, _key, _db, *, keep_zeros):
+            stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(seconds))
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, tuple([watts] * seconds), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([speed] * seconds), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                alt = [grade_pct / 100.0 * speed * i for i in range(seconds)]
+                return 1.0, tuple(alt), stamps
+            return 1.0, (), ()
+
+        return _fake
+
+    def _read(self, activities, streams):
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}._stream_samples", side_effect=streams),
+        ):
+            return analysis_service.get_best_times(2, "run", db)
+
+    def test_the_fastest_split_of_each_distance_wins(self):
+        slow = _activity(1)
+        fast = _activity(2, start_time=_T0_UTC + timedelta(days=1))
+
+        def streams(activity_id, stream_type, _key, _db, *, keep_zeros):
+            seconds = 1000
+            stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(seconds))
+            speed = 4.0 if activity_id == slow.id else 5.0
+            watts = 300.0 if activity_id == slow.id else 400.0
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, tuple([watts] * seconds), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([speed] * seconds), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([0.0] * seconds), stamps
+            return 1.0, (), ()
+
+        read = self._read([slow, fast], streams)
+        by_distance = {record.distance_m: record for record in read.records}
+        assert by_distance[1000].activity_id == fast.id
+        assert by_distance[1000].time_s == pytest.approx(200.0, rel=0.02)
+        assert by_distance[1000].avg_power_w == pytest.approx(400.0, rel=0.02)
+
+    def test_the_window_drops_older_activities(self):
+        now = datetime.now(UTC)
+        recent = _activity(1, start_time=now - timedelta(days=10))
+        older = _activity(2, start_time=now - timedelta(days=100))
+        streams = self._streams(400, 300.0, 5.0, 0.0)
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[recent, older]),
+            patch(f"{_SVC}._stream_samples", side_effect=streams),
+        ):
+            read = analysis_service.get_best_times(2, "run", db, months=3)
+        assert {record.activity_id for record in read.records} == {recent.id}
+
+    def test_downhill_only_activities_contribute_nothing(self):
+        activity = _activity(1, start_time=datetime.now(UTC))
+        streams = self._streams(1500, 300.0, 5.0, -2.5)
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[activity]),
+            patch(f"{_SVC}._stream_samples", side_effect=streams),
+        ):
+            read = analysis_service.get_best_times(2, "run", db)
+        assert read.records == []
+
+    def test_activities_without_power_never_appear(self):
+        activity = _activity(1, start_time=datetime.now(UTC))
+
+        def streams(activity_id, stream_type, key, db, *, keep_zeros):
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, (), ()
+            return 1.0, tuple([4.0] * 1500), tuple()
+
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[activity]),
+            patch(f"{_SVC}._stream_samples", side_effect=streams),
+        ):
+            read = analysis_service.get_best_times(2, "run", db)
+        assert read.records == []
+
+    def test_an_unknown_sport_is_rejected(self):
+        db = _db()
+        with pytest.raises(core_exceptions.InvalidInputError):
+            analysis_service.get_best_times(2, "kiteboarding", db)

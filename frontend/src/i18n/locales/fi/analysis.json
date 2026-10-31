@@ -131,5 +131,28 @@
     "colGrade": "nousu",
     "colContrast": "vs suoritus",
     "rules": "Näin havaitaan: tasangolla jakso on intervalli vain jos se pitää ≥{effortIf}·CP; suoritus avautuu {openW} W:issa ja sulkeutuu alle {closeW} W; vähintään {minS} s (alle {shortS} s vaaditaan {shortBase} session mediaanista; ilman kunnon palautusta —≤{recoveryW} W—, {strongBase}); yli {climbGrade}% nousulla ja IF<{climbIf} lasketaan nousuksi."
+  },
+  "sectionBest": "Parhaat ajat",
+  "bestTimes": {
+    "title": "Parhaat ajat",
+    "subtitle": "Nopein väliaika klassisilla matkoilla, haettuna jokaisen aktivin näytteistä, tehoineen ja linkki päivään.",
+    "period": {
+      "label": "Jakso",
+      "30": "30 pv",
+      "60": "60 pv",
+      "90": "90 pv",
+      "180": "180 pv",
+      "365": "1 vuosi",
+      "all": "Kaikki"
+    },
+    "colDistance": "Matka",
+    "colTime": "Aika",
+    "colPower": "Teho",
+    "colDay": "Päivä",
+    "empty": {
+      "title": "Ei kelvollisia aikoja",
+      "description": "Mikään jakso ikkunassa läpäise kaltevuussuodatinta, tai aktiviteeteissa ei tehoa."
+    },
+    "note": "Osat, joiden nettoprovisuus on alle −1 % (−2 % alle 800 m), hylätään: alamäki ei ole ennätys."
   }
 }

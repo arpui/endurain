@@ -131,5 +131,28 @@
     "colGrade": "eğim",
     "colContrast": "vs seans",
     "rules": "Burada algılama: düz zeminde bir bölüm ancak ≥{effortIf}·CP sürdürürse interval sayılır; efor {openW} W'te açılır ve {closeW} W altında kapanır; asgari {minS} s ({shortS} s altındaysa seans medyanının {shortBase}'i gerekir; gerçek toparlanma olmadan —≤{recoveryW} W—, {strongBase}); >{climbGrade}% eğim ve IF<{climbIf} tırmanış sayılır."
+  },
+  "sectionBest": "En iyi dereceler",
+  "bestTimes": {
+    "title": "En iyi dereceler",
+    "subtitle": "Klasik mesafelerdeki en hızlı bölünmen, her etkinin örneklerinde aranır; bölüm gücü ve günü bağlantısıyla.",
+    "period": {
+      "label": "Dönem",
+      "30": "30 gün",
+      "60": "60 gün",
+      "90": "90 gün",
+      "180": "180 gün",
+      "365": "1 yıl",
+      "all": "Tümü"
+    },
+    "colDistance": "Mesafe",
+    "colTime": "Süre",
+    "colPower": "Güç",
+    "colDay": "Gün",
+    "empty": {
+      "title": "Geçerli bölüm yok",
+      "description": "Penceredeki hiçbir bölüm eğim filtresini geçmiyor ya da hiçbir etkinlik güç içermiyor."
+    },
+    "note": "Net eğimi −1 % (800 m altı −2 %) altında kalan bölümler elenir: iniş kişisel rekor değildir."
   }
 }

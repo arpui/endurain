@@ -383,6 +383,43 @@ class ActivityIntervalsRead(BaseModel):
     rules: IntervalRulesRead | None = None
 
 
+class BestTimeRead(BaseModel):
+    """Serialized best time the athlete has run over one race distance.
+
+    Attributes:
+        distance_m: Distance the split covered, in metres.
+        time_s: Time it took, in seconds.
+        avg_power_w: Mean power across the split, in watts.
+        activity_id: Activity in which the split was run.
+        start_time: Start of that activity, so the record can link to its day.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    distance_m: StrictInt
+    time_s: StrictFloat
+    avg_power_w: StrictFloat
+    activity_id: StrictInt
+    start_time: StrictStr | None
+
+
+class BestTimesRead(BaseModel):
+    """Serialized table of one athlete's best splits over a set of distances.
+
+    Attributes:
+        sport: The sport group read.
+        months: The window applied, months back from today; ``None`` for all history.
+        records: Best split per distance achieved, shortest first; a distance with no
+            valid split (too long, or only ever run downhill) simply does not appear.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    sport: StrictStr
+    months: StrictInt | None
+    records: list[BestTimeRead]
+
+
 class RecomputeQueued(BaseModel):
     """Response of a recompute request.
 

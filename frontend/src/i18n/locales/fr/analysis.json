@@ -131,5 +131,28 @@
     "colGrade": "pente",
     "colContrast": "vs séance",
     "rules": "Détection ici : sur le plat, un segment ne compte comme intervalle que s'il tient ≥{effortIf}·CP ; un effort s'ouvre à {openW} W et se ferme sous {closeW} W ; minimum {minS} s (sous {shortS} s, il faut {shortBase} la médiane de la séance ; sans récupération réelle —≤{recoveryW} W—, {strongBase}) ; une pente >{climbGrade}% avec IF<{climbIf} compte comme côte."
+  },
+  "sectionBest": "Meilleures perfs",
+  "bestTimes": {
+    "title": "Meilleures performances",
+    "subtitle": "Votre meilleur partiel sur les distances classiques, trouvé dans les samples de chaque activité, avec la puissance du tronçon et le lien vers le jour.",
+    "period": {
+      "label": "Période",
+      "30": "30 jours",
+      "60": "60 jours",
+      "90": "90 jours",
+      "180": "180 jours",
+      "365": "1 an",
+      "all": "Tout"
+    },
+    "colDistance": "Distance",
+    "colTime": "Temps",
+    "colPower": "Puissance",
+    "colDay": "Jour",
+    "empty": {
+      "title": "Aucune perf valide",
+      "description": "Aucun tronçon de la fenêtre ne passe le filtre de pente, ou aucune activité n'a de puissance."
+    },
+    "note": "Les tronçons dont la pente nette descend sous −1 % (−2 % sous 800 m) sont écartés : une descente n'est pas un record."
   }
 }

@@ -131,5 +131,28 @@
     "colGrade": "tõus",
     "colContrast": "vs session",
     "rules": "Kuidas siin tuvastatakse: tasasel loeb lõik intervalliks vaid siis, kui peab ≥{effortIf}·CP; koormus avneb {openW} W juures ja sulgub alla {closeW} W; vähemalt {minS} s (alla {shortS} s on vaja {shortBase} sessioni mediaanist; ilma tõelise puhkuseta —≤{recoveryW} W—, {strongBase}); üle {climbGrade}% tõusuga ja IF<{climbIf} loetakse tõusuks."
+  },
+  "sectionBest": "Parimad ajad",
+  "bestTimes": {
+    "title": "Parimad ajad",
+    "subtitle": "Su kiireim lõik klassikalistel distantsidel, leitud iga tegevuse proovidest, koos võimsuse ja lingiga päevale.",
+    "period": {
+      "label": "Periood",
+      "30": "30 päeva",
+      "60": "60 päeva",
+      "90": "90 päeva",
+      "180": "180 päeva",
+      "365": "1 aasta",
+      "all": "Kõik"
+    },
+    "colDistance": "Distants",
+    "colTime": "Aeg",
+    "colPower": "Võimsus",
+    "colDay": "Päev",
+    "empty": {
+      "title": "Pole kehtivaid lõike",
+      "description": "Ükski lõik aknas ei läbi kallaku filtrit või ühelgi tegevusel pole võimsust."
+    },
+    "note": "Lõigud, mille nettkalle on alla −1 % (alla 800 m −2 %), jäetakse välja: allamäge ei ole rekord."
   }
 }

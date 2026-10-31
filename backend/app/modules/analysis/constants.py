@@ -75,6 +75,33 @@ FIT_MIN_PEAKS = 4
 #: overlaid on the full-history one: recent form read against the athlete's record.
 PD_OVERLAY_MONTHS: tuple[int, ...] = (3, 6)
 
+#: Canonical race distances whose best times are tabulated, in metres. The half
+#: marathon is the exact 21,097 m, not a round number.
+BT_DISTANCES_M: tuple[int, ...] = (
+    100,
+    200,
+    300,
+    400,
+    800,
+    1000,
+    2000,
+    3000,
+    4000,
+    5000,
+    10000,
+    15000,
+    20000,
+    21097,
+    30000,
+)
+
+#: Net grade a split may not fall below, so a downhill sprint is not listed as a
+#: personal best. GPS altitude noise dominates short splits, so below this length
+#: the looser bound applies; from it up, a real descent is separable from the noise.
+BT_MIN_GRADE_PCT = -1.0
+BT_SHORT_MIN_M = 800
+BT_MIN_GRADE_PCT_SHORT = -2.0
+
 #: Activities that must contribute peaks before a derived threshold is trusted.
 #: One activity alone fits a curve through its own samples only, which invented a
 #: 202 W threshold from a single walk.

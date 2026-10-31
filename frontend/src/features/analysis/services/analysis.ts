@@ -7,6 +7,10 @@
 import type {
   ActivityIntervals,
   ActivityIntervalsDto,
+  BestTime,
+  BestTimeDto,
+  BestTimes,
+  BestTimesDto,
   AnalysisSettings,
   AnalysisSettingsDto,
   AnalysisSettingsUpdateDto,
@@ -318,4 +322,42 @@ function mapIntervalRules(dto: IntervalRulesDto): IntervalRules {
     climbGradePct: dto.climb_grade_pct,
     climbIf: dto.climb_if,
   }
+}
+
+/** Maps one best-split record to the domain model. */
+function mapBestTime(dto: BestTimeDto): BestTime {
+  return {
+    distanceM: dto.distance_m,
+    timeS: dto.time_s,
+    avgPowerW: dto.avg_power_w,
+    activityId: dto.activity_id,
+    startTime: dto.start_time ?? null,
+  }
+}
+
+/** Maps a best-splits DTO to the domain model. */
+export function mapBestTimes(dto: BestTimesDto): BestTimes {
+  return {
+    sport: dto.sport,
+    months: dto.months ?? null,
+    records: (dto.records ?? []).map(mapBestTime),
+  }
+}
+
+/**
+ * Fetches the athlete's best splits over the canonical race distances.
+ *
+ * @param months - Window in months back from today; ``null`` for all history.
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns The best-splits table, shortest distance first.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchBestTimes(
+  months: number | null,
+  signal?: AbortSignal,
+): Promise<BestTimes> {
+  const params = new URLSearchParams({ sport: 'run' })
+  if (months !== null) params.set('months', String(months))
+  const dto = await apiFetch<BestTimesDto>(`/analysis/best-times?${params.toString()}`, { signal })
+  return mapBestTimes(dto)
 }

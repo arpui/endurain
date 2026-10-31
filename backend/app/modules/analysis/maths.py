@@ -309,6 +309,56 @@ def downsample(points: Sequence[tuple[float, float]], max_points: int) -> list[t
     return sampled
 
 
+def best_split_times(
+    elapsed_s: Sequence[float],
+    distance_cum_m: Sequence[float],
+    power_w: Sequence[float],
+    altitude_m: Sequence[float],
+    distances_m: Sequence[int] = analysis_constants.BT_DISTANCES_M,
+) -> dict[int, tuple[float, float]]:
+    """Return ``(time_s, avg_power_w)`` for the fastest valid split of each distance.
+
+    A split of distance D is every window the cumulative distance spans D or more;
+    the fastest is the one taken between the latest sample that starts it and the
+    sample that closes it. The split counts only when its net grade over D stays
+    above the bound for its length: below it the athlete was coasting downhill, and
+    the time says nothing about fitness. Distances the activity never covers, and
+    distances whose every split ran downhill, are absent from the result.
+    """
+    cum = np.asarray(distance_cum_m, dtype=float)
+    elapsed = np.asarray(elapsed_s, dtype=float)
+    altitude = np.asarray(altitude_m, dtype=float)
+    power_cum = np.concatenate([[0.0], np.cumsum(np.asarray(power_w, dtype=float))])
+    if cum.size != elapsed.size or cum.size != altitude.size or cum.size + 1 != power_cum.size or cum.size < 2:
+        return {}
+
+    result: dict[int, tuple[float, float]] = {}
+    ends = np.arange(1, cum.size)
+    for distance in distances_m:
+        if cum[-1] - cum[0] < distance:
+            continue
+        begins = np.searchsorted(cum, cum[ends] - distance)
+        valid = begins < ends
+        valid &= cum[ends] - cum[begins] >= distance
+        spans = elapsed[ends] - elapsed[begins]
+        grades = (altitude[ends] - altitude[begins]) / distance * 100.0
+        min_grade = (
+            analysis_constants.BT_MIN_GRADE_PCT
+            if distance >= analysis_constants.BT_SHORT_MIN_M
+            else analysis_constants.BT_MIN_GRADE_PCT_SHORT
+        )
+        valid &= spans > 0.0
+        valid &= grades >= min_grade
+        if not valid.any():
+            continue
+        candidates = np.flatnonzero(valid)
+        best = candidates[int(np.argmin(spans[candidates]))]
+        end, begin = int(ends[best]), int(begins[best])
+        samples = end - begin
+        result[int(distance)] = (float(spans[best]), float((power_cum[end] - power_cum[begin]) / samples))
+    return result
+
+
 def fit_cp_wprime(
     peaks: Mapping[int, float],
     fit_from_s: float = analysis_constants.FIT_MIN_S,

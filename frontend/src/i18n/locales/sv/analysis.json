@@ -131,5 +131,28 @@
     "colGrade": "lutning",
     "colContrast": "vs pass",
     "rules": "Så upptäcks det här: på plant räknas en sträcka som intervall bara om den håller ≥{effortIf}·CP; en insats öppnas vid {openW} W och stängs under {closeW} W; minst {minS} s (under {shortS} s krävs {shortBase} passets median; utan riktig återhämtning —≤{recoveryW} W—, {strongBase}); med lutning >{climbGrade}% och IF<{climbIf} räknas det som backe."
+  },
+  "sectionBest": "Bästa tider",
+  "bestTimes": {
+    "title": "Bästa tider",
+    "subtitle": "Dina snabbaste splits över klassiska distanser, hittade i varje aktivitetens samples, med effekten över sträckan och en länk till dagen.",
+    "period": {
+      "label": "Period",
+      "30": "30 dagar",
+      "60": "60 dagar",
+      "90": "90 dagar",
+      "180": "180 dagar",
+      "365": "1 år",
+      "all": "All tid"
+    },
+    "colDistance": "Distans",
+    "colTime": "Tid",
+    "colPower": "Effekt",
+    "colDay": "Datum",
+    "empty": {
+      "title": "Inga giltiga splits",
+      "description": "Ingen sträcka i fönstret klarar lutningsfiltret, eller ingen aktivitet har effekt."
+    },
+    "note": "Splits med netto lutning under −1 % (−2 % under 800 m) kasseras: förbacke är inget pers."
   }
 }

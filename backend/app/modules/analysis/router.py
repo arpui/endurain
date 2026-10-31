@@ -107,6 +107,26 @@ def get_power_duration(
     return analysis_service.get_power_duration(token_user_id, sport, db, fit_from_s=fit_from, fit_to_s=fit_to)
 
 
+@router.get(
+    "/best-times",
+    response_model=analysis_schema.BestTimesRead,
+)
+def get_best_times(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+    sport: Annotated[str, Query(max_length=32)] = "run",
+    months: Annotated[int | None, Query(ge=1, le=1200)] = None,
+) -> analysis_schema.BestTimesRead:
+    """Return the caller's best splits over the canonical race distances.
+
+    The splits are found in the activities' own samples, and a split running
+    downhill more than the bound for its length is discarded, so the table shows
+    what the athlete actually ran rather than what gravity lent them.
+    """
+    return analysis_service.get_best_times(token_user_id, sport, db, months=months)
+
+
 @router.post(
     "/thresholds/refresh",
     response_model=analysis_schema.RecomputeQueued,

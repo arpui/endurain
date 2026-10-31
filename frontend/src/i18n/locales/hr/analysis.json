@@ -131,5 +131,28 @@
     "colGrade": "nagib",
     "colContrast": "vs sesija",
     "rules": "Kako se ovdje prepoznaje: na ravnom se dionica broji kao interval samo ako drži ≥{effortIf}·CP; napor se otvara pri {openW} W i zatvara ispod {closeW} W; najmanje {minS} s (ispod {shortS} s treba {shortBase} medijana sesije; bez pravog odmora —≤{recoveryW} W—, {strongBase}); uz nagib >{climbGrade}% i IF<{climbIf} broji se kao uspon."
+  },
+  "sectionBest": "Najbolja vremena",
+  "bestTimes": {
+    "title": "Najbolja vremena",
+    "subtitle": "Tvoj najbrži split na klasičnim udaljenostima, nađen u uzorcima aktivnosti, sa snagom dionice i poveznicom na dan.",
+    "period": {
+      "label": "Razdoblje",
+      "30": "30 dana",
+      "60": "60 dana",
+      "90": "90 dana",
+      "180": "180 dana",
+      "365": "1 godina",
+      "all": "Sve"
+    },
+    "colDistance": "Udaljenost",
+    "colTime": "Vrijeme",
+    "colPower": "Snaga",
+    "colDay": "Dan",
+    "empty": {
+      "title": "Nema valjanih splitova",
+      "description": "Nijedna dionica u prozoru ne prolazi filter nagiba, ili nijedna aktivnost nema snagu."
+    },
+    "note": "Dionice s neto nagibom ispod −1 % (−2 % ispod 800 m) se odbacuju: silazak nije rekord."
   }
 }

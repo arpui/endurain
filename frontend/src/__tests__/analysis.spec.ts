@@ -7,6 +7,7 @@ import { apiFetch } from '@/services/http'
 import {
   fetchActivityIntervals,
   fetchAnalysisSettings,
+  fetchBestTimes,
   fetchFitnessSeries,
   fetchPowerDuration,
   fetchWprimeBalance,
@@ -362,5 +363,44 @@ describe('activity interval analysis', () => {
     expect(intervals.thresholdW).toBeNull()
     expect(intervals.rules).toBeNull()
     expect(intervals.segments).toEqual([])
+  })
+})
+
+describe('best-splits table', () => {
+  it('fetches a window and maps every record field', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      sport: 'run',
+      months: 90,
+      records: [
+        {
+          distance_m: 5000,
+          time_s: 1210.5,
+          avg_power_w: 392.4,
+          activity_id: 21,
+          start_time: '2026-09-20T08:00:00+00:00',
+        },
+      ],
+    })
+    const table = await fetchBestTimes(90)
+    const url: string = vi.mocked(apiFetch).mock.calls[0]?.[0] as string
+    const params = new URLSearchParams(url.split('?')[1])
+    expect(params.get('sport')).toBe('run')
+    expect(params.get('months')).toBe('90')
+    expect(table.records[0]).toEqual({
+      distanceM: 5000,
+      timeS: 1210.5,
+      avgPowerW: 392.4,
+      activityId: 21,
+      startTime: '2026-09-20T08:00:00+00:00',
+    })
+  })
+
+  it('omits the months parameter for the whole history', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({ sport: 'run', months: null, records: [] })
+    const table = await fetchBestTimes(null)
+    const url: string = vi.mocked(apiFetch).mock.calls[0]?.[0] as string
+    expect(url).not.toContain('months=')
+    expect(table.months).toBeNull()
+    expect(table.records).toEqual([])
   })
 })

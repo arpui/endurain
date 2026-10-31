@@ -131,5 +131,28 @@
     "colGrade": "emelkedő",
     "colContrast": "vs edzés",
     "rules": "Így kerül felismerésre: laposon egy szakasz csak akkor számít intervallumnak, ha tartja a ≥{effortIf}·CP-t; a terhelés {openW} W-nál nyílik és {closeW} W alatt zárul; minimum {minS} s ({shortS} s alatt az edzés mediánjának {shortBase}?a kell; valódi regeneráció nélkül —≤{recoveryW} W—, {strongBase}); >{climbGrade}% emelkedővel és IF<{climbIf}emelkedőnek számít."
+  },
+  "sectionBest": "Legjobb idők",
+  "bestTimes": {
+    "title": "Legjobb idők",
+    "subtitle": "A leggyorsabb szakaid klasszikus távokon, minden tevékenység mintáiból keresve, a szakasz teljesítményével és linkkel a napra.",
+    "period": {
+      "label": "Időszak",
+      "30": "30 nap",
+      "60": "60 nap",
+      "90": "90 nap",
+      "180": "180 nap",
+      "365": "1 év",
+      "all": "Minden idő"
+    },
+    "colDistance": "Táv",
+    "colTime": "Idő",
+    "colPower": "Teljesítmény",
+    "colDay": "Nap",
+    "empty": {
+      "title": "Nincs érvényes szakasz",
+      "description": "Egyik szakasz sem felel meg az emelkedésszűrőnek, vagy nincs teljesítmény adat."
+    },
+    "note": "A −1 %-nál (800 m alatt −2 %) meredekebb meredekségű szakaszok kiesnek: lejtőn nem csúcs."
   }
 }
