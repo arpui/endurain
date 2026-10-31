@@ -42,13 +42,41 @@ describe('lap dynamics fetch', () => {
 
   it('fetches the owner route and maps every field', async () => {
     vi.mocked(apiFetch).mockResolvedValue([
-      { lap_id: 7, avg_power_w: 400, stride_length_m: 3.0, economy: 0.96 },
-      { lap_id: 8, avg_power_w: null, stride_length_m: null, economy: null },
+      {
+        lap_id: 7,
+        avg_power_w: 400,
+        stride_length_m: 3.0,
+        elevation_gain_m: 10,
+        elevation_loss_m: 8,
+        rss: 26.4,
+      },
+      {
+        lap_id: 8,
+        avg_power_w: null,
+        stride_length_m: null,
+        elevation_gain_m: null,
+        elevation_loss_m: null,
+        rss: null,
+      },
     ] satisfies Schemas['LapDynamicsRead'][])
     const rows = await fetchActivityLapDynamics(21)
     expect(apiFetch).toHaveBeenCalledWith('/activities/21/lap-dynamics', expect.anything())
-    expect(rows[0]).toEqual({ lapId: 7, avgPowerW: 400, strideLengthM: 3, economy: 0.96 })
-    expect(rows[1]).toEqual({ lapId: 8, avgPowerW: null, strideLengthM: null, economy: null })
+    expect(rows[0]).toEqual({
+      lapId: 7,
+      avgPowerW: 400,
+      strideLengthM: 3,
+      elevationGainM: 10,
+      elevationLossM: 8,
+      rss: 26.4,
+    })
+    expect(rows[1]).toEqual({
+      lapId: 8,
+      avgPowerW: null,
+      strideLengthM: null,
+      elevationGainM: null,
+      elevationLossM: null,
+      rss: null,
+    })
   })
 })
 
@@ -68,22 +96,44 @@ describe('LapDynamicsTable', () => {
     return row.findAll('td').map((cell) => cell.text())
   }
 
-  it('adds power, stride and economy columns next to the classic ones', () => {
+  it('adds power, stride, elevation split and aRSS columns next to the classic ones', () => {
     const row = cells(
-      mountTable([makeLap()], [{ lapId: 1, avgPowerW: 412, strideLengthM: 3.03, economy: 1 }]),
+      mountTable(
+        [makeLap()],
+        [
+          {
+            lapId: 1,
+            avgPowerW: 412,
+            strideLengthM: 3.03,
+            elevationGainM: 10,
+            elevationLossM: 8,
+            rss: 26.4,
+          },
+        ],
+      ),
     )
     expect(row).toContain('412 W')
-    expect(row.some((value) => /^×1[.,]00$/.test(value))).toBe(true)
+    expect(row).toContain('+10 / \u22128 m')
+    expect(row.some((value) => /^26[.,]4$/.test(value))).toBe(true)
     expect(row.some((value) => /^3[.,]03$/.test(value))).toBe(true)
   })
 
   it('hides the analysis columns when the device recorded nothing to derive', () => {
     const wrapper = mountTable(
       [makeLap()],
-      [{ lapId: 1, avgPowerW: null, strideLengthM: null, economy: null }],
+      [
+        {
+          lapId: 1,
+          avgPowerW: null,
+          strideLengthM: null,
+          elevationGainM: null,
+          elevationLossM: null,
+          rss: null,
+        },
+      ],
     )
     const headers = wrapper.findAll('thead th').map((th) => th.text())
-    expect(headers.some((h) => /Economia|Economy/i.test(h))).toBe(false)
+    expect(headers.some((h) => /aRSS/i.test(h))).toBe(false)
     expect(wrapper.findAll('tbody tr td').length).toBeLessThan(11)
   })
 })

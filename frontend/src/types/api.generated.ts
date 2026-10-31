@@ -414,9 +414,11 @@ export interface paths {
         };
         /**
          * Get Activity Lap Dynamics
-         * @description Return per-lap dynamics (power, stride length, fatigue-referenced economy) for
-         *     the activity's owner: derived from the laps the device recorded and the athlete's
-         *     own threshold, so the drift of form under fatigue reads against their numbers.
+         * @description Return per-lap dynamics: power, stride length, elevation split and aRSS.
+         *
+         *     Computed for the activity's owner from the laps the device recorded and the
+         *     athlete's own threshold, so the drift of form under fatigue reads against
+         *     their numbers.
          */
         get: operations["get_activity_lap_dynamics_api_v1_activities__activity_id__lap_dynamics_get"];
         put?: never;
@@ -9484,6 +9486,10 @@ export interface components {
          *         contrast: Mean power over the session's own median, the relative anchor.
          *         avg_grade_pct: Mean grade, ``None`` when no track was recorded.
          *         avg_speed_ms: Mean speed, ``None`` when the activity carries none.
+         *         elevation_gain_m: Ground risen through, ``None`` without an altitude stream.
+         *         elevation_loss_m: Ground fallen through, ``None`` without an altitude stream.
+         *         rss: Shared-scale aRSS score of the stretch (same kernel as the daily
+         *             rss_total), ``None`` when the sport has no threshold.
          */
         IntervalSegmentRead: {
             /** Avg Grade Pct */
@@ -9498,9 +9504,15 @@ export interface components {
             distance_m: number;
             /** Duration S */
             duration_s: number;
+            /** Elevation Gain M */
+            elevation_gain_m?: number | null;
+            /** Elevation Loss M */
+            elevation_loss_m?: number | null;
             /** Intensity Factor */
             intensity_factor: number;
             kind: components["schemas"]["SegmentKind"];
+            /** Rss */
+            rss?: number | null;
             /** Start S */
             start_s: number;
         };
@@ -9547,24 +9559,31 @@ export interface components {
          * @description Serialized per-lap dynamics, computed from the lap's own recorded numbers.
          *
          *     Cadence and power are what the device reported; stride length is derived
-         *     (speed over cadence, falling back to distance over cycles), and the economy
-         *     value is that stride per unit of relative intensity, normalized to the first
-         *     solid effort of the session: it drifts below 1 as form degrades under fatigue.
+         *     (speed over cadence, falling back to distance over cycles), the ascent and the
+         *     descent are reported as a pair so a rolling lap reads honestly, and the aRSS is
+         *     the daily-load kernel summed over the lap's window - the rows add back up to the
+         *     activity's total.
          *
          *     Attributes:
          *         lap_id: The lap these dynamics belong to.
          *         avg_power_w: Mean power over the lap, when the device recorded one.
          *         stride_length_m: Ground covered per cycle, when cadence or cycles exist.
-         *         economy: Stride per unit of relative intensity, relative to the session's
-         *             first solid effort; ``None`` when there is not enough data.
+         *         elevation_gain_m: Ascent the device recorded for the lap.
+         *         elevation_loss_m: Descent the device recorded for the lap.
+         *         rss: Shared-scale aRSS score of the lap's window, ``None`` without a
+         *             threshold or powered samples in it.
          */
         LapDynamicsRead: {
             /** Avg Power W */
             avg_power_w: number | null;
-            /** Economy */
-            economy: number | null;
+            /** Elevation Gain M */
+            elevation_gain_m?: number | null;
+            /** Elevation Loss M */
+            elevation_loss_m?: number | null;
             /** Lap Id */
             lap_id: number;
+            /** Rss */
+            rss?: number | null;
             /** Stride Length M */
             stride_length_m: number | null;
         };

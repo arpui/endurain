@@ -129,6 +129,8 @@
     "effortsMany": "esforços",
     "colStart": "início",
     "colGrade": "inclinação",
+    "colDesnivel": "elevação / descida",
+    "colRss": "aRSS",
     "colContrast": "vs sessão",
     "rules": "Como é detetado aqui: em plano um troço conta como intervalo só se mantiver ≥{effortIf}·CP; abre-se um esforço a {openW} W e fecha abaixo de {closeW} W; mínimo {minS} s (abaixo de {shortS} s exige {shortBase} a mediana da sessão; sem recuperação real —≤{recoveryW} W—, {strongBase}); com inclinação >{climbGrade}% e IF<{climbIf} conta como subida."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Comp. passada",
     "lengthSwim": "Dist. braçada",
     "lengthRide": "Desenvolvimento",
-    "economy": "Economia",
-    "economyNote": "Economia = comprimento por ciclo à intensidade relativa, referida à primeira passada sólida; abaixo de ×1,00 a forma decai."
+    "desnivel": "Elevação / descida",
+    "rss": "aRSS",
+    "rssNote": "aRSS é a pontuação ponderada pela intensidade por trás da carga diária; as linhas somam o total da sessão."
   }
 }

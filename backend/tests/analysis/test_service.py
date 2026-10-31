@@ -939,6 +939,7 @@ class TestActivityIntervals:
             patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
             patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
             patch(f"{_SVC}._load_input", return_value=data),
+            patch(f"{_SVC}._stream_samples", return_value=(1.0, (), ())),
         ):
             read = analysis_service.get_activity_intervals(1, 2, db)
         assert read.shape is analysis_intervals.SessionShape.STEADY or read.segments
@@ -954,6 +955,7 @@ class TestActivityIntervals:
             patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
             patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
             patch(f"{_SVC}._load_input", return_value=data),
+            patch(f"{_SVC}._stream_samples", return_value=(1.0, (), ())),
         ):
             read = analysis_service.get_activity_intervals(1, 2, db)
         assert read.shape is analysis_intervals.SessionShape.STEADY
@@ -1153,7 +1155,9 @@ class TestBestTimes:
 
 
 class TestLapDynamics:
-    def _lap(self, lap_id, *, distance, elapsed, speed=None, cadence=None, cycles=None, power=None):
+    def _lap(
+        self, lap_id, *, distance, elapsed, speed=None, cadence=None, cycles=None, power=None, ascent=None, descent=None
+    ):
         return SimpleNamespace(
             id=lap_id,
             total_distance=distance,
@@ -1162,14 +1166,27 @@ class TestLapDynamics:
             avg_cadence=cadence,
             total_cycles=cycles,
             avg_power=power,
+            total_ascent=ascent,
+            total_descent=descent,
+            start_time=_T0_UTC,
         )
 
-    def _read(self, laps):
+    def _read(self, laps, *, streams=None):
         db = _db()
-        activity = _activity()
+        stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(600))
+
+        def default_streams(activity_id, stream_type, _key, _db, *, keep_zeros):
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, tuple([400.0] * 600), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([4.0] * 600), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([0.0] * 600), stamps
+            return 1.0, (), ()
+
         with (
             patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
-            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=activity),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
             patch(
                 f"{_SVC}.get_settings",
                 return_value=_settings(
@@ -1184,6 +1201,7 @@ class TestLapDynamics:
                 ),
             ),
             patch(f"{_SVC}.activity_laps_integration.list_laps_for_derivation", return_value=laps),
+            patch(f"{_SVC}._stream_samples", side_effect=streams or default_streams),
         ):
             return analysis_service.get_activity_lap_dynamics(1, 2, db)
 
@@ -1194,25 +1212,33 @@ class TestLapDynamics:
         assert rows[0].stride_length_m == pytest.approx(3.0)  # 4 m/s over 80 cycles/min
         assert rows[1].stride_length_m == pytest.approx(2.86, abs=0.01)
 
-    def test_economy_is_referenced_to_the_first_solid_lap_and_drops_with_fatigue(self):
-        fresh = self._lap(20, distance=1000.0, elapsed=250.0, speed=4.0, cadence=80, power=400)
-        tired = self._lap(21, distance=1000.0, elapsed=260.0, speed=3.85, cadence=80, power=400)
-        rows = self._read([fresh, tired])
-        assert rows[0].economy == 1.0
-        assert rows[1].economy == pytest.approx(0.96, abs=0.01)
+    def test_ascent_and_descent_travel_as_a_pair(self):
+        rolling = self._lap(12, distance=1000.0, elapsed=300.0, speed=3.3, cadence=80, ascent=10, descent=8)
+        rows = self._read([rolling])
+        assert rows[0].elevation_gain_m == 10.0
+        assert rows[0].elevation_loss_m == 8.0  # not netted to a misleading 2
 
-    def test_easy_laps_before_the_first_work_relay_never_set_the_baseline(self):
-        easy = self._lap(30, distance=1000.0, elapsed=400.0, speed=2.5, cadence=75, power=150)
-        work = self._lap(31, distance=1000.0, elapsed=250.0, speed=4.0, cadence=80, power=400)
-        rows = self._read([easy, work])
-        assert rows[1].economy == 1.0  # baseline is the first lap that actually worked
-        assert rows[0].economy is None  # and the easy legs read blank, not inflated
+    def test_lap_rss_entries_add_back_up_to_the_window_total(self):
+        first = self._lap(20, distance=1000.0, elapsed=300.0, speed=3.3, cadence=80, power=400.0)
+        second = self._lap(21, distance=1000.0, elapsed=300.0, speed=3.3, cadence=80, power=400.0)
+        rows = self._read([first, second])
+        whole = analysis_methods.rss_window_stress([400.0] * 600, 1.0, 350.0)
+        assert rows[0].rss is not None and rows[1].rss is not None
+        assert (rows[0].rss + rows[1].rss) == pytest.approx(whole, abs=0.3)
 
-    def test_laps_without_data_answer_nothing_invented(self):
-        rows = self._read([self._lap(40, distance=1000.0, elapsed=250.0)])
-        assert rows[0].avg_power_w is None
-        assert rows[0].stride_length_m is None
-        assert rows[0].economy is None
+    def test_no_threshold_means_no_rss_column(self):
+        lap = self._lap(30, distance=1000.0, elapsed=300.0, speed=3.3, cadence=80, power=400.0)
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.activity_laps_integration.list_laps_for_derivation", return_value=[lap]),
+            patch(f"{_SVC}._stream_samples", return_value=(1.0, (), ())),
+        ):
+            rows = analysis_service.get_activity_lap_dynamics(1, 2, db)
+        assert rows[0].rss is None
+        assert rows[0].stride_length_m is not None  # the rest of the view stays
 
     def test_another_athletes_activity_is_not_found(self):
         db = _db()

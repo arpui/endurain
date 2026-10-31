@@ -30,6 +30,7 @@ from statistics import fmean, median
 
 import modules.analysis.constants as analysis_constants
 import modules.analysis.maths as analysis_maths
+import modules.analysis.methods as analysis_methods
 
 
 class SegmentKind(StrEnum):
@@ -147,6 +148,10 @@ class Segment:
         contrast: Mean power over the session's own median.
         avg_grade_pct: Mean grade, ``None`` when no track was recorded.
         avg_speed_ms: Mean speed, ``None`` when the activity carries none.
+        elevation_gain_m: Ground risen through in the stretch, ``None`` without altitude.
+        elevation_loss_m: Ground fallen through in the stretch, ``None`` without altitude.
+        rss: The shared-scale aRSS score of the stretch (same kernel as the daily
+            rss_total), ``None`` when the sport has no threshold.
     """
 
     kind: SegmentKind
@@ -158,6 +163,9 @@ class Segment:
     contrast: float
     avg_grade_pct: float | None
     avg_speed_ms: float | None
+    elevation_gain_m: float | None = None
+    elevation_loss_m: float | None = None
+    rss: float | None = None
 
 
 @dataclass(frozen=True)
@@ -291,6 +299,7 @@ def analyse_activity(
     threshold_w: float | None,
     speeds_ms: Sequence[float] | None = None,
     grades_pct: Sequence[float] | None = None,
+    altitudes_m: Sequence[float] | None = None,
     parameters: Mapping[str, float] | None = None,
 ) -> IntervalAnalysis:
     """Split one activity's samples into the efforts it contained.
@@ -302,14 +311,18 @@ def analyse_activity(
             none, in which case only the session-relative anchor applies.
         speeds_ms: Speed samples aligned to the power ones, for distance and pace.
         grades_pct: Grade samples aligned to the power ones, for climbs.
+        altitudes_m: Altitude samples aligned to the power ones, for per-segment
+            elevation gain and loss.
         parameters: The athlete's ``iv_`` overrides.
 
     Returns:
         An :class:`IntervalAnalysis`: contiguous segments covering the timeline and a
         shape for the session. Nothing is invented when an input is missing: without
-        speed the distances read 0, without a grade no climb is claimed.
+        speed the distances read 0, without a grade no climb is claimed, without an
+        altitude the elevations read ``None``.
     """
     params = params_from(parameters or {})
+    raw_parameters = parameters or {}
     empty = IntervalAnalysis(shape=SessionShape.STEADY, base_power_w=0.0, threshold_w=threshold_w, segments=())
     if not power_w or period_s <= 0:
         return empty
@@ -338,7 +351,25 @@ def analyse_activity(
 
     measured_s = len(signal) * period_s
     efforts = [_classify_effort(run, signal, grades_pct, params, anchor_w, period_s, measured_s) for run in runs]
-    segments = _timeline(runs, efforts, signal, speeds_ms, grades_pct, period_s, base, anchor_w, threshold_w)
+    altitudes_smooth = (
+        analysis_maths.moving_median(altitudes_m, _window_samples(period_s, analysis_constants.IV_ELEV_MEDIAN_S))
+        if altitudes_m is not None
+        else None
+    )
+    segments = _timeline(
+        runs,
+        efforts,
+        signal,
+        speeds_ms,
+        grades_pct,
+        period_s,
+        base,
+        anchor_w,
+        threshold_w,
+        power_w,
+        altitudes_smooth,
+        raw_parameters,
+    )
     real_efforts = [kind for kind in efforts if kind is not SegmentKind.EASY]
     return IntervalAnalysis(
         shape=_shape(real_efforts, segments, base, anchor_w),
@@ -370,6 +401,9 @@ def _timeline(
     base: float,
     anchor_w: float,
     threshold_w: float | None,
+    power_w: Sequence[float],
+    altitudes_m: Sequence[float] | None,
+    parameters: Mapping[str, float],
 ) -> list[Segment]:
     """Return contiguous segments covering the timeline: each effort and the gaps."""
     out: list[Segment] = []
@@ -377,13 +411,41 @@ def _timeline(
     for run, kind in zip(runs, efforts, strict=True):
         if run[0] > cursor:
             out.append(
-                _gap_segment((cursor, run[0]), signal, speeds_ms, grades_pct, period_s, base, anchor_w, threshold_w)
+                _gap_segment(
+                    (cursor, run[0]),
+                    signal,
+                    speeds_ms,
+                    grades_pct,
+                    period_s,
+                    base,
+                    anchor_w,
+                    threshold_w,
+                    power_w,
+                    altitudes_m,
+                    parameters,
+                )
             )
-        out.append(_segment(kind, run, signal, speeds_ms, grades_pct, period_s, base, threshold_w))
+        out.append(
+            _segment(
+                kind, run, signal, speeds_ms, grades_pct, period_s, base, threshold_w, power_w, altitudes_m, parameters
+            )
+        )
         cursor = run[1]
     if cursor < len(signal):
         out.append(
-            _gap_segment((cursor, len(signal)), signal, speeds_ms, grades_pct, period_s, base, anchor_w, threshold_w)
+            _gap_segment(
+                (cursor, len(signal)),
+                signal,
+                speeds_ms,
+                grades_pct,
+                period_s,
+                base,
+                anchor_w,
+                threshold_w,
+                power_w,
+                altitudes_m,
+                parameters,
+            )
         )
     return out
 
@@ -397,11 +459,34 @@ def _segment(
     period_s: float,
     base: float,
     threshold_w: float | None,
+    power_w: Sequence[float],
+    altitudes_m: Sequence[float] | None,
+    parameters: Mapping[str, float],
 ) -> Segment:
     """Describe one stretch of samples as a segment."""
     span = run[1] - run[0]
     power = fmean(signal[run[0] : run[1]]) if span else 0.0
     speed = fmean(speeds_ms[run[0] : run[1]]) if speeds_ms is not None and span else 0.0
+    gain_m: float | None = None
+    loss_m: float | None = None
+    if altitudes_m is not None and span:
+        deltas = [altitudes_m[i] - altitudes_m[i - 1] for i in range(run[0] + 1, run[1])]
+        gain_m = round(sum(d for d in deltas if d > 0), 1)
+        loss_m = round(sum(-d for d in deltas if d < 0), 1)
+    rss = (
+        round(
+            analysis_methods.rss_window_stress(
+                power_w[run[0] : run[1]],
+                period_s,
+                threshold_w,
+                grades_pct[run[0] : run[1]] if grades_pct is not None else None,
+                parameters,
+            ),
+            1,
+        )
+        if threshold_w
+        else None
+    )
     return Segment(
         kind=kind,
         start_s=round(run[0] * period_s, 1),
@@ -412,6 +497,9 @@ def _segment(
         contrast=round(power / base, 2) if base else 0.0,
         avg_grade_pct=round(fmean(grades_pct[run[0] : run[1]]), 1) if grades_pct is not None and span else None,
         avg_speed_ms=round(speed, 2) if speeds_ms is not None else None,
+        elevation_gain_m=gain_m,
+        elevation_loss_m=loss_m,
+        rss=rss,
     )
 
 
@@ -424,11 +512,16 @@ def _gap_segment(
     base: float,
     anchor_w: float,
     threshold_w: float | None,
+    power_w: Sequence[float],
+    altitudes_m: Sequence[float] | None,
+    parameters: Mapping[str, float],
 ) -> Segment:
     """Describe the stretch between two efforts: a recovery when it is deep enough."""
     power = fmean(signal[run[0] : run[1]]) if run[1] > run[0] else 0.0
     kind = SegmentKind.RECOVERY if power <= analysis_constants.IV_RECOVERY_CP * anchor_w else SegmentKind.EASY
-    return _segment(kind, run, signal, speeds_ms, grades_pct, period_s, base, threshold_w)
+    return _segment(
+        kind, run, signal, speeds_ms, grades_pct, period_s, base, threshold_w, power_w, altitudes_m, parameters
+    )
 
 
 def _shape(

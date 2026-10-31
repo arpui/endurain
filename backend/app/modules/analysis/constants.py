@@ -82,6 +82,8 @@ BT_DISTANCES_M: tuple[int, ...] = (
     200,
     300,
     400,
+    500,
+    600,
     800,
     1000,
     2000,
@@ -200,6 +202,11 @@ IV_STEADY_IF = 1.15
 #: as an interval: brief contact with the gate is not a rep, sustained work above it is.
 #: Grade-driven pushes are exempt; the climb rule already weighs what the terrain justifies.
 IV_EFFORT_IF = 1.05
+
+#: Median window (seconds) for the elevation a segment reports: raw GPS altitude
+#: jitters a couple of metres per sample, and a plain sum of deltas would read that
+#: noise as climbing.
+IV_ELEV_MEDIAN_S = 30.0
 
 #: Minimum segments for the session to read as interval work rather than a single
 #: push.

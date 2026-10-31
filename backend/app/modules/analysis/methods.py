@@ -14,7 +14,7 @@ else in the module changes: it receives the activity's samples and thresholds th
 one :class:`ActivityLoad` row like any other.
 """
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from math import exp
 
@@ -234,6 +234,53 @@ def _rss_sample_band(
     return "mid"
 
 
+def _rss_lifted_kernel(
+    kernel: float,
+    grade_pct: float,
+    soft_grade: float,
+    soft_floor: float,
+    climb_grade: float,
+    climb_floor: float,
+) -> float:
+    """Raise one second's kernel by the grade floors it deserves (soft, then climb)."""
+    if grade_pct > soft_grade:
+        kernel = max(kernel, soft_floor)
+    if grade_pct > climb_grade:
+        kernel = max(kernel, climb_floor)
+    return kernel
+
+
+def rss_window_stress(
+    power_w: Sequence[float],
+    period_s: float,
+    threshold_w: float | None,
+    grade_pct: Sequence[float] | None = None,
+    parameters: Mapping[str, float] | None = None,
+) -> float:
+    """Return the shared-scale aRSS score of any window of samples.
+
+    The same kernel the daily ``rss_total`` sums, over an arbitrary slice: that is
+    what makes the per-lap and per-interval scores add back up to the activity's
+    load, which is how the tables can be cross-checked against the PMC.
+    """
+    if not threshold_w or threshold_w <= 0 or not power_w or period_s <= 0:
+        return 0.0
+    parameters = parameters or {}
+    soft_grade = parameters.get("rss_soft_grade_pct", analysis_constants.RSS_SOFT_GRADE_PCT)
+    soft_floor = parameters.get("rss_soft_floor", analysis_constants.RSS_SOFT_FLOOR)
+    climb_grade = parameters.get("rss_climb_grade_pct", analysis_constants.RSS_CLIMB_GRADE_PCT)
+    climb_floor = parameters.get("rss_climb_floor", analysis_constants.RSS_CLIMB_FLOOR)
+    divisor = parameters.get("rss_norm", analysis_constants.RSS_NORM)
+    total = 0.0
+    for index, watts in enumerate(power_w):
+        if watts <= 0:
+            continue
+        grade = grade_pct[index] if grade_pct is not None and index < len(grade_pct) else 0.0
+        kernel = _rss_kernel(watts / threshold_w, parameters)
+        total += _rss_lifted_kernel(kernel, grade, soft_grade, soft_floor, climb_grade, climb_floor)
+    return 100.0 * total * period_s / (divisor * 3600.0)
+
+
 def _rss_load(data: LoadInput, band: str) -> LoadValue | None:
     """Sum the exponential kernel over one activity, keeping only ``band``'s seconds.
 
@@ -266,10 +313,7 @@ def _rss_load(data: LoadInput, band: str) -> LoadValue | None:
         kernel = _rss_kernel(intensity, parameters)
         if band == "total":
             # Every second counts, and a grade only ever lifts its score.
-            if grade > soft_grade:
-                kernel = max(kernel, soft_floor)
-            if grade > climb_grade:
-                kernel = max(kernel, climb_floor)
+            kernel = _rss_lifted_kernel(kernel, grade, soft_grade, soft_floor, climb_grade, climb_floor)
         else:
             if _rss_sample_band(intensity, speed, grade, parameters) != band:
                 continue

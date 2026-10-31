@@ -129,6 +129,8 @@
     "effortsMany": "akcenty",
     "colStart": "start",
     "colGrade": "nachylenie",
+    "colDesnivel": "przewyższenie (+/−)",
+    "colRss": "aRSS",
     "colContrast": "vs sesja",
     "rules": "Jak to wykrywać: na płaskim odcinek liczy się jako interwał tylko, jeśli utrzymuje ≥{effortIf}·CP; akcent otwiera się przy {openW} W i zamyka poniżej {closeW} W; minimum {minS} s (poniżej {shortS} s wymaga {shortBase} mediany sesji; bez prawdziwej regeneracji —≤{recoveryW} W—, {strongBase}); nachylenie >{climbGrade}% z IF<{climbIf} liczy się jako podbieg."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Długość kroku",
     "lengthSwim": "Dystans/ruch",
     "lengthRide": "Przełożenie",
-    "economy": "Ekonomia",
-    "economyNote": "Ekonomia = dystans na cykl przy względnej intensywności, w odniesieniu do pierwszego solidnego akcentu; poniżej ×1,00 forma spada."
+    "desnivel": "Przewyższenie (+/−)",
+    "rss": "aRSS",
+    "rssNote": "aRSS to punktacja ważona intensywnością stojąca za dziennym obciążeniem; wiersze sumują się do wartości całej aktywności."
   }
 }

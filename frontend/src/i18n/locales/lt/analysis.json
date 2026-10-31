@@ -129,6 +129,8 @@
     "effortsMany": "krūviai",
     "colStart": "pradžia",
     "colGrade": "nuolydis",
+    "colDesnivel": "kylantis / leidžiantis",
+    "colRss": "aRSS",
     "colContrast": "vs sesija",
     "rules": "Kaip čia nustatoma: lygioje atkarpoje intervalu skaičiuojama tik laikantis ≥{effortIf}·CP; krūvis prasideda {openW} W ir baigiasi žemiau {closeW} W; minimumas {minS} s (trumpiau nei {shortS} s reikia {shortBase} seanso medianos; be tikro atsigavimo —≤{recoveryW} W—, {strongBase}); įkalnė >{climbGrade}% su IF<{climbIf} skaičiuojama kaip įkalnė."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Žingsnio ilgis",
     "lengthSwim": "Atstumas/irtimas",
     "lengthRide": "Perdavimas",
-    "economy": "Ekonomiškumas",
-    "economyNote": "Ekonomika = atstumas per ciklą esant santykinei intensyvumui, palyginti su pirmu tvirtu darvu; žemiau ×1,00 forma smunka."
+    "desnivel": "Kylantis / leidžiantis",
+    "rss": "aRSS",
+    "rssNote": "aRSS – intensyvumu sveriamas rodiklis, lemiantis dienos krūvį; eilutės sudaro visos veiklos sumą."
   }
 }

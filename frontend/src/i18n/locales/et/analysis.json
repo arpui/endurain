@@ -129,6 +129,8 @@
     "effortsMany": "koormust",
     "colStart": "algus",
     "colGrade": "tõus",
+    "colDesnivel": "tõus / lask",
+    "colRss": "aRSS",
     "colContrast": "vs session",
     "rules": "Kuidas siin tuvastatakse: tasasel loeb lõik intervalliks vaid siis, kui peab ≥{effortIf}·CP; koormus avneb {openW} W juures ja sulgub alla {closeW} W; vähemalt {minS} s (alla {shortS} s on vaja {shortBase} sessioni mediaanist; ilma tõelise puhkuseta —≤{recoveryW} W—, {strongBase}); üle {climbGrade}% tõusuga ja IF<{climbIf} loetakse tõusuks."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Sammu pikkus",
     "lengthSwim": "Dist./tõmme",
     "lengthRide": "Ülekanne",
-    "economy": "Ökonoomsus",
-    "economyNote": "Ökonoomsus = maa tsükli kohta suhtelisel intensiivsusel, võrreldes esimese tugeva lõiguga; alla ×1,00 vorm halveneb."
+    "desnivel": "Tõus / lask",
+    "rss": "aRSS",
+    "rssNote": "aRSS on intensiivsusega kaalutud skoor päevase koormuse taga; read annavad kokku tegevuse tervikskoori."
   }
 }

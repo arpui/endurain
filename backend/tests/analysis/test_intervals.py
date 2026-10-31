@@ -8,7 +8,11 @@ threshold and the session's own median, which is why the same wattage reads as a
 one day and as a cruise on another.
 """
 
+import pytest
+
 import modules.analysis.intervals as analysis_intervals
+import modules.analysis.maths as analysis_maths
+import modules.analysis.methods as analysis_methods
 
 CP = 350.0
 
@@ -260,3 +264,42 @@ class TestFlatEffortQuality:
         assert analysis.rules["close_w"] == 315.0
         assert analysis.rules["recovery_w"] == 280.0
         assert analysis.rules["effort_if"] == 1.05
+
+
+class TestSegmentElevationAndStress:
+    """Per-segment elevation split and aRSS, so the tables cross-check the load."""
+
+    def test_a_hill_split_reports_ascent_and_descent_as_a_pair(self):
+        power = [250.0] * 300 + [420.0] * 200 + [250.0] * 300
+        speed = [4.0] * 800
+        altitude = [0.0] * 300 + [i * 0.05 for i in range(200)] + [10.0] * 300
+        grades = analysis_maths.grade_pct_series(altitude, speed, 1.0)
+        analysis = analysis_intervals.analyse_activity(
+            power_w=power,
+            period_s=1.0,
+            threshold_w=CP,
+            speeds_ms=speed,
+            grades_pct=grades,
+            altitudes_m=altitude,
+        )
+        efforts = [s for s in analysis.segments if s.kind is analysis_intervals.SegmentKind.INTERVAL]
+        assert efforts
+        climb = efforts[0]
+        assert climb.elevation_gain_m is not None and climb.elevation_gain_m >= 8.0
+        assert climb.elevation_loss_m is not None and climb.elevation_loss_m <= 1.0
+
+    def test_segment_rss_entries_add_up_to_the_whole_window(self):
+        power = [250.0] * 300 + [430.0] * 150 + [120.0] * 150 + [430.0] * 150 + [250.0] * 300
+        speed = [4.0] * 1050
+        grades = [0.0] * 1050
+        analysis = analysis_intervals.analyse_activity(
+            power_w=power, period_s=1.0, threshold_w=CP, speeds_ms=speed, grades_pct=grades
+        )
+        total = analysis_methods.rss_window_stress(power, 1.0, CP)
+        summed = sum(segment.rss or 0.0 for segment in analysis.segments)
+        assert summed == pytest.approx(total, abs=0.5)
+
+    def test_without_a_threshold_the_rss_column_stays_blank(self):
+        power = [300.0] * 300
+        analysis = analysis_intervals.analyse_activity(power_w=power, period_s=1.0, threshold_w=None)
+        assert all(segment.rss is None for segment in analysis.segments)

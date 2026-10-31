@@ -129,6 +129,8 @@
     "effortsMany": "eforturi",
     "colStart": "start",
     "colGrade": "pantă",
+    "colDesnivel": "urcare / coborâre",
+    "colRss": "aRSS",
     "colContrast": "vs ședință",
     "rules": "Cum se detectează aici: pe plat un trakt contează ca interval doar dacă menține ≥{effortIf}·CP; un efort se deschide la {openW} W și se închide sub {closeW} W; minimum {minS} s (sub {shortS} s cere {shortBase} din mediana ședinței; fără recuperare reală —≤{recoveryW} W—, {strongBase}); pantă >{climbGrade}% cu IF<{climbIf} contează ca urcare."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Lungimea pasului",
     "lengthSwim": "Distanță/lobitură",
     "lengthRide": "Dezvoltare",
-    "economy": "Economie",
-    "economyNote": "Economie = distanță pe ciclul la intensitate relativă, raportată la primul efort solid; sub ×1,00 forma scade."
+    "desnivel": "Urcare / coborâre",
+    "rss": "aRSS",
+    "rssNote": "aRSS este scorul ponderat cu intensitate din spatele sarcii zilnice; rândurile însumează totalul activității."
   }
 }

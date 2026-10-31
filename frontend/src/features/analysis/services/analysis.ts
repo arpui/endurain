@@ -278,6 +278,9 @@ function mapIntervalSegment(dto: IntervalSegmentDto): IntervalSegment {
     contrast: dto.contrast,
     avgGradePct: dto.avg_grade_pct ?? null,
     avgSpeedMs: dto.avg_speed_ms ?? null,
+    elevationGainM: dto.elevation_gain_m ?? null,
+    elevationLossM: dto.elevation_loss_m ?? null,
+    rss: dto.rss ?? null,
   }
 }
 
@@ -370,12 +373,15 @@ function mapLapDynamics(dto: LapDynamicsDto): LapDynamics {
     lapId: dto.lap_id,
     avgPowerW: dto.avg_power_w ?? null,
     strideLengthM: dto.stride_length_m ?? null,
-    economy: dto.economy ?? null,
+    elevationGainM: dto.elevation_gain_m ?? null,
+    elevationLossM: dto.elevation_loss_m ?? null,
+    rss: dto.rss ?? null,
   }
 }
 
 /**
- * Fetches the caller's per-lap dynamics (power, stride length, economy) for one
+ * Fetches the caller's per-lap dynamics (power, stride length, elevation split,
+ * aRSS) for one
  * activity, computed on read against their own threshold.
  *
  * @param activityId - The activity to analyze.

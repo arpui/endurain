@@ -129,6 +129,8 @@
     "effortsMany": "innsatser",
     "colStart": "start",
     "colGrade": "stigning",
+    "colDesnivel": "stigning / fall",
+    "colRss": "aRSS",
     "colContrast": "vs økt",
     "rules": "Slik oppdages det her: på flatt teller en strekning bare som intervall hvis den holder ≥{effortIf}·CP; en innsats åpnes ved {openW} W og lukkes under {closeW} W; minst {minS} s (under {shortS} s kreves {shortBase} av øktens median; uten skikkelig hvile —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} teller det som bakke."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Steglengde",
     "lengthSwim": "Dist./tak",
     "lengthRide": "Utveksling",
-    "economy": "Økonomi",
-    "economyNote": "Økonomi = distanse per sykel ved relativ intensitet, referert til første solide innsats; under ×1,00 svikter formen."
+    "desnivel": "Stigning / fall",
+    "rss": "aRSS",
+    "rssNote": "aRSS er den intensitetsvektede poengsummen bak den daglige belastningen; radene summeres til aktivitetens total."
   }
 }

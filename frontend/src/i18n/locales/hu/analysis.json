@@ -129,6 +129,8 @@
     "effortsMany": "terhelés",
     "colStart": "kezdés",
     "colGrade": "emelkedő",
+    "colDesnivel": "emelkedés / ereszkedés",
+    "colRss": "aRSS",
     "colContrast": "vs edzés",
     "rules": "Így kerül felismerésre: laposon egy szakasz csak akkor számít intervallumnak, ha tartja a ≥{effortIf}·CP-t; a terhelés {openW} W-nál nyílik és {closeW} W alatt zárul; minimum {minS} s ({shortS} s alatt az edzés mediánjának {shortBase}?a kell; valódi regeneráció nélkül —≤{recoveryW} W—, {strongBase}); >{climbGrade}% emelkedővel és IF<{climbIf}emelkedőnek számít."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Lépéshossz",
     "lengthSwim": "Táv/húzás",
     "lengthRide": "Áttétel",
-    "economy": "Gazdaságosság",
-    "economyNote": "Gazdaságosság = megtett út körönként relatív intenzitáson, az első stabil erős réshez viszonyítva; ×1,00 alatt romlik a forma."
+    "desnivel": "Emelkedés / ereszkedés",
+    "rss": "aRSS",
+    "rssNote": "Az aRSS a napi terhelés mögötti intenzitással súlyozott pontszám; a sorok az edzés egészére adódnak."
   }
 }

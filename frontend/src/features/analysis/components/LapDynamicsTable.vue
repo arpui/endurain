@@ -54,7 +54,7 @@ const dynamicsById = computed(() => new Map(props.dynamics.map((row) => [row.lap
 const showCadence = computed(() => props.laps.some((lap) => lap.avgCadence !== null))
 const showPower = computed(() => props.dynamics.some((row) => row.avgPowerW !== null))
 const showLength = computed(() => props.dynamics.some((row) => row.strideLengthM !== null))
-const showEconomy = computed(() => props.dynamics.some((row) => row.economy !== null))
+const showRss = computed(() => props.dynamics.some((row) => row.rss !== null))
 
 const activeSummary = computed(() => {
   if (!hasRest.value) {
@@ -102,7 +102,7 @@ interface LapRow {
   cadence: string
   power: string
   length: string
-  economy: string
+  rss: string
   isRest: boolean
 }
 
@@ -127,10 +127,7 @@ const rows = computed<LapRow[]>(() =>
             props.units,
           ),
       tempoScore: entry.isRest ? null : entry.normalizedScore,
-      elevation:
-        lap.totalAscent === null
-          ? '--'
-          : combineMetric(formatElevation(lap.totalAscent, props.units)),
+      elevation: elevationPair(dynamics, lap),
       strokeRate: lap.avgCadence === null ? '--' : `${Math.round(lap.avgCadence)}`,
       hr: lap.avgHeartRate === null ? '--' : `${Math.round(lap.avgHeartRate)} bpm`,
       cadence: lap.avgCadence === null ? '--' : `${Math.round(lap.avgCadence)}`,
@@ -139,14 +136,29 @@ const rows = computed<LapRow[]>(() =>
           ? '--'
           : `${Math.round(dynamics.avgPowerW)} W`,
       length: decimal(dynamics?.strideLengthM ?? null, 2),
-      economy:
-        dynamics?.economy === null || dynamics?.economy === undefined
-          ? '--'
-          : `×${decimal(dynamics.economy, 2)}`,
+      rss: decimal(dynamics?.rss ?? null, 1),
       isRest: entry.isRest,
     }
   }),
 )
+
+/**
+ * Ascent and descent as one honest pair (`+10 / −8 m`), never netted: a rolling
+ * lap is not flat, whatever a single signed number would claim. Falls back to the
+ * plain ascent when the analysis rows carry no split.
+ */
+function elevationPair(dynamics: LapDynamics | undefined, lap: ActivityLap): string {
+  const gain = dynamics?.elevationGainM ?? null
+  const loss = dynamics?.elevationLossM ?? null
+  if (gain === null && loss === null) {
+    return lap.totalAscent === null
+      ? '--'
+      : combineMetric(formatElevation(lap.totalAscent, props.units))
+  }
+  const ascent = formatElevation(gain, props.units)
+  const descent = formatElevation(loss, props.units)
+  return `+${ascent.value} / \u2212${descent.value} ${ascent.unit}`
+}
 </script>
 
 <template>
@@ -169,7 +181,7 @@ const rows = computed<LapRow[]>(() =>
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.time') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
             <th v-if="showElevation" class="py-2 pe-3 font-medium">
-              {{ t('activities.laps.elevation') }}
+              {{ t('analysis.laps.desnivel') }}
             </th>
             <th v-if="showStrokeRate" class="py-2 pe-3 font-medium">
               {{ t('activities.laps.strokeRate') }}
@@ -182,8 +194,8 @@ const rows = computed<LapRow[]>(() =>
               {{ t('analysis.laps.power') }}
             </th>
             <th v-if="showLength" class="py-2 pe-3 font-medium">{{ t(lengthLabelKey) }}</th>
-            <th v-if="showEconomy" class="py-2 font-medium">
-              {{ t('analysis.laps.economy') }}
+            <th v-if="showRss" class="py-2 font-medium">
+              {{ t('analysis.laps.rss') }}
             </th>
           </tr>
         </thead>
@@ -232,15 +244,15 @@ const rows = computed<LapRow[]>(() =>
             <td v-if="showLength" class="py-2 pe-3 tabular-nums text-muted-foreground">
               {{ row.length }}
             </td>
-            <td v-if="showEconomy" class="py-2 tabular-nums text-muted-foreground">
-              {{ row.economy }}
+            <td v-if="showRss" class="py-2 tabular-nums text-muted-foreground">
+              {{ row.rss }}
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p v-if="showEconomy" class="text-caption mt-2 text-muted-foreground">
-      {{ t('analysis.laps.economyNote') }}
+    <p v-if="showRss" class="text-caption mt-2 text-muted-foreground">
+      {{ t('analysis.laps.rssNote') }}
     </p>
   </div>
 </template>

@@ -18,6 +18,9 @@ function makeSegment(overrides: Partial<IntervalSegment> = {}): IntervalSegment 
     contrast: 1.46,
     avgGradePct: 0.4,
     avgSpeedMs: 3.84,
+    elevationGainM: 9.5,
+    elevationLossM: 4,
+    rss: 12.3,
     ...overrides,
   }
 }

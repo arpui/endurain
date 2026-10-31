@@ -129,6 +129,8 @@
     "effortsMany": "efor",
     "colStart": "başlangıç",
     "colGrade": "eğim",
+    "colDesnivel": "tırmanış / iniş",
+    "colRss": "aRSS",
     "colContrast": "vs seans",
     "rules": "Burada algılama: düz zeminde bir bölüm ancak ≥{effortIf}·CP sürdürürse interval sayılır; efor {openW} W'te açılır ve {closeW} W altında kapanır; asgari {minS} s ({shortS} s altındaysa seans medyanının {shortBase}'i gerekir; gerçek toparlanma olmadan —≤{recoveryW} W—, {strongBase}); >{climbGrade}% eğim ve IF<{climbIf} tırmanış sayılır."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Adım uzunluğu",
     "lengthSwim": "Mesafe/çekiş",
     "lengthRide": "Aktarım",
-    "economy": "Ekonomi",
-    "economyNote": "Ekonomi = bağıl yoğunlukta tur başına mesafe, seansın ilk sağlam çabasına göre; ×1,00 altındaysa form düşüyor."
+    "desnivel": "Tırmanış / iniş",
+    "rss": "aRSS",
+    "rssNote": "aRSS, günlük yükün arkasındaki yoğunluk ağırlıklı puandır; satırlar etkinliğin toplamına ulaşır."
   }
 }

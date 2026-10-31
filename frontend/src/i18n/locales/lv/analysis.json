@@ -129,6 +129,8 @@
     "effortsMany": "slodzes",
     "colStart": "sākums",
     "colGrade": "slīpums",
+    "colDesnivel": "kāpums / kritums",
+    "colRss": "aRSS",
     "colContrast": "vs sesija",
     "rules": "Kā šeit nosaka: plakanie posmā atkarums skaitas par intervālu tikai, ja tas saglabā ≥{effortIf}·CP; slodze sākas pie {openW} W un beidzas zem {closeW} W; minimums {minS} s (zem {shortS} s nepieciešams {shortBase} no sesijas mediānas; bez īsta atpūtas —≤{recoveryW} W—, {strongBase}); ar slīpumu >{climbGrade}% un IF<{climbIf} skaitas kā kāpiens."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Soļa garums",
     "lengthSwim": "Att./dziens",
     "lengthRide": "Pārnesums",
-    "economy": "Ekonomija",
-    "economyNote": "Ekonomija = ceļš vienā ciklā pie relatīvā intensitātes, atskaites pirmā iesilde; zem ×1.00 forma krītas."
+    "desnivel": "Kāpums / kritums",
+    "rss": "aRSS",
+    "rssNote": "aRSS ir ar intensitāti svērts rādītājs aiz dienas slodzes; rindas summējas aktivitātes kopsummā."
   }
 }

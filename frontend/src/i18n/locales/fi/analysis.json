@@ -129,6 +129,8 @@
     "effortsMany": "suoritusta",
     "colStart": "alku",
     "colGrade": "nousu",
+    "colDesnivel": "nousu / lasku",
+    "colRss": "aRSS",
     "colContrast": "vs suoritus",
     "rules": "Näin havaitaan: tasangolla jakso on intervalli vain jos se pitää ≥{effortIf}·CP; suoritus avautuu {openW} W:issa ja sulkeutuu alle {closeW} W; vähintään {minS} s (alle {shortS} s vaaditaan {shortBase} session mediaanista; ilman kunnon palautusta —≤{recoveryW} W—, {strongBase}); yli {climbGrade}% nousulla ja IF<{climbIf} lasketaan nousuksi."
   },
@@ -161,7 +163,8 @@
     "lengthRun": "Askeleen pituus",
     "lengthSwim": "Matka/veto",
     "lengthRide": "Vaihde",
-    "economy": "Taloudellisuus",
-    "economyNote": "Talous = maa per kierros suhteellisella intensiteetillä, suhteessa ensimmäiseen kovaan vetoon; alle ×1,00 kunto hiipuu."
+    "desnivel": "Nousu / lasku",
+    "rss": "aRSS",
+    "rssNote": "aRSS on intensiteettipainotettu pisteluku päivittäisen kuorman takana; rivit sumaantuvat harjoituksen kokonaisarvoksi."
   }
 }
