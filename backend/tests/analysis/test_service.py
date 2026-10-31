@@ -1206,6 +1206,7 @@ class TestLapDynamics:
         work = self._lap(31, distance=1000.0, elapsed=250.0, speed=4.0, cadence=80, power=400)
         rows = self._read([easy, work])
         assert rows[1].economy == 1.0  # baseline is the first lap that actually worked
+        assert rows[0].economy is None  # and the easy legs read blank, not inflated
 
     def test_laps_without_data_answer_nothing_invented(self):
         rows = self._read([self._lap(40, distance=1000.0, elapsed=250.0)])
