@@ -11,7 +11,6 @@
 
 /** Design-token colours that may be resolved for canvas/JS rendering. */
 export type ThemeColorToken =
-  | '--color-brand-light'
   | '--color-brand'
   | '--color-brand-mid'
   | '--color-effort'
@@ -24,7 +23,6 @@ export type ThemeColorToken =
  * available (SSR, unit tests). The single place these hex values are repeated.
  */
 const TOKEN_FALLBACKS: Record<ThemeColorToken, string> = {
-  '--color-brand-light': '#e1f5ee',
   '--color-brand': '#1d9e75',
   '--color-brand-mid': '#0f6e56',
   '--color-effort': '#ef9f27',
@@ -48,4 +46,21 @@ export function themeColor(token: ThemeColorToken): string {
     }
   }
   return TOKEN_FALLBACKS[token]
+}
+
+/**
+ * Resolves a design-token colour as a translucent `rgba()` at the given alpha.
+ * Suits chart elements that should recede into the background (context bars),
+ * since one low-alpha colour reads softly on both light and dark surfaces.
+ *
+ * @param token - The CSS custom property name, e.g. `--color-brand`.
+ * @param alpha - Fill opacity in the 0..1 range.
+ * @returns An `rgba(r, g, b, alpha)` string.
+ */
+export function themeColorAlpha(token: ThemeColorToken, alpha: number): string {
+  const hex = themeColor(token).replace('#', '')
+  const r = Number.parseInt(hex.slice(0, 2), 16)
+  const g = Number.parseInt(hex.slice(2, 4), 16)
+  const b = Number.parseInt(hex.slice(4, 6), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }

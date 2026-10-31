@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import type { FitnessPoint, LoadMethod } from '@/features/analysis/types'
 import type { ChartRenderOptions } from '@/composables/useChartProvider'
 
-import { themeColor } from '@/lib/themeColor'
+import { themeColor, themeColorAlpha } from '@/lib/themeColor'
 import { Card } from '@/components/ui/card'
 import { useMetricChart } from '@/composables/useMetricChart'
 import { formatMediumDate } from '@/utils/datetime'
@@ -23,9 +23,10 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 
-// Pale brand green for the daily-load bars: context to read the curves against,
-// never louder than the fitness/fatigue/TSB lines.
-const LOAD_COLOR = themeColor('--color-brand-light')
+// Daily-load bars in translucent brand teal: soft mint on light cards, a faint
+// dark tint on dark cards — background context either way, never louder than
+// the fitness/fatigue/TSB lines.
+const LOAD_COLOR = themeColorAlpha('--color-brand', 0.15)
 const FITNESS_COLOR = themeColor('--color-brand-mid')
 const FATIGUE_COLOR = themeColor('--color-hr')
 const FORM_COLOR = themeColor('--color-info')
