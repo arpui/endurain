@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Denné zaťaženie",
     "series": "Zaťaženie",
     "trimpNote": "TRIMP používa inú škálu ako ostatné vzorce a nikdy sa k nim nepriráta."
   },
   "stats": {
-    "windowTotal": "Celkové zaťaženie",
     "dailyAvg": "Priem. zaťaženie/deň"
   },
   "empty": {

@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Càrrega diària",
     "series": "Càrrega",
     "trimpNote": "El TRIMP fa servir una escala diferent de les altres fórmules i mai no se suma amb elles."
   },
   "stats": {
-    "windowTotal": "Càrrega total",
     "dailyAvg": "Càrrega mitjana/dia"
   },
   "empty": {

@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Daglig belastning",
     "series": "Belastning",
     "trimpNote": "TRIMP bruger en anden skala end de andre formler og lægges aldrig sammen med dem."
   },
   "stats": {
-    "windowTotal": "Samlet belastning",
     "dailyAvg": "Gns. belastning/dag"
   },
   "empty": {

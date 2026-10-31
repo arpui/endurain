@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Carico giornaliero",
     "series": "Carico",
     "trimpNote": "Il TRIMP usa una scala diversa dalle altre formule e non viene mai sommato a esse."
   },
   "stats": {
-    "windowTotal": "Carico totale",
     "dailyAvg": "Carico medio/giorno"
   },
   "empty": {

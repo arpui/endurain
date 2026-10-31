@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Дневно оптерећење",
     "series": "Оптерећење",
     "trimpNote": "TRIMP користи другу скалу од осталих формула и никада им се не сабира."
   },
   "stats": {
-    "windowTotal": "Укупно оптерећење",
     "dailyAvg": "Прос. оптерећење/дан"
   },
   "empty": {

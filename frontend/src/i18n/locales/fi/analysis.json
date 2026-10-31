@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Päivittäinen kuorma",
     "series": "Kuorma",
     "trimpNote": "TRIMP käyttää muista kaavoista poikkeavaa asteikkoa, eikä sitä lasketa yhteen niiden kanssa."
   },
   "stats": {
-    "windowTotal": "Kuormat yhteensä",
     "dailyAvg": "Keskim. kuorma/päivä"
   },
   "empty": {

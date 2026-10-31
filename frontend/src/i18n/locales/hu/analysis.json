@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Napi terhelés",
     "series": "Terhelés",
     "trimpNote": "A TRIMP más skálán mér, mint a többi képlet, és soha nem adódik hozzájuk."
   },
   "stats": {
-    "windowTotal": "Összes terhelés",
     "dailyAvg": "Átlag terhelés/nap"
   },
   "empty": {

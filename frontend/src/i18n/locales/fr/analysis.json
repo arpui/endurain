@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Charge quotidienne",
     "series": "Charge",
     "trimpNote": "Le TRIMP utilise une échelle différente de celle des autres formules et ne s'additionne jamais à elles."
   },
   "stats": {
-    "windowTotal": "Charge totale",
     "dailyAvg": "Charge moy. / jour"
   },
   "empty": {

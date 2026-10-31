@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Dzienne obciążenie",
     "series": "Obciążenie",
     "trimpNote": "TRIMP używa innej skali niż pozostałe wzory i nigdy nie jest do nich dodawany."
   },
   "stats": {
-    "windowTotal": "Całkowite obciążenie",
     "dailyAvg": "Śr. obciąż./dzień"
   },
   "empty": {

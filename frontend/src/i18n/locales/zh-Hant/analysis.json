@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "每日負荷",
     "series": "負荷",
     "trimpNote": "TRIMP 使用與其他公式不同的量尺，不會與它們相加。"
   },
   "stats": {
-    "windowTotal": "負荷總計",
     "dailyAvg": "日均負荷"
   },
   "empty": {

@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Daily load",
     "series": "Load",
     "trimpNote": "TRIMP uses a different scale than the other formulas and is never added to them."
   },
   "stats": {
-    "windowTotal": "Total load",
     "dailyAvg": "Avg load / day"
   },
   "empty": {

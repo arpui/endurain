@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Dnevno opterećenje",
     "series": "Opterećenje",
     "trimpNote": "TRIMP koristi drugu ljestvicu od drugih formula i nikada im se ne zbraja."
   },
   "stats": {
-    "windowTotal": "Ukupno opterećenje",
     "dailyAvg": "Prosj. opterećenje/dan"
   },
   "empty": {

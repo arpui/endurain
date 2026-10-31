@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Päevane koormus",
     "series": "Koormus",
     "trimpNote": "TRIMP kasutab teistest valemitest erinevat skaalat ega liideta nendega."
   },
   "stats": {
-    "windowTotal": "Koormus kokku",
     "dailyAvg": "Keskmine koormus/päev"
   },
   "empty": {

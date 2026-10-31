@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Încărcare zilnică",
     "series": "Încărcare",
     "trimpNote": "TRIMP folosește o scală diferită de celelalte formule și nu se adună niciodată cu acestea."
   },
   "stats": {
-    "windowTotal": "Încărcare totală",
     "dailyAvg": "Încărcare medie/zi"
   },
   "empty": {

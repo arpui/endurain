@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Dagelijkse belasting",
     "series": "Belasting",
     "trimpNote": "TRIMP gebruikt een andere schaal dan de andere formules en wordt er nooit bij opgeteld."
   },
   "stats": {
-    "windowTotal": "Totale belasting",
     "dailyAvg": "Gem. belasting/dag"
   },
   "empty": {

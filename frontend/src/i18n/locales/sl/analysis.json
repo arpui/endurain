@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Dnevna obremenitev",
     "series": "Obremenitev",
     "trimpNote": "TRIMP uporablja drugo lestvico kot drugi obrazci in se nikoli ne prišteva k njim."
   },
   "stats": {
-    "windowTotal": "Skupna obremenitev",
     "dailyAvg": "Povpr. obremenitev/dan"
   },
   "empty": {

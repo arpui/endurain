@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Günlük yük",
     "series": "Yük",
     "trimpNote": "TRIMP diğer formüllerden farklı bir ölçek kullanır ve asla onlarla toplanmaz."
   },
   "stats": {
-    "windowTotal": "Toplam yük",
     "dailyAvg": "Ort. yük/gün"
   },
   "empty": {

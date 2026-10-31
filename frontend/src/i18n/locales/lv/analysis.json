@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Dienas slodze",
     "series": "Slodze",
     "trimpNote": "TRIMP izmanto citu skalu nekā pārējās formulas, un tas nekad netiek saskaitīts ar tām."
   },
   "stats": {
-    "windowTotal": "Kopējā slodze",
     "dailyAvg": "Vid. slodze/dienā"
   },
   "empty": {

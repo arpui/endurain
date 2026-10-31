@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Dienos krūvis",
     "series": "Krūvis",
     "trimpNote": "TRIMP naudoja kitą skalę nei kitos formulės ir niekada su jomis nesumuojamas."
   },
   "stats": {
-    "windowTotal": "Bendras krūvis",
     "dailyAvg": "Vid. krūvis/d."
   },
   "empty": {

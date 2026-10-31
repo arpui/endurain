@@ -27,12 +27,10 @@
     "params": "{method} · τ {acute}/{chronic}"
   },
   "daily": {
-    "title": "Denní zatížení",
     "series": "Zatížení",
     "trimpNote": "TRIMP používá jinou škálu než ostatní vzorce a nikdy se k nim nepřičítá."
   },
   "stats": {
-    "windowTotal": "Celkové zatížení",
     "dailyAvg": "Prům. zatížení/den"
   },
   "empty": {
