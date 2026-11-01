@@ -120,7 +120,7 @@ describe('LapDynamicsTable', () => {
     expect(row).toContain('412 W')
     expect(row).toContain('+10 / \u22128 m')
     expect(row.some((value) => /^26[.,]4$/.test(value))).toBe(true)
-    expect(row.some((value) => /^5[.,]3$/.test(value))).toBe(true)
+    expect(row.some((value) => /^5[.,]30$/.test(value))).toBe(true)
     expect(row.some((value) => /^3[.,]03$/.test(value))).toBe(true)
   })
 

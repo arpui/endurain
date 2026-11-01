@@ -89,7 +89,7 @@ const rows = computed<SegmentRow[]>(() =>
       contrast: segment.contrast > 0 ? `×${segment.contrast.toFixed(2)}` : '--',
       desnivel: elevationPair(segment),
       rss: segment.rss === null ? '--' : segment.rss.toFixed(1),
-      rssMin: segment.rssPerMin === null ? '--' : segment.rssPerMin.toFixed(1),
+      rssMin: segment.rssPerMin === null ? '--' : segment.rssPerMin.toFixed(2),
       isEffort: EFFORT_KINDS.includes(segment.kind),
     })),
 )
@@ -112,7 +112,7 @@ const climbRows = computed<ClimbRow[]>(() =>
     power: climb.avgPowerW === null ? '--' : `${Math.round(climb.avgPowerW)} W`,
     intensityFactor: climb.intensityFactor === null ? '--' : climb.intensityFactor.toFixed(2),
     contrast: climb.contrast === null ? '--' : `\u00d7${climb.contrast.toFixed(2)}`,
-    rssMin: climb.rssPerMin === null ? '--' : climb.rssPerMin.toFixed(1),
+    rssMin: climb.rssPerMin === null ? '--' : climb.rssPerMin.toFixed(2),
   })),
 )
 

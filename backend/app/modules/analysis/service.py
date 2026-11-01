@@ -1226,7 +1226,7 @@ def _apply_lap_rss(
         entry.rss = round(score, 1) if score > 0 else None
         elapsed_s = float(lap.total_elapsed_time or 0.0)
         if entry.rss is not None and elapsed_s > 0:
-            entry.rss_per_min = round(entry.rss * 60.0 / elapsed_s, 1)
+            entry.rss_per_min = round(entry.rss * 60.0 / elapsed_s, 2)
 
 
 def _utc_stamps(stamps: tuple[datetime, ...]) -> tuple[datetime, ...]:
@@ -1328,7 +1328,7 @@ def compute_window_stats(
                         parameters,
                     )
                     if score > 0:
-                        rss_per_min = round(score * 60.0 / elapsed_s, 1)
+                        rss_per_min = round(score * 60.0 / elapsed_s, 2)
         avg_hr: float | None = None
         if hr_values and elapsed_s > 0:
             cut = bisect_left(hr_stamps, start_a)

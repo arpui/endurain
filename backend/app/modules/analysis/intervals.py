@@ -514,7 +514,7 @@ def _segment(
     )
     distance_m = speed * span * period_s
     duration_s = span * period_s
-    rss_per_min = round(rss * 60.0 / duration_s, 1) if rss and duration_s > 0 else None
+    rss_per_min = round(rss * 60.0 / duration_s, 2) if rss and duration_s > 0 else None
     return Segment(
         kind=kind,
         start_s=round(run[0] * period_s, 1),
@@ -739,7 +739,7 @@ def terrain_climbs(
                 if score <= 0:
                     score = None
                 else:
-                    per_min = round(score * 60.0 / ((end - start + 1) * period_s), 1)
+                    per_min = round(score * 60.0 / ((end - start + 1) * period_s), 2)
             if base_power_w and avg_power is not None:
                 contrast = round(avg_power / base_power_w, 2)
         climbs.append(
