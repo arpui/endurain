@@ -355,29 +355,38 @@ class TestTerrainClimbs:
         assert len(climbs) == 1
         assert climbs[0].avg_power_w is None
         assert climbs[0].rss is None
-        assert climbs[0].rss_per_km is None
+        assert climbs[0].rss_per_min is None
         assert climbs[0].elevation_gain_m > 0.0  # the terrain read survives no power
 
     def test_no_altitude_or_no_speed_answers_nothing_invented(self):
         assert analysis_intervals.terrain_climbs(None, [4.0] * 500, 1.0) == []
         assert analysis_intervals.terrain_climbs([0.0] * 500, None, 1.0) == []
 
-    def test_the_score_per_km_scales_the_short_window_up_exactly(self):
-        alts, speeds = self._run(4.0, [(500.0, 5.0)])  # 500 m climb
-        power = [400.0] * len(alts)
-        climbs = analysis_intervals.terrain_climbs(
-            alts, speeds, 1.0, power_w=power, threshold_w=350.0, base_power_w=300.0
-        )
-        assert len(climbs) == 1
-        assert climbs[0].rss is not None and climbs[0].rss_per_km is not None
-        assert climbs[0].rss_per_km == pytest.approx(climbs[0].rss * 2.0, rel=0.05)
+    def test_the_rate_per_minute_is_the_same_whatever_the_climb_length(self):
+        """aRSS integrates over time, so its per-minute rate needs no scaling floor.
 
-    def test_a_climb_shorter_than_the_scaling_floor_keeps_only_its_score(self):
+        The same gradient, speed and watts over half a kilometre and over one must
+        read the same stress rate, with the longer climb holding exactly double the
+        absolute score.
+        """
+        short_alts, short_speeds = self._run(4.0, [(500.0, 5.0)])
+        long_alts, long_speeds = self._run(4.0, [(1000.0, 5.0)])
+        short = analysis_intervals.terrain_climbs(
+            short_alts, short_speeds, 1.0, power_w=[400.0] * len(short_alts), threshold_w=350.0
+        )
+        long = analysis_intervals.terrain_climbs(
+            long_alts, long_speeds, 1.0, power_w=[400.0] * len(long_alts), threshold_w=350.0
+        )
+        assert len(short) == 1 and len(long) == 1
+        assert short[0].rss_per_min == pytest.approx(long[0].rss_per_min, abs=0.2)
+        assert long[0].rss == pytest.approx(2.0 * short[0].rss, abs=0.5)
+
+    def test_a_short_climb_keeps_its_rate_too(self):
         alts, speeds = self._run(4.0, [(220.0, 10.0)])
         power = [400.0] * len(alts)
         climbs = analysis_intervals.terrain_climbs(
             alts, speeds, 1.0, power_w=power, threshold_w=350.0, parameters={"iv_terrain_min_length_m": 100.0}
         )
-        assert len(climbs) == 1 and climbs[0].length_m < 250.0
+        assert len(climbs) == 1
         assert climbs[0].rss is not None
-        assert climbs[0].rss_per_km is None  # scaling a sub-quarter-km up would amplify noise
+        assert climbs[0].rss_per_min is not None  # per minute never scales noise up

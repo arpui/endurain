@@ -339,9 +339,6 @@ RSS_KERNEL_B = 0.363086
 #: the family on the shared scale (100 = one hour at threshold).
 RSS_NORM = 1.6
 
-#: Below this much ground there is no aRSS per km: scaling a 100 m window up to a
-#: kilometre amplifies its noise tenfold, so short windows keep only their score.
-RSS_PER_KM_MIN_DISTANCE_M = 250.0
 
 #: Grade (%) above which a second is a climb: it is measured by ``RSS_UP`` and
 #: never by the intensity bands, and the kernel gets its steepest floor.
