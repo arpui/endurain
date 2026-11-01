@@ -614,6 +614,8 @@ class TerrainClimb:
         rss_source: Which signal scored it (``power``, ``pace``, ``hr``), ``None`` when
             nothing could.
         rss_per_min: That score per minute of climbing, the mean stress rate.
+        source_scores: The same window scored by *every* available signal
+            (``power``/``pace``/``hr``), for the side-by-side benchmark.
     """
 
     start_m: float
@@ -630,6 +632,7 @@ class TerrainClimb:
     rss: float | None
     rss_source: str | None
     rss_per_min: float | None
+    source_scores: dict[str, float] | None = None
 
 
 def terrain_climbs(
@@ -739,7 +742,7 @@ def terrain_climbs(
                 intensity = round(avg_power / threshold_w, 2)
             if base_power_w and avg_power is not None:
                 contrast = round(avg_power / base_power_w, 2)
-        chain_score, chain_source = analysis_methods.window_stress_chain(
+        all_scores = analysis_methods.window_scores_by_source(
             list(power_w[window]) if power_w is not None and len(power_w) >= end + 1 else None,
             list(speeds_ms[window]) if speeds_ms is not None else None,
             list(hr_bpm[window]) if hr_bpm is not None and len(hr_bpm) >= end + 1 else None,
@@ -750,10 +753,13 @@ def terrain_climbs(
             hr_threshold_bpm,
             params,
         )
+        chain_source = next((key for key in ("power", "pace", "hr") if key in all_scores), None)
+        chain_score = all_scores.get(chain_source, 0.0) if chain_source else 0.0
         if chain_score > 0 and chain_source is not None:
             score = round(chain_score, 1)
             source = chain_source
             per_min = round(score * 60.0 / ((end - start + 1) * period_s), 2)
+        scores = {key: round(value, 1) for key, value in all_scores.items()} or None
         climbs.append(
             TerrainClimb(
                 start_m=round(dist[start], 1),
@@ -770,6 +776,7 @@ def terrain_climbs(
                 rss=score,
                 rss_source=source,
                 rss_per_min=per_min,
+                source_scores=scores,
             )
         )
     return climbs

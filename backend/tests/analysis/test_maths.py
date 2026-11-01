@@ -522,3 +522,62 @@ class TestWindowStressChain:
         score, source = analysis_methods.window_stress_chain([350.0] * 10, None, None, None, 1.0, None, None, None)
         assert score == 0.0
         assert source is None
+
+
+class TestWindowScoresBySource:
+    """The benchmark: one window, every signal that can read it, side by side."""
+
+    def test_a_run_with_every_signal_scores_three_ways_at_once(self):
+        scores = analysis_methods.window_scores_by_source(
+            [350.0] * 100,
+            [4.2] * 100,
+            [160.0] * 100,
+            [0.0] * 100,
+            1.0,
+            350.0,
+            4.0,
+            150.0,
+        )
+        assert set(scores) == {"power", "pace", "hr"}
+
+    def test_a_bike_without_a_speed_threshold_never_grows_a_pace_score(self):
+        scores = analysis_methods.window_scores_by_source(
+            [250.0] * 100,
+            [10.0] * 100,
+            [150.0] * 100,
+            [0.0] * 100,
+            1.0,
+            250.0,
+            None,
+            150.0,
+        )
+        assert set(scores) == {"power", "hr"}
+
+    def test_the_chain_is_the_first_entry_of_the_benchmark(self):
+        args = (
+            [350.0] * 100,
+            [4.2] * 100,
+            [160.0] * 100,
+            [0.0] * 100,
+            1.0,
+            350.0,
+            4.0,
+            150.0,
+        )
+        score, source = analysis_methods.window_stress_chain(*args)
+        scores = analysis_methods.window_scores_by_source(*args)
+        assert source == "power"
+        assert score == pytest.approx(scores["power"])
+
+    def test_a_powerless_activity_benchmarks_pace_against_heart_rate(self):
+        scores = analysis_methods.window_scores_by_source(
+            None,
+            [4.0] * 100,
+            [160.0] * 100,
+            [0.0] * 100,
+            1.0,
+            None,
+            4.0,
+            150.0,
+        )
+        assert set(scores) == {"pace", "hr"}

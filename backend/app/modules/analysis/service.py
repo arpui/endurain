@@ -1136,6 +1136,10 @@ def get_activity_intervals(
             )
             for segment in analysis.segments
         ],
+        rss_by_source=[
+            analysis_schema.RssSourceTotalsRead(source=source, **bands)
+            for source, bands in analysis_methods.rss_bands_by_source(data).items()
+        ],
         climbs=[
             analysis_schema.TerrainClimbRead(**vars(climb))
             for climb in analysis_intervals.terrain_climbs(
@@ -1332,7 +1336,7 @@ def _apply_lap_rss(
         if window is None:
             continue
         start, stop = window
-        score, source = analysis_methods.window_stress_chain(
+        window_scores = analysis_methods.window_scores_by_source(
             power_values[start:stop] if power_values is not None else None,
             speeds[start:stop] if speeds is not None else None,
             hr_values[start:stop] if hr_values is not None else None,
@@ -1343,6 +1347,9 @@ def _apply_lap_rss(
             hr_threshold_bpm,
             parameters,
         )
+        source = next((key for key in ("power", "pace", "hr") if key in window_scores), None)
+        entry.source_scores = {key: round(value, 1) for key, value in window_scores.items()} or None
+        score = window_scores.get(source, 0.0) if source else 0.0
         entry.rss = round(score, 1) if score > 0 and source else None
         entry.rss_source = source if entry.rss is not None else None
         elapsed_s = float(lap.total_elapsed_time or 0.0)
@@ -1411,7 +1418,7 @@ def compute_window_stats(
                     avg_power = round(arithmetic_mean(power_values[cut:stop]), 1)
                 if hr_values is not None and any(hr_values[cut:stop]):
                     avg_hr = round(arithmetic_mean([v for v in hr_values[cut:stop] if v > 0]), 0)
-                chain_score, chain_source = analysis_methods.window_stress_chain(
+                all_scores = analysis_methods.window_scores_by_source(
                     power_values[cut:stop] if power_values is not None else None,
                     speeds[cut:stop] if speeds is not None else None,
                     hr_values[cut:stop] if hr_values is not None else None,
@@ -1422,10 +1429,13 @@ def compute_window_stats(
                     hr_threshold_bpm,
                     parameters,
                 )
+                chain_source = next((key for key in ("power", "pace", "hr") if key in all_scores), None)
+                chain_score = all_scores.get(chain_source, 0.0) if chain_source else 0.0
                 if chain_score > 0 and chain_source is not None:
                     score = round(chain_score, 1)
                     source = chain_source
                     per_min = round(score * 60.0 / elapsed_s, 2)
+                scores = {key: round(value, 1) for key, value in all_scores.items()} or None
         stats.append(
             analysis_contracts.WindowStats(
                 avg_power_w=avg_power,
@@ -1433,6 +1443,7 @@ def compute_window_stats(
                 rss=score,
                 rss_source=source,
                 rss_per_min=per_min,
+                source_scores=scores,
             )
         )
     return stats
