@@ -60,6 +60,9 @@
       "sourceAuto": "atvasināts",
       "sourceManual": "manuāli",
       "wattsPlaceholder": "W",
+      "speed": "Kritiskais ātrums (temps)",
+      "pacePlaceholder": "piem. 4:30",
+      "addSpeed": "Pievienot kritisko ātrumu",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Pielāgošana no (s)",

@@ -60,6 +60,9 @@
       "sourceAuto": "derivat",
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
+      "speed": "Viteză critică (ritm)",
+      "pacePlaceholder": "ex. 4:30",
+      "addSpeed": "Adaugă viteză critică",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Potrivire de la (s)",

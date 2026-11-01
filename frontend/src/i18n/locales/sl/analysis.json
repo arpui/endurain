@@ -60,6 +60,9 @@
       "sourceAuto": "izpeljan",
       "sourceManual": "ročno",
       "wattsPlaceholder": "W",
+      "speed": "Kritična hitrost (tempo)",
+      "pacePlaceholder": "npr. 4:30",
+      "addSpeed": "Dodaj kritično hitrost",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Prilagoditev od (s)",

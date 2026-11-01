@@ -45,6 +45,11 @@ logger = core_logger.get_logger(__name__)
 #: Activity type -> sport group, reversed once from the vocabulary the activities
 #: module publishes (the same grouping its own statistics use, so an activity that
 #: counts towards a sport's totals is measured against that sport's threshold).
+#: Sports the grade-adjusted-pace model speaks for: running, where speed is effort
+#: once the gradient is taken out. A bike's ground speed is about drag and drafting,
+#: and walking needs no threshold; neither gets a critical speed.
+_PACE_FIT_SPORTS = frozenset({"run"})
+
 _SPORT_BY_ACTIVITY_TYPE: dict[int, str] = {
     activity_type: sport
     for sport, activity_types in activity_constants.ACTIVITY_TYPES_BY_SPORT.items()
@@ -128,6 +133,15 @@ def update_settings(
                     w_prime_j=None,
                     source=analysis_constants.ThresholdSource.MANUAL,
                     cv_pct=None,
+                )
+    if payload.speed_threshold_ms is not None:
+        for sport, ms in payload.speed_threshold_ms.items():
+            if ms is None:
+                current.speed_thresholds.pop(sport, None)
+            else:
+                current.speed_thresholds[sport] = analysis_schema.SpeedThresholdRead(
+                    value_ms=ms,
+                    source=analysis_constants.ThresholdSource.MANUAL,
                 )
     if "hr_threshold_bpm" in provided:
         if payload.hr_threshold_bpm is None:
@@ -427,8 +441,9 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
     """Derive an athlete's thresholds from their own records, and cache their curves.
 
     Power thresholds come from fitting the hyperbolic model to each sport's
-    duration-intensity curve; the threshold heart rate is the best sustained
-    30-minute average heart rate. Manual values are left alone, and a sport whose
+    duration-intensity curve; running sports get the same fit over their
+    grade-adjusted speed peaks (critical speed); the threshold heart rate is the
+    best sustained 30-minute average heart rate. Manual values are left alone, and a sport whose
     peaks come from too few activities gets no derived threshold at all: a curve
     through one activity's samples invents a plausible-looking number.
 
@@ -444,6 +459,8 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
     peaks_by_sport: dict[str, dict[int, float]] = {}
     holder_by_peak: dict[tuple[str, int], int] = {}
     activities_by_sport: dict[str, int] = {}
+    speed_peaks_by_sport: dict[str, dict[int, float]] = {}
+    speed_activities_by_sport: dict[str, int] = {}
     best_hr = 0.0
 
     for activity in activities:
@@ -476,6 +493,36 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
                 best_hr,
                 analysis_maths.best_window_mean(hr_values, hr_period_s, analysis_constants.LTHR_WINDOW_S),
             )
+        # The pace-side peaks: ground speed with the gradient taken out of it, so a
+        # hilly run feeds the same hyperbolic fit the flat ones do. Only sports the
+        # GAP model speaks for (running); a bike's speed is about drag, not effort.
+        if sport in _PACE_FIT_SPORTS:
+            vel_period_s, speeds, _ = _stream_samples(
+                activity.id,
+                activity_streams_constants.STREAM_TYPE_SPEED,
+                "vel",
+                db,
+                keep_zeros=True,
+            )
+            if speeds:
+                _, elevations, _ = _stream_samples(
+                    activity.id,
+                    activity_streams_constants.STREAM_TYPE_ELEVATION,
+                    "ele",
+                    db,
+                    keep_zeros=True,
+                )
+                grades = (
+                    analysis_maths.grade_pct_series(elevations, speeds, vel_period_s)
+                    if elevations
+                    else (0.0,) * len(speeds)
+                )
+                adjusted = analysis_maths.grade_adjusted_run_speed(speeds, grades)
+                speed_activities_by_sport[sport] = speed_activities_by_sport.get(sport, 0) + 1
+                merged_speed = speed_peaks_by_sport.setdefault(sport, {})
+                for duration, value in analysis_maths.best_means(adjusted, vel_period_s).items():
+                    if value >= merged_speed.get(duration, 0.0):
+                        merged_speed[duration] = value
 
     for sport, peaks in peaks_by_sport.items():
         analysis_crud.replace_duration_peaks(
@@ -507,6 +554,24 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
         settings.power_thresholds[sport] = analysis_schema.PowerThresholdRead(
             value_w=round(critical_power, 1),
             w_prime_j=round(w_prime_j, 1),
+            source=analysis_constants.ThresholdSource.AUTO,
+            cv_pct=round(cv_pct, 2),
+        )
+        derived += 1
+
+    for sport, peaks in speed_peaks_by_sport.items():
+        existing = settings.speed_thresholds.get(sport)
+        if existing is not None and existing.source is analysis_constants.ThresholdSource.MANUAL:
+            continue
+        if speed_activities_by_sport.get(sport, 0) < analysis_constants.FIT_MIN_ACTIVITIES:
+            continue
+        fit = analysis_maths.fit_cp_wprime(peaks, float(fit_from_s), float(fit_to_s))
+        if fit is None:
+            continue
+        critical_speed, capacity_m, cv_pct = fit
+        settings.speed_thresholds[sport] = analysis_schema.SpeedThresholdRead(
+            value_ms=round(critical_speed, 3),
+            w_prime_m=round(capacity_m, 1),
             source=analysis_constants.ThresholdSource.AUTO,
             cv_pct=round(cv_pct, 2),
         )

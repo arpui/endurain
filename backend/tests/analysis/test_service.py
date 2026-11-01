@@ -1395,3 +1395,100 @@ class TestWindowStreamStats:
     def test_windows_given_on_the_naive_device_clock_still_cut(self):
         (stat,) = self._stats([(_T0, _T0 + timedelta(seconds=300))])
         assert stat.avg_power_w == 400.0
+
+
+class TestCriticalSpeedDerivation:
+    """The pace-side twin of the CP fit: critical speed from grade-adjusted peaks."""
+
+    @staticmethod
+    def _run_activities(count: int = 4) -> list:
+        return [SimpleNamespace(id=100 + i, activity_type=2) for i in range(count)]
+
+    @staticmethod
+    def _streams(bursts: list[tuple[int, float]]):
+        """``_stream_samples`` stand-in: activity k bursts (secs, m/s) over a flat 3 m/s base."""
+
+        def _fake(activity_id, stream_type, _key, _db, *, keep_zeros):
+            index = activity_id - 100
+            burst_s, burst_ms = bursts[index]
+            total_s = 2400
+            speeds = [burst_ms] * burst_s + [3.0] * (total_s - burst_s)
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple(speeds), ()
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([50.0] * total_s), ()
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, (), ()
+            if stream_type == activity_streams_constants.STREAM_TYPE_HR:
+                return 1.0, tuple([140.0] * total_s), ()
+            return 1.0, (), ()
+
+        return _fake
+
+    def test_runs_without_power_still_get_a_critical_speed(self):
+        db = _db()
+        bursts = [(300, 6.0), (600, 5.0), (1200, 4.4), (1500, 4.1)]
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=self._run_activities()),
+            patch(f"{_SVC}._stream_samples", side_effect=self._streams(bursts)),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.analysis_crud.store_settings") as mock_store,
+        ):
+            analysis_service.refresh_thresholds(2, db)
+        stored = mock_store.call_args.args[1]
+        assert "run" in stored.speed_thresholds
+        threshold = stored.speed_thresholds["run"]
+        assert threshold.source is analysis_constants.ThresholdSource.AUTO
+        assert 3.5 <= threshold.value_ms <= 4.5
+        assert threshold.w_prime_m is not None and threshold.w_prime_m > 0
+
+    def test_a_manual_critical_speed_is_left_alone(self):
+        db = _db()
+        settings = _settings()
+        settings.speed_thresholds["run"] = analysis_schema.SpeedThresholdRead(
+            value_ms=4.2, source=analysis_constants.ThresholdSource.MANUAL
+        )
+        bursts = [(300, 6.0), (600, 5.0), (1200, 4.4), (1500, 4.1)]
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=self._run_activities()),
+            patch(f"{_SVC}._stream_samples", side_effect=self._streams(bursts)),
+            patch(f"{_SVC}.get_settings", return_value=settings),
+            patch(f"{_SVC}.analysis_crud.store_settings") as mock_store,
+        ):
+            analysis_service.refresh_thresholds(2, db)
+        stored = mock_store.call_args.args[1]
+        assert stored.speed_thresholds["run"].value_ms == 4.2
+        assert stored.speed_thresholds["run"].source is analysis_constants.ThresholdSource.MANUAL
+
+    def test_bikes_get_no_critical_speed_their_speed_is_drag_not_effort(self):
+        db = _db()
+        activities = [SimpleNamespace(id=100 + i, activity_type=4) for i in range(4)]
+        bursts = [(300, 12.0), (600, 10.0), (1200, 9.0), (1500, 8.0)]
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}._stream_samples", side_effect=self._streams(bursts)),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.analysis_crud.store_settings") as mock_store,
+        ):
+            analysis_service.refresh_thresholds(2, db)
+        stored = mock_store.call_args.args[1]
+        assert "bike" not in stored.speed_thresholds
+
+    def test_a_stated_critical_speed_survives_and_clears(self):
+        db = _db()
+        payload = analysis_schema.AnalysisSettingsUpdate(speed_threshold_ms={"run": 4.35})
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.analysis_crud.store_settings") as mock_store,
+        ):
+            analysis_service.update_settings(2, payload, db)
+        stored = mock_store.call_args.args[1]
+        assert stored.speed_thresholds["run"].value_ms == 4.35
+        assert stored.speed_thresholds["run"].source is analysis_constants.ThresholdSource.MANUAL
+        payload_clear = analysis_schema.AnalysisSettingsUpdate(speed_threshold_ms={"run": None})
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=stored),
+            patch(f"{_SVC}.analysis_crud.store_settings") as mock_store_clear,
+        ):
+            analysis_service.update_settings(2, payload_clear, db)
+        assert "run" not in mock_store_clear.call_args.args[1].speed_thresholds

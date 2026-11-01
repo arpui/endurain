@@ -60,6 +60,9 @@
       "sourceAuto": "derivat",
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
+      "speed": "Velocitat crítica (ritme)",
+      "pacePlaceholder": "p. ex. 4:30",
+      "addSpeed": "Afegeix velocitat crítica",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Ajust des de (s)",

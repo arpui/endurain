@@ -60,6 +60,9 @@
       "sourceAuto": "dérivé",
       "sourceManual": "manuel",
       "wattsPlaceholder": "W",
+      "speed": "Vitesse critique (allure)",
+      "pacePlaceholder": "par ex. 4:30",
+      "addSpeed": "Ajouter une vitesse critique",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Ajustement de (s)",

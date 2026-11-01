@@ -60,6 +60,9 @@
       "sourceAuto": "изведено",
       "sourceManual": "ручно",
       "wattsPlaceholder": "W",
+      "speed": "Kritična brzina (tempo)",
+      "pacePlaceholder": "npr. 4:30",
+      "addSpeed": "Dodaj kritičnu brzinu",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Прилагођавање од (s)",

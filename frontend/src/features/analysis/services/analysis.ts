@@ -56,6 +56,15 @@ export function mapSettings(dto: AnalysisSettingsDto): AnalysisSettings {
       cvPct: entry.cv_pct ?? null,
     }
   }
+  const speed: AnalysisSettings['speedThresholds'] = {}
+  for (const [sport, entry] of Object.entries(dto.speed_thresholds ?? {})) {
+    speed[sport] = {
+      valueMs: entry.value_ms,
+      wPrimeM: entry.w_prime_m ?? null,
+      source: mapSource(entry.source),
+      cvPct: entry.cv_pct ?? null,
+    }
+  }
   return {
     acuteDays: dto.acute_days,
     chronicDays: dto.chronic_days,
@@ -64,6 +73,7 @@ export function mapSettings(dto: AnalysisSettingsDto): AnalysisSettings {
     fitToS: dto.fit_to_s ?? null,
     restingHr: dto.resting_hr ?? null,
     powerThresholds: power,
+    speedThresholds: speed,
     hrThreshold: dto.hr_threshold
       ? { valueBpm: dto.hr_threshold.value_bpm, source: mapSource(dto.hr_threshold.source) }
       : null,

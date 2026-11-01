@@ -60,6 +60,9 @@
       "sourceAuto": "johdettu",
       "sourceManual": "käsin",
       "wattsPlaceholder": "W",
+      "speed": "Kriittinen nopeus (vauhti)",
+      "pacePlaceholder": "esim. 4:30",
+      "addSpeed": "Lisää kriittinen nopeus",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Sovituksesta (s)",

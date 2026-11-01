@@ -60,6 +60,9 @@
       "sourceAuto": "tuletatud",
       "sourceManual": "käsitsi",
       "wattsPlaceholder": "W",
+      "speed": "Kriitiline kiirus (tempo)",
+      "pacePlaceholder": "nt 4:30",
+      "addSpeed": "Lisa kriitiline kiirus",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Sobitamine alates (s)",

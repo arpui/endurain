@@ -60,6 +60,9 @@
       "sourceAuto": "derived",
       "sourceManual": "manual",
       "wattsPlaceholder": "W",
+      "speed": "Critical speed (pace)",
+      "pacePlaceholder": "e.g. 4:30",
+      "addSpeed": "Add critical speed",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit from (s)",
