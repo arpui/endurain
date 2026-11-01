@@ -541,6 +541,25 @@ class TestWindowStressChain:
         manual = analysis_methods.window_stress_chain(None, [3.5] * 100, None, [0.0] * 100, 1.0, None, 4.0, None)
         assert manual[0] < plain  # sanity: pace below critical scores less
 
+    def test_the_smoothing_window_is_the_athletes_knob(self):
+        """A wider window dilutes one surge more; the knob moves the score."""
+        spiked = [4.0] * 600
+        spiked[300] = 8.0
+        cs = 4.0
+        tight, _ = analysis_methods.window_stress_chain(
+            None, spiked, None, [0.0] * 600, 1.0, None, cs, None, {"pace_smooth_window_s": 6.0}
+        )
+        wide, _ = analysis_methods.window_stress_chain(
+            None, spiked, None, [0.0] * 600, 1.0, None, cs, None, {"pace_smooth_window_s": 120.0}
+        )
+        assert tight > wide  # one fast second weighs less inside a two-minute average
+
+    def test_smoothing_window_knobs_are_clamped_to_sane_bounds(self):
+        # a one-second "window" would smuggle the raw noise back in; it floors at 5 s
+        assert analysis_methods._pace_window_s({"pace_smooth_window_s": 0.5}) == 5.0
+        assert analysis_methods._pace_window_s({"pace_smooth_window_s": 9999.0}) == 300.0
+        assert analysis_methods._pace_window_s({}) == analysis_constants.PACE_SMOOTH_WINDOW_S
+
     def test_no_signal_and_threshold_pair_scores_nothing(self):
         score, source = analysis_methods.window_stress_chain([350.0] * 10, None, None, None, 1.0, None, None, None)
         assert score == 0.0

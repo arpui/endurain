@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Rep min (s)",
     "ivClimbGrade": "Climb (%)",
     "ivHint": "Interval knobs are compared with your own numbers (threshold and each session's median). Blank means the default.",
+    "paceSmooth": "Pace smoothing (s)",
+    "paceSmoothHint": "The seconds the pace-side score averages over: larger smooths more GPS noise but also absorbs short surges (default 20 s).",
     "ivEffortIf": "Effort ×CP"
   },
   "actions": {

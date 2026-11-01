@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Įkalnė (%)",
     "ivHint": "Intervalų parametrai lyginami su tavo skaičiais (slenkstis ir sesijos mediana). Tuščia = numatyta reikšmė.",
+    "paceSmooth": "Tempo lyginimas (s)",
+    "paceSmoothHint": "Sekundės, per kurias tempo įvertis vidurkinamas: didesnis slopina daugiau GPS triukšmo, bet sugerija ir trumpus pagreitėjimus (pagal nutylėjimą 20 s).",
     "ivEffortIf": "Krūvis ×CP"
   },
   "actions": {

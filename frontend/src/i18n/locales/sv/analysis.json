@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Backe (%)",
     "ivHint": "Intervallvärden jämförs med dina egna värden (tröskel och passets median). Tomt = standard.",
+    "paceSmooth": "Tempoutjämning (s)",
+    "paceSmoothHint": "Sekunder som tempopoängen medelvärdesbildas över: större dämpar mer GPS-brus men tar också korta attacker (standard 20 s).",
     "ivEffortIf": "Insats ×CP"
   },
   "actions": {

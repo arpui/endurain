@@ -86,6 +86,8 @@
     "ivMinSegmentS": "间歇 最短(秒)",
     "ivClimbGrade": "爬坡 (%)",
     "ivHint": "间歇参数按你自己的数据比较（阈值与各次中位数）。留空 = 默认值。",
+    "paceSmooth": "配速平滑（秒）",
+    "paceSmoothHint": "配速评分取平均的秒数：数值越大越能平滑GPS噪声，但也会吸收短促的加速（默认 20 秒）。",
     "ivEffortIf": "强度段 ×CP"
   },
   "actions": {

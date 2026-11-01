@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Côte (%)",
     "ivHint": "Les réglages d'intervalle se comparent à vos chiffres (seuil et médiane de la séance). Vide = valeur par défaut.",
+    "paceSmooth": "Lissage de l’allure (s)",
+    "paceSmoothHint": "les secondes sur lesquelles la note d’allure fait la moyenne : plus grand lisse plus le bruit GPS mais absorbe aussi les à-coups courts (20 s par défaut).",
     "ivEffortIf": "Effort ×CP"
   },
   "actions": {

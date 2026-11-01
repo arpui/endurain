@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Ин. мин (s)",
     "ivClimbGrade": "Успон (%)",
     "ivHint": "Параметри интервала пореде се са твојим бројевима (праг и медијанс сесије). Празно = подразумевано.",
+    "paceSmooth": "Izravnanje tempa (s)",
+    "paceSmoothHint": "Sekunde preko kojih se ocena tempa usrednjava: veća vrednost briše više GPS šuma, ali upija i kratke intervale (podrazumevano 20 s).",
     "ivEffortIf": "Напор ×CP"
   },
   "actions": {

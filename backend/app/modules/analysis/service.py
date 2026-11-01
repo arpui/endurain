@@ -547,7 +547,9 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
                 if power_w and period_s > 0:
                     adjusted_on_power_clock = _align_to_power(adjusted, speed_stamps, power_stamps, period_s)
                     if adjusted_on_power_clock:
-                        pace_window = max(int(analysis_constants.PACE_SMOOTH_WINDOW_S / period_s), 1) | 1
+                        pace_window = (
+                            max(int(analysis_methods._pace_window_s(settings.method_params) / period_s), 1) | 1
+                        )
                         med_speeds = analysis_maths.moving_median(list(adjusted_on_power_clock), pace_window)
                         med_power = analysis_maths.moving_median(list(power_w), pace_window)
                         stats = paired_stats_by_sport.setdefault(sport, [0, 0.0, 0.0, 0.0, 0.0, 0.0])

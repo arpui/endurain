@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Tırmanış (%)",
     "ivHint": "Interval parametreleri kendi değerlerinle karşılaştırılır (eşik ve seans medyanı). Boş = varsayılan.",
+    "paceSmooth": "Tempo yumuşatma (sn)",
+    "paceSmoothHint": "Tempo puanının ortalamasını aldığı saniyeler: büyüdükçe GPS gürültüsünü daha çok yumuşatır ama kısa atakları da emer (varsayılan 20 sn).",
     "ivEffortIf": "Efor ×CP"
   },
   "actions": {

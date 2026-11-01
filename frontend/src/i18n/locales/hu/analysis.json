@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Emelkedő (%)",
     "ivHint": "Az intervallum paraméterek a saját számaiddal hasonlítjuk össze (küszöb és az edzés mediánja). Üres = alapértelmezett.",
+    "paceSmooth": "Tempó-simítás (s)",
+    "paceSmoothHint": "Másodpercek, amelyek felett a tempóérték átlagol: nagyobb érték több GPS-zajt simít, de elnyeli a rövid rohamokat (alapértelmezett 20 mp).",
     "ivEffortIf": "Terhelés ×CP"
   },
   "actions": {
