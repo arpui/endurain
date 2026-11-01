@@ -131,7 +131,7 @@
     "colGrade": "emelkedő",
     "colDesnivel": "emelkedés / ereszkedés",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Útvonal emelkedői",
     "tcColRange": "szakasz",
     "tcNote": "Az emelkedők a terepből olvashatók, a teljesítménytől függetlenül; átfedhetik az idővonalat, és nem adódnak össze vele. Az aRSS teljesítményadatot igényel.",
@@ -169,7 +169,7 @@
     "lengthRide": "Áttétel",
     "desnivel": "Emelkedés / ereszkedés",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "Az aRSS a napi terhelés mögötti intenzitással súlyozott pontszám; a sorok az edzés egészére adódnak."
   }
 }

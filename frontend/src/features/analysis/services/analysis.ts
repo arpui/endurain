@@ -283,7 +283,7 @@ function mapIntervalSegment(dto: IntervalSegmentDto): IntervalSegment {
     elevationGainM: dto.elevation_gain_m ?? null,
     elevationLossM: dto.elevation_loss_m ?? null,
     rss: dto.rss ?? null,
-    rssPerKm: dto.rss_per_km ?? null,
+    rssPerMin: dto.rss_per_min ?? null,
   }
 }
 
@@ -302,7 +302,7 @@ function mapTerrainClimb(dto: TerrainClimbDto): TerrainClimb {
     intensityFactor: dto.intensity_factor ?? null,
     contrast: dto.contrast ?? null,
     rss: dto.rss ?? null,
-    rssPerKm: dto.rss_per_km ?? null,
+    rssPerMin: dto.rss_per_min ?? null,
   }
 }
 
@@ -399,7 +399,7 @@ function mapLapDynamics(dto: LapDynamicsDto): LapDynamics {
     elevationGainM: dto.elevation_gain_m ?? null,
     elevationLossM: dto.elevation_loss_m ?? null,
     rss: dto.rss ?? null,
-    rssPerKm: dto.rss_per_km ?? null,
+    rssPerMin: dto.rss_per_min ?? null,
   }
 }
 

@@ -131,7 +131,7 @@
     "colGrade": "slīpums",
     "colDesnivel": "kāpums / kritums",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Maršruta kāpumi",
     "tcColRange": "posms",
     "tcNote": "Kāpumi nolasīti no reljefa, neatkarīgi no jaudas; tie var pārklāties ar laika joslu un ar to netiek saskaitīti. aRSS nepieciešams jaudas mērītājs.",
@@ -169,7 +169,7 @@
     "lengthRide": "Pārnesums",
     "desnivel": "Kāpums / kritums",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS ir ar intensitāti svērts rādītājs aiz dienas slodzes; rindas summējas aktivitātes kopsummā."
   }
 }

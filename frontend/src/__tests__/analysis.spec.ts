@@ -306,7 +306,7 @@ describe('activity interval analysis', () => {
           elevation_gain_m: 9.5,
           elevation_loss_m: 4,
           rss: 12.3,
-          rss_per_km: 17.6,
+          rss_per_min: 17.6,
         },
         {
           kind: 'recovery',
@@ -321,7 +321,7 @@ describe('activity interval analysis', () => {
           elevation_gain_m: null,
           elevation_loss_m: null,
           rss: null,
-          rss_per_km: null,
+          rss_per_min: null,
         },
       ],
       ...overrides,
@@ -353,7 +353,7 @@ describe('activity interval analysis', () => {
       elevationGainM: 9.5,
       elevationLossM: 4,
       rss: 12.3,
-      rssPerKm: 17.6,
+      rssPerMin: 17.6,
     })
     expect(intervals.climbs).toEqual([])
   })

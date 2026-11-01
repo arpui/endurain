@@ -131,7 +131,7 @@
     "colGrade": "eğim",
     "colDesnivel": "tırmanış / iniş",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Rottaki tırmanışlar",
     "tcColRange": "bölüm",
     "tcNote": "Tırmanışlar araziden okunur, güçten bağımsız; zaman çizelgesiyle örtüşebilir ve onunla toplanmaz. aRSS güç ölçer gerektirir.",
@@ -169,7 +169,7 @@
     "lengthRide": "Aktarım",
     "desnivel": "Tırmanış / iniş",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS, günlük yükün arkasındaki yoğunluk ağırlıklı puandır; satırlar etkinliğin toplamına ulaşır."
   }
 }

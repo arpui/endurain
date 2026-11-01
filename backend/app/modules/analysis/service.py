@@ -1084,7 +1084,7 @@ def get_activity_intervals(
                 elevation_gain_m=segment.elevation_gain_m,
                 elevation_loss_m=segment.elevation_loss_m,
                 rss=segment.rss,
-                rss_per_km=segment.rss_per_km,
+                rss_per_min=segment.rss_per_min,
             )
             for segment in analysis.segments
         ],
@@ -1227,9 +1227,9 @@ def _apply_lap_rss(
             parameters,
         )
         entry.rss = round(score, 1) if score > 0 else None
-        distance_m = float(lap.total_distance or 0.0)
-        if entry.rss is not None and distance_m >= analysis_constants.RSS_PER_KM_MIN_DISTANCE_M:
-            entry.rss_per_km = round(entry.rss * 1000.0 / distance_m, 1)
+        elapsed_s = float(lap.total_elapsed_time or 0.0)
+        if entry.rss is not None and elapsed_s > 0:
+            entry.rss_per_min = round(entry.rss * 60.0 / elapsed_s, 1)
 
 
 def _lap_sample_window(

@@ -306,7 +306,7 @@ class TestIntervalsRoute:
                     elevation_gain_m=40.0,
                     elevation_loss_m=1.0,
                     rss=22.5,
-                    rss_per_km=32.1,
+                    rss_per_min=7.5,
                 )
             ],
             climbs=[
@@ -323,7 +323,7 @@ class TestIntervalsRoute:
                     intensity_factor=1.14,
                     contrast=1.43,
                     rss=45.0,
-                    rss_per_km=45.0,
+                    rss_per_min=10.8,
                 )
             ],
         )
@@ -341,9 +341,9 @@ class TestIntervalsRoute:
         assert body["rules"]["effort_if"] == 1.05
         assert body["segments"][0]["kind"] == "interval"
         assert body["segments"][0]["contrast"] == 1.46
-        assert body["segments"][0]["rss_per_km"] == 32.1
+        assert body["segments"][0]["rss_per_min"] == 7.5
         assert body["climbs"][0]["length_m"] == 1000.0
-        assert body["climbs"][0]["rss_per_km"] == 45.0
+        assert body["climbs"][0]["rss_per_min"] == 10.8
 
     def test_another_users_activity_is_not_found(self):
         client = TestClient(_build_app(MagicMock()))
@@ -404,7 +404,7 @@ class TestLapDynamicsRoute:
                 elevation_gain_m=10.0,
                 elevation_loss_m=8.0,
                 rss=26.4,
-                rss_per_km=26.4,
+                rss_per_min=5.3,
             )
         ]
         with patch("modules.analysis.activity_router.analysis_service.get_activity_lap_dynamics", return_value=rows):
@@ -412,7 +412,7 @@ class TestLapDynamicsRoute:
         assert response.status_code == 200
         assert response.json()[0]["lap_id"] == 7
         assert response.json()[0]["rss"] == 26.4
-        assert response.json()[0]["rss_per_km"] == 26.4
+        assert response.json()[0]["rss_per_min"] == 5.3
         assert response.json()[0]["elevation_loss_m"] == 8.0
 
     def test_another_users_activity_is_not_found(self):

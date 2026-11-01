@@ -131,7 +131,7 @@
     "colGrade": "stigning",
     "colDesnivel": "stigning / fald",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Bakker efter ruten",
     "tcColRange": "strækning",
     "tcNote": "Bakker aflæses fra terrænet, uafhængigt af effekt; de kan overlappe tidslinjen og lægges ikke sammen med den. aRSS kræver effekt.",
@@ -169,7 +169,7 @@
     "lengthRide": "Gearlængde",
     "desnivel": "Stigning / fald",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS er den intensitetsvægtede score bag den daglige belastning; rækkerne lægges sammen til aktivitetens total."
   }
 }

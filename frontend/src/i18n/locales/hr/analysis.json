@@ -131,7 +131,7 @@
     "colGrade": "nagib",
     "colDesnivel": "uspon / spuštanje",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Usponi po ruti",
     "tcColRange": "dionica",
     "tcNote": "Usponi se čitaju iz terena, neovisno o snazi; mogu se preklapati s vremenskom crtom i ne zbrajaju se s njom. aRSS zahtijeva mjerač snage.",
@@ -169,7 +169,7 @@
     "lengthRide": "Prijenos",
     "desnivel": "Uspon / spuštanje",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS je rezultat ponderiran intenzitetom koji stoji iza dnevnog opterećenja; retci zbrojeni daju ukupan zbroj aktivnosti."
   }
 }

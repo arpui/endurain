@@ -131,7 +131,7 @@
     "colGrade": "Steigung",
     "colDesnivel": "auf-/Abstieg",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Anstiege der Route",
     "tcColRange": "Abschnitt",
     "tcNote": "Anstiege werden aus dem Gelände gelesen, unabhängig von der Leistung; sie können sich mit der Zeitachse überschneiden und werden nicht mit ihr summiert. aRSS erfordert eine Leistungsmessung.",
@@ -169,7 +169,7 @@
     "lengthRide": "Übersetzung",
     "desnivel": "Auf-/Abstieg",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS ist der intensivitätsgewichtete Wert hinter der Tagesbelastung; die Zeilen summieren sich zum Aktivitätsgesamt."
   }
 }

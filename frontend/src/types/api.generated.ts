@@ -9499,8 +9499,8 @@ export interface components {
          *         elevation_loss_m: Ground fallen through, ``None`` without an altitude stream.
          *         rss: Shared-scale aRSS score of the stretch (same kernel as the daily
          *             rss_total), ``None`` when the sport has no threshold.
-         *         rss_per_km: That score per kilometre of ground, ``None`` when the stretch is
-         *             too short to scale up honestly or there is no score.
+         *         rss_per_min: That score per minute of the stretch, the mean stress rate;
+         *             ``None`` when there is no score.
          */
         IntervalSegmentRead: {
             /** Avg Grade Pct */
@@ -9524,8 +9524,8 @@ export interface components {
             kind: components["schemas"]["SegmentKind"];
             /** Rss */
             rss?: number | null;
-            /** Rss Per Km */
-            rss_per_km?: number | null;
+            /** Rss Per Min */
+            rss_per_min?: number | null;
             /** Start S */
             start_s: number;
         };
@@ -9585,8 +9585,8 @@ export interface components {
          *         elevation_loss_m: Descent the device recorded for the lap.
          *         rss: Shared-scale aRSS score of the lap's window, ``None`` without a
          *             threshold or powered samples in it.
-         *         rss_per_km: That score per kilometre of the lap, ``None`` when the lap is
-         *             too short to scale up honestly or there is no score.
+         *         rss_per_min: That score per minute of the lap, the mean stress rate;
+         *             ``None`` when there is no score.
          */
         LapDynamicsRead: {
             /** Avg Power W */
@@ -9599,8 +9599,8 @@ export interface components {
             lap_id: number;
             /** Rss */
             rss?: number | null;
-            /** Rss Per Km */
-            rss_per_km?: number | null;
+            /** Rss Per Min */
+            rss_per_min?: number | null;
             /** Stride Length M */
             stride_length_m: number | null;
         };
@@ -11209,7 +11209,7 @@ export interface components {
          *         intensity_factor: Mean power over the threshold, ``None`` without either.
          *         contrast: Mean power over the session's median, ``None`` without either.
          *         rss: Shared-scale aRSS score, ``None`` without power or threshold.
-         *         rss_per_km: That score per kilometre, ``None`` when too short to scale up.
+         *         rss_per_min: That score per minute of climbing, the mean stress rate.
          */
         TerrainClimbRead: {
             /** Avg Grade Pct */
@@ -11232,8 +11232,8 @@ export interface components {
             length_m: number;
             /** Rss */
             rss: number | null;
-            /** Rss Per Km */
-            rss_per_km: number | null;
+            /** Rss Per Min */
+            rss_per_min: number | null;
             /** Start M */
             start_m: number;
             /** Start S */

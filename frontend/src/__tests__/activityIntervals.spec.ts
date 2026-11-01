@@ -21,7 +21,7 @@ function makeSegment(overrides: Partial<IntervalSegment> = {}): IntervalSegment 
     elevationGainM: 9.5,
     elevationLossM: 4,
     rss: 12.3,
-    rssPerKm: 17.6,
+    rssPerMin: 17.6,
     ...overrides,
   }
 }
@@ -105,7 +105,7 @@ describe('ActivityIntervalTable terrain climbs', () => {
         intensityFactor: 1.11,
         contrast: 1.39,
         rss: 60.2,
-        rssPerKm: 14.7,
+        rssPerMin: 14.7,
       },
     ])
     const rows = wrapper.findAll('tbody tr')
@@ -146,7 +146,7 @@ describe('ActivityIntervalTable terrain climbs', () => {
               intensityFactor: null,
               contrast: null,
               rss: null,
-              rssPerKm: 22.0,
+              rssPerMin: 22.0,
             },
           ],
           rules: null,

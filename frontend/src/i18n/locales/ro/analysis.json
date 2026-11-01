@@ -131,7 +131,7 @@
     "colGrade": "pantă",
     "colDesnivel": "urcare / coborâre",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Urcări din traseu",
     "tcColRange": "porțiune",
     "tcNote": "Urcările se citesc din teren, indiferent de putere; pot suprapune cronologia și nu se însumează cu ea. aRSS necesită un senzor de putere.",
@@ -169,7 +169,7 @@
     "lengthRide": "Dezvoltare",
     "desnivel": "Urcare / coborâre",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS este scorul ponderat cu intensitate din spatele sarcii zilnice; rândurile însumează totalul activității."
   }
 }

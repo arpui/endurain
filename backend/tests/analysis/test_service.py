@@ -1031,14 +1031,14 @@ class TestTerrainClimbsService:
         climb = read.climbs[0]
         assert 900.0 <= climb.length_m <= 1450.0  # the grade window rounds the foot and top
         assert climb.avg_power_w is not None and climb.rss is not None
-        assert climb.rss_per_km is not None
+        assert climb.rss_per_min is not None
 
     def test_an_activity_without_power_still_gets_its_climbs(self):
         read = self._read(self._streams(600, with_power=False), with_power=False)
         assert len(read.climbs) == 1  # terrain needs only altitude and speed
         climb = read.climbs[0]
         assert climb.avg_power_w is None
-        assert climb.rss is None and climb.rss_per_km is None
+        assert climb.rss is None and climb.rss_per_min is None
 
     def test_a_flat_route_answers_no_climbs(self):
         read = self._read(self._streams(10**9, with_power=True))
@@ -1290,9 +1290,9 @@ class TestLapDynamics:
         whole = analysis_methods.rss_window_stress([400.0] * 600, 1.0, 350.0)
         assert rows[0].rss is not None and rows[1].rss is not None
         assert (rows[0].rss + rows[1].rss) == pytest.approx(whole, abs=0.3)
-        # each lap covers exactly 1000 m, so its score and its rate coincide
-        assert rows[0].rss_per_km == rows[0].rss
-        assert rows[1].rss_per_km == rows[1].rss
+        # each lap ran exactly 300 s, so its rate is its score over five minutes
+        assert rows[0].rss_per_min == pytest.approx(rows[0].rss / 5.0, abs=0.1)
+        assert rows[1].rss_per_min == pytest.approx(rows[1].rss / 5.0, abs=0.1)
 
     def test_no_threshold_means_no_rss_column(self):
         lap = self._lap(30, distance=1000.0, elapsed=300.0, speed=3.3, cadence=80, power=400.0)

@@ -131,7 +131,7 @@
     "colGrade": "tõus",
     "colDesnivel": "tõus / lask",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Tõusud marsruudilt",
     "tcColRange": "lõik",
     "tcNote": "Tõuse loetakse maastikust, sõltumata võimsusest; need võivad kattuda ajajooniga ega liideta sellega. aRSS nõuab võimsusmõõturit.",
@@ -169,7 +169,7 @@
     "lengthRide": "Ülekanne",
     "desnivel": "Tõus / lask",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS on intensiivsusega kaalutud skoor päevase koormuse taga; read annavad kokku tegevuse tervikskoori."
   }
 }

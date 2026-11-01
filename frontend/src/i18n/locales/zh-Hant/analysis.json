@@ -131,7 +131,7 @@
     "colGrade": "坡度",
     "colDesnivel": "爬升/下降",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "路線爬坡",
     "tcColRange": "路段",
     "tcNote": "爬坡讀自地形，與功率無關；可能與時間線重疊，且不與其相加。aRSS 需要功率計。",
@@ -169,7 +169,7 @@
     "lengthRide": "齒比發展",
     "desnivel": "爬升/下降",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS 是構成每日訓練負荷的強度加權分值；各行相加即為該活動的總分。"
   }
 }

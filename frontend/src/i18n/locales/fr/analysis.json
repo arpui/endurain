@@ -131,7 +131,7 @@
     "colGrade": "pente",
     "colDesnivel": "dénivelé (+/−)",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Côtes du parcours",
     "tcColRange": "section",
     "tcNote": "les côtes se lisent du terrain, quelle que soit la puissance ; elles peuvent chevaucher la chronologie et ne s’y additionnent pas. L’aRSS exige un capteur de puissance.",
@@ -169,7 +169,7 @@
     "lengthRide": "Développement",
     "desnivel": "Dénivelé (+/−)",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "l'aRSS est le score pondéré par l'intensité qui sous-tend la charge quotidienne ; les lignes additionnent le total de la séance."
   }
 }

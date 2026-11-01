@@ -153,9 +153,9 @@ class Segment:
         elevation_loss_m: Ground fallen through in the stretch, ``None`` without altitude.
         rss: The shared-scale aRSS score of the stretch (same kernel as the daily
             rss_total), ``None`` when the sport has no threshold.
-        rss_per_km: That score per kilometre of ground, so stretches of different
-            length compare; ``None`` when the stretch is too short to scale up
-            honestly or there is no score to scale.
+        rss_per_min: That score per minute of the stretch - aRSS is a time
+            integral, so this is its mean stress rate and stretches of different
+            length compare directly; ``None`` when there is no score.
     """
 
     kind: SegmentKind
@@ -170,7 +170,7 @@ class Segment:
     elevation_gain_m: float | None = None
     elevation_loss_m: float | None = None
     rss: float | None = None
-    rss_per_km: float | None = None
+    rss_per_min: float | None = None
 
 
 @dataclass(frozen=True)
@@ -513,15 +513,12 @@ def _segment(
         else None
     )
     distance_m = speed * span * period_s
-    rss_per_km = (
-        round(rss * 1000.0 / distance_m, 1)
-        if rss is not None and distance_m >= analysis_constants.RSS_PER_KM_MIN_DISTANCE_M
-        else None
-    )
+    duration_s = span * period_s
+    rss_per_min = round(rss * 60.0 / duration_s, 1) if rss and duration_s > 0 else None
     return Segment(
         kind=kind,
         start_s=round(run[0] * period_s, 1),
-        duration_s=round(span * period_s, 1),
+        duration_s=round(duration_s, 1),
         distance_m=round(distance_m, 1),
         avg_power_w=round(power, 1),
         intensity_factor=round(power / threshold_w, 2) if threshold_w else 0.0,
@@ -531,7 +528,7 @@ def _segment(
         elevation_gain_m=gain_m,
         elevation_loss_m=loss_m,
         rss=rss,
-        rss_per_km=rss_per_km,
+        rss_per_min=rss_per_min,
     )
 
 
@@ -614,7 +611,7 @@ class TerrainClimb:
         intensity_factor: Mean power over the sport's threshold, ``None`` without either.
         contrast: Mean power over the session's median, ``None`` without either.
         rss: Shared-scale aRSS score of the climb, ``None`` without power or threshold.
-        rss_per_km: That score per kilometre, ``None`` when too short to scale up.
+        rss_per_min: That score per minute of climbing, the mean stress rate.
     """
 
     start_m: float
@@ -629,7 +626,7 @@ class TerrainClimb:
     intensity_factor: float | None
     contrast: float | None
     rss: float | None
-    rss_per_km: float | None
+    rss_per_min: float | None
 
 
 def terrain_climbs(
@@ -728,7 +725,7 @@ def terrain_climbs(
         intensity: float | None = None
         contrast: float | None = None
         score: float | None = None
-        per_km: float | None = None
+        per_min: float | None = None
         if power_w is not None and len(power_w) >= end + 1:
             avg_power = round(fmean(power_w[window]), 1)
             if threshold_w:
@@ -741,8 +738,8 @@ def terrain_climbs(
                 )
                 if score <= 0:
                     score = None
-                elif length_m >= analysis_constants.RSS_PER_KM_MIN_DISTANCE_M:
-                    per_km = round(score * 1000.0 / length_m, 1)
+                else:
+                    per_min = round(score * 60.0 / ((end - start + 1) * period_s), 1)
             if base_power_w and avg_power is not None:
                 contrast = round(avg_power / base_power_w, 2)
         climbs.append(
@@ -759,7 +756,7 @@ def terrain_climbs(
                 intensity_factor=intensity,
                 contrast=contrast,
                 rss=score,
-                rss_per_km=per_km,
+                rss_per_min=per_min,
             )
         )
     return climbs
