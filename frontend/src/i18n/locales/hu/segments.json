@@ -32,7 +32,6 @@
     "activity": "Tevékenység",
     "date": "Dátum",
     "time": "Idő",
-    "speed": "Sebesség",
     "best": "Legjobb",
     "reverse": "Ellentétes irány",
     "activityLabel": "Tevékenység {id}",

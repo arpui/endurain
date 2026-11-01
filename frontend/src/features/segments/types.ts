@@ -24,6 +24,8 @@ export interface SegmentBase {
   distanceM: number
   /** Positive elevation gain in metres, when the source provided it. */
   elevationGainM: number | null
+  /** Positive elevation dropped along the geometry; null when the source gave no altitudes. */
+  elevationLossM: number | null
   /** User that imported or created the definition. */
   createdBy: number | null
 }
@@ -54,6 +56,14 @@ export interface SegmentEffort {
   elapsedSeconds: number
   /** Segment distance over elapsed time, in metres per second. */
   avgSpeedMps: number | null
+  /** Sport of the effort's activity, so the table shows pace or speed as elsewhere. */
+  activityType: number | null
+  /** Mean power over the effort's window; null without a power stream. */
+  avgPowerW: number | null
+  /** Mean heart rate over the effort's window; null without a heart-rate stream. */
+  avgHrBpm: number | null
+  /** The shared aRSS score per minute over the effort; null without power or threshold. */
+  rssPerMin: number | null
   /** Wall-clock time of the first effort waypoint (ISO). */
   timeStart: string
   /** Wall-clock time of the last effort waypoint (ISO). */

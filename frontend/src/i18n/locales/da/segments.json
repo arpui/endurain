@@ -32,7 +32,6 @@
     "activity": "Aktivitet",
     "date": "Dato",
     "time": "Tid",
-    "speed": "Hastighed",
     "best": "Bedste",
     "reverse": "Modsat retning",
     "activityLabel": "Aktivitet {id}",

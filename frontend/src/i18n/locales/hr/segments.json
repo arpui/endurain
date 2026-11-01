@@ -32,7 +32,6 @@
     "activity": "Aktivnost",
     "date": "Datum",
     "time": "Vrijeme",
-    "speed": "Brzina",
     "best": "Najbolji",
     "reverse": "Obrnuti smjer",
     "activityLabel": "Aktivnost {id}",

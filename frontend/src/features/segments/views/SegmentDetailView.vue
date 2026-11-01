@@ -73,7 +73,14 @@ const metaLine = computed(() => {
   }
   const parts = [formatSegmentDistance(current.distanceM, units.value)]
   if (current.elevationGainM !== null) {
-    parts.push(formatSegmentElevation(current.elevationGainM, units.value))
+    const gain = formatSegmentElevation(current.elevationGainM, units.value)
+    if (current.elevationLossM !== null) {
+      const loss = formatSegmentElevation(current.elevationLossM, units.value)
+      // The pair, never the net: an up-and-down segment is not a flat one.
+      parts.push(`+${gain} / \u2212${loss}`)
+    } else {
+      parts.push(gain)
+    }
   }
   return parts.join(' · ')
 })

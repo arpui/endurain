@@ -32,7 +32,6 @@
     "activity": "Veikla",
     "date": "Data",
     "time": "Laikas",
-    "speed": "Grebis",
     "best": "Geriausias",
     "reverse": "Priešinga kryptis",
     "activityLabel": "Veikla {id}",

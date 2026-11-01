@@ -32,7 +32,6 @@
     "activity": "Tegevus",
     "date": "Kuupäev",
     "time": "Aeg",
-    "speed": "Kiirus",
     "best": "Parim",
     "reverse": "Vastassuund",
     "activityLabel": "Tegevus {id}",

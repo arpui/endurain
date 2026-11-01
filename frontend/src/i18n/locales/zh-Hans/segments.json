@@ -32,7 +32,6 @@
     "activity": "活动",
     "date": "日期",
     "time": "用时",
-    "speed": "速度",
     "best": "最佳",
     "reverse": "反向",
     "activityLabel": "活动 {id}",

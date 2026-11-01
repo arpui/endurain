@@ -8,7 +8,8 @@ import type { Schemas } from '@/types'
 
 import { Badge } from '@/components/ui/badge'
 import { formatMediumDateTime } from '@/utils/datetime'
-import { formatEffortDuration, formatSegmentSpeed } from '@/features/segments/utils/format'
+import { formatLapTempo } from '@/features/activities/utils/metrics'
+import { formatEffortDuration } from '@/features/segments/utils/format'
 
 const props = defineProps<{
   /** The viewer's efforts on one segment, fastest first as the server returns them. */
@@ -25,7 +26,10 @@ interface EffortRow {
   rank: number
   date: string
   time: string
-  speed: string
+  tempo: string
+  power: string
+  hr: string
+  rssMin: string
   isReverse: boolean
   isBest: boolean
 }
@@ -52,7 +56,20 @@ const rows = computed<EffortRow[]>(() => {
       rank: isReverse ? reverseRank : forwardRank,
       date: formatMediumDateTime(effort.timeStart, locale.value),
       time: formatEffortDuration(effort.elapsedSeconds),
-      speed: formatSegmentSpeed(effort.avgSpeedMps, props.units),
+      // The same tempo the laps and intervals tables show: pace for sports that
+      // read in pace, speed for the rest.
+      tempo:
+        effort.activityType === null
+          ? '--'
+          : formatLapTempo(
+              effort.avgSpeedMps && effort.avgSpeedMps > 0 ? 1 / effort.avgSpeedMps : null,
+              effort.avgSpeedMps,
+              effort.activityType,
+              props.units,
+            ),
+      power: effort.avgPowerW === null ? '--' : `${Math.round(effort.avgPowerW)} W`,
+      hr: effort.avgHrBpm === null ? '--' : `${Math.round(effort.avgHrBpm)} bpm`,
+      rssMin: effort.rssPerMin === null ? '--' : effort.rssPerMin.toFixed(1),
       isReverse,
       isBest: !isReverse && forwardRank === 1,
     }
@@ -62,14 +79,17 @@ const rows = computed<EffortRow[]>(() => {
 
 <template>
   <div class="overflow-x-auto">
-    <table class="w-full min-w-[30rem] border-collapse text-meta">
+    <table class="w-full min-w-[38rem] border-collapse text-meta">
       <thead>
         <tr class="text-caption border-b border-border text-left">
           <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.rank') }}</th>
           <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.activity') }}</th>
           <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.date') }}</th>
           <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.time') }}</th>
-          <th class="py-2 font-medium">{{ t('segments.efforts.speed') }}</th>
+          <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
+          <th class="py-2 pe-3 font-medium">{{ t('analysis.laps.power') }}</th>
+          <th class="py-2 pe-3 font-medium">{{ t('activities.laps.hr') }}</th>
+          <th class="py-2 font-medium">{{ t('analysis.laps.rssMin') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -98,7 +118,10 @@ const rows = computed<EffortRow[]>(() => {
           </td>
           <td class="py-2 pe-3 text-muted-foreground">{{ row.date }}</td>
           <td class="py-2 pe-3 font-medium text-foreground">{{ row.time }}</td>
-          <td class="py-2 text-foreground">{{ row.speed }}</td>
+          <td class="py-2 pe-3 text-foreground">{{ row.tempo }}</td>
+          <td class="py-2 pe-3 tabular-nums text-foreground">{{ row.power }}</td>
+          <td class="py-2 pe-3 tabular-nums text-muted-foreground">{{ row.hr }}</td>
+          <td class="py-2 tabular-nums text-muted-foreground">{{ row.rssMin }}</td>
         </tr>
       </tbody>
     </table>
