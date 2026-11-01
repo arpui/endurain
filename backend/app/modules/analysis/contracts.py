@@ -1,8 +1,9 @@
-"""Internal contracts the analysis layers pass each other.
+"""Plain-data contracts the analysis layers and its published surface pass around.
 
 Values moving between service and crud are plain dataclasses, never ORM rows: the
 persistence layer keeps its models to itself and the service layer never learns which
-table a number was written to.
+table a number was written to. The same rule covers what leaves the module: another
+module receives one of these dataclasses through ``integration_service``.
 """
 
 from dataclasses import dataclass
@@ -75,3 +76,22 @@ class HeartRateThreshold:
 
     value_bpm: float
     source: analysis_constants.ThresholdSource = analysis_constants.ThresholdSource.AUTO
+
+
+@dataclass(frozen=True)
+class WindowStats:
+    """Aggregate reads over one time window of an activity's own streams.
+
+    Attributes:
+        avg_power_w: Mean power over the window's samples, ``None`` without a
+            power stream.
+        avg_hr_bpm: Mean heart rate over the window, sensor dropouts excluded,
+            ``None`` without a heart-rate stream.
+        rss_per_min: The shared aRSS score per minute of the window, under the
+            athlete's threshold for the sport; ``None`` when power, a threshold
+            or any gained stress is missing.
+    """
+
+    avg_power_w: float | None = None
+    avg_hr_bpm: float | None = None
+    rss_per_min: float | None = None

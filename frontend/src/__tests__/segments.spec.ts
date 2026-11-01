@@ -1,14 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { SegmentDetailDto, SegmentDetail } from '@/features/segments/types'
+import { mount } from '@vue/test-utils'
+import { createMemoryHistory, createRouter } from 'vue-router'
+
+import type { SegmentDetailDto, SegmentDetail, SegmentEffort } from '@/features/segments/types'
 
 import { apiFetch } from '@/services/http'
+import i18n from '@/i18n'
+import SegmentEffortsTable from '@/features/segments/components/SegmentEffortsTable.vue'
 import {
   deleteSegment,
   fetchSegmentEfforts,
   fetchSegments,
   importSegment,
   mapSegmentDetail,
+  mapSegmentEffort,
 } from '@/features/segments/services/segments'
 import {
   looksLikeGpx,
@@ -50,6 +56,7 @@ function makeDetail(overrides: Partial<SegmentDetail> = {}): SegmentDetail {
     sourceId: '39270619',
     distanceM: 840,
     elevationGainM: 60,
+    elevationLossM: null,
     createdBy: 2,
     geometry: straightGeometry(),
     altitudes: Array.from({ length: 21 }, (_, index) => 100 + index * 3),
@@ -359,5 +366,111 @@ describe('segment formatting', () => {
     expect(formatSegmentDistance(1947.2, 'imperial')).toBe('1.21 mi')
     expect(formatSegmentSpeed(2.66, 'metric')).toBe('9.6 km/h')
     expect(formatSegmentSpeed(null, 'metric')).toBe('--')
+  })
+})
+
+describe('mapSegmentEffort dynamics', () => {
+  it('carries the read-time power, heart rate and aRSS rate over', () => {
+    const effort = mapSegmentEffort({
+      segment_id: 3,
+      activity_id: 5,
+      direction: 'forward',
+      pass_number: 1,
+      elapsed_seconds: 300,
+      avg_speed_mps: 3.3,
+      coverage: 0.9,
+      time_start: '2026-10-15T16:00:00',
+      time_end: '2026-10-15T16:05:00',
+      stream_index_start: 10,
+      stream_index_end: 300,
+      activity_type: 2,
+      avg_power_w: 312.5,
+      avg_hr_bpm: 168,
+      rss_per_min: 2.4,
+    })
+    expect(effort.activityType).toBe(2)
+    expect(effort.avgPowerW).toBe(312.5)
+    expect(effort.avgHrBpm).toBe(168)
+    expect(effort.rssPerMin).toBe(2.4)
+  })
+
+  it('keeps the new columns null for activities without those streams', () => {
+    const effort = mapSegmentEffort({
+      segment_id: 3,
+      activity_id: 5,
+      direction: 'forward',
+      pass_number: 1,
+      elapsed_seconds: 300,
+      avg_speed_mps: 3.3,
+      coverage: 0.9,
+      time_start: '2026-10-15T16:00:00',
+      time_end: '2026-10-15T16:05:00',
+      stream_index_start: 10,
+      stream_index_end: 300,
+    })
+    expect(effort.avgPowerW).toBeNull()
+    expect(effort.avgHrBpm).toBeNull()
+    expect(effort.rssPerMin).toBeNull()
+  })
+})
+
+describe('SegmentEffortsTable', () => {
+  const effortRouter = createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/activities/:id', name: 'activity', component: { template: '<div />' } }],
+  })
+
+  function makeEffort(overrides: Partial<SegmentEffort> = {}): SegmentEffort {
+    return {
+      segmentId: 3,
+      activityId: 5,
+      direction: 'forward',
+      passNumber: 1,
+      elapsedSeconds: 372,
+      avgSpeedMps: 3.3,
+      activityType: 2,
+      avgPowerW: 312.5,
+      avgHrBpm: 168,
+      rssPerMin: 2.4,
+      timeStart: '2026-10-15T16:00:00Z',
+      timeEnd: '2026-10-15T16:06:12Z',
+      ...overrides,
+    }
+  }
+
+  it('shows the app-standard columns: tempo, power, heart rate and aRSS per minute', () => {
+    const wrapper = mount(SegmentEffortsTable, {
+      props: { efforts: [makeEffort()], units: 'metric' },
+      global: { plugins: [i18n, effortRouter] },
+    })
+    const headers = wrapper.findAll('thead th').map((th) => th.text())
+    expect(headers).toHaveLength(8)
+    const row = wrapper.findAll('tbody tr')[0]
+    if (!row) {
+      throw new Error('no effort row rendered')
+    }
+    expect(row.text()).toContain('313 W')
+    expect(row.text()).toContain('168 bpm')
+    expect(row.text()).toContain('2.4')
+    // A run reads in pace, not speed: 3.3 m/s is about 5:03 per km.
+    expect(row.text()).toMatch(/[45]:\d\d/)
+  })
+
+  it('dashes the dynamic columns when the activity carried no power or heart rate', () => {
+    const wrapper = mount(SegmentEffortsTable, {
+      props: {
+        efforts: [
+          makeEffort({ activityType: null, avgPowerW: null, avgHrBpm: null, rssPerMin: null }),
+        ],
+        units: 'metric',
+      },
+      global: { plugins: [i18n, effortRouter] },
+    })
+    const row = wrapper.findAll('tbody tr')[0]
+    if (!row) {
+      throw new Error('no effort row rendered')
+    }
+    expect(row.text()).toContain('--')
+    expect(row.text()).not.toContain('bpm')
   })
 })

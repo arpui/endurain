@@ -26,6 +26,7 @@ function mapSegmentBase(dto: SegmentBaseDto): SegmentBase {
     sourceId: dto.source_id ?? null,
     distanceM: dto.distance_m,
     elevationGainM: dto.elevation_gain_m ?? null,
+    elevationLossM: dto.elevation_loss_m ?? null,
     createdBy: dto.created_by ?? null,
   }
 }
@@ -53,6 +54,10 @@ export function mapSegmentEffort(dto: SegmentEffortDto): SegmentEffort {
     passNumber: dto.pass_number,
     elapsedSeconds: dto.elapsed_seconds,
     avgSpeedMps: dto.avg_speed_mps ?? null,
+    activityType: dto.activity_type ?? null,
+    avgPowerW: dto.avg_power_w ?? null,
+    avgHrBpm: dto.avg_hr_bpm ?? null,
+    rssPerMin: dto.rss_per_min ?? null,
     timeStart: dto.time_start,
     timeEnd: dto.time_end,
   }

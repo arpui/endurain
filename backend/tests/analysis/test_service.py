@@ -1337,3 +1337,61 @@ class TestLapDynamics:
             pytest.raises(core_exceptions.NotFoundError),
         ):
             analysis_service.get_activity_lap_dynamics(1, 7, db)
+
+
+class TestWindowStreamStats:
+    """The published surface other modules use to aggregate a stream window."""
+
+    @staticmethod
+    def _streams(with_power: bool = True):
+        def _fake(activity_id, stream_type, _key, _db, *, keep_zeros):
+            stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(600))
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return (1.0, tuple([400.0] * 600), stamps) if with_power else (1.0, (), ())
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([4.0] * 600), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([10.0] * 600), stamps  # flat: the plain kernel applies
+            if stream_type == activity_streams_constants.STREAM_TYPE_HR:
+                return 1.0, tuple([150.0] * 600), stamps
+            return 1.0, (), ()
+
+        return _fake
+
+    def _stats(self, windows, *, with_power=True, threshold=True):
+        db = _db()
+        thresholds = {"run": _power_threshold()} if threshold else {}
+        with (
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity(activity_type=2)),
+            patch(f"{_SVC}.get_settings", return_value=_settings(power_thresholds=thresholds)),
+            patch(f"{_SVC}._stream_samples", side_effect=self._streams(with_power=with_power)),
+        ):
+            return analysis_service.compute_window_stats(1, 2, windows, db)
+
+    def test_a_powered_window_answers_power_heart_rate_and_the_a_rate(self):
+        windows = [(_T0_UTC, _T0_UTC + timedelta(seconds=300))]
+        (stat,) = self._stats(windows)
+        assert stat.avg_power_w == 400.0
+        assert stat.avg_hr_bpm == 150.0
+        expected = analysis_methods.rss_window_stress([400.0] * 300, 1.0, 250.0)
+        assert stat.rss_per_min == pytest.approx(expected * 60.0 / 300.0, abs=0.1)
+
+    def test_the_rate_is_window_size_free(self):
+        short = self._stats([(_T0_UTC, _T0_UTC + timedelta(seconds=100))])
+        long = self._stats([(_T0_UTC, _T0_UTC + timedelta(seconds=500))])
+        assert short[0].rss_per_min == pytest.approx(long[0].rss_per_min, abs=0.1)
+
+    def test_without_power_the_window_still_answers_heart_rate(self):
+        (stat,) = self._stats([(_T0_UTC, _T0_UTC + timedelta(seconds=300))], with_power=False)
+        assert stat.avg_power_w is None
+        assert stat.rss_per_min is None
+        assert stat.avg_hr_bpm == 150.0
+
+    def test_without_a_threshold_the_rate_stays_blank(self):
+        (stat,) = self._stats([(_T0_UTC, _T0_UTC + timedelta(seconds=300))], threshold=False)
+        assert stat.avg_power_w == 400.0
+        assert stat.rss_per_min is None
+
+    def test_windows_given_on_the_naive_device_clock_still_cut(self):
+        (stat,) = self._stats([(_T0, _T0 + timedelta(seconds=300))])
+        assert stat.avg_power_w == 400.0

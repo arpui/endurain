@@ -32,7 +32,6 @@
     "activity": "Activitate",
     "date": "Dată",
     "time": "Timp",
-    "speed": "Viteză",
     "best": "Cel mai bun",
     "reverse": "Sens invers",
     "activityLabel": "Activitate {id}",

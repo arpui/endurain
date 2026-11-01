@@ -32,7 +32,6 @@
     "activity": "Activité",
     "date": "Date",
     "time": "Temps",
-    "speed": "Vitesse",
     "best": "Meilleur",
     "reverse": "Sens inverse",
     "activityLabel": "Activité {id}",

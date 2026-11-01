@@ -79,6 +79,8 @@ class SegmentRead(BaseModel):
         source_id: External identifier within the source, or ``None``.
         distance_m: Length along the stored geometry.
         elevation_gain_m: Positive elevation gain, when known.
+        elevation_loss_m: Positive elevation dropped along the geometry, read from
+            the stored altitudes; ``None`` when the source provided none.
         created_by: Importing/creating user, when known.
         created_at: Creation timestamp.
         updated_at: Last-update timestamp.
@@ -92,6 +94,7 @@ class SegmentRead(BaseModel):
     source_id: str | None
     distance_m: StrictFloat
     elevation_gain_m: StrictFloat | None
+    elevation_loss_m: StrictFloat | None = None
     created_by: StrictInt | None
     created_at: datetime
     updated_at: datetime
@@ -146,6 +149,16 @@ class SegmentEffortRead(BaseModel):
         time_end: Wall-clock time of the last effort waypoint.
         stream_index_start: GPS-stream index of the first effort waypoint.
         stream_index_end: GPS-stream index of the last effort waypoint.
+        activity_type: Sport of the effort's activity, so the client can choose
+            pace or speed for the tempo column; filled on read, ``None`` if the
+            activity could not be resolved.
+        avg_power_w: Mean power over the effort's window, ``None`` without a
+            power stream; filled on read from the activity's own samples.
+        avg_hr_bpm: Mean heart rate over the effort's window, dropouts excluded,
+            ``None`` without a heart-rate stream.
+        rss_per_min: The shared aRSS score per minute over the effort's window,
+            under the requester's threshold for the sport; ``None`` without
+            power, a threshold or gained stress.
     """
 
     model_config = ConfigDict(from_attributes=True, extra="forbid")
@@ -161,6 +174,10 @@ class SegmentEffortRead(BaseModel):
     time_end: datetime
     stream_index_start: StrictInt
     stream_index_end: StrictInt
+    activity_type: StrictInt | None = None
+    avg_power_w: StrictFloat | None = None
+    avg_hr_bpm: StrictFloat | None = None
+    rss_per_min: StrictFloat | None = None
 
 
 class ActivitySegmentRead(BaseModel):

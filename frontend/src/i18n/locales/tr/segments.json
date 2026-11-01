@@ -32,7 +32,6 @@
     "activity": "Etkinlik",
     "date": "Tarih",
     "time": "Süre",
-    "speed": "Hız",
     "best": "En iyi",
     "reverse": "Ters yön",
     "activityLabel": "Etkinlik {id}",

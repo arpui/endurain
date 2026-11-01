@@ -13,6 +13,7 @@ import core.exceptions as core_exceptions
 import core.logger as core_logger
 import modules.activities.activity.integration_service as activity_integration
 import modules.activities.activity_streams.integration_service as activity_streams_integration
+import modules.analysis.integration_service as analysis_integration
 import modules.segments.contracts as segments_contracts
 import modules.segments.crud as segments_crud
 import modules.segments.matcher as segments_matcher
@@ -93,7 +94,10 @@ def get_segment(segment_id: int, db: Session) -> segments_schema.SegmentDetailRe
     segment = segments_crud.get_segment_by_id(segment_id, db)
     if segment is None:
         raise core_exceptions.NotFoundError(f"Segment {segment_id} not found")
-    return segments_schema.SegmentDetailRead.model_validate(segment)
+    detail = segments_schema.SegmentDetailRead.model_validate(segment)
+    if detail.altitudes and len(detail.altitudes) > 1:
+        detail.elevation_loss_m = round(segments_matcher.elevation_loss_m(detail.altitudes), 1)
+    return detail
 
 
 def delete_segment(segment_id: int, db: Session) -> None:
@@ -235,7 +239,40 @@ def list_segment_efforts(
         direction=kept,
     )
     total = segments_crud.count_efforts_for_segment(segment_id, activity_ids, db, direction=kept)
+    _enrich_efforts(items, requester_user_id, db)
     return segments_schema.SegmentEffortPage.build(items, total, page_number, num_records)
+
+
+def _enrich_efforts(
+    items: list[segments_schema.SegmentEffortRead],
+    requester_user_id: int,
+    db: Session,
+) -> None:
+    """Fill each effort's sport, power, heart rate and aRSS/min from its own streams.
+
+    The effort table reads like the rest of the app's tables, so it needs the same
+    columns; they come from the activity's samples at read time - no stored
+    aggregates. The caller has already scoped the efforts to the requester's own
+    activities, and the analysis surface evaluates the windows against that same
+    athlete's thresholds. An effort whose activity cannot be resolved simply keeps
+    its stored columns.
+    """
+    if not items:
+        return
+    indexes_by_activity: dict[int, list[int]] = {}
+    for index, item in enumerate(items):
+        indexes_by_activity.setdefault(item.activity_id, []).append(index)
+    for activity_id, indexes in indexes_by_activity.items():
+        activity = activity_integration.get_activity_for_derivation(activity_id, db)
+        if activity is None:
+            continue
+        windows = [(items[index].time_start, items[index].time_end) for index in indexes]
+        stats = analysis_integration.window_stream_stats(activity_id, requester_user_id, windows, db)
+        for index, stat in zip(indexes, stats, strict=True):
+            items[index].activity_type = activity.activity_type
+            items[index].avg_power_w = stat.avg_power_w
+            items[index].avg_hr_bpm = stat.avg_hr_bpm
+            items[index].rss_per_min = stat.rss_per_min
 
 
 def _kept_direction(direction: segments_schema.EffortDirectionFilter) -> str | None:

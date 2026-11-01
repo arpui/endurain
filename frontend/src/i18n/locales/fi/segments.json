@@ -32,7 +32,6 @@
     "activity": "Aktiviteetti",
     "date": "Päivämäärä",
     "time": "Aika",
-    "speed": "Nopeus",
     "best": "Paras",
     "reverse": "Vastasuunta",
     "activityLabel": "Aktiviteetti {id}",

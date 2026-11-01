@@ -32,7 +32,6 @@
     "activity": "Aktivita",
     "date": "Datum",
     "time": "Čas",
-    "speed": "Rychlost",
     "best": "Nejlepší",
     "reverse": "Obrácený směr",
     "activityLabel": "Aktivita {id}",

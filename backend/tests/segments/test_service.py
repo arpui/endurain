@@ -326,6 +326,76 @@ class TestSegmentEfforts:
         mock_crud.list_efforts_for_activity_with_segments.assert_not_called()
 
 
+class TestEffortEnrichment:
+    @patch("modules.segments.service.analysis_integration")
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.service.segments_crud")
+    def test_listed_efforts_carry_power_heart_rate_and_the_a_rate(self, mock_crud, mock_activities, mock_analysis):
+        """The effort page reads like the app's other tables: the same columns."""
+        from modules.analysis import contracts as analysis_contracts
+        from modules.segments import schema as segments_schema
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_crud.get_segment_by_id.return_value = _segment_row()
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5)]
+        mock_activities.get_activity_for_derivation.return_value = SimpleNamespace(id=5, activity_type=2)
+        mock_crud.list_efforts_for_segment.return_value = [
+            segments_schema.SegmentEffortRead.model_validate(_effort_row())
+        ]
+        mock_crud.count_efforts_for_segment.return_value = 1
+        mock_analysis.window_stream_stats.return_value = [
+            analysis_contracts.WindowStats(avg_power_w=312.5, avg_hr_bpm=168.0, rss_per_min=2.4)
+        ]
+
+        page = service.list_segment_efforts(1, 2, db, page_number=1, num_records=10)
+        item = page.items[0]
+        assert item.activity_type == 2
+        assert item.avg_power_w == 312.5
+        assert item.avg_hr_bpm == 168.0
+        assert item.rss_per_min == 2.4
+
+    @patch("modules.segments.service.analysis_integration")
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.service.segments_crud")
+    def test_an_effort_activity_that_vanished_keeps_its_stored_columns(self, mock_crud, mock_activities, mock_analysis):
+        from modules.segments import schema as segments_schema
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_crud.get_segment_by_id.return_value = _segment_row()
+        mock_activities.list_user_activities.return_value = [SimpleNamespace(id=5)]
+        mock_activities.get_activity_for_derivation.return_value = None
+        mock_crud.list_efforts_for_segment.return_value = [
+            segments_schema.SegmentEffortRead.model_validate(_effort_row())
+        ]
+        mock_crud.count_efforts_for_segment.return_value = 1
+
+        page = service.list_segment_efforts(1, 2, db, page_number=1, num_records=10)
+        item = page.items[0]
+        assert item.avg_power_w is None and item.avg_hr_bpm is None and item.rss_per_min is None
+        mock_analysis.window_stream_stats.assert_not_called()
+
+
+class TestSegmentDescent:
+    @patch("modules.segments.service.segments_crud")
+    def test_the_detail_reports_the_descent_from_the_stored_profile(self, mock_crud):
+        from modules.segments import service
+
+        mock_crud.get_segment_by_id.return_value = _segment_row(altitudes=[10.0, 25.0, 20.0, 30.0, 24.0])
+        detail = service.get_segment(1, MagicMock())
+        assert detail.elevation_gain_m == 60.0  # stored at import
+        assert detail.elevation_loss_m == 11.0  # read on demand: -5 and -6
+
+    @patch("modules.segments.service.segments_crud")
+    def test_a_segment_without_altitudes_answers_no_descent(self, mock_crud):
+        from modules.segments import service
+
+        mock_crud.get_segment_by_id.return_value = _segment_row(altitudes=None)
+        detail = service.get_segment(1, MagicMock())
+        assert detail.elevation_loss_m is None
+
+
 class TestMatchOrchestration:
     def _target(self, segment_id: int = 1) -> segments_contracts.SegmentMatchTarget:
         geometry = [[41.0, 2.0 + i * 0.0005] for i in range(21)]

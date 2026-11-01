@@ -32,7 +32,6 @@
     "activity": "Aktivitāte",
     "date": "Datums",
     "time": "Laiks",
-    "speed": "Ātrums",
     "best": "Labākais",
     "reverse": "Pretējs virziens",
     "activityLabel": "Aktivitāte {id}",

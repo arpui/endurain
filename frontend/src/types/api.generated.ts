@@ -10514,6 +10514,8 @@ export interface components {
             distance_m: number;
             /** Elevation Gain M */
             elevation_gain_m: number | null;
+            /** Elevation Loss M */
+            elevation_loss_m?: number | null;
             /** Geometry */
             geometry: number[][];
             /** Id */
@@ -10568,10 +10570,26 @@ export interface components {
          *         time_end: Wall-clock time of the last effort waypoint.
          *         stream_index_start: GPS-stream index of the first effort waypoint.
          *         stream_index_end: GPS-stream index of the last effort waypoint.
+         *         activity_type: Sport of the effort's activity, so the client can choose
+         *             pace or speed for the tempo column; filled on read, ``None`` if the
+         *             activity could not be resolved.
+         *         avg_power_w: Mean power over the effort's window, ``None`` without a
+         *             power stream; filled on read from the activity's own samples.
+         *         avg_hr_bpm: Mean heart rate over the effort's window, dropouts excluded,
+         *             ``None`` without a heart-rate stream.
+         *         rss_per_min: The shared aRSS score per minute over the effort's window,
+         *             under the requester's threshold for the sport; ``None`` without
+         *             power, a threshold or gained stress.
          */
         SegmentEffortRead: {
             /** Activity Id */
             activity_id: number;
+            /** Activity Type */
+            activity_type?: number | null;
+            /** Avg Hr Bpm */
+            avg_hr_bpm?: number | null;
+            /** Avg Power W */
+            avg_power_w?: number | null;
             /** Avg Speed Mps */
             avg_speed_mps: number | null;
             /** Coverage */
@@ -10581,6 +10599,8 @@ export interface components {
             elapsed_seconds: number;
             /** Pass Number */
             pass_number: number;
+            /** Rss Per Min */
+            rss_per_min?: number | null;
             /** Segment Id */
             segment_id: number;
             /** Stream Index End */
@@ -10667,6 +10687,8 @@ export interface components {
             effort_count: number;
             /** Elevation Gain M */
             elevation_gain_m: number | null;
+            /** Elevation Loss M */
+            elevation_loss_m?: number | null;
             /** Id */
             id: number;
             /** Name */
@@ -10691,6 +10713,8 @@ export interface components {
          *         source_id: External identifier within the source, or ``None``.
          *         distance_m: Length along the stored geometry.
          *         elevation_gain_m: Positive elevation gain, when known.
+         *         elevation_loss_m: Positive elevation dropped along the geometry, read from
+         *             the stored altitudes; ``None`` when the source provided none.
          *         created_by: Importing/creating user, when known.
          *         created_at: Creation timestamp.
          *         updated_at: Last-update timestamp.
@@ -10707,6 +10731,8 @@ export interface components {
             distance_m: number;
             /** Elevation Gain M */
             elevation_gain_m: number | null;
+            /** Elevation Loss M */
+            elevation_loss_m?: number | null;
             /** Id */
             id: number;
             /** Name */
