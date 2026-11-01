@@ -451,7 +451,7 @@ describe('SegmentEffortsTable', () => {
     }
     expect(row.text()).toContain('313 W')
     expect(row.text()).toContain('168 bpm')
-    expect(row.text()).toContain('2.4')
+    expect(row.text()).toContain('2.40')
     // A run reads in pace, not speed: 3.3 m/s is about 5:03 per km.
     expect(row.text()).toMatch(/[45]:\d\d/)
   })

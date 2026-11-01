@@ -115,7 +115,7 @@ describe('ActivityIntervalTable terrain climbs', () => {
     }
     expect(climbRow.text()).toMatch(/0[.,]1 - 4[.,]2 km/)
     expect(climbRow.text()).toContain('+229')
-    expect(climbRow.text()).toContain('14.7')
+    expect(climbRow.text()).toContain('14.70')
     expect(climbRow.text()).toContain('390 W')
   })
 

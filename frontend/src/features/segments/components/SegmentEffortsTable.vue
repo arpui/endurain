@@ -69,7 +69,7 @@ const rows = computed<EffortRow[]>(() => {
             ),
       power: effort.avgPowerW === null ? '--' : `${Math.round(effort.avgPowerW)} W`,
       hr: effort.avgHrBpm === null ? '--' : `${Math.round(effort.avgHrBpm)} bpm`,
-      rssMin: effort.rssPerMin === null ? '--' : effort.rssPerMin.toFixed(1),
+      rssMin: effort.rssPerMin === null ? '--' : effort.rssPerMin.toFixed(2),
       isReverse,
       isBest: !isReverse && forwardRank === 1,
     }

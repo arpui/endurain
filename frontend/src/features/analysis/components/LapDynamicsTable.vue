@@ -139,7 +139,7 @@ const rows = computed<LapRow[]>(() =>
           : `${Math.round(dynamics.avgPowerW)} W`,
       length: decimal(dynamics?.strideLengthM ?? null, 2),
       rss: decimal(dynamics?.rss ?? null, 1),
-      rssMin: decimal(dynamics?.rssPerMin ?? null, 1),
+      rssMin: decimal(dynamics?.rssPerMin ?? null, 2),
       isRest: entry.isRest,
     }
   }),
