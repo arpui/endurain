@@ -60,6 +60,9 @@
       "sourceAuto": "odvozený",
       "sourceManual": "ruční",
       "wattsPlaceholder": "W",
+      "speed": "Kritická rychlost (tempo)",
+      "pacePlaceholder": "např. 4:30",
+      "addSpeed": "Přidat kritickou rychlost",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Přizpůsobení od (s)",

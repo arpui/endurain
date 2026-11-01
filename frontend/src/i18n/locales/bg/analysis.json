@@ -60,6 +60,9 @@
       "sourceAuto": "изведено",
       "sourceManual": "ръчно",
       "wattsPlaceholder": "W",
+      "speed": "Критична скорост (темп)",
+      "pacePlaceholder": "напр. 4:30",
+      "addSpeed": "Добави критична скорост",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Нагласяне от (s)",

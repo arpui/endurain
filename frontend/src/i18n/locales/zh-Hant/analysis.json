@@ -60,6 +60,9 @@
       "sourceAuto": "自動推導",
       "sourceManual": "手動",
       "wattsPlaceholder": "W",
+      "speed": "臨界速度（配速）",
+      "pacePlaceholder": "例如 4:30",
+      "addSpeed": "添加臨界速度",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "擬合起點 (s)",

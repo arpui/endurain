@@ -60,6 +60,9 @@
       "sourceAuto": "παραγόμενο",
       "sourceManual": "χειροκίνητο",
       "wattsPlaceholder": "W",
+      "speed": "Κρίσιμη ταχύτητα (ρυθμός)",
+      "pacePlaceholder": "π.χ. 4:30",
+      "addSpeed": "Προσθήκη κρίσιμης ταχύτητας",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Προσαρμογή από (s)",

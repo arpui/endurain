@@ -60,6 +60,9 @@
       "sourceAuto": "türetilmiş",
       "sourceManual": "elle",
       "wattsPlaceholder": "W",
+      "speed": "Kritik hız (tempo)",
+      "pacePlaceholder": "örn. 4:30",
+      "addSpeed": "Kritik hız ekle",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Uydurma başlangıcı (s)",

@@ -6200,6 +6200,9 @@ export interface components {
          *             while the module default applies.
          *         resting_hr: Resting heart rate stated by the athlete.
          *         power_thresholds: Threshold per sport group, derived or manual.
+         *         speed_thresholds: Threshold running speed per sport group, derived or manual:
+         *             the pace-side twin of the power thresholds, used wherever intensity is
+         *             read from ground speed instead of watts.
          *         hr_threshold: Threshold heart rate, derived or manual.
          *         method_params: Per-formula parameters.
          */
@@ -6224,6 +6227,10 @@ export interface components {
             primary_method: components["schemas"]["LoadMethod"];
             /** Resting Hr */
             resting_hr?: number | null;
+            /** Speed Thresholds */
+            speed_thresholds?: {
+                [key: string]: components["schemas"]["SpeedThresholdRead"];
+            };
         };
         /**
          * AnalysisSettingsUpdate
@@ -6245,6 +6252,8 @@ export interface components {
          *             turns the heart-rate impulse formulas off).
          *         hr_threshold_bpm: Manual threshold heart rate in bpm, or ``None`` to go back
          *             to the derived one.
+         *         speed_threshold_ms: Manual threshold running speed per sport group, or
+         *             ``None`` per sport to fall back to the derived one.
          *         power_threshold_w: Manual threshold power per sport group, or ``None`` per
          *             sport to go back to the derived one.
          *         method_params: Whole replacement of the per-formula parameters.
@@ -6271,6 +6280,10 @@ export interface components {
             primary_method?: components["schemas"]["LoadMethod"] | null;
             /** Resting Hr */
             resting_hr?: number | null;
+            /** Speed Threshold Ms */
+            speed_threshold_ms?: {
+                [key: string]: number | null;
+            } | null;
         };
         /**
          * BackfillQueued
@@ -11178,6 +11191,28 @@ export interface components {
          * @enum {integer}
          */
         SleepStageType: 0 | 1 | 2 | 3;
+        /**
+         * SpeedThresholdRead
+         * @description Serialized threshold running speed (critical speed).
+         *
+         *     Attributes:
+         *         value_ms: Critical speed in metres per second: the fastest pace that can be
+         *             held indefinitely on the flat.
+         *         w_prime_m: Distance capacity above the critical speed, in metres: how far
+         *             faster than critical a short burst carries (the W' of the speed model).
+         *         source: Whether the value was derived from the athlete's records or stated
+         *             by them.
+         *         cv_pct: Fit error as a percentage of the mean, only for derived values.
+         */
+        SpeedThresholdRead: {
+            /** Cv Pct */
+            cv_pct?: number | null;
+            source: components["schemas"]["ThresholdSource"];
+            /** Value Ms */
+            value_ms: number;
+            /** W Prime M */
+            w_prime_m?: number | null;
+        };
         /**
          * StepUpVerification
          * @description Generic step-up verification payload.

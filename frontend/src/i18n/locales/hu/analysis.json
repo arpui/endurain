@@ -60,6 +60,9 @@
       "sourceAuto": "származtatott",
       "sourceManual": "kézi",
       "wattsPlaceholder": "W",
+      "speed": "Kritikus sebesség (tempó)",
+      "pacePlaceholder": "pl. 4:30",
+      "addSpeed": "Kritikus sebesség hozzáadása",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Illesztés innen (s)",

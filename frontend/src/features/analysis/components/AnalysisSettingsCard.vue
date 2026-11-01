@@ -192,6 +192,76 @@ function addPowerThreshold(): void {
   )
 }
 
+/** Parses a typed min/km pace ("4:30" or decimal minutes) into m/s; null when unusable. */
+function paceToMs(value: string): number | null {
+  const trimmed = value.trim()
+  const colon = /^(\d{1,2}):([0-5]?\d)$/.exec(trimmed)
+  const secondsPerKm = colon ? Number(colon[1]) * 60 + Number(colon[2]) : Number(trimmed) * 60
+  if (!Number.isFinite(secondsPerKm) || secondsPerKm < 120 || secondsPerKm > 1200) {
+    return null
+  }
+  return 1000 / secondsPerKm
+}
+
+/** Shows a critical speed the way runners read pace: min:km. */
+function formatPace(ms: number): string {
+  const seconds = Math.round(1000 / ms)
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+}
+
+/** Pace text typed into the speed threshold rows, keyed by sport. */
+const speedOverrides = reactive<Record<string, string>>({})
+
+/** Stores the manual critical speed typed for one sport. */
+function setSpeedThreshold(sport: string): void {
+  const ms = paceToMs(speedOverrides[sport] ?? '')
+  if (ms === null) {
+    return
+  }
+  saveMutation.mutate(
+    { speed_threshold_ms: { [sport]: ms } },
+    {
+      onSuccess: () => {
+        speedOverrides[sport] = ''
+        toasts.success(t('analysis.settings.saved'))
+      },
+      onError: () => toasts.error(t('analysis.settings.saveFailed')),
+    },
+  )
+}
+
+/** Returns a sport's critical speed to the value derived from records. */
+function clearSpeedThreshold(sport: string): void {
+  saveMutation.mutate(
+    { speed_threshold_ms: { [sport]: null } },
+    {
+      onSuccess: () => toasts.success(t('analysis.settings.saved')),
+      onError: () => toasts.error(t('analysis.settings.saveFailed')),
+    },
+  )
+}
+
+const newSpeedSport = ref('run')
+const newPace = ref('')
+
+/** Adds a manual critical speed for a sport that has none (or replaces it). */
+function addSpeedThreshold(): void {
+  const ms = paceToMs(newPace.value)
+  if (ms === null) {
+    return
+  }
+  saveMutation.mutate(
+    { speed_threshold_ms: { [newSpeedSport.value]: ms } },
+    {
+      onSuccess: () => {
+        newPace.value = ''
+        toasts.success(t('analysis.settings.saved'))
+      },
+      onError: () => toasts.error(t('analysis.settings.saveFailed')),
+    },
+  )
+}
+
 const hrOverride = ref('')
 
 /** Stores the manual threshold heart rate. */
@@ -395,6 +465,69 @@ function queueRecompute(): void {
           size="sm"
           :disabled="!isPositive(newWatts)"
           @click="addPowerThreshold"
+        >
+          {{ t('analysis.settings.thresholds.set') }}
+        </Button>
+      </div>
+
+      <div
+        v-for="[sport, entry] in Object.entries(settings.speedThresholds)"
+        :key="`speed-${sport}`"
+        class="flex flex-wrap items-center gap-2"
+      >
+        <span class="text-body font-medium">
+          {{ t(`home.sports.${sport}`) }} · {{ t('analysis.settings.thresholds.speed') }}
+        </span>
+        <span class="text-body tabular-nums">{{ formatPace(entry.valueMs) }} /km</span>
+        <Badge variant="secondary">
+          {{
+            entry.source === 'manual'
+              ? t('analysis.settings.thresholds.sourceManual')
+              : t('analysis.settings.thresholds.sourceAuto')
+          }}
+        </Badge>
+        <Input
+          v-model="speedOverrides[sport]"
+          class="w-20"
+          :placeholder="t('analysis.settings.thresholds.pacePlaceholder')"
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          :disabled="paceToMs(speedOverrides[sport] ?? '') === null"
+          @click="setSpeedThreshold(sport)"
+        >
+          {{ t('analysis.settings.thresholds.set') }}
+        </Button>
+        <Button
+          v-if="entry.source === 'manual'"
+          variant="ghost"
+          size="sm"
+          @click="clearSpeedThreshold(sport)"
+        >
+          {{ t('analysis.settings.thresholds.clear') }}
+        </Button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <Label for="analysis-new-speed-sport">{{
+          t('analysis.settings.thresholds.addSpeed')
+        }}</Label>
+        <Select id="analysis-new-speed-sport" v-model="newSpeedSport">
+          <option v-for="sport in SPORT_GROUPS" :key="sport" :value="sport">
+            {{ t(`home.sports.${sport}`) }}
+          </option>
+        </Select>
+        <Input
+          v-model="newPace"
+          class="w-20"
+          :placeholder="t('analysis.settings.thresholds.pacePlaceholder')"
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          :disabled="paceToMs(newPace) === null"
+          @click="addSpeedThreshold"
         >
           {{ t('analysis.settings.thresholds.set') }}
         </Button>

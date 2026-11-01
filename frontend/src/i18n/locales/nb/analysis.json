@@ -60,6 +60,9 @@
       "sourceAuto": "avledet",
       "sourceManual": "manuelt",
       "wattsPlaceholder": "W",
+      "speed": "Kritisk fart (tempo)",
+      "pacePlaceholder": "f.eks. 4:30",
+      "addSpeed": "Legg til kritisk fart",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Tilpasning fra (s)",

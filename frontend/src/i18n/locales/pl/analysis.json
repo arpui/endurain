@@ -60,6 +60,9 @@
       "sourceAuto": "wyliczony",
       "sourceManual": "ręczny",
       "wattsPlaceholder": "W",
+      "speed": "Prędkość krytyczna (tempo)",
+      "pacePlaceholder": "np. 4:30",
+      "addSpeed": "Dodaj prędkość krytyczną",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Dopasowanie od (s)",

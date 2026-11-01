@@ -48,6 +48,18 @@ export interface PowerThreshold {
 }
 
 /** Threshold heart rate, with its provenance. */
+/** The pace-side twin of the power threshold: critical speed, per sport. */
+export interface SpeedThreshold {
+  /** Critical speed in metres per second. */
+  valueMs: number
+  /** Distance capacity above critical, in metres; an index, not an absolute. */
+  wPrimeM: number | null
+  /** Derived or entered by the athlete. */
+  source: ThresholdSource
+  /** Fit error as a percentage of the mean, derived values only. */
+  cvPct: number | null
+}
+
 export interface HeartRateThreshold {
   /** Threshold heart rate in bpm. */
   valueBpm: number
@@ -71,6 +83,8 @@ export interface AnalysisSettings {
   restingHr: number | null
   /** Power threshold per sport group. */
   powerThresholds: Record<string, PowerThreshold>
+  /** Threshold running speeds by sport, when derived or stated. */
+  speedThresholds: Record<string, SpeedThreshold>
   /** Threshold heart rate, when known. */
   hrThreshold: HeartRateThreshold | null
   /** Per-formula parameters keyed by method. */

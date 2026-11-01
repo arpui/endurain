@@ -60,6 +60,9 @@
       "sourceAuto": "розрахований",
       "sourceManual": "вручну",
       "wattsPlaceholder": "W",
+      "speed": "Критична швидкість (темп)",
+      "pacePlaceholder": "напр. 4:30",
+      "addSpeed": "Додати критичну швидкість",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Апроксимація від (s)",

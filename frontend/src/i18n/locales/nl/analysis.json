@@ -60,6 +60,9 @@
       "sourceAuto": "afgeleid",
       "sourceManual": "handmatig",
       "wattsPlaceholder": "W",
+      "speed": "Kritieke snelheid (tempo)",
+      "pacePlaceholder": "bv. 4:30",
+      "addSpeed": "Kritieke snelheid toevoegen",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit vanaf (s)",

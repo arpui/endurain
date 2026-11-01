@@ -60,6 +60,9 @@
       "sourceAuto": "išvesta",
       "sourceManual": "rankiniu būdu",
       "wattsPlaceholder": "W",
+      "speed": "Kritinis greitis (tempas)",
+      "pacePlaceholder": "pvz. 4:30",
+      "addSpeed": "Pridėti kritinį greitį",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Derinimas nuo (s)",

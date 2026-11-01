@@ -60,6 +60,9 @@
       "sourceAuto": "härledd",
       "sourceManual": "manuell",
       "wattsPlaceholder": "W",
+      "speed": "Kritisk hastighet (tempo)",
+      "pacePlaceholder": "t.ex. 4:30",
+      "addSpeed": "Lägg till kritisk hastighet",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Anpassning från (s)",
