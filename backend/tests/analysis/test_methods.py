@@ -474,6 +474,22 @@ class TestDanielsPoints:
         expected = 100.0 * (3599 + 16) / 3600
         assert analysis_methods.daniels_points(data).load == pytest.approx(expected)
 
+    def test_a_grade_garbage_second_credits_only_a_credible_surge(self):
+        speeds = [4.0] * 3600
+        speeds[10] = 5.0
+        grades = [0.0] * 3600
+        grades[10] = 35.0
+        data = analysis_methods.LoadInput(
+            moving_seconds=3600.0,
+            speed_ms=tuple(speeds),
+            grade_pct=tuple(grades),
+            period_s=1.0,
+            speed_threshold_ms=4.0,
+        )
+        ceiling = analysis_constants.PACE_INTENSITY_CEILING
+        expected = 100.0 * (3599 + ceiling**4) / 3600
+        assert analysis_methods.daniels_points(data).load == pytest.approx(expected)
+
     def test_heart_rate_alone_scores_no_daniels_points(self):
         """Daniels never scored heart rate; neither does this method."""
         data = analysis_methods.LoadInput(
