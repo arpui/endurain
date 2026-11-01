@@ -69,6 +69,32 @@ class SpeedThresholdRead(BaseModel):
     cv_pct: StrictFloat | None = None
 
 
+class PaceCalibrationRead(BaseModel):
+    """Linear map from grade-adjusted pace to one athlete's own watts.
+
+    The pace side of the intensity chain normally reads pace against critical
+    speed; when the athlete's own records pair power and GPS on the same runs,
+    a least-squares line between adjusted pace and watts lets the pace source
+    score on the watts scale instead - which is what makes a pace estimate
+    comparable with the powered sessions beside it in the benchmark.
+
+    Attributes:
+        slope_w_per_ms: Watts gained per metre/second of adjusted pace.
+        intercept_w: Watts the line assigns to standing still; an artefact of the
+            fit, only the line over the athlete's real pace range is meaningful.
+        r2: Squared correlation over the paired samples; low values mean the
+            athlete's pace explains little of their power.
+        source: Whether the map was derived from records or stated by the athlete.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    slope_w_per_ms: StrictFloat
+    intercept_w: StrictFloat
+    r2: StrictFloat | None = None
+    source: analysis_constants.ThresholdSource
+
+
 class HeartRateThresholdRead(BaseModel):
     """Serialized threshold heart rate, with its provenance."""
 
@@ -95,6 +121,8 @@ class AnalysisSettingsRead(BaseModel):
             the pace-side twin of the power thresholds, used wherever intensity is
             read from ground speed instead of watts.
         hr_threshold: Threshold heart rate, derived or manual.
+        pace_calibrations: Per-sport pace-to-watts maps fitted over the athlete's
+            own paired power/GPS records; ``None``-absent when they have none.
         method_params: Per-formula parameters.
     """
 
@@ -109,6 +137,7 @@ class AnalysisSettingsRead(BaseModel):
     power_thresholds: dict[StrictStr, PowerThresholdRead] = Field(default_factory=dict)
     speed_thresholds: dict[StrictStr, SpeedThresholdRead] = Field(default_factory=dict)
     hr_threshold: HeartRateThresholdRead | None = None
+    pace_calibrations: dict[StrictStr, PaceCalibrationRead] = Field(default_factory=dict)
     method_params: dict[StrictStr, StrictFloat] = Field(default_factory=dict)
 
 

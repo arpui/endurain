@@ -1665,3 +1665,67 @@ class TestCriticalSpeedDerivation:
         ):
             analysis_service.update_settings(2, payload_clear, db)
         assert "run" not in mock_store_clear.call_args.args[1].speed_thresholds
+
+
+class TestPaceCalibration:
+    """The athlete's own pace-to-watts map, fitted over paired power/GPS runs."""
+
+    @staticmethod
+    def _runs(count: int = 4) -> list:
+        return [SimpleNamespace(id=100 + i, activity_type=2) for i in range(count)]
+
+    @staticmethod
+    def _paired_streams():
+        """Watts exactly 100*(adjusted pace) - 50 each second, over varied pace."""
+
+        def _fake(activity_id, stream_type, _key, _db, *, keep_zeros):
+            total = 2400
+            stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(total))
+            speeds = tuple(3.0 + 0.05 * (i % 40) for i in range(total))
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, speeds, stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, tuple(100.0 * s - 50.0 for s in speeds), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([50.0] * total), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_HR:
+                return 1.0, tuple([140.0] * total), stamps
+            return 1.0, (), ()
+
+        return _fake
+
+    def test_paired_runs_fit_the_athletes_own_map(self):
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=self._runs()),
+            patch(f"{_SVC}._stream_samples", side_effect=self._paired_streams()),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.analysis_crud.replace_duration_peaks"),
+            patch(f"{_SVC}.analysis_crud.store_settings") as mock_store,
+        ):
+            analysis_service.refresh_thresholds(2, db)
+        stored = mock_store.call_args.args[1]
+        cal = stored.pace_calibrations["run"]
+        assert cal.slope_w_per_ms == pytest.approx(100.0, rel=0.05)
+        assert cal.intercept_w == pytest.approx(-50.0, abs=15.0)
+        assert cal.r2 is not None and cal.r2 > 0.9
+        assert cal.source is analysis_constants.ThresholdSource.AUTO
+
+    def test_a_pace_only_athlete_gets_no_map(self):
+        db = _db()
+
+        def _no_power(activity_id, stream_type, _key, _db, *, keep_zeros):
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, (), ()
+            return self._paired_streams()(activity_id, stream_type, _key, _db, keep_zeros=keep_zeros)
+
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=self._runs()),
+            patch(f"{_SVC}._stream_samples", side_effect=_no_power),
+            patch(f"{_SVC}.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.analysis_crud.replace_duration_peaks"),
+            patch(f"{_SVC}.analysis_crud.store_settings") as mock_store,
+        ):
+            analysis_service.refresh_thresholds(2, db)
+        stored = mock_store.call_args.args[1]
+        assert "run" not in stored.pace_calibrations

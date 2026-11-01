@@ -646,6 +646,7 @@ def terrain_climbs(
     hr_threshold_bpm: float | None = None,
     base_power_w: float = 0.0,
     parameters: Mapping[str, float] | None = None,
+    pace_calibration: tuple[float, float] | None = None,
 ) -> list[TerrainClimb]:
     """Return the climbs the smoothed altitude profile shows along the route.
 
@@ -752,6 +753,7 @@ def terrain_climbs(
             speed_threshold_ms,
             hr_threshold_bpm,
             params,
+            pace_calibration,
         )
         chain_source = next((key for key in ("power", "pace", "hr") if key in all_scores), None)
         chain_score = all_scores.get(chain_source, 0.0) if chain_source else 0.0

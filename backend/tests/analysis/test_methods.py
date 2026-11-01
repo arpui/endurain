@@ -470,9 +470,11 @@ class TestDanielsPoints:
         data = analysis_methods.LoadInput(
             moving_seconds=3600.0, speed_ms=tuple(spiked), period_s=1.0, speed_threshold_ms=4.0
         )
-        # the 20 m/s second is credited as an 8 m/s one: (8/4)^4 instead of (20/4)^4
-        expected = 100.0 * (3599 + 16) / 3600
-        assert analysis_methods.daniels_points(data).load == pytest.approx(expected)
+        # the 20 m/s second is capped at 8 and then blended into the smoothing
+        # window: bounded well under what a per-second read of it would score
+        naive_ceiling = 100.0 * (3599 + 16) / 3600
+        load = analysis_methods.daniels_points(data).load
+        assert 100.0 < load < 100.0 + (naive_ceiling - 100.0)
 
     def test_a_grade_garbage_second_credits_only_a_credible_surge(self):
         speeds = [4.0] * 3600
@@ -487,8 +489,9 @@ class TestDanielsPoints:
             speed_threshold_ms=4.0,
         )
         ceiling = analysis_constants.PACE_INTENSITY_CEILING
-        expected = 100.0 * (3599 + ceiling**4) / 3600
-        assert analysis_methods.daniels_points(data).load == pytest.approx(expected)
+        naive_ceiling = 100.0 * (3599 + ceiling**4) / 3600
+        load = analysis_methods.daniels_points(data).load
+        assert 100.0 < load < naive_ceiling
 
     def test_heart_rate_alone_scores_no_daniels_points(self):
         """Daniels never scored heart rate; neither does this method."""

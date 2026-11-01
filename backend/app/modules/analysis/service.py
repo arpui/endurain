@@ -337,6 +337,7 @@ def _load_input(
         grade_pct = analysis_maths.grade_pct_series(altitude_m, speed_ms, anchor_period_s or 1.0)
     threshold = settings.power_thresholds.get(sport) if sport else None
     speed_threshold = settings.speed_thresholds.get(sport) if sport else None
+    pace_calibration = settings.pace_calibrations.get(sport) if sport else None
     max_hr = activity.max_hr
     if not max_hr and activity.user_id:
         owner = users_integration.get_user(activity.user_id, db)
@@ -357,6 +358,9 @@ def _load_input(
         grade_pct=grade_pct,
         power_threshold_w=float(threshold.value_w) if threshold else None,
         speed_threshold_ms=float(speed_threshold.value_ms) if speed_threshold else None,
+        pace_calibration=(
+            (float(pace_calibration.slope_w_per_ms), float(pace_calibration.intercept_w)) if pace_calibration else None
+        ),
         hr_threshold_bpm=float(settings.hr_threshold.value_bpm) if settings.hr_threshold else None,
         resting_hr_bpm=float(settings.resting_hr) if settings.resting_hr else None,
         parameters=dict(settings.method_params),
@@ -479,13 +483,14 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
     activities_by_sport: dict[str, int] = {}
     speed_peaks_by_sport: dict[str, dict[int, float]] = {}
     speed_activities_by_sport: dict[str, int] = {}
+    paired_stats_by_sport: dict[str, list] = {}
     best_hr = 0.0
 
     for activity in activities:
         sport = sport_group(activity.activity_type)
         if sport is None:
             continue
-        period_s, power_w, _ = _stream_samples(
+        period_s, power_w, power_stamps = _stream_samples(
             activity.id,
             activity_streams_constants.STREAM_TYPE_POWER,
             "power",
@@ -515,7 +520,7 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
         # hilly run feeds the same hyperbolic fit the flat ones do. Only sports the
         # GAP model speaks for (running); a bike's speed is about drag, not effort.
         if sport in _PACE_FIT_SPORTS:
-            vel_period_s, speeds, _ = _stream_samples(
+            vel_period_s, speeds, speed_stamps = _stream_samples(
                 activity.id,
                 activity_streams_constants.STREAM_TYPE_SPEED,
                 "vel",
@@ -537,6 +542,23 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
                 )
                 adjusted = analysis_maths.grade_adjusted_run_speed(speeds, grades)
                 speed_activities_by_sport[sport] = speed_activities_by_sport.get(sport, 0) + 1
+                # Paired watts and adjusted pace on one clock: the raw material for
+                # the athlete's own pace-to-watts map, fit further below.
+                if power_w and period_s > 0:
+                    adjusted_on_power_clock = _align_to_power(adjusted, speed_stamps, power_stamps, period_s)
+                    if adjusted_on_power_clock:
+                        pace_window = max(int(analysis_constants.PACE_SMOOTH_WINDOW_S / period_s), 1) | 1
+                        med_speeds = analysis_maths.moving_median(list(adjusted_on_power_clock), pace_window)
+                        med_power = analysis_maths.moving_median(list(power_w), pace_window)
+                        stats = paired_stats_by_sport.setdefault(sport, [0, 0.0, 0.0, 0.0, 0.0, 0.0])
+                        for pace_value, watt_value in zip(med_speeds, med_power, strict=True):
+                            if watt_value > 0 and pace_value > 0:
+                                stats[0] += 1
+                                stats[1] += pace_value
+                                stats[2] += watt_value
+                                stats[3] += pace_value * pace_value
+                                stats[4] += pace_value * watt_value
+                                stats[5] += watt_value * watt_value
                 merged_speed = speed_peaks_by_sport.setdefault(sport, {})
                 for duration, value in analysis_maths.best_means(adjusted, vel_period_s).items():
                     if value >= merged_speed.get(duration, 0.0):
@@ -592,6 +614,35 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
             w_prime_m=round(capacity_m, 1),
             source=analysis_constants.ThresholdSource.AUTO,
             cv_pct=round(cv_pct, 2),
+        )
+        derived += 1
+
+    for sport, stats in paired_stats_by_sport.items():
+        existing_cal = settings.pace_calibrations.get(sport)
+        if existing_cal is not None and existing_cal.source is analysis_constants.ThresholdSource.MANUAL:
+            continue
+        count, sum_x, sum_y, sum_xx, sum_xy, sum_yy = stats
+        if count < analysis_constants.PACE_CAL_MIN_SECONDS:
+            continue
+        variance_x = sum_xx - sum_x * sum_x / count
+        if variance_x <= 0:
+            continue
+        slope = (sum_xy - sum_x * sum_y / count) / variance_x
+        if slope <= 0:
+            continue
+        intercept = (sum_y - slope * sum_x) / count
+        variance_y = sum_yy - sum_y * sum_y / count
+        if variance_y <= 0:
+            continue
+        cov = sum_xy - sum_x * sum_y / count
+        r2 = (cov * cov) / (variance_x * variance_y)
+        if r2 < analysis_constants.PACE_CAL_MIN_R2:
+            continue
+        settings.pace_calibrations[sport] = analysis_schema.PaceCalibrationRead(
+            slope_w_per_ms=round(slope, 2),
+            intercept_w=round(intercept, 1),
+            r2=round(r2, 3),
+            source=analysis_constants.ThresholdSource.AUTO,
         )
         derived += 1
 
@@ -1153,6 +1204,7 @@ def get_activity_intervals(
                 hr_threshold_bpm=data.hr_threshold_bpm,
                 base_power_w=analysis.base_power_w,
                 parameters=dict(data.parameters),
+                pace_calibration=data.pace_calibration,
             )
         ],
     )
@@ -1211,6 +1263,7 @@ def get_activity_lap_dynamics(
 
     speed_threshold = settings.speed_thresholds.get(sport)
     hr_threshold = settings.hr_threshold
+    pace_calibration = settings.pace_calibrations.get(sport)
     _apply_lap_rss(
         lap_windows=laps,
         dynamics=dynamics,
@@ -1220,6 +1273,9 @@ def get_activity_lap_dynamics(
         hr_threshold_bpm=float(hr_threshold.value_bpm) if hr_threshold else None,
         parameters=dict(settings.method_params),
         db=db,
+        pace_calibration=(
+            (float(pace_calibration.slope_w_per_ms), float(pace_calibration.intercept_w)) if pace_calibration else None
+        ),
     )
     return dynamics
 
@@ -1319,6 +1375,7 @@ def _apply_lap_rss(
     hr_threshold_bpm: float | None,
     parameters: Mapping[str, float],
     db: Session,
+    pace_calibration: tuple[float, float] | None = None,
 ) -> None:
     """Fill each lap's aRSS from the activity's own samples, through the intensity chain.
 
@@ -1346,6 +1403,7 @@ def _apply_lap_rss(
             speed_threshold_ms,
             hr_threshold_bpm,
             parameters,
+            pace_calibration,
         )
         source = next((key for key in ("power", "pace", "hr") if key in window_scores), None)
         entry.source_scores = {key: round(value, 1) for key, value in window_scores.items()} or None
@@ -1398,6 +1456,10 @@ def compute_window_stats(
     heart_rate_threshold = settings.hr_threshold
     hr_threshold_bpm = heart_rate_threshold.value_bpm if heart_rate_threshold else None
     parameters = dict(settings.method_params)
+    pace_calibration = settings.pace_calibrations.get(sport)
+    calibration_pair = (
+        (float(pace_calibration.slope_w_per_ms), float(pace_calibration.intercept_w)) if pace_calibration else None
+    )
 
     period_s, stamps, power_values, speeds, grades, hr_values, _altitude = _ground_timeline(activity_id, db)
     stats: list[analysis_contracts.WindowStats] = []
@@ -1428,6 +1490,7 @@ def compute_window_stats(
                     speed_threshold_ms,
                     hr_threshold_bpm,
                     parameters,
+                    calibration_pair,
                 )
                 chain_source = next((key for key in ("power", "pace", "hr") if key in all_scores), None)
                 chain_score = all_scores.get(chain_source, 0.0) if chain_source else 0.0

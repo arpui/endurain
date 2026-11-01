@@ -58,6 +58,7 @@ class LoadInput:
     grade_pct: tuple[float, ...] | None = None
     power_threshold_w: float | None = None
     speed_threshold_ms: float | None = None
+    pace_calibration: tuple[float, float] | None = None
     hr_threshold_bpm: float | None = None
     resting_hr_bpm: float | None = None
     parameters: Mapping[str, float] = field(default_factory=dict)
@@ -265,16 +266,61 @@ def _plausible_speeds(speeds_ms: Sequence[float]) -> tuple[float, ...]:
     return tuple(min(value, ceiling) for value in speeds_ms)
 
 
-def _paced_samples(adjusted_ms: Sequence[float], threshold_ms: float) -> tuple[float, ...]:
-    """Cap grade-adjusted pace at the intensity the pace chain can vouch for.
+def _paced_samples(adjusted_ms: Sequence[float], threshold_ms: float, period_s: float) -> tuple[float, ...]:
+    """Smooth and cap grade-adjusted pace to what the pace chain can vouch for.
 
-    Speed has its own plausibility ceiling, but garbage elevation feeding the GAP
-    polynomial inflates a still-plausible speed into an impossible flat-ground
-    equivalent; the intensity over critical speed is the number these methods
-    actually score, so it is what gets bounded.
+    GPS speed cannot resolve one second of effort, and a convex kernel turns that
+    jitter into a bonus an honest effort never earned: the series is averaged
+    over the window pace actually speaks at (``PACE_SMOOTH_WINDOW_S``) before it
+    is scored. On top, garbage elevation feeding the GAP polynomial can inflate a
+    plausible speed into an impossible flat-ground equivalent, so the intensity
+    over critical speed - the number these methods actually divide - is bounded.
     """
+    values = list(adjusted_ms)
+    if period_s > 0:
+        window = max(round(analysis_constants.PACE_SMOOTH_WINDOW_S / period_s), 1)
+        if window > 1 and len(values) >= window:
+            half = window // 2
+            padded = [values[0]] * half + values + [values[-1]] * (window - 1 - half)
+            running = 0.0
+            smoothed: list[float] = []
+            for index, value in enumerate(padded):
+                running += value
+                if index >= window:
+                    running -= padded[index - window]
+                if index >= window - 1:
+                    smoothed.append(running / window)
+            values = smoothed
     cap = analysis_constants.PACE_INTENSITY_CEILING * threshold_ms
-    return tuple(min(value, cap) for value in adjusted_ms)
+    return tuple(min(value, cap) for value in values)
+
+
+def _pace_signal(
+    speeds_ms: Sequence[float],
+    period_s: float,
+    speed_threshold_ms: float,
+    grades_pct: Sequence[float] | None,
+    power_threshold_w: float | None,
+    calibration: tuple[float, float] | None,
+) -> tuple[list[float], float]:
+    """Return the values and divisor the pace source scores.
+
+    Normally the smoothed, capped grade-adjusted pace over the critical speed.
+    When the athlete's own records have mapped pace onto watts (the refresh fit
+    against paired power/GPS streams), the adjusted pace walks through that map
+    and is divided by the critical power instead - the same effort read on the
+    watts scale the power source uses, which is what makes the two comparable.
+    """
+    grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
+    adjusted = _paced_samples(
+        analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades),
+        float(speed_threshold_ms),
+        period_s,
+    )
+    if calibration and power_threshold_w and power_threshold_w > 0:
+        slope, intercept = calibration
+        return [slope * value + intercept for value in adjusted], float(power_threshold_w)
+    return list(adjusted), float(speed_threshold_ms)
 
 
 def _window_stress_scaled(
@@ -348,12 +394,12 @@ def _pace_window_score(
     speed_threshold_ms: float,
     grades_pct: Sequence[float] | None,
     params: Mapping[str, float],
+    power_threshold_w: float | None = None,
+    calibration: tuple[float, float] | None = None,
 ) -> float:
     """Score a window from grade-adjusted pace: GAP has already paid for the terrain."""
-    grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
-    adjusted = analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades)
-    adjusted = _paced_samples(adjusted, float(speed_threshold_ms))
-    return _window_stress_scaled(adjusted, float(speed_threshold_ms), period_s, None, params, lift_with_grade=False)
+    values, divisor = _pace_signal(speeds_ms, period_s, speed_threshold_ms, grades_pct, power_threshold_w, calibration)
+    return _window_stress_scaled(values, divisor, period_s, None, params, lift_with_grade=False)
 
 
 def _hr_window_score(
@@ -376,6 +422,7 @@ def window_stress_chain(
     speed_threshold_ms: float | None,
     hr_threshold_bpm: float | None,
     parameters: Mapping[str, float] | None = None,
+    pace_calibration: tuple[float, float] | None = None,
 ) -> tuple[float, str | None]:
     """Return a window's shared-scale aRSS from the best signal the device carried.
 
@@ -400,6 +447,7 @@ def window_stress_chain(
         speed_threshold_ms,
         hr_threshold_bpm,
         parameters,
+        pace_calibration,
     )
     for source in ("power", "pace", "hr"):
         if source in scores:
@@ -417,6 +465,7 @@ def window_scores_by_source(
     speed_threshold_ms: float | None,
     hr_threshold_bpm: float | None,
     parameters: Mapping[str, float] | None = None,
+    pace_calibration: tuple[float, float] | None = None,
 ) -> dict[str, float]:
     """Score one window with *every* signal and threshold pair it can read.
 
@@ -434,7 +483,9 @@ def window_scores_by_source(
         if score > 0:
             scores["power"] = score
     if speeds_ms and speed_threshold_ms and speed_threshold_ms > 0:
-        score = _pace_window_score(speeds_ms, period_s, float(speed_threshold_ms), grades_pct, params)
+        score = _pace_window_score(
+            speeds_ms, period_s, float(speed_threshold_ms), grades_pct, params, threshold_w, pace_calibration
+        )
         if score > 0:
             scores["pace"] = score
     if hr_bpm and hr_threshold_bpm and hr_threshold_bpm > 0:
@@ -495,12 +546,14 @@ def _rss_load(data: LoadInput, band: str, source: str | None = None) -> LoadValu
         signal_divisor = float(threshold)
         lift_with_grade = True
     elif chosen == "pace":
-        grade_source = grades if grades is not None else (0.0,) * len(speeds)
-        samples = _paced_samples(
-            analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds), grade_source),
+        samples, signal_divisor = _pace_signal(
+            speeds,
+            data.period_s or 1.0,
             float(data.speed_threshold_ms),
+            grades,
+            float(threshold) if threshold and threshold > 0 else None,
+            data.pace_calibration,
         )
-        signal_divisor = float(data.speed_threshold_ms)
         lift_with_grade = False
     else:
         samples = None
@@ -619,6 +672,7 @@ def daniels_points(data: LoadInput) -> LoadValue | None:
         samples = _paced_samples(
             analysis_maths.grade_adjusted_run_speed(_plausible_speeds(data.speed_ms), grades),
             float(data.speed_threshold_ms),
+            data.period_s or 1.0,
         )
         divisor = float(data.speed_threshold_ms)
     else:

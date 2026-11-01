@@ -503,20 +503,43 @@ class TestWindowStressChain:
         assert source == "pace"
         assert spike_score == pytest.approx(capped_score)
 
-    def test_a_grade_garbage_second_scores_at_the_intensity_ceiling(self):
-        """Elevation noise cannot buy a superhuman surge through the GAP factor."""
+    def test_a_grade_garbage_second_never_buys_a_superhuman_surge(self):
+        """Elevation noise stays bounded: the ceiling caps it and the window smooths it.
+
+        Pace scoring averages over the window GPS speed can actually speak for, so
+        one garbage second blends into its neighbourhood instead of scoring a full
+        ceiling surge; the guarantee is it lands strictly between the clean window
+        and what an uncapped (or per-second-capped) read would give.
+        """
         cs = 3.0
+        clean, _ = analysis_methods.window_stress_chain(None, [4.0] * 100, None, [0.0] * 100, 1.0, None, cs, None)
         spiked_speeds = [4.0] * 100
         spiked_speeds[50] = 5.0
         grades = [0.0] * 100
         grades[50] = 35.0
         score, _ = analysis_methods.window_stress_chain(None, spiked_speeds, None, grades, 1.0, None, cs, None)
-        capped_speeds = [4.0] * 100
-        capped_speeds[50] = analysis_constants.PACE_INTENSITY_CEILING * cs
-        expected, _ = analysis_methods.window_stress_chain(None, capped_speeds, None, [0.0] * 100, 1.0, None, cs, None)
+        hill = int(analysis_constants.PACE_SMOOTH_WINDOW_S)
+        sustained = [5.0] * hill + [4.0] * (100 - hill)
+        sustained_grades = [35.0] * hill + [0.0] * (100 - hill)
+        sustained_score, _ = analysis_methods.window_stress_chain(
+            None, sustained, None, sustained_grades, 1.0, None, cs, None
+        )
         raw_adjusted = analysis_maths.grade_adjusted_run_speed([5.0], [35.0])[0]
-        assert raw_adjusted > analysis_constants.PACE_INTENSITY_CEILING * cs  # the ceiling bites
-        assert score == pytest.approx(expected)
+        assert raw_adjusted > analysis_constants.PACE_INTENSITY_CEILING * cs  # the ceiling still bites
+        # the blip raises the window but stays strictly under a *sustained* hill of the
+        # same invented intensity: one noisy second can never read as a real climb
+        assert clean < score < sustained_score
+
+    def test_a_calibrated_pace_scores_on_the_watts_scale(self):
+        """With the athlete's own map, the pace source reads in watts over CP."""
+        plain, _ = analysis_methods.window_stress_chain(None, [4.0] * 100, None, [0.0] * 100, 1.0, None, 4.0, None)
+        calibrated, _ = analysis_methods.window_stress_chain(
+            None, [4.0] * 100, None, [0.0] * 100, 1.0, 250.0, 4.0, None, None, (100.0, -50.0)
+        )
+        # 4.0 m/s maps to 350 W over CP 250 (i 1.4) instead of 4.0 over CS 4.0 (i 1.0)
+        assert calibrated > plain
+        manual = analysis_methods.window_stress_chain(None, [3.5] * 100, None, [0.0] * 100, 1.0, None, 4.0, None)
+        assert manual[0] < plain  # sanity: pace below critical scores less
 
     def test_no_signal_and_threshold_pair_scores_nothing(self):
         score, source = analysis_methods.window_stress_chain([350.0] * 10, None, None, None, 1.0, None, None, None)

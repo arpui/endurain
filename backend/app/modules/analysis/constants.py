@@ -243,6 +243,19 @@ GAP_COEFFICIENTS: tuple[float, ...] = (
 #: kernel would spend it like a superhuman surge.
 PACE_INTENSITY_CEILING = 2.5
 
+#: The window pace-side scoring averages adjusted pace over, in seconds. GPS speed
+#: cannot prove anything about one second of effort: its jitter, amplified by a
+#: convex kernel, inflates whole activities. What pace can resolve is tens of
+#: seconds, so that is the resolution pace scores at.
+PACE_SMOOTH_WINDOW_S = 20.0
+
+#: Minimum paired samples (seconds) before a pace-to-watts calibration is trusted.
+PACE_CAL_MIN_SECONDS = 1800
+
+#: Minimum squared correlation before a pace-to-watts calibration is stored; below
+#: it the athlete's pace explains too little of their power to be worth the map.
+PACE_CAL_MIN_R2 = 0.4
+
 #: A flat grade gets a factor of exactly 1; the polynomial's value at zero is a
 #: hair under it, and flat ground should not be adjusted at all.
 GAP_FLAT_CORRECTION_PCT = 0.0
