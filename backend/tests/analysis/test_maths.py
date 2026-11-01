@@ -663,3 +663,44 @@ class TestWindowScoresBySource:
             150.0,
         )
         assert set(scores) == {"pace", "hr"}
+
+
+class TestAdaptivePaceWindow:
+    """Short windows re-average the raw adjusted series at their own scale."""
+
+    @staticmethod
+    def _series():
+        speeds = [4.0] * 100 + [7.0] * 27 + [4.0] * 100
+        grades = [0.0] * 227
+        cs = 4.0
+        smooth = analysis_methods.pace_series(speeds, 1.0, cs, grades)
+        raw = analysis_methods.pace_raw_series(speeds, 1.0, cs, grades)
+        return smooth, raw
+
+    def test_a_burst_shorter_than_the_kernel_scores_higher_than_the_global_slice(self):
+        smooth, raw = self._series()
+        global_slice = smooth[100:127]
+        adaptive = analysis_methods.pace_window(smooth, raw, 1.0, {}, 100, 127)
+        # the global kernel pulls the burst down toward the surrounding jog
+        assert sum(adaptive) / len(adaptive) > sum(global_slice) / len(global_slice)
+        # and never exceeds what the seconds themselves held
+        assert max(adaptive) <= max(global_slice) + 1e-9
+
+    def test_windows_at_least_twice_the_kernel_read_the_global_series(self):
+        smooth, raw = self._series()
+        same = analysis_methods.pace_window(smooth, raw, 1.0, {}, 87, 140)  # 53 s ≥ 2·20
+        assert same == pytest.approx(list(smooth[87:140]))
+
+    def test_the_surrounding_recovery_loses_the_bleed_too(self):
+        smooth, raw = self._series()
+        global_slice = smooth[127:154]
+        adaptive = analysis_methods.pace_window(smooth, raw, 1.0, {}, 127, 154)
+        assert sum(adaptive) / len(adaptive) < sum(global_slice) / len(global_slice)
+
+    def test_the_raw_series_is_capped_and_gap_adjusted_without_smoothing(self):
+        speeds = [4.0] * 10 + [6.0] * 10 + [4.0] * 10
+        grades = [0.0] * 30
+        raw = analysis_methods.pace_raw_series(speeds, 1.0, 4.0, grades)
+        smooth = analysis_methods.pace_series(speeds, 1.0, 4.0, grades)
+        assert raw[10] == pytest.approx(6.0)  # the first hard second is untouched, no kernel
+        assert smooth[10] < 6.0  # ...while the smoothed series has already diluted it
