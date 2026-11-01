@@ -1101,43 +1101,8 @@ def get_activity_intervals(
         )
     sport = sport_group(activity.activity_type)
     data = _load_input(activity, sport, db)
-    power_period, power_values, power_stamps = _stream_samples(
-        activity.id,
-        activity_streams_constants.STREAM_TYPE_POWER,
-        "power",
-        db,
-        keep_zeros=True,
-    )
-    speed_period, speeds, speed_stamps = _stream_samples(
-        activity.id,
-        activity_streams_constants.STREAM_TYPE_SPEED,
-        "vel",
-        db,
-        keep_zeros=True,
-    )
-    _, elevations, elevation_stamps = _stream_samples(
-        activity.id,
-        activity_streams_constants.STREAM_TYPE_ELEVATION,
-        "ele",
-        db,
-        keep_zeros=True,
-    )
-    # One clock for the terrain read: the power samples when the device carried a
-    # power meter, otherwise the speed samples. Altitude aligns onto whichever wins.
-    if power_values and power_period > 0:
-        ground_period, ground_stamps = power_period, power_stamps
-        ground_speeds = _align_to_power(speeds, speed_stamps, ground_stamps, ground_period) if speeds else None
-        ground_power: tuple[float, ...] | None = power_values
-    elif speeds and speed_period > 0:
-        ground_period, ground_stamps = speed_period, speed_stamps
-        ground_speeds = speeds
-        ground_power = None
-    else:
-        ground_period, ground_stamps, ground_speeds, ground_power = 0.0, (), None, None
-    altitudes_m = (
-        _align_to_power(elevations, elevation_stamps, ground_stamps, ground_period)
-        if elevations and ground_stamps
-        else None
+    ground_period, _ground_stamps, ground_power, ground_speeds, _grades_unused, ground_hr, altitudes_m = (
+        _ground_timeline(activity.id, db)
     )
     analysis = analysis_intervals.analyse_activity(
         power_w=data.power_w or (),
@@ -1178,6 +1143,7 @@ def get_activity_intervals(
                 speeds_ms=ground_speeds,
                 period_s=ground_period,
                 power_w=ground_power,
+                hr_bpm=ground_hr,
                 threshold_w=analysis.threshold_w,
                 speed_threshold_ms=data.speed_threshold_ms,
                 hr_threshold_bpm=data.hr_threshold_bpm,

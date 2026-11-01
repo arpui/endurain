@@ -1044,6 +1044,33 @@ class TestTerrainClimbsService:
         assert climb.avg_power_w is None
         assert climb.rss is None and climb.rss_per_min is None
 
+    def test_a_powerless_route_without_a_critical_speed_falls_back_to_heart_rate(self):
+        db = _db()
+        data = analysis_methods.LoadInput(
+            moving_seconds=1500.0,
+            period_s=1.0,
+            speed_ms=tuple([4.0] * 1500),
+            hr_threshold_bpm=150.0,
+        )
+
+        stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(1500))
+
+        def _hr_streams(activity_id, stream_type, _key, _db, *, keep_zeros):
+            if stream_type == activity_streams_constants.STREAM_TYPE_HR:
+                return 1.0, tuple([160.0] * 1500), stamps
+            return self._streams(600, with_power=False)(activity_id, stream_type, _key, _db, keep_zeros=keep_zeros)
+
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}._load_input", return_value=data),
+            patch(f"{_SVC}._stream_samples", side_effect=_hr_streams),
+        ):
+            read = analysis_service.get_activity_intervals(1, 2, db)
+        climb = read.climbs[0]
+        assert climb.rss is not None
+        assert climb.rss_source == "hr"
+
     def test_a_powerless_route_with_a_critical_speed_scores_its_climbs_by_pace(self):
         db = _db()
         data = analysis_methods.LoadInput(
