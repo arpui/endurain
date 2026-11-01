@@ -28,6 +28,9 @@ def _to_settings_read(row: analysis_models.AnalysisSettings) -> analysis_schema.
     power: dict[str, analysis_schema.PowerThresholdRead] = {}
     for sport, entry in (thresholds.get("power") or {}).items():
         power[sport] = analysis_schema.PowerThresholdRead(**entry)
+    speed: dict[str, analysis_schema.SpeedThresholdRead] = {}
+    for sport, entry in (thresholds.get("speed") or {}).items():
+        speed[sport] = analysis_schema.SpeedThresholdRead(**entry)
     heart_rate = thresholds.get("hr")
     return analysis_schema.AnalysisSettingsRead(
         acute_days=row.acute_days,
@@ -37,6 +40,7 @@ def _to_settings_read(row: analysis_models.AnalysisSettings) -> analysis_schema.
         fit_to_s=row.fit_to_s,
         resting_hr=row.resting_hr,
         power_thresholds=power,
+        speed_thresholds=speed,
         hr_threshold=analysis_schema.HeartRateThresholdRead(**heart_rate) if heart_rate else None,
         method_params={key: float(value) for key, value in (row.method_params or {}).items()},
     )
@@ -94,6 +98,7 @@ def _threshold_document(settings: analysis_schema.AnalysisSettingsRead) -> dict:
     """Return the threshold JSON document for a settings read."""
     document: dict = {
         "power": {sport: entry.model_dump(mode="json") for sport, entry in settings.power_thresholds.items()},
+        "speed": {sport: entry.model_dump(mode="json") for sport, entry in settings.speed_thresholds.items()},
     }
     if settings.hr_threshold is not None:
         document["hr"] = settings.hr_threshold.model_dump(mode="json")

@@ -427,3 +427,28 @@ class TestBestSplitPowerRules:
         # one sitting on the 600 W block rather than the one starting in the easy part
         assert splits[100][0] == pytest.approx(20.0)
         assert splits[100][1] > 550.0
+
+
+class TestGradeAdjustedRunSpeed:
+    """The GoldenCheetah GAP polynomial, recovered from their 3.8 source."""
+
+    def _factor(self, slope_pct: float, speed: float = 4.0) -> float:
+        adjusted = analysis_maths.grade_adjusted_run_speed([speed], [slope_pct])
+        return adjusted[0] / speed
+
+    def test_flat_ground_is_not_adjusted_at_all(self):
+        assert self._factor(0.0) == 1.0
+
+    def test_a_ten_percent_climb_reads_half_again_as_fast(self):
+        assert self._factor(10.0) == pytest.approx(1.4798, abs=0.01)
+
+    def test_a_gentle_descent_barely_pays(self):
+        assert self._factor(-18.0) == pytest.approx(1.024, abs=0.01)
+
+    def test_beyond_the_valid_range_the_edge_constants_take_over(self):
+        assert self._factor(50.0) == 3.739
+        assert self._factor(-50.0) == 1.937
+
+    def test_a_stopped_runner_stays_stopped_hill_or_not(self):
+        adjusted = analysis_maths.grade_adjusted_run_speed([0.0, 0.0], [12.0, -30.0])
+        assert adjusted == (0.0, 0.0)

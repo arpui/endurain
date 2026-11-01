@@ -208,6 +208,38 @@ IV_EFFORT_IF = 1.05
 #: noise as climbing.
 IV_ELEV_MEDIAN_S = 30.0
 
+# --- Grade-adjusted running pace (critical speed) ---------------------------
+# The GoldenCheetah 3.8 grade-adjusted-pace model: a degree-5 polynomial fitted
+# to Strava's GAP curve ("An improved GAP model", Strava Engineering), close to
+# Minetti's 2002 measurements but with a lower factor uphill and a much lower one
+# downhill: descending does not repay what climbing costs. A factor multiplies
+# the actual speed to give the equivalent flat-ground speed, so a slow steep
+# climb reads as the hard effort it was.
+
+#: Beyond this |grade|, in percent, the polynomial is replaced by the constants
+#: GoldenCheetah uses at its edge of validity.
+GAP_SLOPE_CLAMP_PCT = 40.0
+
+#: Factor for any grade above the clamp (the polynomial's value at +40 %).
+GAP_CLAMP_FACTOR_UP = 3.739
+
+#: Factor for any grade below the negative clamp.
+GAP_CLAMP_FACTOR_DOWN = 1.937
+
+#: Polynomial coefficients, highest power first, over the grade in percent.
+GAP_COEFFICIENTS: tuple[float, ...] = (
+    -0.00000000340028981678083,
+    -0.000000471345135734814,
+    +0.000000777801576537029,
+    +0.001906977,
+    +0.0299822939,
+    +0.9935756154,
+)
+
+#: A flat grade gets a factor of exactly 1; the polynomial's value at zero is a
+#: hair under it, and flat ground should not be adjusted at all.
+GAP_FLAT_CORRECTION_PCT = 0.0
+
 # --- Terrain climbs -------------------------------------------------------------
 # A climb the route itself shows, independent of how the athlete rode or ran it:
 # the smoothed altitude profile, not the power signal, decides. The numbers below

@@ -48,6 +48,27 @@ class PowerThresholdRead(BaseModel):
     cv_pct: StrictFloat | None
 
 
+class SpeedThresholdRead(BaseModel):
+    """Serialized threshold running speed (critical speed).
+
+    Attributes:
+        value_ms: Critical speed in metres per second: the fastest pace that can be
+            held indefinitely on the flat.
+        w_prime_m: Distance capacity above the critical speed, in metres: how far
+            faster than critical a short burst carries (the W' of the speed model).
+        source: Whether the value was derived from the athlete's records or stated
+            by them.
+        cv_pct: Fit error as a percentage of the mean, only for derived values.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    value_ms: StrictFloat
+    w_prime_m: StrictFloat | None = None
+    source: analysis_constants.ThresholdSource
+    cv_pct: StrictFloat | None = None
+
+
 class HeartRateThresholdRead(BaseModel):
     """Serialized threshold heart rate, with its provenance."""
 
@@ -70,6 +91,9 @@ class AnalysisSettingsRead(BaseModel):
             while the module default applies.
         resting_hr: Resting heart rate stated by the athlete.
         power_thresholds: Threshold per sport group, derived or manual.
+        speed_thresholds: Threshold running speed per sport group, derived or manual:
+            the pace-side twin of the power thresholds, used wherever intensity is
+            read from ground speed instead of watts.
         hr_threshold: Threshold heart rate, derived or manual.
         method_params: Per-formula parameters.
     """
@@ -83,6 +107,7 @@ class AnalysisSettingsRead(BaseModel):
     fit_to_s: StrictInt | None = None
     resting_hr: StrictInt | None = None
     power_thresholds: dict[StrictStr, PowerThresholdRead] = Field(default_factory=dict)
+    speed_thresholds: dict[StrictStr, SpeedThresholdRead] = Field(default_factory=dict)
     hr_threshold: HeartRateThresholdRead | None = None
     method_params: dict[StrictStr, StrictFloat] = Field(default_factory=dict)
 
@@ -106,6 +131,8 @@ class AnalysisSettingsUpdate(BaseModel):
             turns the heart-rate impulse formulas off).
         hr_threshold_bpm: Manual threshold heart rate in bpm, or ``None`` to go back
             to the derived one.
+        speed_threshold_ms: Manual threshold running speed per sport group, or
+            ``None`` per sport to fall back to the derived one.
         power_threshold_w: Manual threshold power per sport group, or ``None`` per
             sport to go back to the derived one.
         method_params: Whole replacement of the per-formula parameters.
@@ -121,6 +148,7 @@ class AnalysisSettingsUpdate(BaseModel):
     resting_hr: StrictInt | None = Field(default=None, ge=20, le=120)
     hr_threshold_bpm: StrictFloat | None = Field(default=None, ge=60, le=230)
     power_threshold_w: Mapping[StrictStr, StrictFloat | None] | None = None
+    speed_threshold_ms: Mapping[StrictStr, StrictFloat | None] | None = None
     method_params: Mapping[StrictStr, StrictFloat] | None = None
 
 

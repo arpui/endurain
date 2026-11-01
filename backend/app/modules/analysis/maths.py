@@ -415,3 +415,38 @@ def fit_cp_wprime(
     predicted = critical_power + w_prime / durations
     cv_pct = 100.0 * float(np.sqrt(np.mean((predicted - powers) ** 2))) / float(np.mean(powers))
     return critical_power, w_prime, cv_pct
+
+
+def grade_adjusted_run_speed(
+    speed_ms: Sequence[float],
+    grades_pct: Sequence[float],
+) -> tuple[float, ...]:
+    """Return each sample's equivalent flat-ground running speed.
+
+    Climbing slows the runner while costing more energy, and descending speeds them
+    up while costing braking; the GAP factor (GoldenCheetah's fit to Strava's curve)
+    converts the actual speed into the flat-ground speed that would cost the same,
+    which is what lets a pace-based intensity survive real terrain. Grades outside
+    the polynomial's ±40 % validity get the constants the model uses at its edges;
+    a grade of exactly zero stays unadjusted.
+
+    Args:
+        speed_ms: One speed per sample, in metres per second.
+        grades_pct: One grade per sample, in percent, aligned to ``speed_ms``.
+
+    Returns:
+        The equivalent flat-ground speed per sample, aligned to the input.
+    """
+    count = min(len(speed_ms), len(grades_pct))
+    speeds = np.asarray(speed_ms[:count], dtype=float)
+    slopes = np.asarray(grades_pct[:count], dtype=float)
+    factors = np.polyval(
+        analysis_constants.GAP_COEFFICIENTS,
+        np.clip(slopes, -analysis_constants.GAP_SLOPE_CLAMP_PCT, analysis_constants.GAP_SLOPE_CLAMP_PCT),
+    )
+    factors = np.where(slopes > analysis_constants.GAP_SLOPE_CLAMP_PCT, analysis_constants.GAP_CLAMP_FACTOR_UP, factors)
+    factors = np.where(
+        slopes < -analysis_constants.GAP_SLOPE_CLAMP_PCT, analysis_constants.GAP_CLAMP_FACTOR_DOWN, factors
+    )
+    factors = np.where(slopes == analysis_constants.GAP_FLAT_CORRECTION_PCT, 1.0, factors)
+    return tuple(speeds * factors)
