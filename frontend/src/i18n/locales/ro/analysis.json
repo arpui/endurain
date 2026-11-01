@@ -76,6 +76,8 @@
       "speed": "Viteză critică (ritm)",
       "pacePlaceholder": "ex. 4:30",
       "addSpeed": "Adaugă viteză critică",
+      "paceCalib": "Calibrare ritm→wați",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Potrivire de la (s)",

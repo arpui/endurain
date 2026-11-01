@@ -6209,6 +6209,8 @@ export interface components {
          *             the pace-side twin of the power thresholds, used wherever intensity is
          *             read from ground speed instead of watts.
          *         hr_threshold: Threshold heart rate, derived or manual.
+         *         pace_calibrations: Per-sport pace-to-watts maps fitted over the athlete's
+         *             own paired power/GPS records; ``None``-absent when they have none.
          *         method_params: Per-formula parameters.
          */
         AnalysisSettingsRead: {
@@ -6224,6 +6226,10 @@ export interface components {
             /** Method Params */
             method_params?: {
                 [key: string]: number;
+            };
+            /** Pace Calibrations */
+            pace_calibrations?: {
+                [key: string]: components["schemas"]["PaceCalibrationRead"];
             };
             /** Power Thresholds */
             power_thresholds?: {
@@ -10103,6 +10109,33 @@ export interface components {
              * @description FK to user
              */
             user_id: number;
+        };
+        /**
+         * PaceCalibrationRead
+         * @description Linear map from grade-adjusted pace to one athlete's own watts.
+         *
+         *     The pace side of the intensity chain normally reads pace against critical
+         *     speed; when the athlete's own records pair power and GPS on the same runs,
+         *     a least-squares line between adjusted pace and watts lets the pace source
+         *     score on the watts scale instead - which is what makes a pace estimate
+         *     comparable with the powered sessions beside it in the benchmark.
+         *
+         *     Attributes:
+         *         slope_w_per_ms: Watts gained per metre/second of adjusted pace.
+         *         intercept_w: Watts the line assigns to standing still; an artefact of the
+         *             fit, only the line over the athlete's real pace range is meaningful.
+         *         r2: Squared correlation over the paired samples; low values mean the
+         *             athlete's pace explains little of their power.
+         *         source: Whether the map was derived from records or stated by the athlete.
+         */
+        PaceCalibrationRead: {
+            /** Intercept W */
+            intercept_w: number;
+            /** R2 */
+            r2?: number | null;
+            /** Slope W Per Ms */
+            slope_w_per_ms: number;
+            source: components["schemas"]["ThresholdSource"];
         };
         /** Page[ActivityLapsRead] */
         Page_ActivityLapsRead_: {

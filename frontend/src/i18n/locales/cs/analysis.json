@@ -76,6 +76,8 @@
       "speed": "Kritická rychlost (tempo)",
       "pacePlaceholder": "např. 4:30",
       "addSpeed": "Přidat kritickou rychlost",
+      "paceCalib": "Kalibrace tempo→watty",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Přizpůsobení od (s)",

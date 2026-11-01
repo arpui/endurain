@@ -76,6 +76,8 @@
       "speed": "Kritinis greitis (tempas)",
       "pacePlaceholder": "pvz. 4:30",
       "addSpeed": "Pridėti kritinį greitį",
+      "paceCalib": "Tempo→vatų kalibracija",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Derinimas nuo (s)",

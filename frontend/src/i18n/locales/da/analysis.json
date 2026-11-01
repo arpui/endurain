@@ -76,6 +76,8 @@
       "speed": "Kritisk fart (pace)",
       "pacePlaceholder": "f.eks. 4:30",
       "addSpeed": "Tilføj kritisk fart",
+      "paceCalib": "Pace-til-watt-kalibrering",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Tilpasning fra (s)",

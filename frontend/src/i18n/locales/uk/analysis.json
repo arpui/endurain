@@ -76,6 +76,8 @@
       "speed": "Критична швидкість (темп)",
       "pacePlaceholder": "напр. 4:30",
       "addSpeed": "Додати критичну швидкість",
+      "paceCalib": "Калібрування темп→вати",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Апроксимація від (s)",

@@ -76,6 +76,8 @@
       "speed": "Κρίσιμη ταχύτητα (ρυθμός)",
       "pacePlaceholder": "π.χ. 4:30",
       "addSpeed": "Προσθήκη κρίσιμης ταχύτητας",
+      "paceCalib": "Βαθμονόμηση ρυθμού→watt",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Προσαρμογή από (s)",

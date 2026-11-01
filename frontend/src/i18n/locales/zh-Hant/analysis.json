@@ -76,6 +76,8 @@
       "speed": "臨界速度（配速）",
       "pacePlaceholder": "例如 4:30",
       "addSpeed": "添加臨界速度",
+      "paceCalib": "配速→功率校準",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "擬合起點 (s)",

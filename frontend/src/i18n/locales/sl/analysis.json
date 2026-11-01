@@ -76,6 +76,8 @@
       "speed": "Kritična hitrost (tempo)",
       "pacePlaceholder": "npr. 4:30",
       "addSpeed": "Dodaj kritično hitrost",
+      "paceCalib": "Kalibracija tempo→watt",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Prilagoditev od (s)",

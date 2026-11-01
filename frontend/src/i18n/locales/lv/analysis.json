@@ -76,6 +76,8 @@
       "speed": "Kritiskais ātrums (temps)",
       "pacePlaceholder": "piem. 4:30",
       "addSpeed": "Pievienot kritisko ātrumu",
+      "paceCalib": "Tempa→watu kalibrācija",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Pielāgošana no (s)",

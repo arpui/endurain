@@ -76,6 +76,8 @@
       "speed": "Vitesse critique (allure)",
       "pacePlaceholder": "par ex. 4:30",
       "addSpeed": "Ajouter une vitesse critique",
+      "paceCalib": "Calibrage allure→watts",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Ajustement de (s)",

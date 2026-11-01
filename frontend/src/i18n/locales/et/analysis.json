@@ -76,6 +76,8 @@
       "speed": "Kriitiline kiirus (tempo)",
       "pacePlaceholder": "nt 4:30",
       "addSpeed": "Lisa kriitiline kiirus",
+      "paceCalib": "Tempo-vati kalibreerimine",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Sobitamine alates (s)",

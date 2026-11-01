@@ -76,6 +76,8 @@
       "speed": "Kritikus sebesség (tempó)",
       "pacePlaceholder": "pl. 4:30",
       "addSpeed": "Kritikus sebesség hozzáadása",
+      "paceCalib": "Tempó→watt kalibráció",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Illesztés innen (s)",

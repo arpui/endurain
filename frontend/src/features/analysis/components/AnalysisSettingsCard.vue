@@ -509,6 +509,27 @@ function queueRecompute(): void {
         </Button>
       </div>
 
+      <div
+        v-for="[sport, cal] in Object.entries(settings.paceCalibrations)"
+        :key="`pace-cal-${sport}`"
+        class="flex flex-wrap items-center gap-2"
+      >
+        <span class="text-body font-medium">
+          {{ t(`home.sports.${sport}`) }} · {{ t('analysis.settings.thresholds.paceCalib') }}
+        </span>
+        <span class="text-body tabular-nums">
+          {{ Math.round(cal.slopeWPerMs) }} W · {{ t('analysis.settings.thresholds.paceCalibR2') }}
+          {{ cal.r2 === null ? '--' : cal.r2.toFixed(2) }}
+        </span>
+        <Badge variant="secondary">
+          {{
+            cal.source === 'manual'
+              ? t('analysis.settings.thresholds.sourceManual')
+              : t('analysis.settings.thresholds.sourceAuto')
+          }}
+        </Badge>
+      </div>
+
       <div class="flex flex-wrap items-center gap-2">
         <Label for="analysis-new-speed-sport">{{
           t('analysis.settings.thresholds.addSpeed')

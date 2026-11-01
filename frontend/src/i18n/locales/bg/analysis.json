@@ -76,6 +76,8 @@
       "speed": "Критична скорост (темп)",
       "pacePlaceholder": "напр. 4:30",
       "addSpeed": "Добави критична скорост",
+      "paceCalib": "Калибриране темпо→ватове",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Нагласяне от (s)",

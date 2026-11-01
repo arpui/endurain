@@ -76,6 +76,8 @@
       "speed": "Critical speed (pace)",
       "pacePlaceholder": "e.g. 4:30",
       "addSpeed": "Add critical speed",
+      "paceCalib": "Pace-to-watts calibration",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit from (s)",

@@ -76,6 +76,8 @@
       "speed": "Kritische Geschwindigkeit (Tempo)",
       "pacePlaceholder": "z. B. 4:30",
       "addSpeed": "Kritische Geschwindigkeit hinzufügen",
+      "paceCalib": "Tempo-zu-Watt-Kalibrierung",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Anpassung ab (s)",

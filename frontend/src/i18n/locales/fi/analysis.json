@@ -76,6 +76,8 @@
       "speed": "Kriittinen nopeus (vauhti)",
       "pacePlaceholder": "esim. 4:30",
       "addSpeed": "Lisää kriittinen nopeus",
+      "paceCalib": "Vauhti-watt-kalibrointi",
+      "paceCalibR2": "r²",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Sovituksesta (s)",

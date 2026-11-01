@@ -61,6 +61,18 @@ export interface SpeedThreshold {
   cvPct: number | null
 }
 
+/** The athlete's own pace-to-watts map, fitted over paired power/GPS runs. */
+export interface PaceCalibration {
+  /** Watts gained per metre/second of grade-adjusted pace. */
+  slopeWPerMs: number
+  /** Fit artefact at zero speed; only the line over the athlete's real range matters. */
+  interceptW: number
+  /** Squared correlation over the paired samples. */
+  r2: number | null
+  /** Derived from records (manual is reserved). */
+  source: ThresholdSource
+}
+
 export interface HeartRateThreshold {
   /** Threshold heart rate in bpm. */
   valueBpm: number
@@ -86,6 +98,8 @@ export interface AnalysisSettings {
   powerThresholds: Record<string, PowerThreshold>
   /** Threshold running speeds by sport, when derived or stated. */
   speedThresholds: Record<string, SpeedThreshold>
+  /** Pace-to-watts maps by sport, when their records pair both signals. */
+  paceCalibrations: Record<string, PaceCalibration>
   /** Threshold heart rate, when known. */
   hrThreshold: HeartRateThreshold | null
   /** Per-formula parameters keyed by method. */
