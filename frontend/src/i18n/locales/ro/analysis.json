@@ -32,6 +32,7 @@
     "matrixTitle": "Comparație pe sursă",
     "matrixNote": "Aceeași activitate evaluată pe fiecare semnal care a putut-o citi: wattul este măsurat; ritmul compensat cu pantă și FC sunt estimări."
   },
+  "rapNote": "RAP = ritm echivalent pe plat (compensat cu pantă): ritmul real corectat pentru pantă, acesta este ritmul pe care formulele de ritm îl punctează.",
   "sport": {
     "label": "Sport",
     "all": "Toate sporturile"
@@ -149,6 +150,7 @@
     "effortsMany": "eforturi",
     "colStart": "start",
     "colGrade": "pantă",
+    "colRap": "Equiv.",
     "colDesnivel": "urcare / coborâre",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Urcare / coborâre",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS este scorul ponderat cu intensitate din spatele sarcii zilnice; rândurile însumează totalul activității. „≈”: estimat din ritm (compensat cu pantă) sau FC fără senzor de putere."
   }
 }

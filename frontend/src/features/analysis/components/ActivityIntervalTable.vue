@@ -31,6 +31,11 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 
+/** Formats an m/s pace-or-speed value the way the sport's other tempo cells read. */
+function tempoFromMs(ms: number, activityType: number): string {
+  return formatLapTempo(1 / ms, ms, activityType, props.units)
+}
+
 /** Short benchmark label for one source, matching the sources.* block. */
 function sourceShortLabel(key: string): string {
   return t(`analysis.sources.short${key.charAt(0).toUpperCase()}${key.slice(1)}`)
@@ -62,6 +67,10 @@ const bandMatrix = computed(() =>
     })),
 )
 const showMatrix = computed(() => bandMatrix.value.length >= 2)
+
+/** Equivalent pace exists when the athlete has a critical speed for the sport. */
+const showSegRap = computed(() => props.intervals.segments.some((s) => s.paceAdjustedMs !== null))
+const showClimbRap = computed(() => props.intervals.climbs.some((c) => c.rapMs !== null))
 const BAND_COLUMNS = ['rss_total', 'rss_up', 'rss_high', 'rss_mid', 'rss_low'] as const
 
 /** Effort kinds, so the summary can count them and the table can colour them. */
@@ -75,6 +84,7 @@ interface SegmentRow {
   duration: string
   distance: string
   tempo: string
+  rap: string
   power: string
   intensityFactor: string
   grade: string
@@ -92,6 +102,7 @@ interface ClimbRow {
   duration: string
   desnivel: string
   grade: string
+  rap: string
   power: string
   intensityFactor: string
   contrast: string
@@ -119,6 +130,10 @@ const rows = computed<SegmentRow[]>(() =>
         props.activityType,
         props.units,
       ),
+      rap:
+        segment.paceAdjustedMs === null
+          ? '--'
+          : tempoFromMs(segment.paceAdjustedMs, props.activityType),
       power: segment.avgPowerW > 0 ? `${Math.round(segment.avgPowerW)} W` : '--',
       intensityFactor: segment.intensityFactor > 0 ? segment.intensityFactor.toFixed(2) : '--',
       grade: segment.avgGradePct === null ? '--' : `${segment.avgGradePct.toFixed(1)} %`,
@@ -153,6 +168,7 @@ const climbRows = computed<ClimbRow[]>(() =>
     duration: formatHmsDuration(climb.durationS),
     desnivel: `+${climb.elevationGainM.toFixed(0)} / \u2212${climb.elevationLossM.toFixed(0)} m`,
     grade: `${climb.avgGradePct.toFixed(1)} %`,
+    rap: climb.rapMs === null ? '--' : tempoFromMs(climb.rapMs, props.activityType),
     power: climb.avgPowerW === null ? '--' : `${Math.round(climb.avgPowerW)} W`,
     intensityFactor: climb.intensityFactor === null ? '--' : climb.intensityFactor.toFixed(2),
     contrast: climb.contrast === null ? '--' : `\u00d7${climb.contrast.toFixed(2)}`,
@@ -234,6 +250,9 @@ const rulesNote = computed(() => {
               <th class="py-2 pe-3 font-medium">{{ t('activities.laps.time') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('activities.laps.distance') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
+              <th v-if="showSegRap" class="py-2 pe-3 font-medium">
+                {{ t('analysis.intervals.colRap') }}
+              </th>
               <th class="py-2 pe-3 font-medium">{{ t('activities.metrics.avgPower') }}</th>
               <th class="py-2 pe-3 font-medium">IF</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colContrast') }}</th>
@@ -255,6 +274,9 @@ const rulesNote = computed(() => {
               <td class="py-2 pe-3 tabular-nums">{{ row.duration }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.distance }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.tempo }}</td>
+              <td v-if="showSegRap" class="py-2 pe-3 tabular-nums text-muted-foreground">
+                {{ row.rap }}
+              </td>
               <td class="py-2 pe-3 tabular-nums">{{ row.power }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.intensityFactor }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.contrast }}</td>
@@ -290,6 +312,9 @@ const rulesNote = computed(() => {
               <th class="py-2 pe-3 font-medium">{{ t('activities.laps.time') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colDesnivel') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colGrade') }}</th>
+              <th v-if="showClimbRap" class="py-2 pe-3 font-medium">
+                {{ t('analysis.intervals.colRap') }}
+              </th>
               <th class="py-2 pe-3 font-medium">{{ t('activities.metrics.avgPower') }}</th>
               <th class="py-2 pe-3 font-medium">IF</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colContrast') }}</th>
@@ -309,6 +334,9 @@ const rulesNote = computed(() => {
               <td class="py-2 pe-3 tabular-nums">{{ row.duration }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.desnivel }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.grade }}</td>
+              <td v-if="showClimbRap" class="py-2 pe-3 tabular-nums text-muted-foreground">
+                {{ row.rap }}
+              </td>
               <td class="py-2 pe-3 tabular-nums">{{ row.power }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.intensityFactor }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.contrast }}</td>
@@ -330,6 +358,9 @@ const rulesNote = computed(() => {
       </div>
       <p class="text-caption text-muted-foreground">
         {{ t('analysis.intervals.tcNote') }}
+      </p>
+      <p v-if="showSegRap || showClimbRap" class="text-caption mt-1 text-muted-foreground">
+        {{ t('analysis.rapNote') }}
       </p>
     </template>
 

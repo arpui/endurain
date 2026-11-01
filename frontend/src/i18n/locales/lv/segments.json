@@ -39,7 +39,8 @@
     "empty": {
       "title": "Piepūļu vēl nav",
       "description": "Pārrēķini piepūles, lai salīdzinātu esošās aktivitātes ar šo posmu."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importēt posmu",

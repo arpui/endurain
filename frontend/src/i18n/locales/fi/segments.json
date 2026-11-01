@@ -39,7 +39,8 @@
     "empty": {
       "title": "Ei suorituksia vielä",
       "description": "Laske suoritukset uudelleen, jotta olemassa olevat aktiviteetit vertaillaan tähän osioon."
-    }
+    },
+    "rap": "Ekv."
   },
   "import": {
     "button": "Tuo osio",

@@ -75,6 +75,7 @@ describe('lap dynamics fetch', () => {
       rss: 26.4,
       rssSource: 'power',
       rssPerMin: 26.4,
+      rapMs: null,
       sourceScores: { power: 26.4, hr: 19.2 },
     })
     expect(rows[1]).toEqual({
@@ -85,6 +86,7 @@ describe('lap dynamics fetch', () => {
       elevationLossM: null,
       rss: null,
       rssSource: null,
+      rapMs: null,
       rssPerMin: null,
       sourceScores: null,
     })
@@ -121,6 +123,7 @@ describe('LapDynamicsTable', () => {
             rss: 26.4,
             rssSource: 'power',
             rssPerMin: 5.3,
+            rapMs: null,
             sourceScores: null,
           },
         ],
@@ -146,6 +149,7 @@ describe('LapDynamicsTable', () => {
           rss: null,
           rssSource: null,
           rssPerMin: null,
+          rapMs: null,
           sourceScores: null,
         },
       ],
@@ -171,6 +175,7 @@ describe('LapDynamicsTable estimated scores', () => {
             rss: 9.9,
             rssSource: 'pace',
             rssPerMin: 1.98,
+            rapMs: null,
             sourceScores: { pace: 9.9, hr: 7.8 },
           },
         ],
@@ -203,6 +208,7 @@ describe('LapDynamicsTable source benchmark', () => {
             rss: 26.4,
             rssSource: 'power',
             rssPerMin: 5.28,
+            rapMs: null,
             sourceScores: { power: 26.4, hr: 19.2 },
           },
         ],

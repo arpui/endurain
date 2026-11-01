@@ -32,6 +32,7 @@
     "matrixTitle": "Salīdzinājums pa avotu",
     "matrixNote": "Tā pati aktivitāte novērtēta pa katru avotu, kas to varēja nolasīt: vati tiek mērīti; slīpumu kompensējošs temps un sirdsdarbība ir novērtējumi."
   },
+  "rapNote": "RAP = ekvivalents temps līdzenumā (kompensēts slīpums): faktiskais temps ar slīpuma koriģējumu — to vērtē tempa formulas.",
   "sport": {
     "label": "Sporta veids",
     "all": "Visi sporta veidi"
@@ -149,6 +150,7 @@
     "effortsMany": "slodzes",
     "colStart": "sākums",
     "colGrade": "slīpums",
+    "colRap": "Equiv.",
     "colDesnivel": "kāpums / kritums",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Kāpums / kritums",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS ir ar intensitāti svērts rādītājs aiz dienas slodzes; rindas summējas aktivitātes kopsummā. „≈“: novērtēts no (slīpumu kompensējoša) tempa vai sirdsdarbības bez jaudas mērījuma."
   }
 }

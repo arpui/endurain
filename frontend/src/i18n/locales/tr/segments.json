@@ -39,7 +39,8 @@
     "empty": {
       "title": "Henüz efor yok",
       "description": "Mevcut etkinlikleri bu segmentle karşılaştırmak için eforları yeniden hesaplayın."
-    }
+    },
+    "rap": "Eşd."
   },
   "import": {
     "button": "Segment içe aktar",

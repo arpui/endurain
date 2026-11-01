@@ -39,7 +39,8 @@
     "empty": {
       "title": "Še ni prizadevanj",
       "description": "Ponovno izračunaj prizadevanja, da se primerjajo s svojimi obstoječimi aktivnostmi."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Uvozi odsek",

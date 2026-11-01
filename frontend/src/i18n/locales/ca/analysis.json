@@ -32,6 +32,7 @@
     "matrixTitle": "Banc de proves per font",
     "matrixNote": "La mateixa activitat puntuada per cada senyal que l’ha pogut llegir: els watts es mesuren; el ritme (pendent compensat) i la freqüència cardíaca són estimacions."
   },
+  "rapNote": "RAP = ritme equivalent en pla (pendent compensat): el ritme real corregit pel pendent, que és el que puntuen les fórmules de ritme.",
   "sport": {
     "label": "Esport",
     "all": "Tots els esports"
@@ -149,6 +150,7 @@
     "effortsMany": "intents",
     "colStart": "inici",
     "colGrade": "pendent",
+    "colRap": "Equiv.",
     "colDesnivel": "desnivell",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Desnivell",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS és la puntuació ponderada per intensitat que hi ha darrere la càrrega diària; les files sumen el total de la sessió. «≈»: estimat amb ritme (pendent compensat) o freqüència cardíaca quan no hi ha potència."
   }
 }

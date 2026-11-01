@@ -32,6 +32,7 @@
     "matrixTitle": "Banco de pruebas por fuente",
     "matrixNote": "La misma actividad puntuada por cada señal que pudo leerla: los watts se miden; el ritmo (pendiente compensada) y la FC son estimaciones."
   },
+  "rapNote": "RAP = ritmo equivalente en llano (pendiente compensada): el ritmo real corregido por la pendiente, el que puntúan las fórmulas de ritmo.",
   "sport": {
     "label": "Deporte",
     "all": "Todos los deportes"
@@ -149,6 +150,7 @@
     "effortsMany": "intentos",
     "colStart": "inicio",
     "colGrade": "pendiente",
+    "colRap": "Equiv.",
     "colDesnivel": "desnivel (+/−)",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Desnivel (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS es la puntuación ponderada por intensidad que hay detrás de la carga diaria; las filas suman el total de la sesión. «≈»: estimado por ritmo (pendiente compensado) o FC cuando no hay potencia."
   }
 }

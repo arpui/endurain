@@ -39,7 +39,8 @@
     "empty": {
       "title": "Aucun effort pour l’instant",
       "description": "Recalculez les efforts pour comparer vos activités existantes à ce segment."
-    }
+    },
+    "rap": "Éq."
   },
   "import": {
     "button": "Importer un segment",

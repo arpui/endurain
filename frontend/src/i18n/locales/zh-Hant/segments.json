@@ -39,7 +39,8 @@
     "empty": {
       "title": "還沒有用時",
       "description": "重新計算用時，以比對現有活動與此路段。"
-    }
+    },
+    "rap": "等效"
   },
   "import": {
     "button": "匯入路段",

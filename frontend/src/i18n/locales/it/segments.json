@@ -39,7 +39,8 @@
     "empty": {
       "title": "Ancora nessuno sforzo",
       "description": "Ricalcola gli sforzi per confrontare le attività esistenti con questo segmento."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importa segmento",

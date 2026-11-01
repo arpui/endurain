@@ -32,6 +32,7 @@
     "matrixTitle": "Uporedba po izvoru",
     "matrixNote": "Ista aktivnost ocenjena po svakom izvoru koji ju je mogao očitati: vatovi se mere; tempo kompenzovan nagibom i FT su procene."
   },
+  "rapNote": "RAP = ekvivalentan tempo na ravnom (kompenzovan nagibom): stvarni tempo popravljen nagibom, taj tempo formule tempa boduju.",
   "sport": {
     "label": "Спорт",
     "all": "Сви спортови"
@@ -149,6 +150,7 @@
     "effortsMany": "напора",
     "colStart": "почетак",
     "colGrade": "нагиб",
+    "colRap": "Equiv.",
     "colDesnivel": "uspon / spuštanje",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Uspon / spuštanje",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS je ocena ponderisana intenzitetom iza dnevne opterećenosti; redovi se sabiraju u ukupan zbir aktivnosti. „≈”: procenjeno iz (nagibom kompenzovanog) tempa ili FT bez snage."
   }
 }

@@ -32,6 +32,11 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 
+/** Formats an m/s pace-or-speed value the way the sport's other tempo cells read. */
+function tempoFromMs(ms: number, activityType: number): string {
+  return formatLapTempo(1 / ms, ms, activityType, props.units)
+}
+
 /** Short benchmark label for one source, matching the sources.* block. */
 function sourceShortLabel(key: string): string {
   return t(`analysis.sources.short${key.charAt(0).toUpperCase()}${key.slice(1)}`)
@@ -63,6 +68,8 @@ const showPower = computed(() => props.dynamics.some((row) => row.avgPowerW !== 
 const showLength = computed(() => props.dynamics.some((row) => row.strideLengthM !== null))
 const showRss = computed(() => props.dynamics.some((row) => row.rss !== null))
 const showRssMin = computed(() => props.dynamics.some((row) => row.rssPerMin !== null))
+/** Equivalent-pace column only when some lap has one (running with a critical speed). */
+const showRap = computed(() => props.dynamics.some((row) => row.rapMs !== null))
 /** The source benchmark only earns a column when something compares. */
 const showCompare = computed(() =>
   props.dynamics.some((row) => orderedSourceScores(row.sourceScores ?? null).length >= 2),
@@ -107,6 +114,7 @@ interface LapRow {
   distance: string
   time: string
   tempo: string
+  rap: string
   tempoScore: number | null
   elevation: string
   strokeRate: string
@@ -140,6 +148,10 @@ const rows = computed<LapRow[]>(() =>
             props.activity.activityType,
             props.units,
           ),
+      rap:
+        entry.isRest || dynamics?.rapMs === null || dynamics?.rapMs === undefined
+          ? '--'
+          : tempoFromMs(dynamics.rapMs, props.activity.activityType),
       tempoScore: entry.isRest ? null : entry.normalizedScore,
       elevation: elevationPair(dynamics, lap),
       strokeRate: lap.avgCadence === null ? '--' : `${Math.round(lap.avgCadence)}`,
@@ -204,6 +216,7 @@ function elevationPair(dynamics: LapDynamics | undefined, lap: ActivityLap): str
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.distance') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.time') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
+            <th v-if="showRap" class="py-2 pe-3 font-medium">{{ t('analysis.laps.rap') }}</th>
             <th v-if="showElevation" class="py-2 pe-3 font-medium">
               {{ t('analysis.laps.desnivel') }}
             </th>
@@ -258,6 +271,9 @@ function elevationPair(dynamics: LapDynamics | undefined, lap: ActivityLap): str
                 />
               </span>
             </td>
+            <td v-if="showRap" class="py-2 pe-3 tabular-nums text-muted-foreground">
+              {{ row.rap }}
+            </td>
             <td v-if="showElevation" class="py-2 pe-3 text-muted-foreground">
               {{ row.elevation }}
             </td>
@@ -294,6 +310,9 @@ function elevationPair(dynamics: LapDynamics | undefined, lap: ActivityLap): str
     </div>
     <p v-if="showRss" class="text-caption mt-2 text-muted-foreground">
       {{ t('analysis.laps.rssNote') }}
+    </p>
+    <p v-if="showRap" class="text-caption mt-1 text-muted-foreground">
+      {{ t('analysis.rapNote') }}
     </p>
   </div>
 </template>

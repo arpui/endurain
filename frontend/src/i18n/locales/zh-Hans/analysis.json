@@ -32,6 +32,7 @@
     "matrixTitle": "按来源比较",
     "matrixNote": "同一次活动按每个可读信号分别评分：功率为实测；坡度补偿配速与心率为估算。"
   },
+  "rapNote": "RAP = 平路等效配速（坡度补偿）：经坡度修正的实际配速，配速公式据此评分。",
   "sport": {
     "label": "运动",
     "all": "全部运动"
@@ -149,6 +150,7 @@
     "effortsMany": "个强度段",
     "colStart": "开始",
     "colGrade": "坡度",
+    "colRap": "等效",
     "colDesnivel": "爬升/下降",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "爬升/下降",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "等效",
     "rssNote": "aRSS 是构成每日训练负荷的强度加权分值；各行相加即为该活动的总分。 “≈”：无功率数据时由坡度补偿配速或心率估算。"
   }
 }

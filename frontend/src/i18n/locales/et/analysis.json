@@ -32,6 +32,7 @@
     "matrixTitle": "Võrdlus allika kaupa",
     "matrixNote": "See sama tegevus hinnatud iga signaaliga, mis seda lugeda suutis: vatteid mõõdetakse; kallet arvestav tempo ja pulss on hinnangud."
   },
+  "rapNote": "RAP = ekvivalentne tempo tasasel (kallet arvestav): tegelik tempo kallakuga korrigeerituna — seda tempot hindavad tempovalemid.",
   "sport": {
     "label": "Ala",
     "all": "Kõik alad"
@@ -149,6 +150,7 @@
     "effortsMany": "koormust",
     "colStart": "algus",
     "colGrade": "tõus",
+    "colRap": "Ekv.",
     "colDesnivel": "tõus / lask",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Tõus / lask",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Ekv.",
     "rssNote": "aRSS on intensiivsusega kaalutud skoor päevase koormuse taga; read annavad kokku tegevuse tervikskoori. \"≈\": hinnatud (kallet arvestava) tempo või pulsiga, kui võimsust pole."
   }
 }

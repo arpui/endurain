@@ -32,6 +32,7 @@
     "matrixTitle": "Confronto per fonte",
     "matrixNote": "La stessa attività valutata da ogni segnale che ha potuto leggerla: i watt sono misurati; ritmo (pendenza compensata) e FC sono stime."
   },
+  "rapNote": "RAP = ritmo equivalente in piano (pendenza compensata): il ritmo reale corretto per la pendenza, quello valutato dalle formule del ritmo.",
   "sport": {
     "label": "Sport",
     "all": "Tutti gli sport"
@@ -149,6 +150,7 @@
     "effortsMany": "sforzi",
     "colStart": "inizio",
     "colGrade": "pendenza",
+    "colRap": "Equiv.",
     "colDesnivel": "dislivello (+/−)",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Dislivello (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS è il punteggio ponderato per intensità alla base del carico giornaliero; le righe sommano il totale dell'attività. «≈»: stimato da ritmo (pendenza compensata) o FC quando non cè potenza."
   }
 }

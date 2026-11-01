@@ -39,7 +39,8 @@
     "empty": {
       "title": "Pingutusi pole veel",
       "description": "Arvuta pingutused uuesti, et võrrelda olemasolevaid tegevusi selle lõiguga."
-    }
+    },
+    "rap": "Ekv."
   },
   "import": {
     "button": "Impordi lõik",

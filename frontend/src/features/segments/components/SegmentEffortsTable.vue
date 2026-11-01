@@ -21,6 +21,9 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 
+/** Equivalent pace exists when the viewer has a critical speed for the sport. */
+const showRap = computed(() => props.efforts.some((effort) => effort.rapMs !== null))
+
 /** Short benchmark label for one source, matching the sources.* block. */
 function sourceShortLabel(key: string): string {
   return t(`analysis.sources.short${key.charAt(0).toUpperCase()}${key.slice(1)}`)
@@ -39,6 +42,7 @@ interface EffortRow {
   date: string
   time: string
   tempo: string
+  rap: string
   power: string
   hr: string
   rssMin: string
@@ -80,6 +84,10 @@ const rows = computed<EffortRow[]>(() => {
               effort.activityType,
               props.units,
             ),
+      rap:
+        effort.rapMs === null || effort.activityType === null
+          ? '--'
+          : formatLapTempo(null, effort.rapMs, effort.activityType, props.units),
       power: effort.avgPowerW === null ? '--' : `${Math.round(effort.avgPowerW)} W`,
       hr: effort.avgHrBpm === null ? '--' : `${Math.round(effort.avgHrBpm)} bpm`,
       rssMin:
@@ -107,6 +115,7 @@ const rows = computed<EffortRow[]>(() => {
             <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.date') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.time') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
+            <th v-if="showRap" class="py-2 pe-3 font-medium">{{ t('segments.efforts.rap') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('analysis.laps.power') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.hr') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('analysis.laps.rssMin') }}</th>
@@ -142,6 +151,9 @@ const rows = computed<EffortRow[]>(() => {
             <td class="py-2 pe-3 text-muted-foreground">{{ row.date }}</td>
             <td class="py-2 pe-3 font-medium text-foreground">{{ row.time }}</td>
             <td class="py-2 pe-3 text-foreground">{{ row.tempo }}</td>
+            <td v-if="showRap" class="py-2 pe-3 tabular-nums text-muted-foreground">
+              {{ row.rap }}
+            </td>
             <td class="py-2 pe-3 tabular-nums text-foreground">{{ row.power }}</td>
             <td class="py-2 pe-3 tabular-nums text-muted-foreground">{{ row.hr }}</td>
             <td class="py-2 pe-3 tabular-nums text-muted-foreground">{{ row.rssMin }}</td>
@@ -159,6 +171,9 @@ const rows = computed<EffortRow[]>(() => {
     </div>
     <p class="text-caption mt-2 text-muted-foreground">
       {{ t('segments.efforts.rssNote') }}
+    </p>
+    <p v-if="showRap" class="text-caption mt-1 text-muted-foreground">
+      {{ t('analysis.rapNote') }}
     </p>
   </div>
 </template>

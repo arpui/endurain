@@ -39,7 +39,8 @@
     "empty": {
       "title": "Încă nu există eforturi",
       "description": "Recalculează eforturile pentru a compara activitățile existente cu acest segment."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importă segment",

@@ -62,6 +62,7 @@ export function mapSegmentEffort(dto: SegmentEffortDto): SegmentEffort {
     sourceScores: dto.source_scores ?? null,
     timeStart: dto.time_start,
     timeEnd: dto.time_end,
+    rapMs: dto.rap_ms ?? null,
   }
 }
 

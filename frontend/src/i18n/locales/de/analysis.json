@@ -32,6 +32,7 @@
     "matrixTitle": "Vergleich nach Quelle",
     "matrixNote": "Dieselbe Aktivität, nach jeder Quelle bewertet, die sie erfassen konnte: Watt werden gemessen; steigkorrigiertes Tempo und Herzfrequenz sind Schätzungen."
   },
+  "rapNote": "RAP = äquivalentes Tempo in der Ebene (steigkorrigiert): das tatsächliche Tempo, korrigiert um die Steigung - das Tempo, das die Tempo-Formeln bewerten.",
   "sport": {
     "label": "Sportart",
     "all": "Alle Sportarten"
@@ -149,6 +150,7 @@
     "effortsMany": "Belastungen",
     "colStart": "Beginn",
     "colGrade": "Steigung",
+    "colRap": "Äquiv.",
     "colDesnivel": "auf-/Abstieg",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Auf-/Abstieg",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Äquiv.",
     "rssNote": "aRSS ist der intensivitätsgewichtete Wert hinter der Tagesbelastung; die Zeilen summieren sich zum Aktivitätsgesamt. „≈“: ohne Leistungsmessung aus (steigkorrigiertem) Tempo oder Herzfrequenz geschätzt."
   }
 }
