@@ -18,7 +18,8 @@
     "rss_up": "aRSS nousut",
     "rss_high": "aRSS korkea",
     "rss_mid": "aRSS keski",
-    "rss_low": "aRSS kevyt"
+    "rss_low": "aRSS kevyt",
+    "daniels_points": "Daniels-pisteet"
   },
   "sport": {
     "label": "Laji",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Kuorma",
     "trimpNote": "TRIMP käyttää muista kaavoista poikkeavaa asteikkoa, eikä sitä lasketa yhteen niiden kanssa.",
+    "danielsNote": "Daniels-pisteet käyttävät omaa skaalaansa, eivätkä ne koskaan lasketa yhteen muiden kaavojen kanssa.",
     "rssNote": "aRSS mittaa vain teholiikunnat. Ilman tehoa oleva liikunta jää tämän sarjan ulkopuolelle; sykekuorma mittaa sen.",
     "bandNote": "Kaistat näyttävät missä työ tehtiin: nousut, korkea, keski, kevyt. Jokainen tehosekunti lasketaan vain yhdessä kaistassa, joten ne summautuvat aRSS-yhteensäarvoon."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Reitin nousut",
     "tcColRange": "osuus",
-    "tcNote": "Nousut luetaan maastosta tehosta riippumatta; ne voivat päällekkäin aikajanan kanssa eivätkä summannaudu sen kanssa. aRSS vaatii tehomittarin.",
+    "tcNote": "Nousut luetaan maastosta tehosta riippumatta; ne voivat päällekkäin aikajanan kanssa eivätkä summannaudu sen kanssa. aRSS vaatii tehomittarin. \"≈\": arvioitu (kaltevakorjatusta) vauhdista tai sykkeestä tehomittarittomissa lenkeissä.",
     "colContrast": "vs suoritus",
     "rules": "Näin havaitaan: tasangolla jakso on intervalli vain jos se pitää ≥{effortIf}·CP; suoritus avautuu {openW} W:issa ja sulkeutuu alle {closeW} W; vähintään {minS} s (alle {shortS} s vaaditaan {shortBase} session mediaanista; ilman kunnon palautusta —≤{recoveryW} W—, {strongBase}); yli {climbGrade}% nousulla ja IF<{climbIf} lasketaan nousuksi."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Nousu / lasku",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS on intensiteettipainotettu pisteluku päivittäisen kuorman takana; rivit sumaantuvat harjoituksen kokonaisarvoksi."
+    "rssNote": "aRSS on intensiteettipainotettu pisteluku päivittäisen kuorman takana; rivit sumaantuvat harjoituksen kokonaisarvoksi. \"≈\": arvioitu (kaltevakorjatusta) vauhdista tai sykkeestä tehomittarittomissa lenkeissä."
   }
 }

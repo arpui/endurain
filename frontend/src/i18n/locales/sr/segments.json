@@ -34,6 +34,7 @@
     "time": "Vreme",
     "best": "Najbolji",
     "reverse": "Suprotan smer",
+    "rssNote": "aRSS/min koristi snagu kad je ima; inače nagibom kompenzovan tempo ili FT („≈“).",
     "activityLabel": "Aktivnost {id}",
     "empty": {
       "title": "Još nema napora",

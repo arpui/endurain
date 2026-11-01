@@ -18,7 +18,8 @@
     "rss_up": "aRSS stoupání",
     "rss_high": "aRSS vysoká",
     "rss_mid": "aRSS střední",
-    "rss_low": "aRSS nízká"
+    "rss_low": "aRSS nízká",
+    "daniels_points": "Daniels body"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Zatížení",
     "trimpNote": "TRIMP používá jinou škálu než ostatní vzorce a nikdy se k nim nepřičítá.",
+    "danielsNote": "Daniels body používají vlastní škálu a nikdy se nesčítají s ostatními vzorci.",
     "rssNote": "aRSS měří jen aktivity s výkonem. Aktivita bez výkonu z této řady vypadává; tu měří zátěž podle tepu.",
     "bandNote": "Pásma říkají, kde byla práce: stoupání, vysoká, střední, nízká. Každá vteřina s výkonem se počítá právě v jednom pásmu, takže se sčítají na aRSS celkem."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Stoupání podle trasy",
     "tcColRange": "úsek",
-    "tcNote": "Stoupání se čtou z terénu, bez ohledu na výkon; mohou se překrývat s časovou osou a nesčítají se s ní. aRSS vyžaduje měření výkonu.",
+    "tcNote": "Stoupání se čtou z terénu, bez ohledu na výkon; mohou se překrývat s časovou osou a nesčítají se s ní. aRSS vyžaduje měření výkonu. „≈“: odhad z (sklonem kompenzovaného) tempa nebo TF bez měření výkonu.",
     "colContrast": "vs aktivita",
     "rules": "Jak se to detekuje: na rovině se úsek počítá jako interval jen při ≥{effortIf}·CP; úsek se otevírá při {openW} W a zavírá pod {closeW} W; minimum {minS} s (pod {shortS} s je potřeba {shortBase} mediánu aktivity; bez skutečné regenerace —≤{recoveryW} W—, {strongBase}); se stoupáním >{climbGrade}% a IF<{climbIf} se počítá jako stoupání."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Převýšení (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS je intenzitou vážené skóre za denní zátěží; řádky se sčítají na celkový údaj aktivity."
+    "rssNote": "aRSS je intenzitou vážené skóre za denní zátěží; řádky se sčítají na celkový údaj aktivity. „≈“: odhad z (sklonem kompenzovaného) tempa nebo TF bez měření výkonu."
   }
 }

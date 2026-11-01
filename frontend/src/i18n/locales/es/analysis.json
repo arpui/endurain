@@ -18,7 +18,8 @@
     "rss_up": "aRSS subidas",
     "rss_high": "aRSS intenso",
     "rss_mid": "aRSS medio",
-    "rss_low": "aRSS suave"
+    "rss_low": "aRSS suave",
+    "daniels_points": "Puntos de Daniels"
   },
   "sport": {
     "label": "Deporte",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Carga",
     "trimpNote": "TRIMP usa una escala distinta a las demás fórmulas y nunca se suma con ellas.",
+    "danielsNote": "Los puntos de Daniels usan una escala propia y nunca se suman con las demás fórmulas.",
     "rssNote": "El aRSS solo mide actividades con potencia. Una actividad sin potencia queda fuera de esta serie; quien la mide es la carga por FC.",
     "bandNote": "Las bandas dicen dónde estuvo el trabajo: subidas, intenso, medio, suave. Cada segundo con potencia cuenta en una sola banda, así que se suman al aRSS total."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Puertos del recorrido",
     "tcColRange": "tramo",
-    "tcNote": "Los puertos se leen del terreno, independientemente de la potencia; pueden solaparse con la línea de tiempo y no se suman con ella. El aRSS requiere potencia.",
+    "tcNote": "Los puertos se leen del terreno, independientemente de la potencia; pueden solaparse con la línea de tiempo y no se suman con ella. El aRSS requiere potencia. «≈»: estimado por ritmo (pendiente compensado) o FC cuando no hay potencia.",
     "colContrast": "vs sesión",
     "rules": "Cómo se detecta aquí: en llano un tramo cuenta como intervalo solo si mantiene ≥{effortIf}·CP; se abre uno a {openW} W y se cierra por debajo de {closeW} W; mínimo {minS} s (bajo {shortS} s hace falta {shortBase} la mediana de la sesión; sin recuperación real —≤{recoveryW} W—, {strongBase}); con pendiente >{climbGrade}% e IF<{climbIf} cuenta como subida."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Desnivel (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS es la puntuación ponderada por intensidad que hay detrás de la carga diaria; las filas suman el total de la sesión."
+    "rssNote": "aRSS es la puntuación ponderada por intensidad que hay detrás de la carga diaria; las filas suman el total de la sesión. «≈»: estimado por ritmo (pendiente compensado) o FC cuando no hay potencia."
   }
 }

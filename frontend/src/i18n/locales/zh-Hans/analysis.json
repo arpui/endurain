@@ -18,7 +18,8 @@
     "rss_up": "aRSS 爬坡",
     "rss_high": "aRSS 高强度",
     "rss_mid": "aRSS 中等",
-    "rss_low": "aRSS 低强度"
+    "rss_low": "aRSS 低强度",
+    "daniels_points": "丹尼尔斯点数"
   },
   "sport": {
     "label": "运动",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "负荷",
     "trimpNote": "TRIMP 使用与其他公式不同的量表，不会与它们相加。",
+    "danielsNote": "丹尼尔斯点数使用独立的量纲，绝不与其他公式的数值相加。",
     "rssNote": "aRSS 只测量带功率的活动。没有功率的活动不计入这条曲线；由心率负荷来测量。",
     "bandNote": "各分区说明负荷来自哪里：爬坡、高强度、中等、低强度。每个功率秒只计入一个分区，因此相加等于 aRSS 总计。"
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "路线爬坡",
     "tcColRange": "路段",
-    "tcNote": "爬坡读自地形，与功率无关；可能与时间线重叠，且不与其相加。aRSS 需要功率计。",
+    "tcNote": "爬坡读自地形，与功率无关；可能与时间线重叠，且不与其相加。aRSS 需要功率计。 “≈”：无功率数据时由坡度补偿配速或心率估算。",
     "colContrast": "对比本次",
     "rules": "此处的判定方式：平路上只有维持 ≥{effortIf}·CP 的段落才算间歇；强度段在 {openW} W 开启、低于 {closeW} W 结束；最短 {minS} 秒（低于 {shortS} 秒需达到本次中位数的 {shortBase}；无真正恢复——≤{recoveryW} W——时需 {strongBase}）；坡度 >{climbGrade}% 且 IF<{climbIf} 计为爬坡。"
   },
@@ -173,6 +175,6 @@
     "desnivel": "爬升/下降",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS 是构成每日训练负荷的强度加权分值；各行相加即为该活动的总分。"
+    "rssNote": "aRSS 是构成每日训练负荷的强度加权分值；各行相加即为该活动的总分。 “≈”：无功率数据时由坡度补偿配速或心率估算。"
   }
 }

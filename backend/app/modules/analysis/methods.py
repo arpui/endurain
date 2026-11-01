@@ -17,6 +17,7 @@ one :class:`ActivityLoad` row like any other.
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from math import exp
+from statistics import mean as arithmetic_mean
 
 import modules.analysis.constants as analysis_constants
 import modules.analysis.maths as analysis_maths
@@ -56,6 +57,7 @@ class LoadInput:
     speed_ms: tuple[float, ...] | None = None
     grade_pct: tuple[float, ...] | None = None
     power_threshold_w: float | None = None
+    speed_threshold_ms: float | None = None
     hr_threshold_bpm: float | None = None
     resting_hr_bpm: float | None = None
     parameters: Mapping[str, float] = field(default_factory=dict)
@@ -250,6 +252,40 @@ def _rss_lifted_kernel(
     return kernel
 
 
+def _window_stress_scaled(
+    values: Sequence[float],
+    divisor_signal: float,
+    period_s: float,
+    grade_pct: Sequence[float] | None,
+    parameters: Mapping[str, float],
+    *,
+    lift_with_grade: bool,
+) -> float:
+    """Sum the kernel over one window, dividing each raw sample by its threshold.
+
+    A sample at or below zero skipped: it is a stopped sensor second, not a zero
+    effort. ``lift_with_grade`` applies the grade floors only where the signal
+    itself misses the terrain: watts do, adjusted pace and heart rate do not.
+    """
+    if not values or divisor_signal <= 0 or period_s <= 0:
+        return 0.0
+    soft_grade = parameters.get("rss_soft_grade_pct", analysis_constants.RSS_SOFT_GRADE_PCT)
+    soft_floor = parameters.get("rss_soft_floor", analysis_constants.RSS_SOFT_FLOOR)
+    climb_grade = parameters.get("rss_climb_grade_pct", analysis_constants.RSS_CLIMB_GRADE_PCT)
+    climb_floor = parameters.get("rss_climb_floor", analysis_constants.RSS_CLIMB_FLOOR)
+    divisor = parameters.get("rss_norm", analysis_constants.RSS_NORM)
+    total = 0.0
+    for index, raw in enumerate(values):
+        if raw <= 0:
+            continue
+        kernel = _rss_kernel(raw / divisor_signal, parameters)
+        if lift_with_grade:
+            grade = grade_pct[index] if grade_pct is not None and index < len(grade_pct) else 0.0
+            kernel = _rss_lifted_kernel(kernel, grade, soft_grade, soft_floor, climb_grade, climb_floor)
+        total += kernel
+    return 100.0 * total * period_s / (divisor * 3600.0)
+
+
 def rss_window_stress(
     power_w: Sequence[float],
     period_s: float,
@@ -261,76 +297,139 @@ def rss_window_stress(
 
     The same kernel the daily ``rss_total`` sums, over an arbitrary slice: that is
     what makes the per-lap and per-interval scores add back up to the activity's
-    load, which is how the tables can be cross-checked against the PMC.
+    load, which is how the tables can be cross-checked with the PMC.
     """
-    if not threshold_w or threshold_w <= 0 or not power_w or period_s <= 0:
+    if not threshold_w or threshold_w <= 0:
         return 0.0
-    parameters = parameters or {}
-    soft_grade = parameters.get("rss_soft_grade_pct", analysis_constants.RSS_SOFT_GRADE_PCT)
-    soft_floor = parameters.get("rss_soft_floor", analysis_constants.RSS_SOFT_FLOOR)
-    climb_grade = parameters.get("rss_climb_grade_pct", analysis_constants.RSS_CLIMB_GRADE_PCT)
-    climb_floor = parameters.get("rss_climb_floor", analysis_constants.RSS_CLIMB_FLOOR)
-    divisor = parameters.get("rss_norm", analysis_constants.RSS_NORM)
-    total = 0.0
-    for index, watts in enumerate(power_w):
-        if watts <= 0:
-            continue
-        grade = grade_pct[index] if grade_pct is not None and index < len(grade_pct) else 0.0
-        kernel = _rss_kernel(watts / threshold_w, parameters)
-        total += _rss_lifted_kernel(kernel, grade, soft_grade, soft_floor, climb_grade, climb_floor)
-    return 100.0 * total * period_s / (divisor * 3600.0)
+    return _window_stress_scaled(
+        power_w, float(threshold_w), period_s, grade_pct, parameters or {}, lift_with_grade=True
+    )
+
+
+def window_stress_chain(
+    power_w: Sequence[float] | None,
+    speeds_ms: Sequence[float] | None,
+    hr_bpm: Sequence[float] | None,
+    grades_pct: Sequence[float] | None,
+    period_s: float,
+    threshold_w: float | None,
+    speed_threshold_ms: float | None,
+    hr_threshold_bpm: float | None,
+    parameters: Mapping[str, float] | None = None,
+) -> tuple[float, str | None]:
+    """Return a window's shared-scale aRSS from the best signal the device carried.
+
+    The sources follow one order everywhere it is asked: watts over threshold,
+    then grade-adjusted pace over critical speed, then heart rate over threshold
+    heart rate. Watts get the grade floors because power alone under-reads
+    climbing; adjusted pace does not need them because GAP has already turned the
+    terrain into equivalent flat speed; heart rate does not need them either
+    because the body has already paid for the hill on a climb.
+
+    Returns:
+        The score and the source used (``power``, ``pace``, ``hr``), or ``(0.0,
+        None)`` when no signal and threshold pair is available.
+    """
+    params = parameters or {}
+    if period_s <= 0:
+        return 0.0, None
+    if power_w and threshold_w and threshold_w > 0:
+        score = _window_stress_scaled(power_w, float(threshold_w), period_s, grades_pct, params, lift_with_grade=True)
+        return score, ("power" if score > 0 else None)
+    if speeds_ms and speed_threshold_ms and speed_threshold_ms > 0:
+        grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
+        adjusted = analysis_maths.grade_adjusted_run_speed(speeds_ms, grades)
+        score = _window_stress_scaled(
+            adjusted, float(speed_threshold_ms), period_s, None, params, lift_with_grade=False
+        )
+        return score, ("pace" if score > 0 else None)
+    if hr_bpm and hr_threshold_bpm and hr_threshold_bpm > 0:
+        score = _window_stress_scaled(hr_bpm, float(hr_threshold_bpm), period_s, None, params, lift_with_grade=False)
+        return score, ("hr" if score > 0 else None)
+    return 0.0, None
 
 
 def _rss_load(data: LoadInput, band: str) -> LoadValue | None:
     """Sum the exponential kernel over one activity, keeping only ``band``'s seconds.
 
+    The intensity source follows the one chain: the power stream when the activity
+    carries one, otherwise grade-adjusted pace over critical speed, otherwise the
+    session's average heart rate over the threshold heart rate - the only heart
+    rate these formulas have, as in ``hr_load``, so its seconds all read the same
+    intensity.
+
     Args:
         data: The activity's samples and thresholds.
         band: ``total``, ``up``, ``high``, ``mid`` or ``low``; ``total`` keeps every
-            powered second instead of splitting them.
+            measured second instead of splitting them.
 
     Returns:
-        The load in the shared scale, or ``None`` when the activity has no power or
-        its sport no threshold, or when no second fell in the band.
+        The load in the shared scale, or ``None`` when no signal and threshold pair
+        is available, or when no second fell in the band.
     """
-    threshold = data.power_threshold_w
-    if not threshold or threshold <= 0 or not data.power_w or data.moving_seconds <= 0:
+    if data.moving_seconds <= 0:
         return None
     parameters = data.parameters
     speeds = data.speed_ms
     grades = data.grade_pct
+    threshold = data.power_threshold_w
     soft_grade = parameters.get("rss_soft_grade_pct", analysis_constants.RSS_SOFT_GRADE_PCT)
     soft_floor = parameters.get("rss_soft_floor", analysis_constants.RSS_SOFT_FLOOR)
     climb_grade = parameters.get("rss_climb_grade_pct", analysis_constants.RSS_CLIMB_GRADE_PCT)
     climb_floor = parameters.get("rss_climb_floor", analysis_constants.RSS_CLIMB_FLOOR)
+    divisor = parameters.get("rss_norm", analysis_constants.RSS_NORM)
+
+    if data.power_w and threshold and threshold > 0:
+        samples: Sequence[float] | None = data.power_w
+        signal_divisor = float(threshold)
+        lift_with_grade = True
+    elif speeds and data.speed_threshold_ms and data.speed_threshold_ms > 0:
+        grade_source = grades if grades is not None else (0.0,) * len(speeds)
+        samples = analysis_maths.grade_adjusted_run_speed(speeds, grade_source)
+        signal_divisor = float(data.speed_threshold_ms)
+        lift_with_grade = False
+    elif data.average_hr and data.hr_threshold_bpm and data.hr_threshold_bpm > 0:
+        samples = None
+        signal_divisor = float(data.hr_threshold_bpm)
+        lift_with_grade = False
+    else:
+        return None
+
     total = 0.0
-    for index, watts in enumerate(data.power_w):
-        if watts <= 0:
-            continue
-        intensity = watts / threshold
-        grade = grades[index] if grades is not None and index < len(grades) else 0.0
-        speed = speeds[index] if speeds is not None and index < len(speeds) else 0.0
-        kernel = _rss_kernel(intensity, parameters)
-        if band == "total":
-            # Every second counts, and a grade only ever lifts its score.
-            kernel = _rss_lifted_kernel(kernel, grade, soft_grade, soft_floor, climb_grade, climb_floor)
-        else:
-            if _rss_sample_band(intensity, speed, grade, parameters) != band:
+    if samples is None:
+        intensity = float(data.average_hr) / signal_divisor
+        if band != "total" and _rss_sample_band(intensity, 0.0, 0.0, parameters) != band:
+            return None
+        total = _rss_kernel(intensity, parameters) * (data.moving_seconds / (data.period_s or 1.0))
+        intensity_factor: float | None = intensity
+    else:
+        for index, raw in enumerate(samples):
+            if raw <= 0:
                 continue
-            if band == "up" or grade > climb_grade:
-                kernel = max(kernel, climb_floor)
-            elif band in ("low", "mid") and grade > soft_grade:
-                kernel = max(kernel, soft_floor)
-        total += kernel
+            intensity = raw / signal_divisor
+            grade = grades[index] if grades is not None and index < len(grades) else 0.0
+            speed = speeds[index] if speeds is not None and index < len(speeds) else 0.0
+            kernel = _rss_kernel(intensity, parameters)
+            if band == "total":
+                if lift_with_grade:
+                    kernel = _rss_lifted_kernel(kernel, grade, soft_grade, soft_floor, climb_grade, climb_floor)
+            else:
+                if _rss_sample_band(intensity, speed, grade, parameters) != band:
+                    continue
+                if lift_with_grade:
+                    if band == "up" or grade > climb_grade:
+                        kernel = max(kernel, climb_floor)
+                    elif band in ("low", "mid") and grade > soft_grade:
+                        kernel = max(kernel, soft_floor)
+            total += kernel
+        positive = [value for value in samples if value > 0]
+        intensity_factor = (arithmetic_mean(positive) / signal_divisor) if positive else None
     if total <= 0:
         return None
-    normalized = _normalized_power_w(data)
-    intensity_factor = normalized / threshold if normalized else None
-    divisor = parameters.get("rss_norm", analysis_constants.RSS_NORM)
     return LoadValue(
-        load=100.0 * total * data.period_s / (divisor * 3600.0),
+        load=100.0 * total * (data.period_s or 1.0) / (divisor * 3600.0),
         intensity_factor=intensity_factor,
-        threshold_used=float(threshold),
+        threshold_used=signal_divisor,
     )
 
 
@@ -357,6 +456,53 @@ def rss_mid(data: LoadInput) -> LoadValue | None:
 def rss_low(data: LoadInput) -> LoadValue | None:
     """The share taken slow and below the low band edge, off climbs."""
     return _rss_load(data, "low")
+
+
+# --- Daniels points ------------------------------------------------------------
+#
+# Jack Daniels' pace model, kept in the shape GoldenCheetah's metric gives it:
+# one second at intensity ``x`` over threshold is worth ``100/3600 · x⁴``, so
+# an hour at threshold scores 100 points. The fourth power is why this is a
+# scale of its own: an hour at threshold reads 100 like every other method, but
+# away from threshold the curve is far steeper than any of theirs, so Daniels
+# numbers are reported beside the shared scale and never added to it, exactly
+# like TRIMP's. The intensity source follows the chain only as far as pace -
+# watts over critical power, grade-adjusted pace over critical speed - because
+# Daniels never scored heart rate, and neither does this.
+
+
+def daniels_points(data: LoadInput) -> LoadValue | None:
+    """Daniels points over one activity: the fourth power of intensity, summed.
+
+    Returns:
+        The points, with the mean intensity they were built from and the
+        threshold used, or ``None`` when neither watts nor adjusted pace and a
+        matching threshold are available.
+    """
+    if data.moving_seconds <= 0:
+        return None
+    if data.power_w and data.power_threshold_w and data.power_threshold_w > 0:
+        samples: Sequence[float] = data.power_w
+        divisor = float(data.power_threshold_w)
+    elif data.speed_ms and data.speed_threshold_ms and data.speed_threshold_ms > 0:
+        grades = data.grade_pct if data.grade_pct is not None else (0.0,) * len(data.speed_ms)
+        samples = analysis_maths.grade_adjusted_run_speed(data.speed_ms, grades)
+        divisor = float(data.speed_threshold_ms)
+    else:
+        return None
+    total = 0.0
+    for raw in samples:
+        if raw <= 0:
+            continue
+        total += (raw / divisor) ** 4
+    if total <= 0:
+        return None
+    positive = [value for value in samples if value > 0]
+    return LoadValue(
+        load=100.0 * total * (data.period_s or 1.0) / 3600.0,
+        intensity_factor=(arithmetic_mean(positive) / divisor) if positive else None,
+        threshold_used=divisor,
+    )
 
 
 @dataclass(frozen=True)
@@ -387,6 +533,7 @@ LOAD_FORMULAS: tuple[LoadFormula, ...] = (
     LoadFormula(analysis_constants.LoadMethod.RSS_HIGH, "aRSS high band", rss_high),
     LoadFormula(analysis_constants.LoadMethod.RSS_MID, "aRSS middle band", rss_mid),
     LoadFormula(analysis_constants.LoadMethod.RSS_LOW, "aRSS low band", rss_low),
+    LoadFormula(analysis_constants.LoadMethod.DANIELS, "Daniels points", daniels_points),
 )
 
 

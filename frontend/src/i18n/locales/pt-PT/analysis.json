@@ -18,7 +18,8 @@
     "rss_up": "aRSS subidas",
     "rss_high": "aRSS intenso",
     "rss_mid": "aRSS médio",
-    "rss_low": "aRSS fácil"
+    "rss_low": "aRSS fácil",
+    "daniels_points": "Pontos Daniels"
   },
   "sport": {
     "label": "Desporto",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Carga",
     "trimpNote": "O TRIMP usa uma escala diferente das outras fórmulas e nunca é somado a elas.",
+    "danielsNote": "Os pontos Daniels usam uma escala própria e nunca são somados às outras fórmulas.",
     "rssNote": "O aRSS só mede atividades com potência. Uma atividade sem potência fica fora desta série; quem a mede é a carga por FC.",
     "bandNote": "As bandas dizem onde esteve o trabalho: subidas, intenso, médio, fácil. Cada segundo com potência conta numa só banda, por isso somam ao aRSS total."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Subidas do percurso",
     "tcColRange": "troço",
-    "tcNote": "As subidas são lidas do terreno, independentemente da potência; podem sobrepor-se à linha temporal e não são somadas com ela. O aRSS requer um potenciómetro.",
+    "tcNote": "As subidas são lidas do terreno, independentemente da potência; podem sobrepor-se à linha temporal e não são somadas com ela. O aRSS requer um potenciómetro. «≈»: estimado pelo ritmo (declive compensado) ou FC quando não há potência.",
     "colContrast": "vs sessão",
     "rules": "Como é detetado aqui: em plano um troço conta como intervalo só se mantiver ≥{effortIf}·CP; abre-se um esforço a {openW} W e fecha abaixo de {closeW} W; mínimo {minS} s (abaixo de {shortS} s exige {shortBase} a mediana da sessão; sem recuperação real —≤{recoveryW} W—, {strongBase}); com inclinação >{climbGrade}% e IF<{climbIf} conta como subida."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Elevação / descida",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS é a pontuação ponderada pela intensidade por trás da carga diária; as linhas somam o total da sessão."
+    "rssNote": "aRSS é a pontuação ponderada pela intensidade por trás da carga diária; as linhas somam o total da sessão. «≈»: estimado pelo ritmo (declive compensado) ou FC quando não há potência."
   }
 }

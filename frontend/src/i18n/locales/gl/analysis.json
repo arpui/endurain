@@ -18,7 +18,8 @@
     "rss_up": "aRSS subidas",
     "rss_high": "aRSS intenso",
     "rss_mid": "aRSS medio",
-    "rss_low": "aRSS suave"
+    "rss_low": "aRSS suave",
+    "daniels_points": "Puntos Daniels"
   },
   "sport": {
     "label": "Deporte",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Carga",
     "trimpNote": "O TRIMP emprega unha escala distinta das outras fórmulas e nunca se suma con elas.",
+    "danielsNote": "Os puntos Daniels usan unha escala propia e nunca se suman coas demais fórmulas.",
     "rssNote": "O aRSS só mide actividades con potencia. Unha actividade sen potencia queda fóra desta serie; quen a mide é a carga por FC.",
     "bandNote": "As bandas din onde estivo o traballo: subidas, intenso, medio, suave. Cada segundo con potencia conta nunha soa banda, polo que se suman ao aRSS total."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Subidas do percorrido",
     "tcColRange": "tramo",
-    "tcNote": "As subidas léense do terreo, independentemente da potencia; poden solaparse coa liña de tempo e non se suman con ela. O aRSS require potencia.",
+    "tcNote": "As subidas léense do terreo, independentemente da potencia; poden solaparse coa liña de tempo e non se suman con ela. O aRSS require potencia. «≈»: estimado polo ritmo (pendente compensado) ou a FC cando non hai potencia.",
     "colContrast": "vs sesión",
     "rules": "Como se detecta aquí: en chanzo un tramo conta como intervalo só se mantén ≥{effortIf}·CP; ábrese un esforzo a {openW} W e péchase por debaixo de {closeW} W; mínimo {minS} s (baixo {shortS} s require {shortBase} a mediana da sesión; sen recuperación real —≤{recoveryW} W—, {strongBase}); con pendente >{climbGrade}% e IF<{climbIf} conta como subida."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Desnivel (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS é a puntuación ponderada pola intensidade que hai detrás da carga diaria; as filas suman o total da sesión."
+    "rssNote": "aRSS é a puntuación ponderada pola intensidade que hai detrás da carga diaria; as filas suman o total da sesión. «≈»: estimado polo ritmo (pendente compensado) ou a FC cando non hai potencia."
   }
 }

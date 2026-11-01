@@ -34,6 +34,7 @@
     "time": "Tempo",
     "best": "Migliore",
     "reverse": "Senso inverso",
+    "rssNote": "aRSS/min usa la potenza se presente; altrimenti ritmo con pendenza compensata o FC (contrassegnato «≈»).",
     "activityLabel": "Attività {id}",
     "empty": {
       "title": "Ancora nessuno sforzo",

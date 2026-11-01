@@ -105,6 +105,7 @@ describe('ActivityIntervalTable terrain climbs', () => {
         intensityFactor: 1.11,
         contrast: 1.39,
         rss: 60.2,
+        rssSource: 'power',
         rssPerMin: 14.7,
       },
     ])
@@ -145,7 +146,8 @@ describe('ActivityIntervalTable terrain climbs', () => {
               avgPowerW: null,
               intensityFactor: null,
               contrast: null,
-              rss: null,
+              rss: 11.0,
+              rssSource: 'pace',
               rssPerMin: 22.0,
             },
           ],
@@ -160,7 +162,9 @@ describe('ActivityIntervalTable terrain climbs', () => {
     if (!row) {
       throw new Error('no climb row rendered')
     }
-    expect(row.text()).toContain('--')
     expect(row.text()).toContain('+80')
+    // scored from adjusted pace: marked as an estimate, watts stay dashed
+    expect(row.text()).toContain('\u224822.00')
+    expect(row.text()).toContain('--')
   })
 })

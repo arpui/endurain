@@ -138,12 +138,20 @@ const rows = computed<LapRow[]>(() =>
           ? '--'
           : `${Math.round(dynamics.avgPowerW)} W`,
       length: decimal(dynamics?.strideLengthM ?? null, 2),
-      rss: decimal(dynamics?.rss ?? null, 1),
-      rssMin: decimal(dynamics?.rssPerMin ?? null, 2),
+      rss: estimated(dynamics, decimal(dynamics?.rss ?? null, 1)),
+      rssMin: estimated(dynamics, decimal(dynamics?.rssPerMin ?? null, 2)),
       isRest: entry.isRest,
     }
   }),
 )
+
+/** Estimated scores (pace or heart rate, no power meter) carry a marker. */
+function estimated(dynamics: LapDynamics | undefined, value: string): string {
+  if (value === '--') {
+    return value
+  }
+  return dynamics?.rssSource && dynamics.rssSource !== 'power' ? `\u2248${value}` : value
+}
 
 /**
  * Ascent and descent as one honest pair (`+10 / −8 m`), never netted: a rolling

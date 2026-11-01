@@ -26,6 +26,7 @@ export type LoadMethod =
   | 'skiba_score'
   | 'hr_load'
   | 'trimp'
+  | 'daniels_points'
   | 'rss_total'
   | 'rss_up'
   | 'rss_high'
@@ -295,6 +296,8 @@ export interface TerrainClimb {
   intensityFactor: number | null
   contrast: number | null
   rss: number | null
+  /** Which signal scored it: power, grade-adjusted pace or heart rate. */
+  rssSource: 'power' | 'pace' | 'hr' | null
   /** The score per minute of climbing, the comparable rate across climbs. */
   rssPerMin: number | null
 }
@@ -308,8 +311,8 @@ export interface BestTime {
   distanceM: number
   /** Time it took, in seconds. */
   timeS: number
-  /** Mean power across the split, in watts. */
-  avgPowerW: number
+  /** Mean power across the split; null when the activity had no power stream. */
+  avgPowerW: number | null
   activityId: number
   /** Start of the activity holding the split, for the link to its day. */
   startTime: string | null
@@ -337,6 +340,8 @@ export interface LapDynamics {
   elevationLossM: number | null
   /** Shared-scale aRSS score of the lap's window; the rows add up to the activity's. */
   rss: number | null
+  /** Which signal scored it: power, grade-adjusted pace or heart rate. */
+  rssSource: 'power' | 'pace' | 'hr' | null
   /** That score per minute of the lap, the mean stress rate. */
   rssPerMin: number | null
 }

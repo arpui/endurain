@@ -34,6 +34,7 @@
     "time": "Tid",
     "best": "Bedste",
     "reverse": "Modsat retning",
+    "rssNote": "aRSS/min bruger effekt, hvis tilgængelig; ellers hældningskorrigeret pace eller puls (markeret \"≈\").",
     "activityLabel": "Aktivitet {id}",
     "empty": {
       "title": "Ingen indsatser endnu",

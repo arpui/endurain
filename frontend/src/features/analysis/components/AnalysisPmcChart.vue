@@ -42,6 +42,9 @@ const methodNote = computed(() => {
   if (props.method === 'trimp') {
     return t('analysis.daily.trimpNote')
   }
+  if (props.method === 'daniels_points') {
+    return t('analysis.daily.danielsNote')
+  }
   if (props.method.startsWith('rss_')) {
     return isRssBandMethod(props.method)
       ? `${t('analysis.daily.rssNote')} ${t('analysis.daily.bandNote')}`

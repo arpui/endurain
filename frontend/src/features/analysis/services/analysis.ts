@@ -312,6 +312,7 @@ function mapTerrainClimb(dto: TerrainClimbDto): TerrainClimb {
     intensityFactor: dto.intensity_factor ?? null,
     contrast: dto.contrast ?? null,
     rss: dto.rss ?? null,
+    rssSource: (dto.rss_source as 'power' | 'pace' | 'hr' | null) ?? null,
     rssPerMin: dto.rss_per_min ?? null,
   }
 }
@@ -367,7 +368,7 @@ function mapBestTime(dto: BestTimeDto): BestTime {
   return {
     distanceM: dto.distance_m,
     timeS: dto.time_s,
-    avgPowerW: dto.avg_power_w,
+    avgPowerW: dto.avg_power_w ?? null,
     activityId: dto.activity_id,
     startTime: dto.start_time ?? null,
   }
@@ -409,6 +410,7 @@ function mapLapDynamics(dto: LapDynamicsDto): LapDynamics {
     elevationGainM: dto.elevation_gain_m ?? null,
     elevationLossM: dto.elevation_loss_m ?? null,
     rss: dto.rss ?? null,
+    rssSource: (dto.rss_source as 'power' | 'pace' | 'hr' | null) ?? null,
     rssPerMin: dto.rss_per_min ?? null,
   }
 }

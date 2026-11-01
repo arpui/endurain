@@ -413,7 +413,9 @@ class TerrainClimbRead(BaseModel):
         avg_power_w: Mean power, ``None`` without a power stream.
         intensity_factor: Mean power over the threshold, ``None`` without either.
         contrast: Mean power over the session's median, ``None`` without either.
-        rss: Shared-scale aRSS score, ``None`` without power or threshold.
+        rss: Shared-scale aRSS score, from the intensity chain (watts, adjusted
+            pace, heart rate); ``None`` when nothing scored.
+        rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
         rss_per_min: That score per minute of climbing, the mean stress rate.
     """
 
@@ -431,6 +433,7 @@ class TerrainClimbRead(BaseModel):
     intensity_factor: StrictFloat | None
     contrast: StrictFloat | None
     rss: StrictFloat | None
+    rss_source: StrictStr | None = None
     rss_per_min: StrictFloat | None
 
 
@@ -477,7 +480,7 @@ class BestTimeRead(BaseModel):
 
     distance_m: StrictInt
     time_s: StrictFloat
-    avg_power_w: StrictFloat
+    avg_power_w: StrictFloat | None
     activity_id: StrictInt
     start_time: StrictStr | None
 
@@ -514,8 +517,9 @@ class LapDynamicsRead(BaseModel):
         stride_length_m: Ground covered per cycle, when cadence or cycles exist.
         elevation_gain_m: Ascent the device recorded for the lap.
         elevation_loss_m: Descent the device recorded for the lap.
-        rss: Shared-scale aRSS score of the lap's window, ``None`` without a
-            threshold or powered samples in it.
+        rss: Shared-scale aRSS score of the lap's window, from the intensity chain
+            (watts, grade-adjusted pace, heart rate); ``None`` when nothing scored.
+        rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
         rss_per_min: That score per minute of the lap, the mean stress rate;
             ``None`` when there is no score.
     """
@@ -528,6 +532,7 @@ class LapDynamicsRead(BaseModel):
     elevation_gain_m: StrictFloat | None = None
     elevation_loss_m: StrictFloat | None = None
     rss: StrictFloat | None = None
+    rss_source: StrictStr | None = None
     rss_per_min: StrictFloat | None = None
 
 

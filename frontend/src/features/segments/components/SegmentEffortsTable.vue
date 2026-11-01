@@ -69,7 +69,12 @@ const rows = computed<EffortRow[]>(() => {
             ),
       power: effort.avgPowerW === null ? '--' : `${Math.round(effort.avgPowerW)} W`,
       hr: effort.avgHrBpm === null ? '--' : `${Math.round(effort.avgHrBpm)} bpm`,
-      rssMin: effort.rssPerMin === null ? '--' : effort.rssPerMin.toFixed(2),
+      rssMin:
+        effort.rssPerMin === null
+          ? '--'
+          : effort.rssSource && effort.rssSource !== 'power'
+            ? `\u2248${effort.rssPerMin.toFixed(2)}`
+            : effort.rssPerMin.toFixed(2),
       isReverse,
       isBest: !isReverse && forwardRank === 1,
     }
@@ -78,52 +83,57 @@ const rows = computed<EffortRow[]>(() => {
 </script>
 
 <template>
-  <div class="overflow-x-auto">
-    <table class="w-full min-w-[38rem] border-collapse text-meta">
-      <thead>
-        <tr class="text-caption border-b border-border text-left">
-          <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.rank') }}</th>
-          <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.activity') }}</th>
-          <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.date') }}</th>
-          <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.time') }}</th>
-          <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
-          <th class="py-2 pe-3 font-medium">{{ t('analysis.laps.power') }}</th>
-          <th class="py-2 pe-3 font-medium">{{ t('activities.laps.hr') }}</th>
-          <th class="py-2 font-medium">{{ t('analysis.laps.rssMin') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="row in rows"
-          :key="row.key"
-          class="border-b border-border/60 last:border-0"
-          :class="row.isReverse ? 'text-muted-foreground opacity-60' : ''"
-        >
-          <td class="py-2 pe-3 font-medium text-foreground">
-            {{ row.rank }}
-            <Badge v-if="row.isBest" class="ms-2" variant="secondary">
-              {{ t('segments.efforts.best') }}
-            </Badge>
-          </td>
-          <td class="py-2 pe-3">
-            <RouterLink
-              class="text-brand underline-offset-4 hover:underline"
-              :to="{ name: 'activity', params: { id: row.activityId } }"
-            >
-              {{ t('segments.efforts.activityLabel', { id: row.activityId }) }}
-            </RouterLink>
-            <span v-if="row.isReverse" class="text-caption ms-2 text-muted-foreground">
-              {{ t('segments.efforts.reverse') }}
-            </span>
-          </td>
-          <td class="py-2 pe-3 text-muted-foreground">{{ row.date }}</td>
-          <td class="py-2 pe-3 font-medium text-foreground">{{ row.time }}</td>
-          <td class="py-2 pe-3 text-foreground">{{ row.tempo }}</td>
-          <td class="py-2 pe-3 tabular-nums text-foreground">{{ row.power }}</td>
-          <td class="py-2 pe-3 tabular-nums text-muted-foreground">{{ row.hr }}</td>
-          <td class="py-2 tabular-nums text-muted-foreground">{{ row.rssMin }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="flex flex-col">
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[38rem] border-collapse text-meta">
+        <thead>
+          <tr class="text-caption border-b border-border text-left">
+            <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.rank') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.activity') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.date') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('segments.efforts.time') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('analysis.laps.power') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('activities.laps.hr') }}</th>
+            <th class="py-2 font-medium">{{ t('analysis.laps.rssMin') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="row in rows"
+            :key="row.key"
+            class="border-b border-border/60 last:border-0"
+            :class="row.isReverse ? 'text-muted-foreground opacity-60' : ''"
+          >
+            <td class="py-2 pe-3 font-medium text-foreground">
+              {{ row.rank }}
+              <Badge v-if="row.isBest" class="ms-2" variant="secondary">
+                {{ t('segments.efforts.best') }}
+              </Badge>
+            </td>
+            <td class="py-2 pe-3">
+              <RouterLink
+                class="text-brand underline-offset-4 hover:underline"
+                :to="{ name: 'activity', params: { id: row.activityId } }"
+              >
+                {{ t('segments.efforts.activityLabel', { id: row.activityId }) }}
+              </RouterLink>
+              <span v-if="row.isReverse" class="text-caption ms-2 text-muted-foreground">
+                {{ t('segments.efforts.reverse') }}
+              </span>
+            </td>
+            <td class="py-2 pe-3 text-muted-foreground">{{ row.date }}</td>
+            <td class="py-2 pe-3 font-medium text-foreground">{{ row.time }}</td>
+            <td class="py-2 pe-3 text-foreground">{{ row.tempo }}</td>
+            <td class="py-2 pe-3 tabular-nums text-foreground">{{ row.power }}</td>
+            <td class="py-2 pe-3 tabular-nums text-muted-foreground">{{ row.hr }}</td>
+            <td class="py-2 tabular-nums text-muted-foreground">{{ row.rssMin }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-caption mt-2 text-muted-foreground">
+      {{ t('segments.efforts.rssNote') }}
+    </p>
   </div>
 </template>

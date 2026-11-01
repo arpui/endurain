@@ -18,7 +18,8 @@
     "rss_up": "aRSS pujades",
     "rss_high": "aRSS intens",
     "rss_mid": "aRSS mitjà",
-    "rss_low": "aRSS suau"
+    "rss_low": "aRSS suau",
+    "daniels_points": "Punts de Daniels"
   },
   "sport": {
     "label": "Esport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Càrrega",
     "trimpNote": "El TRIMP fa servir una escala diferent de les altres fórmules i mai no se suma amb elles.",
+    "danielsNote": "Els punts de Daniels fan servir una escala pròpia i mai no se sumen amb les altres fórmules.",
     "rssNote": "L'aRSS només mesura activitats amb potència. Una activitat sense potència queda fora d'aquesta sèrie; qui la mesura és la càrrega per FC.",
     "bandNote": "Les bandes diuen on ha estat la feina: pujades, intens, mitjà, suau. Cada segon amb potència compta en una sola banda, per això se sumen a l'aRSS global."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Pujades del recorregut",
     "tcColRange": "tram",
-    "tcNote": "Les pujades es llegeixen del terreny, independentment de la potència; poden solapar-se amb la línia de temps i no se sumen amb ella. L'aRSS requereix potència.",
+    "tcNote": "Les pujades es llegeixen del terreny, independentment de la potència; poden solapar-se amb la línia de temps i no se sumen amb ella. L'aRSS requereix potència. «≈»: estimat amb ritme (pendent compensat) o freqüència cardíaca quan no hi ha potència.",
     "colContrast": "vs sessió",
     "rules": "Com es detecta aquí: en pla un tros compta com a interval només si manté ≥{effortIf}·CP; se'n obre un a {openW} W i es tanca per sota de {closeW} W; mínim {minS} s (sota {shortS} s cal {shortBase} la mediana de la sessió; sense recuperació real —≤{recoveryW} W—, {strongBase}); amb pendent >{climbGrade}% i IF<{climbIf} compta com a pujada."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Desnivell",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS és la puntuació ponderada per intensitat que hi ha darrere la càrrega diària; les files sumen el total de la sessió."
+    "rssNote": "aRSS és la puntuació ponderada per intensitat que hi ha darrere la càrrega diària; les files sumen el total de la sessió. «≈»: estimat amb ritme (pendent compensat) o freqüència cardíaca quan no hi ha potència."
   }
 }

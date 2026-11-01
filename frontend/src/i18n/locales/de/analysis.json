@@ -18,7 +18,8 @@
     "rss_up": "aRSS Anstiege",
     "rss_high": "aRSS intensiv",
     "rss_mid": "aRSS mittel",
-    "rss_low": "aRSS locker"
+    "rss_low": "aRSS locker",
+    "daniels_points": "Daniels-Punkte"
   },
   "sport": {
     "label": "Sportart",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Belastung",
     "trimpNote": "TRIMP nutzt eine andere Skala als die anderen Formeln und wird nie mit ihnen addiert.",
+    "danielsNote": "Daniels-Punkte nutzen eine eigene Skala und werden nie mit den anderen Formeln addiert.",
     "rssNote": "aRSS misst nur Aktivitäten mit Leistung. Eine Aktivität ohne Leistung bleibt außerhalb dieser Serie; dafür misst die Herzfrequenz-Last sie.",
     "bandNote": "Die Bänder zeigen, wo die Arbeit steckte: Anstiege, intensiv, mittel, locker. Jede Leistungssekunde zählt in genau einem Band, sie addieren sich zum aRSS gesamt."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Anstiege der Route",
     "tcColRange": "Abschnitt",
-    "tcNote": "Anstiege werden aus dem Gelände gelesen, unabhängig von der Leistung; sie können sich mit der Zeitachse überschneiden und werden nicht mit ihr summiert. aRSS erfordert eine Leistungsmessung.",
+    "tcNote": "Anstiege werden aus dem Gelände gelesen, unabhängig von der Leistung; sie können sich mit der Zeitachse überschneiden und werden nicht mit ihr summiert. aRSS erfordert eine Leistungsmessung. „≈“: ohne Leistungsmessung aus (steigkorrigiertem) Tempo oder Herzfrequenz geschätzt.",
     "colContrast": "vs Einheit",
     "rules": "So wird erkannt: auf flachem Grund zählt ein Abschnitt nur als Intervall, wenn er ≥{effortIf}·CP hält; ein Einsatz beginnt bei {openW} W und endet unter {closeW} W; mindestens {minS} s (unter {shortS} s braucht er {shortBase} des Einheiten-Medians; ohne echte Erholung —≤{recoveryW} W— {strongBase}); bei Steigung >{climbGrade}% und IF<{climbIf} zählt er als Anstieg."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Auf-/Abstieg",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS ist der intensivitätsgewichtete Wert hinter der Tagesbelastung; die Zeilen summieren sich zum Aktivitätsgesamt."
+    "rssNote": "aRSS ist der intensivitätsgewichtete Wert hinter der Tagesbelastung; die Zeilen summieren sich zum Aktivitätsgesamt. „≈“: ohne Leistungsmessung aus (steigkorrigiertem) Tempo oder Herzfrequenz geschätzt."
   }
 }

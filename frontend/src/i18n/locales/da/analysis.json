@@ -18,7 +18,8 @@
     "rss_up": "aRSS stigninger",
     "rss_high": "aRSS høj",
     "rss_mid": "aRSS middel",
-    "rss_low": "aRSS lav"
+    "rss_low": "aRSS lav",
+    "daniels_points": "Daniels-point"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Belastning",
     "trimpNote": "TRIMP bruger en anden skala end de andre formler og lægges aldrig sammen med dem.",
+    "danielsNote": "Daniels-point bruger en egen skala og lægges aldrig sammen med de andre formler.",
     "rssNote": "aRSS måler kun aktiviteter med effekt. En aktivitet uden effekt er uden for denne serie; pulsbelastningen måler den.",
     "bandNote": "Båndene viser, hvor arbejdet lå: stigninger, høj, middel, lav. Hvert effektsekund tæller i ét bånd, så de lægges sammen til aRSS total."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Bakker efter ruten",
     "tcColRange": "strækning",
-    "tcNote": "Bakker aflæses fra terrænet, uafhængigt af effekt; de kan overlappe tidslinjen og lægges ikke sammen med den. aRSS kræver effekt.",
+    "tcNote": "Bakker aflæses fra terrænet, uafhængigt af effekt; de kan overlappe tidslinjen og lægges ikke sammen med den. aRSS kræver effekt. \"≈\": estimeret fra (hældningskorrigeret) pace eller puls uden effekt.",
     "colContrast": "vs session",
     "rules": "Så detekteres det her: på fladt tæller en strækning kun som interval, hvis den holder ≥{effortIf}·CP; en anstrengelse åbner ved {openW} W og lukker under {closeW} W; mindst {minS} s (under {shortS} s kræves {shortBase} af sessionens median; uden rigtig restitution —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} tæller det som stigning."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Stigning / fald",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS er den intensitetsvægtede score bag den daglige belastning; rækkerne lægges sammen til aktivitetens total."
+    "rssNote": "aRSS er den intensitetsvægtede score bag den daglige belastning; rækkerne lægges sammen til aktivitetens total. \"≈\": estimeret fra (hældningskorrigeret) pace eller puls uden effekt."
   }
 }

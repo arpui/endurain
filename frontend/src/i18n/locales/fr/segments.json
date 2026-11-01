@@ -34,6 +34,7 @@
     "time": "Temps",
     "best": "Meilleur",
     "reverse": "Sens inverse",
+    "rssNote": "l’aRSS/min utilise la puissance si disponible ; sinon l’allure compensée en pente ou la FC (marqué « ≈ »).",
     "activityLabel": "Activité {id}",
     "empty": {
       "title": "Aucun effort pour l’instant",

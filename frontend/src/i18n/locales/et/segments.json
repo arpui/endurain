@@ -34,6 +34,7 @@
     "time": "Aeg",
     "best": "Parim",
     "reverse": "Vastassuund",
+    "rssNote": "aRSS/min kasutab võimsust, kui see on olemas; muidu kallet arvestavat tempot või pulssi (\"≈\").",
     "activityLabel": "Tegevus {id}",
     "empty": {
       "title": "Pingutusi pole veel",

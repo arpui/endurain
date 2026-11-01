@@ -18,7 +18,8 @@
     "rss_up": "aRSS bakker",
     "rss_high": "aRSS høy",
     "rss_mid": "aRSS medium",
-    "rss_low": "aRSS lav"
+    "rss_low": "aRSS lav",
+    "daniels_points": "Daniels-poeng"
   },
   "sport": {
     "label": "Idrett",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Belastning",
     "trimpNote": "TRIMP bruker en annen skala enn de andre formlene og legges aldri sammen med dem.",
+    "danielsNote": "Daniels-poeng bruker en egen skala og legges aldri sammen med de andre formlene.",
     "rssNote": "aRSS måler bare aktiviteter med effekt. En aktivitet uten effekt er utenfor denne serien; pulsbelastningen måler den.",
     "bandNote": "Båndene viser hvor arbeidet lå: bakker, høy, medium, lav. Hvert effektsekund teller i ett bånd, så de summeres til aRSS total."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Bakker etter ruten",
     "tcColRange": "strekning",
-    "tcNote": "Bakkene leses fra terrenget, uavhengig av effekt; de kan overlappe tidslinjen og summeres ikke med den. aRSS krever effektmåler.",
+    "tcNote": "Bakkene leses fra terrenget, uavhengig av effekt; de kan overlappe tidslinjen og summeres ikke med den. aRSS krever effektmåler. «≈»: estimert fra (stigningskorrigert) tempo eller puls uten effekt.",
     "colContrast": "vs økt",
     "rules": "Slik oppdages det her: på flatt teller en strekning bare som intervall hvis den holder ≥{effortIf}·CP; en innsats åpnes ved {openW} W og lukkes under {closeW} W; minst {minS} s (under {shortS} s kreves {shortBase} av øktens median; uten skikkelig hvile —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} teller det som bakke."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Stigning / fall",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS er den intensitetsvektede poengsummen bak den daglige belastningen; radene summeres til aktivitetens total."
+    "rssNote": "aRSS er den intensitetsvektede poengsummen bak den daglige belastningen; radene summeres til aktivitetens total. «≈»: estimert fra (stigningskorrigert) tempo eller puls uten effekt."
   }
 }

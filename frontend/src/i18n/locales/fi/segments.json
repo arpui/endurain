@@ -34,6 +34,7 @@
     "time": "Aika",
     "best": "Paras",
     "reverse": "Vastasuunta",
+    "rssNote": "aRSS/min käyttää tehoa jos saatavilla; muuten kaltevakorjattua vauhtia tai sykettä (\"≈\").",
     "activityLabel": "Aktiviteetti {id}",
     "empty": {
       "title": "Ei suorituksia vielä",

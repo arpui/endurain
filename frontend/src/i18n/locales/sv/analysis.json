@@ -18,7 +18,8 @@
     "rss_up": "aRSS backar",
     "rss_high": "aRSS hög",
     "rss_mid": "aRSS medel",
-    "rss_low": "aRSS låg"
+    "rss_low": "aRSS låg",
+    "daniels_points": "Daniels-poäng"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Belastning",
     "trimpNote": "TRIMP använder en annan skala än de andra formlerna och adderas aldrig till dem.",
+    "danielsNote": "Daniels-poäng använder en egen skala och adderas aldrig till de andra formlerna.",
     "rssNote": "aRSS mäter bara aktiviteter med effekt. En aktivitet utan effekt hamnar utanför den här serien; pulsbelastningen mäter den.",
     "bandNote": "Banden visar var arbetet låg: backar, hög, medel, låg. Varje effektsekund räknas i exakt ett band, så de summeras till aRSS total."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Stigningar efter rutten",
     "tcColRange": "sträcka",
-    "tcNote": "Stigningar läses från terrängen, oavsett effekt; de kan överlappa tidslinjen och summeras inte med den. aRSS kräver effektmätning.",
+    "tcNote": "Stigningar läses från terrängen, oavsett effekt; de kan överlappa tidslinjen och summeras inte med den. aRSS kräver effektmätning. \"≈\": uppskattat från (lutningskorrigerad) tempo eller puls utan effekt.",
     "colContrast": "vs pass",
     "rules": "Så upptäcks det här: på plant räknas en sträcka som intervall bara om den håller ≥{effortIf}·CP; en insats öppnas vid {openW} W och stängs under {closeW} W; minst {minS} s (under {shortS} s krävs {shortBase} passets median; utan riktig återhämtning —≤{recoveryW} W—, {strongBase}); med lutning >{climbGrade}% och IF<{climbIf} räknas det som backe."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Höjdmeter (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS är den intensitetsvikta poängen bakom den dagliga belastningen; raderna summerar till aktivitetens total."
+    "rssNote": "aRSS är den intensitetsvikta poängen bakom den dagliga belastningen; raderna summerar till aktivitetens total. \"≈\": uppskattat från (lutningskorrigerad) tempo eller puls utan effekt."
   }
 }

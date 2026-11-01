@@ -34,6 +34,7 @@
     "time": "Tid",
     "best": "Bästa",
     "reverse": "Motsatt riktning",
+    "rssNote": "aRSS/min använder effekt om sådan finns; annars lutningskorrigerad tempo eller puls (markerad \"≈\").",
     "activityLabel": "Aktivitet {id}",
     "empty": {
       "title": "Inga insatser ännu",

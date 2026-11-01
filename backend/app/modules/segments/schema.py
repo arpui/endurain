@@ -157,8 +157,9 @@ class SegmentEffortRead(BaseModel):
         avg_hr_bpm: Mean heart rate over the effort's window, dropouts excluded,
             ``None`` without a heart-rate stream.
         rss_per_min: The shared aRSS score per minute over the effort's window,
-            under the requester's threshold for the sport; ``None`` without
-            power, a threshold or gained stress.
+            following the intensity chain (watts, grade-adjusted pace, heart
+            rate); ``None`` when nothing scored.
+        rss_source: Which signal scored the effort (``power``, ``pace``, ``hr``).
     """
 
     model_config = ConfigDict(from_attributes=True, extra="forbid")
@@ -178,6 +179,7 @@ class SegmentEffortRead(BaseModel):
     avg_power_w: StrictFloat | None = None
     avg_hr_bpm: StrictFloat | None = None
     rss_per_min: StrictFloat | None = None
+    rss_source: StrictStr | None = None
 
 
 class ActivitySegmentRead(BaseModel):

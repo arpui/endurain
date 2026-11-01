@@ -49,6 +49,7 @@ describe('lap dynamics fetch', () => {
         elevation_gain_m: 10,
         elevation_loss_m: 8,
         rss: 26.4,
+        rss_source: 'power',
         rss_per_min: 26.4,
       },
       {
@@ -58,6 +59,7 @@ describe('lap dynamics fetch', () => {
         elevation_gain_m: null,
         elevation_loss_m: null,
         rss: null,
+        rss_source: null,
         rss_per_min: null,
       },
     ] satisfies Schemas['LapDynamicsRead'][])
@@ -70,6 +72,7 @@ describe('lap dynamics fetch', () => {
       elevationGainM: 10,
       elevationLossM: 8,
       rss: 26.4,
+      rssSource: 'power',
       rssPerMin: 26.4,
     })
     expect(rows[1]).toEqual({
@@ -79,6 +82,7 @@ describe('lap dynamics fetch', () => {
       elevationGainM: null,
       elevationLossM: null,
       rss: null,
+      rssSource: null,
       rssPerMin: null,
     })
   })
@@ -112,6 +116,7 @@ describe('LapDynamicsTable', () => {
             elevationGainM: 10,
             elevationLossM: 8,
             rss: 26.4,
+            rssSource: 'power',
             rssPerMin: 5.3,
           },
         ],
@@ -135,6 +140,7 @@ describe('LapDynamicsTable', () => {
           elevationGainM: null,
           elevationLossM: null,
           rss: null,
+          rssSource: null,
           rssPerMin: null,
         },
       ],
@@ -142,5 +148,36 @@ describe('LapDynamicsTable', () => {
     const headers = wrapper.findAll('thead th').map((th) => th.text())
     expect(headers.some((h) => /aRSS/i.test(h))).toBe(false)
     expect(wrapper.findAll('tbody tr td').length).toBeLessThan(11)
+  })
+})
+
+describe('LapDynamicsTable estimated scores', () => {
+  it('marks pace- and heart-rate-estimated aRSS with an approximation sign', () => {
+    const wrapper = mount(LapDynamicsTable, {
+      props: {
+        laps: [makeLap()],
+        dynamics: [
+          {
+            lapId: 1,
+            avgPowerW: null,
+            strideLengthM: 2.9,
+            elevationGainM: 12,
+            elevationLossM: 0,
+            rss: 9.9,
+            rssSource: 'pace',
+            rssPerMin: 1.98,
+          },
+        ],
+        activity: makeActivity(),
+        units: 'metric',
+      },
+      global: { plugins: [i18n] },
+    })
+    const cells = wrapper
+      .findAll('tbody tr')[0]!
+      .findAll('td')
+      .map((cell) => cell.text())
+    expect(cells.some((value) => /^\u22489[.,]9$/.test(value))).toBe(true)
+    expect(cells.some((value) => /^\u22481[.,]98$/.test(value))).toBe(true)
   })
 })

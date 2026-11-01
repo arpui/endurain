@@ -18,7 +18,8 @@
     "rss_up": "аRSS успони",
     "rss_high": "аRSS високо",
     "rss_mid": "аRSS средње",
-    "rss_low": "аRSS ниско"
+    "rss_low": "аRSS ниско",
+    "daniels_points": "Daniels bodovi"
   },
   "sport": {
     "label": "Спорт",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Оптерећење",
     "trimpNote": "TRIMP користи другу скалу од осталих формула и никада им се не сабира.",
+    "danielsNote": "Daniels bodovi koriste sopstvenu lestvicu i nikada se ne sabiraju sa ostalim formulama.",
     "rssNote": "аRSS мери само активности са снагом. Активност без снаге остаје ван овог низа; њу мери оптерећење по пулсу.",
     "bandNote": "Траке кажу где је био рад: успони, високо, средње, ниско. Свака секунда са снагом рачуна се у једној траци, зато се сабирају у аRSS укупно."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Usponi po ruti",
     "tcColRange": "deonica",
-    "tcNote": "Usponi se čitaju iz terena, nezavisno od snage; mogu se preklapati sa vremenskom linijom i ne sabiraju se s njom. aRSS zahteva merač snage.",
+    "tcNote": "Usponi se čitaju iz terena, nezavisno od snage; mogu se preklapati sa vremenskom linijom i ne sabiraju se s njom. aRSS zahteva merač snage. „≈”: procenjeno iz (nagibom kompenzovanog) tempa ili FT bez snage.",
     "colContrast": "vs сесија",
     "rules": "Како се овде препознаје: на равном се деоница рачуна као интервал само ако држи ≥{effortIf}·CP; напор се отвара при {openW} W и затвара испод {closeW} W; најмање {minS} s (испод {shortS} s тражи се {shortBase} медијана сесије; без правог одмора —≤{recoveryW} W—, {strongBase}); уз нагиб >{climbGrade}% и IF<{climbIf} рачуна се као успон."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Uspon / spuštanje",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS je ocena ponderisana intenzitetom iza dnevne opterećenosti; redovi se sabiraju u ukupan zbir aktivnosti."
+    "rssNote": "aRSS je ocena ponderisana intenzitetom iza dnevne opterećenosti; redovi se sabiraju u ukupan zbir aktivnosti. „≈”: procenjeno iz (nagibom kompenzovanog) tempa ili FT bez snage."
   }
 }

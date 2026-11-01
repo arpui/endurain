@@ -34,6 +34,7 @@
     "time": "Laiks",
     "best": "Labākais",
     "reverse": "Pretējs virziens",
+    "rssNote": "aRSS/min izmanto jaudu, ja tā ir; citādi slīpumu kompensējošu tempu vai sirdsdarbību („≈“).",
     "activityLabel": "Aktivitāte {id}",
     "empty": {
       "title": "Piepūļu vēl nav",

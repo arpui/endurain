@@ -34,6 +34,7 @@
     "time": "Tijd",
     "best": "Beste",
     "reverse": "Terugrichting",
+    "rssNote": "aRSS/min gebruikt vermogen indien aanwezig; anders hellinggecompenseerd tempo of hartslag (\"≈\").",
     "activityLabel": "Activiteit {id}",
     "empty": {
       "title": "Nog geen inspanningen",

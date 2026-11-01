@@ -18,7 +18,8 @@
     "rss_up": "aRSS usponi",
     "rss_high": "aRSS visoko",
     "rss_mid": "aRSS srednje",
-    "rss_low": "aRSS nisko"
+    "rss_low": "aRSS nisko",
+    "daniels_points": "Daniels bodovi"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Opterećenje",
     "trimpNote": "TRIMP koristi drugu ljestvicu od drugih formula i nikada im se ne zbraja.",
+    "danielsNote": "Daniels bodovi koriste vlastitu ljestvicu i nikada se ne zbrajaju s ostalim formulama.",
     "rssNote": "aRSS mjeri samo aktivnosti s snagom. Aktivnost bez snage izvan je ovog niza; nju mjeri opterećenje po pulsu.",
     "bandNote": "Vrpove govore gdje je bio rad: usponi, visoko, srednje, nisko. Svaka sekunda sa snagom broji se u jednoj traci, pa se zbrajaju u aRSS ukupno."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Usponi po ruti",
     "tcColRange": "dionica",
-    "tcNote": "Usponi se čitaju iz terena, neovisno o snazi; mogu se preklapati s vremenskom crtom i ne zbrajaju se s njom. aRSS zahtijeva mjerač snage.",
+    "tcNote": "Usponi se čitaju iz terena, neovisno o snazi; mogu se preklapati s vremenskom crtom i ne zbrajaju se s njom. aRSS zahtijeva mjerač snage. „≈”: procijenjeno iz (nagnutom kompenziranog) tempa ili FT bez snage.",
     "colContrast": "vs sesija",
     "rules": "Kako se ovdje prepoznaje: na ravnom se dionica broji kao interval samo ako drži ≥{effortIf}·CP; napor se otvara pri {openW} W i zatvara ispod {closeW} W; najmanje {minS} s (ispod {shortS} s treba {shortBase} medijana sesije; bez pravog odmora —≤{recoveryW} W—, {strongBase}); uz nagib >{climbGrade}% i IF<{climbIf} broji se kao uspon."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Uspon / spuštanje",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS je rezultat ponderiran intenzitetom koji stoji iza dnevnog opterećenja; retci zbrojeni daju ukupan zbroj aktivnosti."
+    "rssNote": "aRSS je rezultat ponderiran intenzitetom koji stoji iza dnevnog opterećenja; retci zbrojeni daju ukupan zbroj aktivnosti. „≈”: procijenjeno iz (nagnutom kompenziranog) tempa ili FT bez snage."
   }
 }

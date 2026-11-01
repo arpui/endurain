@@ -18,7 +18,8 @@
     "rss_up": "aRSS podbiegi",
     "rss_high": "aRSS wysokie",
     "rss_mid": "aRSS średnie",
-    "rss_low": "aRSS niskie"
+    "rss_low": "aRSS niskie",
+    "daniels_points": "Punkty Danielsa"
   },
   "sport": {
     "label": "Dyscyplina",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Obciążenie",
     "trimpNote": "TRIMP używa innej skali niż pozostałe wzory i nigdy nie jest do nich dodawany.",
+    "danielsNote": "Punkty Daniels mają własną skalę i nigdy nie są sumowane z pozostałymi formułami.",
     "rssNote": "aRSS mierzy tylko aktywności z mocą. Aktywność bez mocy pozostaje poza tą serią; mierzy ją obciążenie tętnem.",
     "bandNote": "Pasma mówią, gdzie była praca: podbiegi, wysokie, średnie, niskie. Każda sekunda z mocą liczy się w jednym pasmie, więc sumują się do aRSS razem."
   },
@@ -137,7 +139,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Podjazdy z trasy",
     "tcColRange": "odcinek",
-    "tcNote": "Podjazdy czytamy z terenu, niezależnie od mocy; mogą zachodzić na oś czasu i nie sumują się z nią. aRSS wymaga pomiaru mocy.",
+    "tcNote": "Podjazdy czytamy z terenu, niezależnie od mocy; mogą zachodzić na oś czasu i nie sumują się z nią. aRSS wymaga pomiaru mocy. „≈”: szacowane z tempa (skompensowanego nachyleniem) lub HR bez pomiaru mocy.",
     "colContrast": "vs sesja",
     "rules": "Jak to wykrywać: na płaskim odcinek liczy się jako interwał tylko, jeśli utrzymuje ≥{effortIf}·CP; akcent otwiera się przy {openW} W i zamyka poniżej {closeW} W; minimum {minS} s (poniżej {shortS} s wymaga {shortBase} mediany sesji; bez prawdziwej regeneracji —≤{recoveryW} W—, {strongBase}); nachylenie >{climbGrade}% z IF<{climbIf} liczy się jako podbieg."
   },
@@ -173,6 +175,6 @@
     "desnivel": "Przewyższenie (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS to punktacja ważona intensywnością stojąca za dziennym obciążeniem; wiersze sumują się do wartości całej aktywności."
+    "rssNote": "aRSS to punktacja ważona intensywnością stojąca za dziennym obciążeniem; wiersze sumują się do wartości całej aktywności. „≈”: szacowane z tempa (skompensowanego nachyleniem) lub HR bez pomiaru mocy."
   }
 }

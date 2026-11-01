@@ -92,7 +92,9 @@ function dayLabel(startIso: string | null): string {
             >
               <td class="py-2 pe-3 font-medium">{{ distanceLabel(record.distanceM) }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ formatHmsDuration(record.timeS) }}</td>
-              <td class="py-2 pe-3 tabular-nums">{{ `${Math.round(record.avgPowerW)} W` }}</td>
+              <td class="py-2 pe-3 tabular-nums">
+                {{ record.avgPowerW === null ? '--' : `${Math.round(record.avgPowerW)} W` }}
+              </td>
               <td class="py-2 pe-3">
                 <RouterLink :to="{ name: 'activity', params: { id: record.activityId } }">
                   {{ dayLabel(record.startTime) }}

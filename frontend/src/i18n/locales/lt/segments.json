@@ -34,6 +34,7 @@
     "time": "Laikas",
     "best": "Geriausias",
     "reverse": "Priešinga kryptis",
+    "rssNote": "aRSS/min naudoja galią, jei yra; kitaip – nuolygiu kompensuotą tempą arba širdies ritmą („≈“).",
     "activityLabel": "Veikla {id}",
     "empty": {
       "title": "Įdėjimų dar nėra",

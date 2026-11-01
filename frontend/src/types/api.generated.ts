@@ -6311,7 +6311,7 @@ export interface components {
             /** Activity Id */
             activity_id: number;
             /** Avg Power W */
-            avg_power_w: number;
+            avg_power_w: number | null;
             /** Distance M */
             distance_m: number;
             /** Start Time */
@@ -9596,8 +9596,9 @@ export interface components {
          *         stride_length_m: Ground covered per cycle, when cadence or cycles exist.
          *         elevation_gain_m: Ascent the device recorded for the lap.
          *         elevation_loss_m: Descent the device recorded for the lap.
-         *         rss: Shared-scale aRSS score of the lap's window, ``None`` without a
-         *             threshold or powered samples in it.
+         *         rss: Shared-scale aRSS score of the lap's window, from the intensity chain
+         *             (watts, grade-adjusted pace, heart rate); ``None`` when nothing scored.
+         *         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
          *         rss_per_min: That score per minute of the lap, the mean stress rate;
          *             ``None`` when there is no score.
          */
@@ -9614,6 +9615,8 @@ export interface components {
             rss?: number | null;
             /** Rss Per Min */
             rss_per_min?: number | null;
+            /** Rss Source */
+            rss_source?: string | null;
             /** Stride Length M */
             stride_length_m: number | null;
         };
@@ -9694,6 +9697,11 @@ export interface components {
          *     series meaningful. ``TRIMP`` is a different scale (Banister's) and is reported
          *     beside the others, never added to them.
          *
+         *     :attr:`DANIELS` scores effort the way Jack Daniels' pace tables do: one
+         *     second at intensity ``x`` over threshold is worth ``x⁴``, normalized so an
+         *     hour at threshold is 100 points. That fourth power makes it a scale of its
+         *     own like ``TRIMP``: it answers beside the others and is never added to them.
+         *
          *     The ``RSS_*`` methods are one family: an exponential stress kernel summed per
          *     second over the samples of an activity that carries power. :attr:`RSS_TOTAL`
          *     is the family's general load; the other four split it by *where* the effort
@@ -9712,9 +9720,11 @@ export interface components {
          *         RSS_MID: The share taken between the band cutoffs, off climbs.
          *         RSS_LOW: The share taken below a low fraction of threshold, slow and off
          *             climbs.
+         *         DANIELS: Daniels points, intensity to the fourth power (reported,
+         *             not summed).
          * @enum {string}
          */
-        LoadMethod: "coggan_tss" | "skiba_score" | "hr_load" | "trimp" | "rss_total" | "rss_up" | "rss_high" | "rss_mid" | "rss_low";
+        LoadMethod: "coggan_tss" | "skiba_score" | "hr_load" | "trimp" | "rss_total" | "rss_up" | "rss_high" | "rss_mid" | "rss_low" | "daniels_points";
         /**
          * LogoutResponse
          * @description Response payload returned by the logout endpoint.
@@ -10591,8 +10601,9 @@ export interface components {
          *         avg_hr_bpm: Mean heart rate over the effort's window, dropouts excluded,
          *             ``None`` without a heart-rate stream.
          *         rss_per_min: The shared aRSS score per minute over the effort's window,
-         *             under the requester's threshold for the sport; ``None`` without
-         *             power, a threshold or gained stress.
+         *             following the intensity chain (watts, grade-adjusted pace, heart
+         *             rate); ``None`` when nothing scored.
+         *         rss_source: Which signal scored the effort (``power``, ``pace``, ``hr``).
          */
         SegmentEffortRead: {
             /** Activity Id */
@@ -10614,6 +10625,8 @@ export interface components {
             pass_number: number;
             /** Rss Per Min */
             rss_per_min?: number | null;
+            /** Rss Source */
+            rss_source?: string | null;
             /** Segment Id */
             segment_id: number;
             /** Stream Index End */
@@ -11269,7 +11282,9 @@ export interface components {
          *         avg_power_w: Mean power, ``None`` without a power stream.
          *         intensity_factor: Mean power over the threshold, ``None`` without either.
          *         contrast: Mean power over the session's median, ``None`` without either.
-         *         rss: Shared-scale aRSS score, ``None`` without power or threshold.
+         *         rss: Shared-scale aRSS score, from the intensity chain (watts, adjusted
+         *             pace, heart rate); ``None`` when nothing scored.
+         *         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
          *         rss_per_min: That score per minute of climbing, the mean stress rate.
          */
         TerrainClimbRead: {
@@ -11295,6 +11310,8 @@ export interface components {
             rss: number | null;
             /** Rss Per Min */
             rss_per_min: number | null;
+            /** Rss Source */
+            rss_source?: string | null;
             /** Start M */
             start_m: number;
             /** Start S */

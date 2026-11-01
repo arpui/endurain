@@ -610,7 +610,9 @@ class TerrainClimb:
         avg_power_w: Mean power over the climb, ``None`` without a power stream.
         intensity_factor: Mean power over the sport's threshold, ``None`` without either.
         contrast: Mean power over the session's median, ``None`` without either.
-        rss: Shared-scale aRSS score of the climb, ``None`` without power or threshold.
+        rss: Shared-scale aRSS score of the climb, from the best signal available.
+        rss_source: Which signal scored it (``power``, ``pace``, ``hr``), ``None`` when
+            nothing could.
         rss_per_min: That score per minute of climbing, the mean stress rate.
     """
 
@@ -626,6 +628,7 @@ class TerrainClimb:
     intensity_factor: float | None
     contrast: float | None
     rss: float | None
+    rss_source: str | None
     rss_per_min: float | None
 
 
@@ -634,7 +637,10 @@ def terrain_climbs(
     speeds_ms: Sequence[float] | None,
     period_s: float,
     power_w: Sequence[float] | None = None,
+    hr_bpm: Sequence[float] | None = None,
     threshold_w: float | None = None,
+    speed_threshold_ms: float | None = None,
+    hr_threshold_bpm: float | None = None,
     base_power_w: float = 0.0,
     parameters: Mapping[str, float] | None = None,
 ) -> list[TerrainClimb]:
@@ -725,23 +731,29 @@ def terrain_climbs(
         intensity: float | None = None
         contrast: float | None = None
         score: float | None = None
+        source: str | None = None
         per_min: float | None = None
         if power_w is not None and len(power_w) >= end + 1:
             avg_power = round(fmean(power_w[window]), 1)
             if threshold_w:
                 intensity = round(avg_power / threshold_w, 2)
-                score = round(
-                    analysis_methods.rss_window_stress(
-                        list(power_w[window]), period_s, threshold_w, sample_grades[window], params
-                    ),
-                    1,
-                )
-                if score <= 0:
-                    score = None
-                else:
-                    per_min = round(score * 60.0 / ((end - start + 1) * period_s), 2)
             if base_power_w and avg_power is not None:
                 contrast = round(avg_power / base_power_w, 2)
+        chain_score, chain_source = analysis_methods.window_stress_chain(
+            list(power_w[window]) if power_w is not None and len(power_w) >= end + 1 else None,
+            list(speeds_ms[window]) if speeds_ms is not None else None,
+            list(hr_bpm[window]) if hr_bpm is not None and len(hr_bpm) >= end + 1 else None,
+            sample_grades[window],
+            period_s,
+            threshold_w,
+            speed_threshold_ms,
+            hr_threshold_bpm,
+            params,
+        )
+        if chain_score > 0 and chain_source is not None:
+            score = round(chain_score, 1)
+            source = chain_source
+            per_min = round(score * 60.0 / ((end - start + 1) * period_s), 2)
         climbs.append(
             TerrainClimb(
                 start_m=round(dist[start], 1),
@@ -756,6 +768,7 @@ def terrain_climbs(
                 intensity_factor=intensity,
                 contrast=contrast,
                 rss=score,
+                rss_source=source,
                 rss_per_min=per_min,
             )
         )
