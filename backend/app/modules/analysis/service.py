@@ -1319,7 +1319,7 @@ def _ground_timeline(
         anchor_period, anchor_stamps = hr_period, hr_stamps
         power_aligned = None
     else:
-        return 0.0, (), None, None, None, None
+        return 0.0, (), None, None, None, None, None
     stamps = _utc_stamps(anchor_stamps)
     speed_aligned = (
         _align_to_power(speeds, _utc_stamps(speed_stamps), stamps, anchor_period)
@@ -1337,7 +1337,7 @@ def _ground_timeline(
     grades: tuple[float, ...] | None = None
     if altitude_m is not None and speed_aligned is not None:
         grades = analysis_maths.grade_pct_series(altitude_m, speed_aligned, anchor_period)
-    return anchor_period, stamps, power_aligned, speed_aligned, grades, hr_aligned
+    return anchor_period, stamps, power_aligned, speed_aligned, grades, hr_aligned, altitude_m
 
 
 def _apply_lap_rss(
@@ -1358,7 +1358,7 @@ def _apply_lap_rss(
     """
     if not lap_windows:
         return
-    period_s, stamps, power_values, speeds, grades, hr_values = _ground_timeline(activity_id, db)
+    period_s, stamps, power_values, speeds, grades, hr_values, _altitude = _ground_timeline(activity_id, db)
     if not stamps or period_s <= 0:
         return
     for lap, entry in zip(lap_windows, dynamics, strict=True):
@@ -1426,7 +1426,7 @@ def compute_window_stats(
     hr_threshold_bpm = heart_rate_threshold.value_bpm if heart_rate_threshold else None
     parameters = dict(settings.method_params)
 
-    period_s, stamps, power_values, speeds, grades, hr_values = _ground_timeline(activity_id, db)
+    period_s, stamps, power_values, speeds, grades, hr_values, _altitude = _ground_timeline(activity_id, db)
     stats: list[analysis_contracts.WindowStats] = []
     for start, end in windows:
         start_a = start if start.tzinfo else start.replace(tzinfo=UTC)
@@ -1523,10 +1523,12 @@ def get_best_times(
     Each distance's fastest window is found in every activity's own samples, so
     the table answers "the best I have run", never "the best my watch reported
     per lap". Splits whose net grade falls below the bound for their length are
-    discarded: a downhill sprint is not a personal best. Activities without a
-    power stream cannot appear (the table shows watts alongside every time);
-    without elevation a split is read as flat, which the short-distance bound
-    already tolerates.
+    discarded: a downhill sprint is not a personal best. The short distances also
+    demand an engine behind them, judged through the intensity chain: watts over
+    threshold, or grade-adjusted pace over critical speed; an activity with only
+    heart rate therefore contributes its longer distances alone. Activities with
+    neither power nor a critical speed need enough ground covered to appear at
+    all, and watts simply read blank where there is no power stream.
 
     Args:
         user_id: The athlete.
@@ -1545,9 +1547,11 @@ def get_best_times(
     if months is not None and months <= 0:
         raise core_exceptions.InvalidInputError(f"Invalid months '{months}'")
 
-    threshold = get_settings(user_id, db).power_thresholds.get(sport)
+    settings = get_settings(user_id, db)
+    power_threshold = settings.power_thresholds.get(sport)
+    speed_threshold = settings.speed_thresholds.get(sport)
     since = _months_ago(datetime.now(UTC), months) if months else None
-    best: dict[int, tuple[float, float, int, datetime | None]] = {}
+    best: dict[int, tuple[float, float | None, int, datetime | None]] = {}
     for activity in activity_integration.list_user_activities(user_id, db):
         if sport_group(activity.activity_type) != sport:
             continue
@@ -1556,48 +1560,33 @@ def get_best_times(
             continue
         if since is not None and (started is None or started.tzinfo is None):
             continue
-        period_s, power_w, power_stamps = _stream_samples(
-            activity.id,
-            activity_streams_constants.STREAM_TYPE_POWER,
-            "power",
-            db,
-            keep_zeros=True,
-        )
-        if not power_w or period_s <= 0:
+        period_s, _stamps, power_values, speeds, grades, _hr_values, altitude_m = _ground_timeline(activity.id, db)
+        if not speeds or period_s <= 0:
             continue
-        _, speeds, speed_stamps = _stream_samples(
-            activity.id,
-            activity_streams_constants.STREAM_TYPE_SPEED,
-            "vel",
-            db,
-            keep_zeros=True,
-        )
-        _, elevations, elevation_stamps = _stream_samples(
-            activity.id,
-            activity_streams_constants.STREAM_TYPE_ELEVATION,
-            "ele",
-            db,
-            keep_zeros=True,
-        )
-        speed_ms = _align_to_power(speeds, speed_stamps, power_stamps, period_s)
-        if not speed_ms:
-            continue
-        altitude_m = _align_to_power(elevations, elevation_stamps, power_stamps, period_s)
         # alignment copies the nearest sample across dropouts, which can repeat a GPS
         # speed spike second after second and invent distance; no foot runs that fast,
         # so cap every sample at the split speed ceiling before accumulating
-        speed_ms = tuple(min(value, analysis_constants.BT_MAX_SPEED_MS) for value in speed_ms)
-
-        count = len(power_w)
+        speeds = tuple(min(value, analysis_constants.BT_MAX_SPEED_MS) for value in speeds)
+        count = len(speeds)
         elapsed_s = [index * period_s for index in range(count)]
-        distance_cum_m = list(accumulate(speed * period_s for speed in speed_ms))
+        distance_cum_m = list(accumulate(speed * period_s for speed in speeds))
         altitude_series_m = altitude_m if altitude_m is not None else (0.0,) * count
+        # the gate's engine follows the chain: watts, then grade-adjusted pace. Heart
+        # rate alone never evidences a short surge (it lags the effort by minutes),
+        # so a heart-rate-only athlete gets only the distances whose gate is the grade.
+        intensity: tuple[float, ...] | None = None
+        if power_values and power_threshold:
+            intensity = tuple(value / float(power_threshold.value_w) for value in power_values[:count])
+        elif speed_threshold:
+            grade_source = grades if grades is not None else (0.0,) * count
+            adjusted = analysis_maths.grade_adjusted_run_speed(speeds, grade_source)
+            intensity = tuple(value / float(speed_threshold.value_ms) for value in adjusted[:count])
         splits = analysis_maths.best_split_times(
             elapsed_s=elapsed_s,
             distance_cum_m=distance_cum_m,
-            power_w=power_w,
+            power_w=power_values[:count] if power_values is not None else None,
             altitude_m=altitude_series_m,
-            threshold_w=threshold.value_w if threshold else None,
+            intensity=intensity,
         )
         for distance_m, (time_s, avg_power_w) in splits.items():
             current = best.get(distance_m)
@@ -1611,7 +1600,7 @@ def get_best_times(
             analysis_schema.BestTimeRead(
                 distance_m=distance_m,
                 time_s=round(values[0], 1),
-                avg_power_w=round(values[1], 1),
+                avg_power_w=round(values[1], 1) if values[1] is not None else None,
                 activity_id=values[2],
                 start_time=values[3].isoformat() if values[3] is not None else None,
             )

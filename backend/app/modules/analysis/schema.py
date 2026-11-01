@@ -480,7 +480,7 @@ class BestTimeRead(BaseModel):
 
     distance_m: StrictInt
     time_s: StrictFloat
-    avg_power_w: StrictFloat
+    avg_power_w: StrictFloat | None
     activity_id: StrictInt
     start_time: StrictStr | None
 

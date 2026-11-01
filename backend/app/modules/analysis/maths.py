@@ -312,11 +312,12 @@ def downsample(points: Sequence[tuple[float, float]], max_points: int) -> list[t
 def best_split_times(
     elapsed_s: Sequence[float],
     distance_cum_m: Sequence[float],
-    power_w: Sequence[float],
+    power_w: Sequence[float] | None,
     altitude_m: Sequence[float],
     distances_m: Sequence[int] = analysis_constants.BT_DISTANCES_M,
     threshold_w: float | None = None,
-) -> dict[int, tuple[float, float]]:
+    intensity: Sequence[float] | None = None,
+) -> dict[int, tuple[float, float | None]]:
     """Return ``(time_s, avg_power_w)`` for the fastest valid split of each distance.
 
     A split of distance D is every window the cumulative distance spans D or more;
@@ -327,17 +328,31 @@ def best_split_times(
     length: below it the athlete was coasting downhill, and the time says nothing
     about fitness. Below that same length GPS speed itself stops being trustworthy
     (jitter and under-measured bursts), so there the split must also carry a real
-    engine: mean power at least ``BT_EFFORT_IF`` times the athlete's threshold.
-    Distances no window satisfies are absent from the result.
+    engine: mean intensity at least ``BT_EFFORT_IF`` - watts over threshold, or
+    grade-adjusted pace over critical speed via ``intensity``, the chain's pace
+    reading. With no engine signal at all the short distances are absent: heart
+    rate lags too much to evidence a 400 m surge.
     """
     cum = np.asarray(distance_cum_m, dtype=float)
     elapsed = np.asarray(elapsed_s, dtype=float)
     altitude = np.asarray(altitude_m, dtype=float)
-    power_cum = np.concatenate([[0.0], np.cumsum(np.asarray(power_w, dtype=float))])
-    if cum.size != elapsed.size or cum.size != altitude.size or cum.size + 1 != power_cum.size or cum.size < 2:
+    engine = (
+        np.asarray(intensity, dtype=float)
+        if intensity is not None
+        else (
+            np.asarray(power_w, dtype=float) / threshold_w
+            if threshold_w and threshold_w > 0 and power_w is not None
+            else None
+        )
+    )
+    engine_cum = np.concatenate([[0.0], np.cumsum(engine)]) if engine is not None else None
+    power_cum = np.concatenate([[0.0], np.cumsum(np.asarray(power_w, dtype=float))]) if power_w is not None else None
+    if cum.size != elapsed.size or cum.size != altitude.size or cum.size < 2:
+        return {}
+    if engine_cum is not None and cum.size + 1 != engine_cum.size:
         return {}
 
-    result: dict[int, tuple[float, float]] = {}
+    result: dict[int, tuple[float, float | None]] = {}
     ends = np.arange(1, cum.size)
     for distance in distances_m:
         if cum[-1] - cum[0] < distance:
@@ -353,19 +368,28 @@ def best_split_times(
             if distance >= analysis_constants.BT_SHORT_MIN_M
             else analysis_constants.BT_MIN_GRADE_PCT_SHORT
         )
-        powers = (power_cum[ends] - power_cum[begins]) / np.maximum(spans, 1e-9)
+        if distance < analysis_constants.BT_SHORT_MIN_M and engine_cum is None:
+            continue  # no signal can evidence a short surge
+        engine_means = (
+            (engine_cum[ends] - engine_cum[begins]) / np.maximum(spans, 1e-9) if engine_cum is not None else spans * 0.0
+        )
         valid &= spans > 0.0
         valid &= distance / spans <= analysis_constants.BT_MAX_SPEED_MS
         valid &= grades >= min_grade
-        if distance < analysis_constants.BT_SHORT_MIN_M and threshold_w:
-            valid &= powers >= analysis_constants.BT_EFFORT_IF * threshold_w
+        if distance < analysis_constants.BT_SHORT_MIN_M:
+            valid &= engine_means >= analysis_constants.BT_EFFORT_IF
         if not valid.any():
             continue
         candidates = np.flatnonzero(valid)
         # fastest first; among equals, the hardest effort wins
-        order = np.lexsort((-powers[candidates], spans[candidates]))
+        order = np.lexsort((-engine_means[candidates], spans[candidates]))
         best = int(candidates[order[0]])
-        result[int(distance)] = (float(spans[best]), float(powers[best]))
+        avg_power = (
+            float((power_cum[ends[best]] - power_cum[begins[best]]) / max(spans[best], 1e-9))
+            if power_cum is not None
+            else None
+        )
+        result[int(distance)] = (float(spans[best]), avg_power)
     return result
 
 

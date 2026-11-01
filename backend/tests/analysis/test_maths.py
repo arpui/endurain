@@ -335,6 +335,7 @@ class TestBestSplitTimes:
             power_w=power,
             altitude_m=altitude,
             distances_m=(400, 1000),
+            threshold_w=250.0,  # short distances also need the engine gate cleared
         )
         assert 400 in splits  # short: bound is -2 %, -1,5 % passes
         assert 1000 not in splits  # long: bound is -1 %, -1,5 % fails
@@ -382,6 +383,7 @@ class TestBestSplitSpeedCeiling:
             power_w=power,
             altitude_m=altitude,
             distances_m=(100,),
+            threshold_w=350.0,
         )
         assert splits[100][0] == pytest.approx(13.0, abs=1.0)
 
@@ -408,8 +410,9 @@ class TestBestSplitPowerRules:
             distances_m=(100,),
             threshold_w=350.0,
         )
-        assert 100 in without
-        assert with_floor == {}
+        # no signal at all cannot evidence a short surge: the distance is absent
+        assert without == {}
+        assert with_floor == {}  # with one, 180 W is 0,51 IF: rejected again
 
     def test_equal_times_go_to_the_window_sitting_on_the_effort(self):
         seconds = 30
@@ -423,6 +426,7 @@ class TestBestSplitPowerRules:
             power_w=power,
             altitude_m=altitude,
             distances_m=(100,),
+            threshold_w=350.0,
         )
         # every 100 m window spans the same handful of seconds; the tie goes to the
         # one sitting on the 600 W block rather than the one starting in the easy part

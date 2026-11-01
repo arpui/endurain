@@ -1045,11 +1045,6 @@ class TestTerrainClimbsService:
         assert climb.rss is None and climb.rss_per_min is None
 
     def test_a_powerless_route_with_a_critical_speed_scores_its_climbs_by_pace(self):
-        settings_with_cs = _settings(
-            speed_thresholds={
-                "run": analysis_schema.SpeedThresholdRead(value_ms=4.0, source=analysis_constants.ThresholdSource.AUTO)
-            }
-        )
         db = _db()
         data = analysis_methods.LoadInput(
             moving_seconds=1500.0,
@@ -1152,13 +1147,25 @@ class TestBestTimes:
             read = analysis_service.get_best_times(2, "run", db)
         assert read.records == []
 
-    def test_activities_without_power_never_appear(self):
+    def test_an_activity_without_engine_signal_keeps_only_the_grade_gated_distances(self):
+        """Heart rate cannot evidence a short surge, so the short rows stay empty.
+
+        The distances whose only guard is the net grade still read: a powerless
+        run over enough ground is a personal best there too, watts blank.
+        """
         activity = _activity(1, start_time=datetime.now(UTC))
+        stamps = tuple(datetime.now(UTC) + timedelta(seconds=i) for i in range(5400))
 
         def streams(activity_id, stream_type, key, db, *, keep_zeros):
             if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
                 return 1.0, (), ()
-            return 1.0, tuple([4.0] * 1500), tuple()
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([4.0] * 5400), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([10.0] * 5400), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_HR:
+                return 1.0, tuple([150.0] * 5400), stamps
+            return 1.0, (), ()
 
         db = _db()
         with (
@@ -1167,7 +1174,38 @@ class TestBestTimes:
             patch(f"{_SVC}._stream_samples", side_effect=streams),
         ):
             read = analysis_service.get_best_times(2, "run", db)
-        assert read.records == []
+        distances = {record.distance_m for record in read.records}
+        assert distances and all(distance >= analysis_constants.BT_SHORT_MIN_M for distance in distances)
+        assert all(record.avg_power_w is None for record in read.records)
+
+    def test_a_critical_speed_lets_a_powerless_activity_clear_the_short_gate(self):
+        """With a critical speed, adjusted pace is the engine behind a short split."""
+        activity = _activity(1, start_time=datetime.now(UTC))
+        stamps = tuple(datetime.now(UTC) + timedelta(seconds=i) for i in range(1500))
+
+        def streams(activity_id, stream_type, key, db, *, keep_zeros):
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, (), ()
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([4.4] * 1500), stamps  # 1,10 x the 4,0 critical speed
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([10.0] * 1500), stamps
+            return 1.0, (), ()
+
+        settings = _settings(
+            speed_thresholds={
+                "run": analysis_schema.SpeedThresholdRead(value_ms=4.0, source=analysis_constants.ThresholdSource.AUTO)
+            }
+        )
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=[activity]),
+            patch(f"{_SVC}.get_settings", return_value=settings),
+            patch(f"{_SVC}._stream_samples", side_effect=streams),
+        ):
+            read = analysis_service.get_best_times(2, "run", db)
+        distances = {record.distance_m for record in read.records}
+        assert 100 in distances and 800 in distances
 
     def test_a_repeated_gps_spike_does_not_become_a_split(self):
         """Alignment copies the last speed across a dropout; six copies fake a 100 m sprint.
