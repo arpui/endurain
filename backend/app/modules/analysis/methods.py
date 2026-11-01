@@ -252,6 +252,19 @@ def _rss_lifted_kernel(
     return kernel
 
 
+def _plausible_speeds(speeds_ms: Sequence[float]) -> tuple[float, ...]:
+    """Cap raw GPS speeds at the plausibility ceiling the best-times gate uses.
+
+    A running sensor invents the occasional 40 km/h second; divided by a critical
+    speed of ~4 m/s that reads as a superhuman surge, and an exponential or
+    fourth-power kernel turns one such second into a whole activity's stress.
+    Everything above ``BT_MAX_SPEED_MS`` counts as that ceiling's worth of effort
+    instead: the run happened, its pace credit stays bounded.
+    """
+    ceiling = analysis_constants.BT_MAX_SPEED_MS
+    return tuple(min(value, ceiling) for value in speeds_ms)
+
+
 def _window_stress_scaled(
     values: Sequence[float],
     divisor_signal: float,
@@ -338,7 +351,7 @@ def window_stress_chain(
         return score, ("power" if score > 0 else None)
     if speeds_ms and speed_threshold_ms and speed_threshold_ms > 0:
         grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
-        adjusted = analysis_maths.grade_adjusted_run_speed(speeds_ms, grades)
+        adjusted = analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades)
         score = _window_stress_scaled(
             adjusted, float(speed_threshold_ms), period_s, None, params, lift_with_grade=False
         )
@@ -385,7 +398,7 @@ def _rss_load(data: LoadInput, band: str) -> LoadValue | None:
         lift_with_grade = True
     elif speeds and data.speed_threshold_ms and data.speed_threshold_ms > 0:
         grade_source = grades if grades is not None else (0.0,) * len(speeds)
-        samples = analysis_maths.grade_adjusted_run_speed(speeds, grade_source)
+        samples = analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds), grade_source)
         signal_divisor = float(data.speed_threshold_ms)
         lift_with_grade = False
     elif data.average_hr and data.hr_threshold_bpm and data.hr_threshold_bpm > 0:
@@ -486,7 +499,7 @@ def daniels_points(data: LoadInput) -> LoadValue | None:
         divisor = float(data.power_threshold_w)
     elif data.speed_ms and data.speed_threshold_ms and data.speed_threshold_ms > 0:
         grades = data.grade_pct if data.grade_pct is not None else (0.0,) * len(data.speed_ms)
-        samples = analysis_maths.grade_adjusted_run_speed(data.speed_ms, grades)
+        samples = analysis_maths.grade_adjusted_run_speed(_plausible_speeds(data.speed_ms), grades)
         divisor = float(data.speed_threshold_ms)
     else:
         return None

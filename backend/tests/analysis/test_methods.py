@@ -463,6 +463,17 @@ class TestDanielsPoints:
         )
         assert analysis_methods.daniels_points(hilly).load > value.load
 
+    def test_a_gps_speed_spike_cannot_buy_the_fourth_power(self):
+        seconds = (4.0,) * 3600
+        spiked = list(seconds)
+        spiked[10] = 20.0
+        data = analysis_methods.LoadInput(
+            moving_seconds=3600.0, speed_ms=tuple(spiked), period_s=1.0, speed_threshold_ms=4.0
+        )
+        # the 20 m/s second is credited as an 8 m/s one: (8/4)^4 instead of (20/4)^4
+        expected = 100.0 * (3599 + 16) / 3600
+        assert analysis_methods.daniels_points(data).load == pytest.approx(expected)
+
     def test_heart_rate_alone_scores_no_daniels_points(self):
         """Daniels never scored heart rate; neither does this method."""
         data = analysis_methods.LoadInput(
