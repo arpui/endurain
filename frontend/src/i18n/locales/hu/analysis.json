@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Útvonal emelkedői",
     "tcColRange": "szakasz",
-    "tcNote": "Az emelkedők a terepből olvashatók, a teljesítménytől függetlenül; átfedhetik az idővonalat, és nem adódnak össze vele. Az aRSS teljesítményadatot igényel.",
+    "tcNote": "Az emelkedők a terepből olvashatók, a teljesítménytől függetlenül; átfedhetik az idővonalat, és nem adódnak össze vele. Az aRSS teljesítményadatot igényel. „≈”: lejtést korrigáló tempóból vagy pulzásból becsülve, ha nincs teljesítmény.",
     "colContrast": "vs edzés",
     "rules": "Így kerül felismerésre: laposon egy szakasz csak akkor számít intervallumnak, ha tartja a ≥{effortIf}·CP-t; a terhelés {openW} W-nál nyílik és {closeW} W alatt zárul; minimum {minS} s ({shortS} s alatt az edzés mediánjának {shortBase}?a kell; valódi regeneráció nélkül —≤{recoveryW} W—, {strongBase}); >{climbGrade}% emelkedővel és IF<{climbIf}emelkedőnek számít."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Emelkedés / ereszkedés",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "Az aRSS a napi terhelés mögötti intenzitással súlyozott pontszám; a sorok az edzés egészére adódnak."
+    "rssNote": "Az aRSS a napi terhelés mögötti intenzitással súlyozott pontszám; a sorok az edzés egészére adódnak. „≈”: lejtést korrigáló tempóból vagy pulzásból becsülve, ha nincs teljesítmény."
   }
 }

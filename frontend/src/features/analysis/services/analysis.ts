@@ -312,6 +312,7 @@ function mapTerrainClimb(dto: TerrainClimbDto): TerrainClimb {
     intensityFactor: dto.intensity_factor ?? null,
     contrast: dto.contrast ?? null,
     rss: dto.rss ?? null,
+    rssSource: (dto.rss_source as 'power' | 'pace' | 'hr' | null) ?? null,
     rssPerMin: dto.rss_per_min ?? null,
   }
 }
@@ -409,6 +410,7 @@ function mapLapDynamics(dto: LapDynamicsDto): LapDynamics {
     elevationGainM: dto.elevation_gain_m ?? null,
     elevationLossM: dto.elevation_loss_m ?? null,
     rss: dto.rss ?? null,
+    rssSource: (dto.rss_source as 'power' | 'pace' | 'hr' | null) ?? null,
     rssPerMin: dto.rss_per_min ?? null,
   }
 }

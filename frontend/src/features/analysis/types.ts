@@ -295,6 +295,8 @@ export interface TerrainClimb {
   intensityFactor: number | null
   contrast: number | null
   rss: number | null
+  /** Which signal scored it: power, grade-adjusted pace or heart rate. */
+  rssSource: 'power' | 'pace' | 'hr' | null
   /** The score per minute of climbing, the comparable rate across climbs. */
   rssPerMin: number | null
 }
@@ -337,6 +339,8 @@ export interface LapDynamics {
   elevationLossM: number | null
   /** Shared-scale aRSS score of the lap's window; the rows add up to the activity's. */
   rss: number | null
+  /** Which signal scored it: power, grade-adjusted pace or heart rate. */
+  rssSource: 'power' | 'pace' | 'hr' | null
   /** That score per minute of the lap, the mean stress rate. */
   rssPerMin: number | null
 }

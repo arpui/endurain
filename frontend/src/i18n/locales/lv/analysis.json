@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Maršruta kāpumi",
     "tcColRange": "posms",
-    "tcNote": "Kāpumi nolasīti no reljefa, neatkarīgi no jaudas; tie var pārklāties ar laika joslu un ar to netiek saskaitīti. aRSS nepieciešams jaudas mērītājs.",
+    "tcNote": "Kāpumi nolasīti no reljefa, neatkarīgi no jaudas; tie var pārklāties ar laika joslu un ar to netiek saskaitīti. aRSS nepieciešams jaudas mērītājs. „≈“: novērtēts no (slīpumu kompensējoša) tempa vai sirdsdarbības bez jaudas mērījuma.",
     "colContrast": "vs sesija",
     "rules": "Kā šeit nosaka: plakanie posmā atkarums skaitas par intervālu tikai, ja tas saglabā ≥{effortIf}·CP; slodze sākas pie {openW} W un beidzas zem {closeW} W; minimums {minS} s (zem {shortS} s nepieciešams {shortBase} no sesijas mediānas; bez īsta atpūtas —≤{recoveryW} W—, {strongBase}); ar slīpumu >{climbGrade}% un IF<{climbIf} skaitas kā kāpiens."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Kāpums / kritums",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS ir ar intensitāti svērts rādītājs aiz dienas slodzes; rindas summējas aktivitātes kopsummā."
+    "rssNote": "aRSS ir ar intensitāti svērts rādītājs aiz dienas slodzes; rindas summējas aktivitātes kopsummā. „≈“: novērtēts no (slīpumu kompensējoša) tempa vai sirdsdarbības bez jaudas mērījuma."
   }
 }

@@ -34,6 +34,7 @@
     "time": "用时",
     "best": "最佳",
     "reverse": "反向",
+    "rssNote": "aRSS/min 优先使用功率；否则使用坡度补偿配速或心率（标记“≈”）。",
     "activityLabel": "活动 {id}",
     "empty": {
       "title": "还没有用时",

@@ -34,6 +34,7 @@
     "time": "Czas",
     "best": "Najlepszy",
     "reverse": "Odwrotny kierunek",
+    "rssNote": "aRSS/min używa mocy, jeśli jest; w przeciwnym razie tempo skompensowane nachyleniem lub HR („≈”).",
     "activityLabel": "Aktywność {id}",
     "empty": {
       "title": "Jeszcze nie ma starań",

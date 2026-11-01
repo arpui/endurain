@@ -62,8 +62,10 @@ export interface SegmentEffort {
   avgPowerW: number | null
   /** Mean heart rate over the effort's window; null without a heart-rate stream. */
   avgHrBpm: number | null
-  /** The shared aRSS score per minute over the effort; null without power or threshold. */
+  /** The shared aRSS score per minute over the effort; null when nothing scored. */
   rssPerMin: number | null
+  /** Which signal scored it: power, grade-adjusted pace or heart rate. */
+  rssSource: 'power' | 'pace' | 'hr' | null
   /** Wall-clock time of the first effort waypoint (ISO). */
   timeStart: string
   /** Wall-clock time of the last effort waypoint (ISO). */

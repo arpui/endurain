@@ -9596,8 +9596,9 @@ export interface components {
          *         stride_length_m: Ground covered per cycle, when cadence or cycles exist.
          *         elevation_gain_m: Ascent the device recorded for the lap.
          *         elevation_loss_m: Descent the device recorded for the lap.
-         *         rss: Shared-scale aRSS score of the lap's window, ``None`` without a
-         *             threshold or powered samples in it.
+         *         rss: Shared-scale aRSS score of the lap's window, from the intensity chain
+         *             (watts, grade-adjusted pace, heart rate); ``None`` when nothing scored.
+         *         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
          *         rss_per_min: That score per minute of the lap, the mean stress rate;
          *             ``None`` when there is no score.
          */
@@ -9614,6 +9615,8 @@ export interface components {
             rss?: number | null;
             /** Rss Per Min */
             rss_per_min?: number | null;
+            /** Rss Source */
+            rss_source?: string | null;
             /** Stride Length M */
             stride_length_m: number | null;
         };
@@ -10591,8 +10594,9 @@ export interface components {
          *         avg_hr_bpm: Mean heart rate over the effort's window, dropouts excluded,
          *             ``None`` without a heart-rate stream.
          *         rss_per_min: The shared aRSS score per minute over the effort's window,
-         *             under the requester's threshold for the sport; ``None`` without
-         *             power, a threshold or gained stress.
+         *             following the intensity chain (watts, grade-adjusted pace, heart
+         *             rate); ``None`` when nothing scored.
+         *         rss_source: Which signal scored the effort (``power``, ``pace``, ``hr``).
          */
         SegmentEffortRead: {
             /** Activity Id */
@@ -10614,6 +10618,8 @@ export interface components {
             pass_number: number;
             /** Rss Per Min */
             rss_per_min?: number | null;
+            /** Rss Source */
+            rss_source?: string | null;
             /** Segment Id */
             segment_id: number;
             /** Stream Index End */
@@ -11269,7 +11275,9 @@ export interface components {
          *         avg_power_w: Mean power, ``None`` without a power stream.
          *         intensity_factor: Mean power over the threshold, ``None`` without either.
          *         contrast: Mean power over the session's median, ``None`` without either.
-         *         rss: Shared-scale aRSS score, ``None`` without power or threshold.
+         *         rss: Shared-scale aRSS score, from the intensity chain (watts, adjusted
+         *             pace, heart rate); ``None`` when nothing scored.
+         *         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
          *         rss_per_min: That score per minute of climbing, the mean stress rate.
          */
         TerrainClimbRead: {
@@ -11295,6 +11303,8 @@ export interface components {
             rss: number | null;
             /** Rss Per Min */
             rss_per_min: number | null;
+            /** Rss Source */
+            rss_source?: string | null;
             /** Start M */
             start_m: number;
             /** Start S */

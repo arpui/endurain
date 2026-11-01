@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Maršruto įkalnės",
     "tcColRange": "ruožas",
-    "tcNote": "Įkalnės skaitomos iš reljefo, nepriklausomai nuo galios; jos gali persikloti su laiko juosta ir su ja nesumuojamos. aRSS reikia galios matuoklio.",
+    "tcNote": "Įkalnės skaitomos iš reljefo, nepriklausomai nuo galios; jos gali persikloti su laiko juosta ir su ja nesumuojamos. aRSS reikia galios matuoklio. „≈“: įvertinta iš (nuolygiu kompensuoto) tempo arba širdies ritmo, nėra galios.",
     "colContrast": "vs sesija",
     "rules": "Kaip čia nustatoma: lygioje atkarpoje intervalu skaičiuojama tik laikantis ≥{effortIf}·CP; krūvis prasideda {openW} W ir baigiasi žemiau {closeW} W; minimumas {minS} s (trumpiau nei {shortS} s reikia {shortBase} seanso medianos; be tikro atsigavimo —≤{recoveryW} W—, {strongBase}); įkalnė >{climbGrade}% su IF<{climbIf} skaičiuojama kaip įkalnė."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Kylantis / leidžiantis",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS – intensyvumu sveriamas rodiklis, lemiantis dienos krūvį; eilutės sudaro visos veiklos sumą."
+    "rssNote": "aRSS – intensyvumu sveriamas rodiklis, lemiantis dienos krūvį; eilutės sudaro visos veiklos sumą. „≈“: įvertinta iš (nuolygiu kompensuoto) tempo arba širdies ritmo, nėra galios."
   }
 }

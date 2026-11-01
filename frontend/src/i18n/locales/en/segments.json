@@ -34,6 +34,7 @@
     "time": "Time",
     "best": "Best",
     "reverse": "Reverse",
+    "rssNote": "aRSS/min uses power when present; otherwise gradient-compensated pace or heart rate (marked \"≈\").",
     "activityLabel": "Activity {id}",
     "empty": {
       "title": "No efforts yet",

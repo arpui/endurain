@@ -34,6 +34,7 @@
     "time": "Čas",
     "best": "Najboljši",
     "reverse": "Nasprotna smer",
+    "rssNote": "aRSS/min uporablja moč, če je na voljo; sicer naklonom popravljen tempo ali UT („≈“).",
     "activityLabel": "Aktivnost {id}",
     "empty": {
       "title": "Še ni prizadevanj",

@@ -34,6 +34,7 @@
     "time": "Čas",
     "best": "Najlepší",
     "reverse": "Opačný smer",
+    "rssNote": "aRSS/min používa výkon, ak je; inak sklonom kompenzované tempo alebo TF („≈“).",
     "activityLabel": "Aktivita {id}",
     "empty": {
       "title": "Zatiaľ žiadne výkony",

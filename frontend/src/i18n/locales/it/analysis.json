@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Salite del percorso",
     "tcColRange": "tratto",
-    "tcNote": "le salite si leggono dal terreno, indipendentemente dalla potenza; possono sovrapporsi alla linea temporale e non si sommano ad essa. L'aRSS richiede una misurazione di potenza.",
+    "tcNote": "le salite si leggono dal terreno, indipendentemente dalla potenza; possono sovrapporsi alla linea temporale e non si sommano ad essa. L'aRSS richiede una misurazione di potenza. «≈»: stimato da ritmo (pendenza compensata) o FC quando non cè potenza.",
     "colContrast": "vs sessione",
     "rules": "Rilevazione qui: in piano un tratto conta come intervallo solo se mantiene ≥{effortIf}·CP; uno sforzo si apre a {openW} W e si chiude sotto {closeW} W; minimo {minS} s (sotto {shortS} s serve {shortBase} la mediana della sessione; senza recupero reale —≤{recoveryW} W—, {strongBase}); con pendenza >{climbGrade}% e IF<{climbIf} conta come salita."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Dislivello (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS è il punteggio ponderato per intensità alla base del carico giornaliero; le righe sommano il totale dell'attività."
+    "rssNote": "aRSS è il punteggio ponderato per intensità alla base del carico giornaliero; le righe sommano il totale dell'attività. «≈»: stimato da ritmo (pendenza compensata) o FC quando non cè potenza."
   }
 }

@@ -94,6 +94,14 @@ const rows = computed<SegmentRow[]>(() =>
     })),
 )
 
+/** Estimated scores (adjusted pace or heart rate) carry a marker. */
+function markEstimated(source: string | null, value: string): string {
+  if (value === '--') {
+    return value
+  }
+  return source && source !== 'power' ? `\u2248${value}` : value
+}
+
 /** Kilometre marks of a climb's stretch: always metric, like the score per km. */
 function kmMark(meters: number): string {
   return new Intl.NumberFormat(locale.value, {
@@ -112,7 +120,10 @@ const climbRows = computed<ClimbRow[]>(() =>
     power: climb.avgPowerW === null ? '--' : `${Math.round(climb.avgPowerW)} W`,
     intensityFactor: climb.intensityFactor === null ? '--' : climb.intensityFactor.toFixed(2),
     contrast: climb.contrast === null ? '--' : `\u00d7${climb.contrast.toFixed(2)}`,
-    rssMin: climb.rssPerMin === null ? '--' : climb.rssPerMin.toFixed(2),
+    rssMin: markEstimated(
+      climb.rssSource,
+      climb.rssPerMin === null ? '--' : climb.rssPerMin.toFixed(2),
+    ),
   })),
 )
 

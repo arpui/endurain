@@ -34,6 +34,7 @@
     "time": "Süre",
     "best": "En iyi",
     "reverse": "Ters yön",
+    "rssNote": "aRSS/min varsa gücü kullanır; yoksa eğim dengelenmiş tempo veya nabız (\"≈\" işaretli).",
     "activityLabel": "Etkinlik {id}",
     "empty": {
       "title": "Henüz efor yok",

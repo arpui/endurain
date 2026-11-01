@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Tõusud marsruudilt",
     "tcColRange": "lõik",
-    "tcNote": "Tõuse loetakse maastikust, sõltumata võimsusest; need võivad kattuda ajajooniga ega liideta sellega. aRSS nõuab võimsusmõõturit.",
+    "tcNote": "Tõuse loetakse maastikust, sõltumata võimsusest; need võivad kattuda ajajooniga ega liideta sellega. aRSS nõuab võimsusmõõturit. \"≈\": hinnatud (kallet arvestava) tempo või pulsiga, kui võimsust pole.",
     "colContrast": "vs session",
     "rules": "Kuidas siin tuvastatakse: tasasel loeb lõik intervalliks vaid siis, kui peab ≥{effortIf}·CP; koormus avneb {openW} W juures ja sulgub alla {closeW} W; vähemalt {minS} s (alla {shortS} s on vaja {shortBase} sessioni mediaanist; ilma tõelise puhkuseta —≤{recoveryW} W—, {strongBase}); üle {climbGrade}% tõusuga ja IF<{climbIf} loetakse tõusuks."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Tõus / lask",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS on intensiivsusega kaalutud skoor päevase koormuse taga; read annavad kokku tegevuse tervikskoori."
+    "rssNote": "aRSS on intensiivsusega kaalutud skoor päevase koormuse taga; read annavad kokku tegevuse tervikskoori. \"≈\": hinnatud (kallet arvestava) tempo või pulsiga, kui võimsust pole."
   }
 }

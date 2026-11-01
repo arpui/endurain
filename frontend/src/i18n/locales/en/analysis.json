@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Climbs from the route",
     "tcColRange": "stretch",
-    "tcNote": "Climbs are read from the terrain, whatever the power did; they may overlap the timeline and are never summed with it. aRSS needs a power meter.",
+    "tcNote": "Climbs are read from the terrain, whatever the power did; they may overlap the timeline and are never summed with it. aRSS needs a power meter. \"≈\" is estimated from gradient-compensated pace or heart rate when the activity has no power.",
     "colContrast": "vs session",
     "rules": "How it is detected here: on the flat a stretch counts as an interval only if it holds ≥{effortIf}·CP; an effort opens at {openW} W and closes below {closeW} W; minimum {minS} s (under {shortS} s it needs {shortBase} the session median; with no real recovery —≤{recoveryW} W—, {strongBase}); a grade above {climbGrade}% with IF<{climbIf} counts as a climb."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Ascent / descent",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS is the intensity-weighted score behind the daily load; the rows add up to the activity's total."
+    "rssNote": "aRSS is the intensity-weighted score behind the daily load; the rows add up to the activity's total. \"≈\" is estimated from gradient-compensated pace or heart rate when the activity has no power."
   }
 }

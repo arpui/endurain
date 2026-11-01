@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Klimmen van de route",
     "tcColRange": "vak",
-    "tcNote": "Klimmen worden uit het terrein gelezen, ongeacht het vermogen; ze kunnen de tijdlijn overlappen en worden niet opgeteld. aRSS vereist een vermogensmeter.",
+    "tcNote": "Klimmen worden uit het terrein gelezen, ongeacht het vermogen; ze kunnen de tijdlijn overlappen en worden niet opgeteld. aRSS vereist een vermogensmeter. \"≈\": geschat uit (hellinggecompenseerd) tempo of hartslag zonder vermogensmeter.",
     "colContrast": "vs sessie",
     "rules": "Detectie hier: op vlakke weg telt een stuk alleen als interval als het ≥{effortIf}·CP houdt; een inspanning opent bij {openW} W en sluit onder {closeW} W; minimaal {minS} s (onder {shortS} s is {shortBase} van het sessie-mediaan nodig; zonder echt herstel —≤{recoveryW} W—, {strongBase}); met stijging >{climbGrade}% en IF<{climbIf} telt het als klim."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Stijging / daling",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS is de intensiteit-gewogen score achter de dagelijkse belasting; de rijen tellen op tot het totaal van de activiteit."
+    "rssNote": "aRSS is de intensiteit-gewogen score achter de dagelijkse belasting; de rijen tellen op tot het totaal van de activiteit. \"≈\": geschat uit (hellinggecompenseerd) tempo of hartslag zonder vermogensmeter."
   }
 }

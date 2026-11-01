@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Vzponi po progi",
     "tcColRange": "odsek",
-    "tcNote": "Vzponi se berejo iz terena, ne glede na moč; lahko se prekrivajo s časovnico in se z njo ne seštevajo. aRSS zahteva merilnik moči.",
+    "tcNote": "Vzponi se berejo iz terena, ne glede na moč; lahko se prekrivajo s časovnico in se z njo ne seštevajo. aRSS zahteva merilnik moči. „≈“: ocenjeno iz (naklonom popravljenega) tempa ali UT brez merjenja moči.",
     "colContrast": "vs seja",
     "rules": "Kako je zaznano: na ravnem šteje odsek kot interval samo, če drži ≥{effortIf}·CP; naprezanje se odpre pri {openW} W in zapre pod {closeW} W; najmanj {minS} s (pod {shortS} s je potrebnih {shortBase} mediane seje; brez pravega počitka —≤{recoveryW} W—, {strongBase}); s strmino >{climbGrade}% in IF<{climbIf} šteje kot vzpon."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Višinska razlika (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS je z intenzivnostjo utežena točka za dnevno obremenitvijo; vrstice se seštejejo v skupni rezultat aktivnosti."
+    "rssNote": "aRSS je z intenzivnostjo utežena točka za dnevno obremenitvijo; vrstice se seštejejo v skupni rezultat aktivnosti. „≈“: ocenjeno iz (naklonom popravljenega) tempa ali UT brez merjenja moči."
   }
 }

@@ -34,6 +34,7 @@
     "time": "Idő",
     "best": "Legjobb",
     "reverse": "Ellentétes irány",
+    "rssNote": "Az aRSS/min teljesítményt használja, ha van; különben a lejtést korrigáló tempót vagy pulzust („≈”-vel jelölve).",
     "activityLabel": "Tevékenység {id}",
     "empty": {
       "title": "Még nincs erőfeszítés",

@@ -387,11 +387,13 @@ describe('mapSegmentEffort dynamics', () => {
       avg_power_w: 312.5,
       avg_hr_bpm: 168,
       rss_per_min: 2.4,
+      rss_source: 'power',
     })
     expect(effort.activityType).toBe(2)
     expect(effort.avgPowerW).toBe(312.5)
     expect(effort.avgHrBpm).toBe(168)
     expect(effort.rssPerMin).toBe(2.4)
+    expect(effort.rssSource).toBe('power')
   })
 
   it('keeps the new columns null for activities without those streams', () => {
@@ -411,6 +413,7 @@ describe('mapSegmentEffort dynamics', () => {
     expect(effort.avgPowerW).toBeNull()
     expect(effort.avgHrBpm).toBeNull()
     expect(effort.rssPerMin).toBeNull()
+    expect(effort.rssSource).toBeNull()
   })
 })
 
@@ -432,6 +435,7 @@ describe('SegmentEffortsTable', () => {
       avgPowerW: 312.5,
       avgHrBpm: 168,
       rssPerMin: 2.4,
+      rssSource: 'pace',
       timeStart: '2026-10-15T16:00:00Z',
       timeEnd: '2026-10-15T16:06:12Z',
       ...overrides,
@@ -451,7 +455,7 @@ describe('SegmentEffortsTable', () => {
     }
     expect(row.text()).toContain('313 W')
     expect(row.text()).toContain('168 bpm')
-    expect(row.text()).toContain('2.40')
+    expect(row.text()).toContain('\u22482.40')
     // A run reads in pace, not speed: 3.3 m/s is about 5:03 per km.
     expect(row.text()).toMatch(/[45]:\d\d/)
   })

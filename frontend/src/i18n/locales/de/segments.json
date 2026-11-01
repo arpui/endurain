@@ -34,6 +34,7 @@
     "time": "Zeit",
     "best": "Beste",
     "reverse": "Gegenrichtung",
+    "rssNote": "aRSS/min nutzt Leistung, wo vorhanden; sonst steigkorrigiertes Tempo oder Herzfrequenz (mit „≈“ markiert).",
     "activityLabel": "Aktivität {id}",
     "empty": {
       "title": "Noch keine Aufwände",

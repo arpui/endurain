@@ -34,6 +34,7 @@
     "time": "Temps",
     "best": "Millor",
     "reverse": "Sentit invers",
+    "rssNote": "aRSS/min usa potència si n’hi ha; si no, ritme amb el pendent compensat o freqüència cardíaca (marcat amb «≈»).",
     "activityLabel": "Activitat {id}",
     "empty": {
       "title": "Encara no hi ha esforços",

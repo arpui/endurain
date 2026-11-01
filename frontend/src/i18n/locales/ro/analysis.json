@@ -137,7 +137,7 @@
     "colRssMin": "aRSS/min",
     "tcTitle": "Urcări din traseu",
     "tcColRange": "porțiune",
-    "tcNote": "Urcările se citesc din teren, indiferent de putere; pot suprapune cronologia și nu se însumează cu ea. aRSS necesită un senzor de putere.",
+    "tcNote": "Urcările se citesc din teren, indiferent de putere; pot suprapune cronologia și nu se însumează cu ea. aRSS necesită un senzor de putere. „≈”: estimat din ritm (compensat cu pantă) sau FC fără senzor de putere.",
     "colContrast": "vs ședință",
     "rules": "Cum se detectează aici: pe plat un trakt contează ca interval doar dacă menține ≥{effortIf}·CP; un efort se deschide la {openW} W și se închide sub {closeW} W; minimum {minS} s (sub {shortS} s cere {shortBase} din mediana ședinței; fără recuperare reală —≤{recoveryW} W—, {strongBase}); pantă >{climbGrade}% cu IF<{climbIf} contează ca urcare."
   },
@@ -173,6 +173,6 @@
     "desnivel": "Urcare / coborâre",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
-    "rssNote": "aRSS este scorul ponderat cu intensitate din spatele sarcii zilnice; rândurile însumează totalul activității."
+    "rssNote": "aRSS este scorul ponderat cu intensitate din spatele sarcii zilnice; rândurile însumează totalul activității. „≈”: estimat din ritm (compensat cu pantă) sau FC fără senzor de putere."
   }
 }

@@ -34,6 +34,7 @@
     "time": "Tempo",
     "best": "Mellor",
     "reverse": "Sentido inverso",
+    "rssNote": "O aRSS/min usa potencia se a hai; se non, ritmo co pendente compensado ou FC (marcado «≈»).",
     "activityLabel": "Actividade {id}",
     "empty": {
       "title": "Aínda non hai esforzos",
