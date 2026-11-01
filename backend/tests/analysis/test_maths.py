@@ -473,13 +473,28 @@ class TestWindowStressChain:
         assert score > 0
 
     def test_without_watts_the_adjusted_pace_scores_the_window(self):
+        """The chain scores the pace series - GAP-adjusted, not raw speed."""
         score_flat, source = analysis_methods.window_stress_chain(
-            None, [4.0] * 100, None, self.FLAT * 100, 1.0, None, 4.0, None
+            None,
+            analysis_methods.pace_series([4.0] * 100, 1.0, 4.0, self.FLAT * 100),
+            None,
+            self.FLAT * 100,
+            1.0,
+            None,
+            4.0,
+            None,
         )
         assert source == "pace"
         # the same ground speed up a 10 % hill is a harder effort, and GAP knows it
         score_hill, hill_source = analysis_methods.window_stress_chain(
-            None, [4.0] * 100, None, [10.0] * 100, 1.0, None, 4.0, None
+            None,
+            analysis_methods.pace_series([4.0] * 100, 1.0, 4.0, [10.0] * 100),
+            None,
+            [10.0] * 100,
+            1.0,
+            None,
+            4.0,
+            None,
         )
         assert hill_source == "pace"
         assert score_hill > score_flat
@@ -497,9 +512,11 @@ class TestWindowStressChain:
         capped = [4.0] * 100
         capped[50] = analysis_constants.BT_MAX_SPEED_MS
         spike_score, source = analysis_methods.window_stress_chain(
-            None, spiked, None, [0.0] * 100, 1.0, None, 4.0, None
+            None, analysis_methods.pace_series(spiked, 1.0, 4.0, [0.0] * 100), None, [0.0] * 100, 1.0, None, 4.0, None
         )
-        capped_score, _ = analysis_methods.window_stress_chain(None, capped, None, [0.0] * 100, 1.0, None, 4.0, None)
+        capped_score, _ = analysis_methods.window_stress_chain(
+            None, analysis_methods.pace_series(capped, 1.0, 4.0, [0.0] * 100), None, [0.0] * 100, 1.0, None, 4.0, None
+        )
         assert source == "pace"
         assert spike_score == pytest.approx(capped_score)
 
@@ -517,12 +534,21 @@ class TestWindowStressChain:
         spiked_speeds[50] = 5.0
         grades = [0.0] * 100
         grades[50] = 35.0
-        score, _ = analysis_methods.window_stress_chain(None, spiked_speeds, None, grades, 1.0, None, cs, None)
+        score, _ = analysis_methods.window_stress_chain(
+            None, analysis_methods.pace_series(spiked_speeds, 1.0, cs, grades), None, grades, 1.0, None, cs, None
+        )
         hill = int(analysis_constants.PACE_SMOOTH_WINDOW_S)
         sustained = [5.0] * hill + [4.0] * (100 - hill)
         sustained_grades = [35.0] * hill + [0.0] * (100 - hill)
         sustained_score, _ = analysis_methods.window_stress_chain(
-            None, sustained, None, sustained_grades, 1.0, None, cs, None
+            None,
+            analysis_methods.pace_series(sustained, 1.0, cs, sustained_grades),
+            None,
+            sustained_grades,
+            1.0,
+            None,
+            cs,
+            None,
         )
         raw_adjusted = analysis_maths.grade_adjusted_run_speed([5.0], [35.0])[0]
         assert raw_adjusted > analysis_constants.PACE_INTENSITY_CEILING * cs  # the ceiling still bites
@@ -542,15 +568,29 @@ class TestWindowStressChain:
         assert manual[0] < plain  # sanity: pace below critical scores less
 
     def test_the_smoothing_window_is_the_athletes_knob(self):
-        """A wider window dilutes one surge more; the knob moves the score."""
+        """A wider window dilutes one surge more; the knob shapes the series."""
         spiked = [4.0] * 600
         spiked[300] = 8.0
         cs = 4.0
         tight, _ = analysis_methods.window_stress_chain(
-            None, spiked, None, [0.0] * 600, 1.0, None, cs, None, {"pace_smooth_window_s": 6.0}
+            None,
+            analysis_methods.pace_series(spiked, 1.0, cs, [0.0] * 600, {"pace_smooth_window_s": 6.0}),
+            None,
+            [0.0] * 600,
+            1.0,
+            None,
+            cs,
+            None,
         )
         wide, _ = analysis_methods.window_stress_chain(
-            None, spiked, None, [0.0] * 600, 1.0, None, cs, None, {"pace_smooth_window_s": 120.0}
+            None,
+            analysis_methods.pace_series(spiked, 1.0, cs, [0.0] * 600, {"pace_smooth_window_s": 120.0}),
+            None,
+            [0.0] * 600,
+            1.0,
+            None,
+            cs,
+            None,
         )
         assert tight > wide  # one fast second weighs less inside a two-minute average
 

@@ -1154,8 +1154,15 @@ def get_activity_intervals(
         )
     sport = sport_group(activity.activity_type)
     data = _load_input(activity, sport, db)
-    ground_period, _ground_stamps, ground_power, ground_speeds, _grades_unused, ground_hr, altitudes_m = (
+    ground_period, _ground_stamps, ground_power, ground_speeds, ground_grades, ground_hr, altitudes_m = (
         _ground_timeline(activity.id, db)
+    )
+    ground_pace = (
+        analysis_methods.pace_series(
+            ground_speeds, ground_period, data.speed_threshold_ms, ground_grades, dict(data.parameters)
+        )
+        if ground_speeds and data.speed_threshold_ms
+        else None
     )
     analysis = analysis_intervals.analyse_activity(
         power_w=data.power_w or (),
@@ -1207,6 +1214,7 @@ def get_activity_intervals(
                 base_power_w=analysis.base_power_w,
                 parameters=dict(data.parameters),
                 pace_calibration=data.pace_calibration,
+                pace_ms=ground_pace,
             )
         ],
     )
@@ -1390,6 +1398,11 @@ def _apply_lap_rss(
     period_s, stamps, power_values, speeds, grades, hr_values, _altitude = _ground_timeline(activity_id, db)
     if not stamps or period_s <= 0:
         return
+    pace_values = (
+        analysis_methods.pace_series(speeds, period_s, speed_threshold_ms, grades, parameters)
+        if speeds and speed_threshold_ms
+        else None
+    )
     for lap, entry in zip(lap_windows, dynamics, strict=True):
         window = _lap_sample_window(stamps, lap.start_time, float(lap.total_elapsed_time or 0.0))
         if window is None:
@@ -1397,7 +1410,7 @@ def _apply_lap_rss(
         start, stop = window
         window_scores = analysis_methods.window_scores_by_source(
             power_values[start:stop] if power_values is not None else None,
-            speeds[start:stop] if speeds is not None else None,
+            pace_values[start:stop] if pace_values is not None else None,
             hr_values[start:stop] if hr_values is not None else None,
             grades[start:stop] if grades is not None else None,
             period_s,
@@ -1464,6 +1477,11 @@ def compute_window_stats(
     )
 
     period_s, stamps, power_values, speeds, grades, hr_values, _altitude = _ground_timeline(activity_id, db)
+    pace_values = (
+        analysis_methods.pace_series(speeds, period_s, speed_threshold_ms, grades, parameters)
+        if speeds and speed_threshold_ms
+        else None
+    )
     stats: list[analysis_contracts.WindowStats] = []
     for start, end in windows:
         start_a = start if start.tzinfo else start.replace(tzinfo=UTC)
@@ -1484,7 +1502,7 @@ def compute_window_stats(
                     avg_hr = round(arithmetic_mean([v for v in hr_values[cut:stop] if v > 0]), 0)
                 all_scores = analysis_methods.window_scores_by_source(
                     power_values[cut:stop] if power_values is not None else None,
-                    speeds[cut:stop] if speeds is not None else None,
+                    pace_values[cut:stop] if pace_values is not None else None,
                     hr_values[cut:stop] if hr_values is not None else None,
                     grades[cut:stop] if grades is not None else None,
                     period_s,
