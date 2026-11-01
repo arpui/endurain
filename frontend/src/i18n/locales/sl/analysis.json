@@ -21,6 +21,17 @@
     "rss_low": "aRSS nizka",
     "daniels_points": "Danielske točke"
   },
+  "sources": {
+    "title": "Vir",
+    "power": "Moč",
+    "pace": "Tempo (popravljen z naklonom)",
+    "hr": "Urjenost srca",
+    "shortPower": "MOČ",
+    "shortPace": "TEM",
+    "shortHr": "UT",
+    "matrixTitle": "Primerjava po viru",
+    "matrixNote": "Ista aktivnost, ocenjena po vsakem viru, ki jo je lahko zaznal: wattje so izmerjeni; tempo s popravkom naklona in UT sta oceni."
+  },
   "sport": {
     "label": "Šport",
     "all": "Vsi športi"

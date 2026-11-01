@@ -21,6 +21,17 @@
     "rss_low": "aRSS låg",
     "daniels_points": "Daniels-poäng"
   },
+  "sources": {
+    "title": "Källor",
+    "power": "Effekt",
+    "pace": "Tempo (lutningskorrigerad)",
+    "hr": "Puls",
+    "shortPower": "EFF",
+    "shortPace": "TEM",
+    "shortHr": "PUL",
+    "matrixTitle": "Jämförelse per källa",
+    "matrixNote": "Samma aktivitet poängsatt av varje signal som kunde läsa den: watt mäts; lutningskorrigerad tempo och puls är uppskattningar."
+  },
   "sport": {
     "label": "Sport",
     "all": "Alla sporter"

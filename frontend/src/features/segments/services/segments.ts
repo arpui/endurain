@@ -59,6 +59,7 @@ export function mapSegmentEffort(dto: SegmentEffortDto): SegmentEffort {
     avgHrBpm: dto.avg_hr_bpm ?? null,
     rssPerMin: dto.rss_per_min ?? null,
     rssSource: (dto.rss_source as 'power' | 'pace' | 'hr' | null) ?? null,
+    sourceScores: dto.source_scores ?? null,
     timeStart: dto.time_start,
     timeEnd: dto.time_end,
   }

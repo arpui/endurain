@@ -436,6 +436,7 @@ describe('SegmentEffortsTable', () => {
       avgHrBpm: 168,
       rssPerMin: 2.4,
       rssSource: 'pace',
+      sourceScores: null,
       timeStart: '2026-10-15T16:00:00Z',
       timeEnd: '2026-10-15T16:06:12Z',
       ...overrides,

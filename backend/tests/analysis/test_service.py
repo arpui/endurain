@@ -1438,6 +1438,49 @@ class TestLapDynamics:
         assert rows[0].rss_source == "pace"
         assert rows[0].rss_per_min is not None
 
+    def test_a_powered_lap_benchmarks_power_against_heart_rate(self):
+        """Watts still score the lap, and the same window reads its HR estimate too."""
+        lap = self._lap(35, distance=1200.0, elapsed=300.0, speed=4.0, cadence=80)
+
+        stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(600))
+
+        def _with_hr(activity_id, stream_type, _key, _db, *, keep_zeros):
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, tuple([400.0] * 600), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([4.0] * 600), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_HR:
+                return 1.0, tuple([160.0] * 600), stamps
+            return 1.0, (), ()
+
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=350.0,
+                    w_prime_j=20000.0,
+                    source=analysis_constants.ThresholdSource.AUTO,
+                    cv_pct=2.0,
+                )
+            },
+            hr_threshold=analysis_schema.HeartRateThresholdRead(
+                value_bpm=150.0, source=analysis_constants.ThresholdSource.AUTO
+            ),
+        )
+        db = _db()
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}.get_settings", return_value=settings),
+            patch(f"{_SVC}.activity_laps_integration.list_laps_for_derivation", return_value=[lap]),
+            patch(f"{_SVC}._stream_samples", side_effect=_with_hr),
+        ):
+            rows = analysis_service.get_activity_lap_dynamics(1, 2, db)
+        entry = rows[0]
+        assert entry.rss_source == "power"
+        assert entry.source_scores is not None
+        assert set(entry.source_scores) == {"power", "hr"}
+        assert entry.source_scores["power"] == entry.rss
+
     def test_streams_without_a_utc_offset_still_locate_the_laps(self):
         """Waypoint times arrive naive while lap start times are aware: one shared UTC clock.
 

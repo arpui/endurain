@@ -417,6 +417,8 @@ class TerrainClimbRead(BaseModel):
             pace, heart rate); ``None`` when nothing scored.
         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
         rss_per_min: That score per minute of climbing, the mean stress rate.
+        source_scores: The climb scored by every available signal, for the
+            side-by-side benchmark.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -435,6 +437,30 @@ class TerrainClimbRead(BaseModel):
     rss: StrictFloat | None
     rss_source: StrictStr | None = None
     rss_per_min: StrictFloat | None
+    source_scores: dict[StrictStr, StrictFloat] | None = None
+
+
+class RssSourceTotalsRead(BaseModel):
+    """One signal's band scores over a whole activity (the source benchmark).
+
+    Attributes:
+        source: The signal the activity was scored with (``power``, ``pace``,
+            ``hr``).
+        total: The general exponential stress over every measured second.
+        up: The share taken on climbs.
+        high: The share taken above the high band edge, off climbs.
+        mid: The share taken between the band edges, off climbs.
+        low: The share taken slow and below the low band edge, off climbs.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    source: StrictStr
+    total: StrictFloat | None = None
+    up: StrictFloat | None = None
+    high: StrictFloat | None = None
+    mid: StrictFloat | None = None
+    low: StrictFloat | None = None
 
 
 class ActivityIntervalsRead(BaseModel):
@@ -463,6 +489,7 @@ class ActivityIntervalsRead(BaseModel):
     segments: list[IntervalSegmentRead]
     rules: IntervalRulesRead | None = None
     climbs: list[TerrainClimbRead] = []
+    rss_by_source: list[RssSourceTotalsRead] = []
 
 
 class BestTimeRead(BaseModel):
@@ -520,6 +547,8 @@ class LapDynamicsRead(BaseModel):
         rss: Shared-scale aRSS score of the lap's window, from the intensity chain
             (watts, grade-adjusted pace, heart rate); ``None`` when nothing scored.
         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
+        source_scores: The lap scored by every available signal, for the
+            side-by-side benchmark.
         rss_per_min: That score per minute of the lap, the mean stress rate;
             ``None`` when there is no score.
     """
@@ -534,6 +563,7 @@ class LapDynamicsRead(BaseModel):
     rss: StrictFloat | None = None
     rss_source: StrictStr | None = None
     rss_per_min: StrictFloat | None = None
+    source_scores: dict[StrictStr, StrictFloat] | None = None
 
 
 class RecomputeQueued(BaseModel):

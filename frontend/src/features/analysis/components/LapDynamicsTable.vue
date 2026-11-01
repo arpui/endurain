@@ -17,6 +17,8 @@ import {
   formatHmsDuration,
 } from '@/features/activities/utils/format'
 import { normalizeLaps, summarizeActiveLaps } from '@/features/activities/utils/laps'
+import type { SourceScore } from '@/utils/sourceScores'
+import { orderedSourceScores } from '@/utils/sourceScores'
 import { formatLapTempo } from '@/features/activities/utils/metrics'
 
 const props = defineProps<{
@@ -29,6 +31,11 @@ const props = defineProps<{
 }>()
 
 const { t, locale } = useI18n()
+
+/** Short benchmark label for one source, matching the sources.* block. */
+function sourceShortLabel(key: string): string {
+  return t(`analysis.sources.short${key.charAt(0).toUpperCase()}${key.slice(1)}`)
+}
 
 const isSwimming = computed(() => activityTypeIsSwimming(props.activity.activityType))
 const showElevation = computed(() => !isSwimming.value)
@@ -56,6 +63,10 @@ const showPower = computed(() => props.dynamics.some((row) => row.avgPowerW !== 
 const showLength = computed(() => props.dynamics.some((row) => row.strideLengthM !== null))
 const showRss = computed(() => props.dynamics.some((row) => row.rss !== null))
 const showRssMin = computed(() => props.dynamics.some((row) => row.rssPerMin !== null))
+/** The source benchmark only earns a column when something compares. */
+const showCompare = computed(() =>
+  props.dynamics.some((row) => orderedSourceScores(row.sourceScores ?? null).length >= 2),
+)
 
 const activeSummary = computed(() => {
   if (!hasRest.value) {
@@ -105,6 +116,7 @@ interface LapRow {
   length: string
   rss: string
   rssMin: string
+  compare: SourceScore[]
   isRest: boolean
 }
 
@@ -140,6 +152,7 @@ const rows = computed<LapRow[]>(() =>
       length: decimal(dynamics?.strideLengthM ?? null, 2),
       rss: estimated(dynamics, decimal(dynamics?.rss ?? null, 1)),
       rssMin: estimated(dynamics, decimal(dynamics?.rssPerMin ?? null, 2)),
+      compare: orderedSourceScores(dynamics?.sourceScores ?? null),
       isRest: entry.isRest,
     }
   }),
@@ -211,6 +224,9 @@ function elevationPair(dynamics: LapDynamics | undefined, lap: ActivityLap): str
             <th v-if="showRssMin" class="py-2 font-medium">
               {{ t('analysis.laps.rssMin') }}
             </th>
+            <th v-if="showCompare" class="py-2 font-medium">
+              {{ t('analysis.sources.title') }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -263,6 +279,14 @@ function elevationPair(dynamics: LapDynamics | undefined, lap: ActivityLap): str
             </td>
             <td v-if="showRssMin" class="py-2 tabular-nums text-muted-foreground">
               {{ row.rssMin }}
+            </td>
+            <td v-if="showCompare" class="py-2 text-caption tabular-nums text-muted-foreground">
+              <span v-for="(score, order) in row.compare" :key="score.key"
+                ><span v-if="order > 0"> · </span
+                ><span :title="t(`analysis.sources.${score.key}`)"
+                  >{{ sourceShortLabel(score.key) }} {{ score.value.toFixed(1) }}</span
+                ></span
+              >
             </td>
           </tr>
         </tbody>

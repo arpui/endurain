@@ -21,6 +21,17 @@
     "rss_low": "aRSS lav",
     "daniels_points": "Daniels-point"
   },
+  "sources": {
+    "title": "Kilder",
+    "power": "Effekt",
+    "pace": "Pace (hældningskorrigeret)",
+    "hr": "Puls",
+    "shortPower": "EFT",
+    "shortPace": "PAC",
+    "shortHr": "PUL",
+    "matrixTitle": "Sammenligning pr. kilde",
+    "matrixNote": "Samme aktivitet scoret efter hver kilde, der kunne læse den: watt måles; hældningskorrigeret pace og puls er estimater."
+  },
   "sport": {
     "label": "Sport",
     "all": "Alle sporter"

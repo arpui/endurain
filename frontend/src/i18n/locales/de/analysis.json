@@ -21,6 +21,17 @@
     "rss_low": "aRSS locker",
     "daniels_points": "Daniels-Punkte"
   },
+  "sources": {
+    "title": "Quellen",
+    "power": "Leistung",
+    "pace": "Tempo (steigkorrigiert)",
+    "hr": "Herzfrequenz",
+    "shortPower": "LEI",
+    "shortPace": "TEM",
+    "shortHr": "HF",
+    "matrixTitle": "Vergleich nach Quelle",
+    "matrixNote": "Dieselbe Aktivität, nach jeder Quelle bewertet, die sie erfassen konnte: Watt werden gemessen; steigkorrigiertes Tempo und Herzfrequenz sind Schätzungen."
+  },
   "sport": {
     "label": "Sportart",
     "all": "Alle Sportarten"

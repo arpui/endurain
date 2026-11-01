@@ -21,6 +21,17 @@
     "rss_low": "aRSS kevyt",
     "daniels_points": "Daniels-pisteet"
   },
+  "sources": {
+    "title": "Lähteet",
+    "power": "Teho",
+    "pace": "Vauhti (kaltevakorjattu)",
+    "hr": "Syke",
+    "shortPower": "TEH",
+    "shortPace": "VAU",
+    "shortHr": "SYK",
+    "matrixTitle": "Vertailu lähteittäin",
+    "matrixNote": "Sama toiminta arvioituna jokaisen luettavissa olleen signaalin mukaan: watit mitataan; kaltevakorjattu vauhti ja syke ovat arvioita."
+  },
   "sport": {
     "label": "Laji",
     "all": "Kaikki lajit"

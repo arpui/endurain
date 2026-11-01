@@ -92,6 +92,8 @@ class WindowStats:
         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
         rss_per_min: That score per minute of the window; ``None`` when there is
             no score.
+        source_scores: The window scored by *every* available signal
+            (``power``/``pace``/``hr``), for the side-by-side benchmark.
     """
 
     avg_power_w: float | None = None
@@ -99,3 +101,4 @@ class WindowStats:
     rss: float | None = None
     rss_source: str | None = None
     rss_per_min: float | None = None
+    source_scores: dict[str, float] | None = None

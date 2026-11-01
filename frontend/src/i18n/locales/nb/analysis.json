@@ -21,6 +21,17 @@
     "rss_low": "aRSS lav",
     "daniels_points": "Daniels-poeng"
   },
+  "sources": {
+    "title": "Kilder",
+    "power": "Effekt",
+    "pace": "Fart (stigningskorrigert)",
+    "hr": "Puls",
+    "shortPower": "EFF",
+    "shortPace": "FAR",
+    "shortHr": "PUL",
+    "matrixTitle": "Sammenligning per kilde",
+    "matrixNote": "Samme aktivitet vurdert etter hver kilde som kunne lese den: watt måles; stigningskorrigert tempo og puls er estimater."
+  },
   "sport": {
     "label": "Idrett",
     "all": "Alle idretter"

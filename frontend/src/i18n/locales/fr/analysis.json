@@ -21,6 +21,17 @@
     "rss_low": "aRSS facile",
     "daniels_points": "Points Daniels"
   },
+  "sources": {
+    "title": "Sources",
+    "power": "Puissance",
+    "pace": "Allure (pente compensée)",
+    "hr": "Fréquence cardiaque",
+    "shortPower": "PUI",
+    "shortPace": "ALL",
+    "shortHr": "FC",
+    "matrixTitle": "Comparatif par source",
+    "matrixNote": "la même activité notée par chaque signal capable de la lire : les watts sont mesurés ; l’allure compensée en pente et la FC sont estimées."
+  },
   "sport": {
     "label": "Sport",
     "all": "Tous les sports"

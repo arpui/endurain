@@ -274,6 +274,11 @@ def _enrich_efforts(
             items[index].avg_hr_bpm = stat.avg_hr_bpm
             items[index].rss_per_min = stat.rss_per_min
             items[index].rss_source = stat.rss_source
+            effort_s = (items[index].time_end - items[index].time_start).total_seconds()
+            if stat.source_scores and effort_s > 0:
+                items[index].source_scores = {
+                    key: round(value * 60.0 / effort_s, 2) for key, value in stat.source_scores.items()
+                }
 
 
 def _kept_direction(direction: segments_schema.EffortDirectionFilter) -> str | None:

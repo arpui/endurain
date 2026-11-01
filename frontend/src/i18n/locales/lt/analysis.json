@@ -21,6 +21,17 @@
     "rss_low": "aRSS žema",
     "daniels_points": "Daniels taškai"
   },
+  "sources": {
+    "title": "Šaltiniai",
+    "power": "Galia",
+    "pace": "Tempas (kompensuotas nuolygio)",
+    "hr": "Širdies ritmas",
+    "shortPower": "GAL",
+    "shortPace": "TEM",
+    "shortHr": "ŠRD",
+    "matrixTitle": "Palyginimas pagal šaltinį",
+    "matrixNote": "Ta pati veikla įvertinta pagal kiekvieną signalą, kuris ją galėjo nuskaityti: wattai matuojami; nuolygiu kompensuotas tempas ir širdies ritmas – įverčiai."
+  },
   "sport": {
     "label": "Sportas",
     "all": "Visi sportai"

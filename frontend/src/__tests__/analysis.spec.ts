@@ -280,6 +280,7 @@ describe('activity interval analysis', () => {
       threshold_w: 350,
       base_power_w: 280,
       climbs: [],
+      rss_by_source: [],
       rules: {
         open_w: 384,
         close_w: 315,

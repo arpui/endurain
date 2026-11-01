@@ -511,3 +511,39 @@ class TestDanielsPoints:
         assert analysis_constants.LoadMethod.COGGAN_TSS not in measured
         # the exponential family reaches pace-side activities through the chain too
         assert analysis_constants.LoadMethod.RSS_TOTAL in measured
+
+
+class TestRssBandsBySource:
+    """The activity-level benchmark: each signal's band totals, side by side."""
+
+    def test_a_powered_run_with_heart_rate_reports_both(self):
+        data = analysis_methods.LoadInput(
+            moving_seconds=3600.0,
+            power_w=(300.0,) * 3600,
+            period_s=1.0,
+            speed_ms=(4.0,) * 3600,
+            speed_threshold_ms=4.0,
+            power_threshold_w=300.0,
+            average_hr=160.0,
+            hr_threshold_bpm=150.0,
+        )
+        bands = analysis_methods.rss_bands_by_source(data)
+        assert set(bands) == {"power", "pace", "hr"}
+        # the power row matches the chain's own rss_total exactly; the others are
+        # their own honest reads of the same seconds
+        assert bands["power"]["total"] == pytest.approx(analysis_methods.rss_total(data).load)
+        assert bands["pace"]["total"] > 0
+        assert bands["hr"]["total"] > 0
+
+    def test_a_run_without_power_still_benchmarks_its_available_sources(self):
+        data = analysis_methods.LoadInput(
+            moving_seconds=3600.0,
+            period_s=1.0,
+            speed_ms=(4.0,) * 3600,
+            speed_threshold_ms=4.0,
+            average_hr=160.0,
+            hr_threshold_bpm=150.0,
+        )
+        bands = analysis_methods.rss_bands_by_source(data)
+        assert set(bands) == {"pace", "hr"}
+        assert "power" not in bands

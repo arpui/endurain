@@ -18,6 +18,8 @@ import {
 } from '@/features/activities/utils/format'
 import { formatLapTempo } from '@/features/activities/utils/metrics'
 import { formatClock } from '@/features/analysis/utils/format'
+import type { SourceScore } from '@/utils/sourceScores'
+import { orderedSourceScores } from '@/utils/sourceScores'
 
 const props = defineProps<{
   /** The breakdown the server computed for this activity. */
@@ -28,6 +30,39 @@ const props = defineProps<{
 }>()
 
 const { t, locale } = useI18n()
+
+/** Short benchmark label for one source, matching the sources.* block. */
+function sourceShortLabel(key: string): string {
+  return t(`analysis.sources.short${key.charAt(0).toUpperCase()}${key.slice(1)}`)
+}
+
+/** The benchmark column only earns its space when a climb has 2+ sources. */
+const showClimbCompare = computed(() =>
+  props.intervals.climbs.some(
+    (climb) => orderedSourceScores(climb.sourceScores ?? null).length >= 2,
+  ),
+)
+
+/** Rows of the band-by-source matrix; hidden unless the activity supports a comparison. */
+const bandMatrix = computed(() =>
+  (props.intervals.rssBySource ?? [])
+    .filter(
+      (row) =>
+        row.total !== null ||
+        row.up !== null ||
+        row.high !== null ||
+        row.mid !== null ||
+        row.low !== null,
+    )
+    .map((row) => ({
+      source: row.source,
+      cells: [row.total, row.up, row.high, row.mid, row.low].map((value) =>
+        value === null ? '--' : value.toFixed(1),
+      ),
+    })),
+)
+const showMatrix = computed(() => bandMatrix.value.length >= 2)
+const BAND_COLUMNS = ['rss_total', 'rss_up', 'rss_high', 'rss_mid', 'rss_low'] as const
 
 /** Effort kinds, so the summary can count them and the table can colour them. */
 const EFFORT_KINDS: IntervalSegmentKind[] = ['interval', 'climb', 'race']
@@ -61,6 +96,7 @@ interface ClimbRow {
   intensityFactor: string
   contrast: string
   rssMin: string
+  compare: SourceScore[]
 }
 
 const rows = computed<SegmentRow[]>(() =>
@@ -124,6 +160,7 @@ const climbRows = computed<ClimbRow[]>(() =>
       climb.rssSource,
       climb.rssPerMin === null ? '--' : climb.rssPerMin.toFixed(2),
     ),
+    compare: orderedSourceScores(climb.sourceScores ?? null),
   })),
 )
 
@@ -256,7 +293,10 @@ const rulesNote = computed(() => {
               <th class="py-2 pe-3 font-medium">{{ t('activities.metrics.avgPower') }}</th>
               <th class="py-2 pe-3 font-medium">IF</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colContrast') }}</th>
-              <th class="py-2 font-medium">{{ t('analysis.intervals.colRssMin') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colRssMin') }}</th>
+              <th v-if="showClimbCompare" class="py-2 font-medium">
+                {{ t('analysis.sources.title') }}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -272,13 +312,62 @@ const rulesNote = computed(() => {
               <td class="py-2 pe-3 tabular-nums">{{ row.power }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.intensityFactor }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.contrast }}</td>
-              <td class="py-2 tabular-nums">{{ row.rssMin }}</td>
+              <td class="py-2 pe-3 tabular-nums">{{ row.rssMin }}</td>
+              <td
+                v-if="showClimbCompare"
+                class="py-2 text-caption tabular-nums text-muted-foreground"
+              >
+                <span v-for="(score, order) in row.compare" :key="score.key"
+                  ><span v-if="order > 0"> · </span
+                  ><span :title="t(`analysis.sources.${score.key}`)"
+                    >{{ sourceShortLabel(score.key) }} {{ score.value.toFixed(1) }}</span
+                  ></span
+                >
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
       <p class="text-caption text-muted-foreground">
         {{ t('analysis.intervals.tcNote') }}
+      </p>
+    </template>
+
+    <template v-if="showMatrix">
+      <h4 class="mt-4 mb-1 text-body font-medium">{{ t('analysis.sources.matrixTitle') }}</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-body">
+          <thead>
+            <tr class="border-b border-border text-left text-caption text-muted-foreground">
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.laps.rss') }}</th>
+              <th v-for="band in BAND_COLUMNS" :key="band" class="py-2 pe-3 font-medium">
+                {{ t(`analysis.method.${band}`) }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="row in bandMatrix"
+              :key="row.source"
+              class="border-b border-border last:border-0"
+            >
+              <td class="py-2 pe-3 font-medium text-foreground">
+                {{ t(`analysis.sources.${row.source}`) }}
+              </td>
+              <td
+                v-for="(cell, order) in row.cells"
+                :key="order"
+                class="py-2 pe-3 tabular-nums"
+                :class="order === row.cells.length - 1 ? 'pe-0' : ''"
+              >
+                {{ cell }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-caption text-muted-foreground">
+        {{ t('analysis.sources.matrixNote') }}
       </p>
     </template>
   </div>

@@ -331,6 +331,41 @@ def rss_window_stress(
     )
 
 
+def _power_window_score(
+    power_w: Sequence[float],
+    period_s: float,
+    threshold_w: float,
+    grades_pct: Sequence[float] | None,
+    params: Mapping[str, float],
+) -> float:
+    """Score a window from watts alone: the only source needing the grade floors."""
+    return _window_stress_scaled(power_w, float(threshold_w), period_s, grades_pct, params, lift_with_grade=True)
+
+
+def _pace_window_score(
+    speeds_ms: Sequence[float],
+    period_s: float,
+    speed_threshold_ms: float,
+    grades_pct: Sequence[float] | None,
+    params: Mapping[str, float],
+) -> float:
+    """Score a window from grade-adjusted pace: GAP has already paid for the terrain."""
+    grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
+    adjusted = analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades)
+    adjusted = _paced_samples(adjusted, float(speed_threshold_ms))
+    return _window_stress_scaled(adjusted, float(speed_threshold_ms), period_s, None, params, lift_with_grade=False)
+
+
+def _hr_window_score(
+    hr_bpm: Sequence[float],
+    period_s: float,
+    hr_threshold_bpm: float,
+    params: Mapping[str, float],
+) -> float:
+    """Score a window from heart rate: the body already paid for the hill."""
+    return _window_stress_scaled(hr_bpm, float(hr_threshold_bpm), period_s, None, params, lift_with_grade=False)
+
+
 def window_stress_chain(
     power_w: Sequence[float] | None,
     speeds_ms: Sequence[float] | None,
@@ -355,43 +390,79 @@ def window_stress_chain(
         The score and the source used (``power``, ``pace``, ``hr``), or ``(0.0,
         None)`` when no signal and threshold pair is available.
     """
-    params = parameters or {}
-    if period_s <= 0:
-        return 0.0, None
-    if power_w and threshold_w and threshold_w > 0:
-        score = _window_stress_scaled(power_w, float(threshold_w), period_s, grades_pct, params, lift_with_grade=True)
-        return score, ("power" if score > 0 else None)
-    if speeds_ms and speed_threshold_ms and speed_threshold_ms > 0:
-        grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
-        adjusted = analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades)
-        adjusted = _paced_samples(adjusted, float(speed_threshold_ms))
-        score = _window_stress_scaled(
-            adjusted, float(speed_threshold_ms), period_s, None, params, lift_with_grade=False
-        )
-        return score, ("pace" if score > 0 else None)
-    if hr_bpm and hr_threshold_bpm and hr_threshold_bpm > 0:
-        score = _window_stress_scaled(hr_bpm, float(hr_threshold_bpm), period_s, None, params, lift_with_grade=False)
-        return score, ("hr" if score > 0 else None)
+    scores = window_scores_by_source(
+        power_w,
+        speeds_ms,
+        hr_bpm,
+        grades_pct,
+        period_s,
+        threshold_w,
+        speed_threshold_ms,
+        hr_threshold_bpm,
+        parameters,
+    )
+    for source in ("power", "pace", "hr"):
+        if source in scores:
+            return scores[source], source
     return 0.0, None
 
 
-def _rss_load(data: LoadInput, band: str) -> LoadValue | None:
+def window_scores_by_source(
+    power_w: Sequence[float] | None,
+    speeds_ms: Sequence[float] | None,
+    hr_bpm: Sequence[float] | None,
+    grades_pct: Sequence[float] | None,
+    period_s: float,
+    threshold_w: float | None,
+    speed_threshold_ms: float | None,
+    hr_threshold_bpm: float | None,
+    parameters: Mapping[str, float] | None = None,
+) -> dict[str, float]:
+    """Score one window with *every* signal and threshold pair it can read.
+
+    The comparison the chain implies but never shows: what the same seconds look
+    like from watts, from adjusted pace and from heart rate at once, so an
+    athlete can benchmark the estimates against the measured effort beside them.
+    Sources the activity or the athlete cannot support stay absent.
+    """
+    params = parameters or {}
+    scores: dict[str, float] = {}
+    if period_s <= 0:
+        return scores
+    if power_w and threshold_w and threshold_w > 0:
+        score = _power_window_score(power_w, period_s, float(threshold_w), grades_pct, params)
+        if score > 0:
+            scores["power"] = score
+    if speeds_ms and speed_threshold_ms and speed_threshold_ms > 0:
+        score = _pace_window_score(speeds_ms, period_s, float(speed_threshold_ms), grades_pct, params)
+        if score > 0:
+            scores["pace"] = score
+    if hr_bpm and hr_threshold_bpm and hr_threshold_bpm > 0:
+        score = _hr_window_score(hr_bpm, period_s, float(hr_threshold_bpm), params)
+        if score > 0:
+            scores["hr"] = score
+    return scores
+
+
+def _rss_load(data: LoadInput, band: str, source: str | None = None) -> LoadValue | None:
     """Sum the exponential kernel over one activity, keeping only ``band``'s seconds.
 
     The intensity source follows the one chain: the power stream when the activity
     carries one, otherwise grade-adjusted pace over critical speed, otherwise the
     session's average heart rate over the threshold heart rate - the only heart
     rate these formulas have, as in ``hr_load``, so its seconds all read the same
-    intensity.
+    intensity. Pass ``source`` to force one signal instead, which is how the
+    source-by-source benchmark scores the same activity three ways.
 
     Args:
         data: The activity's samples and thresholds.
         band: ``total``, ``up``, ``high``, ``mid`` or ``low``; ``total`` keeps every
             measured second instead of splitting them.
+        source: Force ``power``, ``pace`` or ``hr``; ``None`` follows the chain.
 
     Returns:
-        The load in the shared scale, or ``None`` when no signal and threshold pair
-        is available, or when no second fell in the band.
+        The load in the shared scale, or ``None`` when the source (or the chain)
+        has no signal and threshold pair, or when no second fell in the band.
     """
     if data.moving_seconds <= 0:
         return None
@@ -405,11 +476,25 @@ def _rss_load(data: LoadInput, band: str) -> LoadValue | None:
     climb_floor = parameters.get("rss_climb_floor", analysis_constants.RSS_CLIMB_FLOOR)
     divisor = parameters.get("rss_norm", analysis_constants.RSS_NORM)
 
-    if data.power_w and threshold and threshold > 0:
+    power_ok = bool(data.power_w) and bool(threshold) and threshold > 0
+    pace_ok = bool(speeds) and bool(data.speed_threshold_ms) and data.speed_threshold_ms > 0
+    hr_ok = bool(data.average_hr) and bool(data.hr_threshold_bpm) and data.hr_threshold_bpm > 0
+    if source is None:
+        chosen = "power" if power_ok else "pace" if pace_ok else "hr" if hr_ok else None
+    elif source in ("power", "pace", "hr") and (
+        power_ok if source == "power" else pace_ok if source == "pace" else hr_ok
+    ):
+        chosen = source
+    else:
+        return None
+    if chosen is None:
+        return None
+
+    if chosen == "power":
         samples: Sequence[float] | None = data.power_w
         signal_divisor = float(threshold)
         lift_with_grade = True
-    elif speeds and data.speed_threshold_ms and data.speed_threshold_ms > 0:
+    elif chosen == "pace":
         grade_source = grades if grades is not None else (0.0,) * len(speeds)
         samples = _paced_samples(
             analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds), grade_source),
@@ -417,12 +502,10 @@ def _rss_load(data: LoadInput, band: str) -> LoadValue | None:
         )
         signal_divisor = float(data.speed_threshold_ms)
         lift_with_grade = False
-    elif data.average_hr and data.hr_threshold_bpm and data.hr_threshold_bpm > 0:
+    else:
         samples = None
         signal_divisor = float(data.hr_threshold_bpm)
         lift_with_grade = False
-    else:
-        return None
 
     total = 0.0
     if samples is None:
@@ -460,6 +543,24 @@ def _rss_load(data: LoadInput, band: str) -> LoadValue | None:
         intensity_factor=intensity_factor,
         threshold_used=signal_divisor,
     )
+
+
+def rss_bands_by_source(data: LoadInput) -> dict[str, dict[str, float]]:
+    """Return one activity's band loads scored by *each* signal it can support.
+
+    The benchmark behind the source-comparison views: the same seconds read as
+    watts, as adjusted pace and as heart rate, side by side.
+    """
+    by_source: dict[str, dict[str, float]] = {}
+    for source in ("power", "pace", "hr"):
+        bands: dict[str, float] = {}
+        for band in ("total", "up", "high", "mid", "low"):
+            value = _rss_load(data, band, source=source)
+            if value is not None:
+                bands[band] = value.load
+        if bands:
+            by_source[source] = bands
+    return by_source
 
 
 def rss_total(data: LoadInput) -> LoadValue | None:

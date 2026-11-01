@@ -21,6 +21,17 @@
     "rss_low": "aRSS fácil",
     "daniels_points": "Pontos Daniels"
   },
+  "sources": {
+    "title": "Fontes",
+    "power": "Potência",
+    "pace": "Ritmo (declive compensado)",
+    "hr": "Frequência cardíaca",
+    "shortPower": "POT",
+    "shortPace": "RIT",
+    "shortHr": "FC",
+    "matrixTitle": "Comparação por fonte",
+    "matrixNote": "A mesma atividade pontuada por cada sinal que a conseguiu ler: os watts são medidos; o ritmo (declive compensado) e a FC são estimativas."
+  },
   "sport": {
     "label": "Desporto",
     "all": "Todos os desportos"

@@ -160,6 +160,8 @@ class SegmentEffortRead(BaseModel):
             following the intensity chain (watts, grade-adjusted pace, heart
             rate); ``None`` when nothing scored.
         rss_source: Which signal scored the effort (``power``, ``pace``, ``hr``).
+        source_scores: The effort's window scored by every available signal
+            (``power``/``pace``/``hr``), as aRSS per minute, for the benchmark.
     """
 
     model_config = ConfigDict(from_attributes=True, extra="forbid")
@@ -180,6 +182,7 @@ class SegmentEffortRead(BaseModel):
     avg_hr_bpm: StrictFloat | None = None
     rss_per_min: StrictFloat | None = None
     rss_source: StrictStr | None = None
+    source_scores: dict[StrictStr, StrictFloat] | None = None
 
 
 class ActivitySegmentRead(BaseModel):

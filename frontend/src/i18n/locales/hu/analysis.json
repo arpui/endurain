@@ -21,6 +21,17 @@
     "rss_low": "aRSS alacsony",
     "daniels_points": "Daniels-pontok"
   },
+  "sources": {
+    "title": "Források",
+    "power": "Teljesítmény",
+    "pace": "Tempó (lejtés-korrigált)",
+    "hr": "Pulzus",
+    "shortPower": "TEL",
+    "shortPace": "TMP",
+    "shortHr": "PUL",
+    "matrixTitle": "Összehasonlítás forrásonként",
+    "matrixNote": "Ugyanaz a tevékenység minden elérhető jel szerint értékelve: a watt mért adat; a lejtés-korrigált tempó és a pulzus becslés."
+  },
   "sport": {
     "label": "Sportág",
     "all": "Minden sportág"

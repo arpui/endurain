@@ -21,6 +21,17 @@
     "rss_low": "aRSS niskie",
     "daniels_points": "Punkty Danielsa"
   },
+  "sources": {
+    "title": "Źródła",
+    "power": "Moc",
+    "pace": "Tempo (skompensowane nachyleniem)",
+    "hr": "Tętno",
+    "shortPower": "MOC",
+    "shortPace": "TEM",
+    "shortHr": "TF",
+    "matrixTitle": "Porównanie według źródła",
+    "matrixNote": "Ta sama aktywność oceniona przez każde dostępne źródło: waty są mierzone; tempo skompensowane nachyleniem i HR to szacunki."
+  },
   "sport": {
     "label": "Dyscyplina",
     "all": "Wszystkie dyscypliny"

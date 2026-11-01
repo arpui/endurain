@@ -21,6 +21,17 @@
     "rss_low": "aRSS licht",
     "daniels_points": "Daniels-punten"
   },
+  "sources": {
+    "title": "Bronnen",
+    "power": "Vermogen",
+    "pace": "Tempo (hellinggecompenseerd)",
+    "hr": "Hartslag",
+    "shortPower": "VER",
+    "shortPace": "TEM",
+    "shortHr": "HS",
+    "matrixTitle": "Vergelijking per bron",
+    "matrixNote": "Dezelfde activiteit gescoord per bron die hem kon lezen: watt is gemeten; hellinggecompenseerd tempo en hartslag zijn schattingen."
+  },
   "sport": {
     "label": "Sport",
     "all": "Alle sporten"

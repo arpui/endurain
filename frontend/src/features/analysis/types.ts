@@ -271,6 +271,8 @@ export interface ActivityIntervals {
   segments: IntervalSegment[]
   /** The numeric gates used, `null` when nothing was segmented. */
   rules: IntervalRules | null
+  /** The activity scored by every available source, band by band. */
+  rssBySource: RssSourceTotals[]
   /** Climbs the route itself shows; independent of the segments and never summed. */
   climbs: TerrainClimb[]
 }
@@ -278,6 +280,16 @@ export interface ActivityIntervals {
 export type TerrainClimbDto = Schemas['TerrainClimbRead']
 
 /** One climb the smoothed altitude profile shows along the route. */
+/** One signal's band totals over a whole activity (the source benchmark). */
+export interface RssSourceTotals {
+  source: 'power' | 'pace' | 'hr'
+  total: number | null
+  up: number | null
+  high: number | null
+  mid: number | null
+  low: number | null
+}
+
 export interface TerrainClimb {
   /** Ground position where the climb starts, metres from the start of the data. */
   startM: number
@@ -300,6 +312,8 @@ export interface TerrainClimb {
   rssSource: 'power' | 'pace' | 'hr' | null
   /** The score per minute of climbing, the comparable rate across climbs. */
   rssPerMin: number | null
+  /** The climb scored by every available source, for the benchmark. */
+  sourceScores: Record<string, number> | null
 }
 
 export type BestTimesDto = Schemas['BestTimesRead']
@@ -344,4 +358,6 @@ export interface LapDynamics {
   rssSource: 'power' | 'pace' | 'hr' | null
   /** That score per minute of the lap, the mean stress rate. */
   rssPerMin: number | null
+  /** The same window scored by every available source, for the benchmark. */
+  sourceScores: Record<string, number> | null
 }

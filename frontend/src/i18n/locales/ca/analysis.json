@@ -21,6 +21,17 @@
     "rss_low": "aRSS suau",
     "daniels_points": "Punts de Daniels"
   },
+  "sources": {
+    "title": "Fonts",
+    "power": "Potència",
+    "pace": "Ritme (pendent compensat)",
+    "hr": "Freqüència cardíaca",
+    "shortPower": "POT",
+    "shortPace": "RIT",
+    "shortHr": "FC",
+    "matrixTitle": "Banc de proves per font",
+    "matrixNote": "La mateixa activitat puntuada per cada senyal que l’ha pogut llegir: els watts es mesuren; el ritme (pendent compensat) i la freqüència cardíaca són estimacions."
+  },
   "sport": {
     "label": "Esport",
     "all": "Tots els esports"
