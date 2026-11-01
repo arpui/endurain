@@ -1174,7 +1174,7 @@ def get_activity_intervals(
         parameters=dict(data.parameters),
     )
 
-    def _segment_rap_ms(segment: analysis_intervals.IntervalSegment) -> float | None:
+    def _segment_rap_ms(segment: analysis_intervals.Segment) -> float | None:
         if ground_pace is None or ground_period <= 0:
             return None
         start = int(segment.start_s / ground_period)
