@@ -21,6 +21,17 @@
     "rss_low": "aRSS 低强度",
     "daniels_points": "丹尼尔斯点数"
   },
+  "sources": {
+    "title": "来源",
+    "power": "功率",
+    "pace": "配速（坡度补偿）",
+    "hr": "心率",
+    "shortPower": "功率",
+    "shortPace": "配速",
+    "shortHr": "心率",
+    "matrixTitle": "按来源比较",
+    "matrixNote": "同一次活动按每个可读信号分别评分：功率为实测；坡度补偿配速与心率为估算。"
+  },
   "sport": {
     "label": "运动",
     "all": "全部运动"

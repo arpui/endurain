@@ -66,6 +66,8 @@ export interface SegmentEffort {
   rssPerMin: number | null
   /** Which signal scored it: power, grade-adjusted pace or heart rate. */
   rssSource: 'power' | 'pace' | 'hr' | null
+  /** The effort scored per minute by every available source, for the benchmark. */
+  sourceScores: Record<string, number> | null
   /** Wall-clock time of the first effort waypoint (ISO). */
   timeStart: string
   /** Wall-clock time of the last effort waypoint (ISO). */

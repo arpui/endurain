@@ -313,6 +313,7 @@ function mapTerrainClimb(dto: TerrainClimbDto): TerrainClimb {
     contrast: dto.contrast ?? null,
     rss: dto.rss ?? null,
     rssSource: (dto.rss_source as 'power' | 'pace' | 'hr' | null) ?? null,
+    sourceScores: dto.source_scores ?? null,
     rssPerMin: dto.rss_per_min ?? null,
   }
 }
@@ -325,6 +326,14 @@ export function mapActivityIntervals(dto: ActivityIntervalsDto): ActivityInterva
     basePowerW: dto.base_power_w,
     segments: (dto.segments ?? []).map(mapIntervalSegment),
     rules: dto.rules ? mapIntervalRules(dto.rules) : null,
+    rssBySource: (dto.rss_by_source ?? []).map((row) => ({
+      source: row.source as 'power' | 'pace' | 'hr',
+      total: row.total ?? null,
+      up: row.up ?? null,
+      high: row.high ?? null,
+      mid: row.mid ?? null,
+      low: row.low ?? null,
+    })),
     climbs: (dto.climbs ?? []).map(mapTerrainClimb),
   }
 }
@@ -411,6 +420,7 @@ function mapLapDynamics(dto: LapDynamicsDto): LapDynamics {
     elevationLossM: dto.elevation_loss_m ?? null,
     rss: dto.rss ?? null,
     rssSource: (dto.rss_source as 'power' | 'pace' | 'hr' | null) ?? null,
+    sourceScores: dto.source_scores ?? null,
     rssPerMin: dto.rss_per_min ?? null,
   }
 }

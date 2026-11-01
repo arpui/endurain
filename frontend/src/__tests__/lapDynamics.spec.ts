@@ -51,6 +51,7 @@ describe('lap dynamics fetch', () => {
         rss: 26.4,
         rss_source: 'power',
         rss_per_min: 26.4,
+        source_scores: { power: 26.4, hr: 19.2 },
       },
       {
         lap_id: 8,
@@ -74,6 +75,7 @@ describe('lap dynamics fetch', () => {
       rss: 26.4,
       rssSource: 'power',
       rssPerMin: 26.4,
+      sourceScores: { power: 26.4, hr: 19.2 },
     })
     expect(rows[1]).toEqual({
       lapId: 8,
@@ -84,6 +86,7 @@ describe('lap dynamics fetch', () => {
       rss: null,
       rssSource: null,
       rssPerMin: null,
+      sourceScores: null,
     })
   })
 })
@@ -118,6 +121,7 @@ describe('LapDynamicsTable', () => {
             rss: 26.4,
             rssSource: 'power',
             rssPerMin: 5.3,
+            sourceScores: null,
           },
         ],
       ),
@@ -142,6 +146,7 @@ describe('LapDynamicsTable', () => {
           rss: null,
           rssSource: null,
           rssPerMin: null,
+          sourceScores: null,
         },
       ],
     )
@@ -166,6 +171,7 @@ describe('LapDynamicsTable estimated scores', () => {
             rss: 9.9,
             rssSource: 'pace',
             rssPerMin: 1.98,
+            sourceScores: { pace: 9.9, hr: 7.8 },
           },
         ],
         activity: makeActivity(),
@@ -179,5 +185,34 @@ describe('LapDynamicsTable estimated scores', () => {
       .map((cell) => cell.text())
     expect(cells.some((value) => /^\u22489[.,]9$/.test(value))).toBe(true)
     expect(cells.some((value) => /^\u22481[.,]98$/.test(value))).toBe(true)
+  })
+})
+
+describe('LapDynamicsTable source benchmark', () => {
+  it('shows every source side by side when a lap has two', () => {
+    const wrapper = mount(LapDynamicsTable, {
+      props: {
+        laps: [makeLap()],
+        dynamics: [
+          {
+            lapId: 1,
+            avgPowerW: 400,
+            strideLengthM: null,
+            elevationGainM: 12,
+            elevationLossM: 0,
+            rss: 26.4,
+            rssSource: 'power',
+            rssPerMin: 5.28,
+            sourceScores: { power: 26.4, hr: 19.2 },
+          },
+        ],
+        activity: makeActivity(),
+        units: 'metric',
+      },
+      global: { plugins: [i18n] },
+    })
+    const text = wrapper.text()
+    expect(text).toContain('PWR 26.4')
+    expect(text).toContain('HR 19.2')
   })
 })

@@ -21,6 +21,17 @@
     "rss_low": "aRSS nisko",
     "daniels_points": "Daniels bodovi"
   },
+  "sources": {
+    "title": "Izvori",
+    "power": "Snaga",
+    "pace": "Tempo (kompenziran nagibom)",
+    "hr": "Frekvencija otkucaja",
+    "shortPower": "SNR",
+    "shortPace": "TEM",
+    "shortHr": "FT",
+    "matrixTitle": "Usporedba po izvoru",
+    "matrixNote": "Ista aktivnost ocijenjena po svakom izvoru koji ju je mogao očitati: wattovi se mjere; tempo kompenziran nagibom i FT su procjene."
+  },
   "sport": {
     "label": "Sport",
     "all": "Svi sportovi"

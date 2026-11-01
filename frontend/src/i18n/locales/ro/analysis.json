@@ -21,6 +21,17 @@
     "rss_low": "aRSS scăzut",
     "daniels_points": "Puncte Daniels"
   },
+  "sources": {
+    "title": "Surse",
+    "power": "Putere",
+    "pace": "Ritm (compensat cu pantă)",
+    "hr": "Frecvență cardiacă",
+    "shortPower": "PUT",
+    "shortPace": "RIT",
+    "shortHr": "FC",
+    "matrixTitle": "Comparație pe sursă",
+    "matrixNote": "Aceeași activitate evaluată pe fiecare semnal care a putut-o citi: wattul este măsurat; ritmul compensat cu pantă și FC sunt estimări."
+  },
   "sport": {
     "label": "Sport",
     "all": "Toate sporturile"

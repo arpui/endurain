@@ -21,6 +21,17 @@
     "rss_low": "aRSS madal",
     "daniels_points": "Danielsi punktid"
   },
+  "sources": {
+    "title": "Allikad",
+    "power": "Võimsus",
+    "pace": "Tempo (kallet arvestav)",
+    "hr": "Pulss",
+    "shortPower": "VÕI",
+    "shortPace": "TEM",
+    "shortHr": "PUL",
+    "matrixTitle": "Võrdlus allika kaupa",
+    "matrixNote": "See sama tegevus hinnatud iga signaaliga, mis seda lugeda suutis: vatteid mõõdetakse; kallet arvestav tempo ja pulss on hinnangud."
+  },
   "sport": {
     "label": "Ala",
     "all": "Kõik alad"

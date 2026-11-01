@@ -5677,6 +5677,11 @@ export interface components {
              * @default []
              */
             climbs: components["schemas"]["TerrainClimbRead"][];
+            /**
+             * Rss By Source
+             * @default []
+             */
+            rss_by_source: components["schemas"]["RssSourceTotalsRead"][];
             rules?: components["schemas"]["IntervalRulesRead"] | null;
             /** Segments */
             segments: components["schemas"]["IntervalSegmentRead"][];
@@ -9599,6 +9604,8 @@ export interface components {
          *         rss: Shared-scale aRSS score of the lap's window, from the intensity chain
          *             (watts, grade-adjusted pace, heart rate); ``None`` when nothing scored.
          *         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
+         *         source_scores: The lap scored by every available signal, for the
+         *             side-by-side benchmark.
          *         rss_per_min: That score per minute of the lap, the mean stress rate;
          *             ``None`` when there is no score.
          */
@@ -9617,6 +9624,10 @@ export interface components {
             rss_per_min?: number | null;
             /** Rss Source */
             rss_source?: string | null;
+            /** Source Scores */
+            source_scores?: {
+                [key: string]: number;
+            } | null;
             /** Stride Length M */
             stride_length_m: number | null;
         };
@@ -10511,6 +10522,33 @@ export interface components {
             outgoing?: components["schemas"]["FollowRelationshipRead"] | null;
         };
         /**
+         * RssSourceTotalsRead
+         * @description One signal's band scores over a whole activity (the source benchmark).
+         *
+         *     Attributes:
+         *         source: The signal the activity was scored with (``power``, ``pace``,
+         *             ``hr``).
+         *         total: The general exponential stress over every measured second.
+         *         up: The share taken on climbs.
+         *         high: The share taken above the high band edge, off climbs.
+         *         mid: The share taken between the band edges, off climbs.
+         *         low: The share taken slow and below the low band edge, off climbs.
+         */
+        RssSourceTotalsRead: {
+            /** High */
+            high?: number | null;
+            /** Low */
+            low?: number | null;
+            /** Mid */
+            mid?: number | null;
+            /** Source */
+            source: string;
+            /** Total */
+            total?: number | null;
+            /** Up */
+            up?: number | null;
+        };
+        /**
          * SegmentDetailRead
          * @description Serialized segment including its geometry and bounding box.
          *
@@ -10604,6 +10642,8 @@ export interface components {
          *             following the intensity chain (watts, grade-adjusted pace, heart
          *             rate); ``None`` when nothing scored.
          *         rss_source: Which signal scored the effort (``power``, ``pace``, ``hr``).
+         *         source_scores: The effort's window scored by every available signal
+         *             (``power``/``pace``/``hr``), as aRSS per minute, for the benchmark.
          */
         SegmentEffortRead: {
             /** Activity Id */
@@ -10629,6 +10669,10 @@ export interface components {
             rss_source?: string | null;
             /** Segment Id */
             segment_id: number;
+            /** Source Scores */
+            source_scores?: {
+                [key: string]: number;
+            } | null;
             /** Stream Index End */
             stream_index_end: number;
             /** Stream Index Start */
@@ -11286,6 +11330,8 @@ export interface components {
          *             pace, heart rate); ``None`` when nothing scored.
          *         rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
          *         rss_per_min: That score per minute of climbing, the mean stress rate.
+         *         source_scores: The climb scored by every available signal, for the
+         *             side-by-side benchmark.
          */
         TerrainClimbRead: {
             /** Avg Grade Pct */
@@ -11312,6 +11358,10 @@ export interface components {
             rss_per_min: number | null;
             /** Rss Source */
             rss_source?: string | null;
+            /** Source Scores */
+            source_scores?: {
+                [key: string]: number;
+            } | null;
             /** Start M */
             start_m: number;
             /** Start S */

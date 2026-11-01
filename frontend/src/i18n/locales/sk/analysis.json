@@ -21,6 +21,17 @@
     "rss_low": "aRSS nízka",
     "daniels_points": "Daniels body"
   },
+  "sources": {
+    "title": "Zdroje",
+    "power": "Výkon",
+    "pace": "Tempo (kompenzovaný sklonom)",
+    "hr": "Tepová frekvencia",
+    "shortPower": "VÝK",
+    "shortPace": "TEM",
+    "shortHr": "TD",
+    "matrixTitle": "Srovnanie podľa zdroja",
+    "matrixNote": "Tá istá aktivita hodnotená podľa každého dostupného zdroja: watty sa merajú; tempo kompenzované sklonom a TF sú odhady."
+  },
   "sport": {
     "label": "Šport",
     "all": "Všetky športy"

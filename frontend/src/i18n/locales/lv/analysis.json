@@ -21,6 +21,17 @@
     "rss_low": "aRSS zems",
     "daniels_points": "Daniels punkti"
   },
+  "sources": {
+    "title": "Avoti",
+    "power": "Jauda",
+    "pace": "Temps (kompensēts slīpums)",
+    "hr": "Sirdsdarbība",
+    "shortPower": "JAU",
+    "shortPace": "TEM",
+    "shortHr": "SD",
+    "matrixTitle": "Salīdzinājums pa avotu",
+    "matrixNote": "Tā pati aktivitāte novērtēta pa katru avotu, kas to varēja nolasīt: vati tiek mērīti; slīpumu kompensējošs temps un sirdsdarbība ir novērtējumi."
+  },
   "sport": {
     "label": "Sporta veids",
     "all": "Visi sporta veidi"

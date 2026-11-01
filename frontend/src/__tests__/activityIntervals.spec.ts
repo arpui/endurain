@@ -34,6 +34,7 @@ function makeIntervals(segment: IntervalSegment): ActivityIntervals {
     basePowerW: 280,
     segments: [segment],
     climbs: [],
+    rssBySource: [],
     rules: {
       openW: 349,
       closeW: 314,
@@ -107,6 +108,7 @@ describe('ActivityIntervalTable terrain climbs', () => {
         rss: 60.2,
         rssSource: 'power',
         rssPerMin: 14.7,
+        sourceScores: null,
       },
     ])
     const rows = wrapper.findAll('tbody tr')
@@ -149,8 +151,10 @@ describe('ActivityIntervalTable terrain climbs', () => {
               rss: 11.0,
               rssSource: 'pace',
               rssPerMin: 22.0,
+              sourceScores: null,
             },
           ],
+          rssBySource: [],
           rules: null,
         },
         activityType: 1,
@@ -166,5 +170,55 @@ describe('ActivityIntervalTable terrain climbs', () => {
     // scored from adjusted pace: marked as an estimate, watts stay dashed
     expect(row.text()).toContain('\u224822.00')
     expect(row.text()).toContain('--')
+  })
+})
+
+describe('ActivityIntervalTable source benchmark', () => {
+  it('shows the band-by-source matrix when two sources score the activity', () => {
+    const wrapper = mount(ActivityIntervalTable, {
+      props: {
+        intervals: {
+          shape: 'steady',
+          thresholdW: 350,
+          basePowerW: 280,
+          segments: [],
+          climbs: [],
+          rssBySource: [
+            { source: 'power', total: 88.2, up: 30.1, high: 40.0, mid: 15.0, low: 3.1 },
+            { source: 'hr', total: 74.5, up: null, high: 74.5, mid: null, low: null },
+          ],
+          rules: null,
+        },
+        activityType: 1,
+        units: 'metric',
+      },
+      global: { plugins: [i18n] },
+    })
+    const text = wrapper.text()
+    expect(text).toContain('Benchmark by source')
+    expect(text).toContain('88.2')
+    expect(text).toContain('74.5')
+  })
+
+  it('stays hidden when only one source can score', () => {
+    const wrapper = mount(ActivityIntervalTable, {
+      props: {
+        intervals: {
+          shape: 'steady',
+          thresholdW: 350,
+          basePowerW: 280,
+          segments: [],
+          climbs: [],
+          rssBySource: [
+            { source: 'power', total: 88.2, up: null, high: null, mid: null, low: null },
+          ],
+          rules: null,
+        },
+        activityType: 1,
+        units: 'metric',
+      },
+      global: { plugins: [i18n] },
+    })
+    expect(wrapper.text()).not.toContain('Benchmark by source')
   })
 })

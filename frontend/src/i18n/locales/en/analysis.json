@@ -21,6 +21,17 @@
     "rss_low": "aRSS low",
     "daniels_points": "Daniels points"
   },
+  "sources": {
+    "title": "Sources",
+    "power": "Power",
+    "pace": "Pace (gradient-compensated)",
+    "hr": "Heart rate",
+    "shortPower": "PWR",
+    "shortPace": "PAC",
+    "shortHr": "HR",
+    "matrixTitle": "Benchmark by source",
+    "matrixNote": "The same activity scored by every signal that could read it: watts are measured; gradient-compensated pace and heart rate are estimates."
+  },
   "sport": {
     "label": "Sport",
     "all": "All sports"

@@ -21,6 +21,17 @@
     "rss_low": "аRSS ниско",
     "daniels_points": "Daniels bodovi"
   },
+  "sources": {
+    "title": "Izvori",
+    "power": "Snaga",
+    "pace": "Tempo (kompenzovan nagibom)",
+    "hr": "Frekvencija otkucaja",
+    "shortPower": "SNR",
+    "shortPace": "TEM",
+    "shortHr": "FT",
+    "matrixTitle": "Uporedba po izvoru",
+    "matrixNote": "Ista aktivnost ocenjena po svakom izvoru koji ju je mogao očitati: vatovi se mere; tempo kompenzovan nagibom i FT su procene."
+  },
   "sport": {
     "label": "Спорт",
     "all": "Сви спортови"

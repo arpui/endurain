@@ -21,6 +21,17 @@
     "rss_low": "aRSS suave",
     "daniels_points": "Puntos Daniels"
   },
+  "sources": {
+    "title": "Fontes",
+    "power": "Potencia",
+    "pace": "Ritmo (pendente compensada)",
+    "hr": "Frecuencia cardíaca",
+    "shortPower": "POT",
+    "shortPace": "RIT",
+    "shortHr": "FC",
+    "matrixTitle": "Comparación por fonte",
+    "matrixNote": "A mesma actividade puntuada por cada sinal que puido lela: os watts mídense; o ritmo (pendente compensada) e a FC son estimacións."
+  },
   "sport": {
     "label": "Deporte",
     "all": "Todos os deportes"

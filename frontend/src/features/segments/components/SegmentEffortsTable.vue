@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { SourceScore } from '@/utils/sourceScores'
+import { orderedSourceScores } from '@/utils/sourceScores'
 import { RouterLink } from 'vue-router'
 
 import type { SegmentEffort } from '@/features/segments/types'
@@ -19,6 +21,16 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 
+/** Short benchmark label for one source, matching the sources.* block. */
+function sourceShortLabel(key: string): string {
+  return t(`analysis.sources.short${key.charAt(0).toUpperCase()}${key.slice(1)}`)
+}
+
+/** The benchmark column only earns its space when an effort has 2+ sources. */
+const showCompare = computed(() =>
+  props.efforts.some((effort) => orderedSourceScores(effort.sourceScores ?? null).length >= 2),
+)
+
 interface EffortRow {
   key: string
   activityId: number
@@ -32,6 +44,7 @@ interface EffortRow {
   rssMin: string
   isReverse: boolean
   isBest: boolean
+  compare: SourceScore[]
 }
 
 /**
@@ -75,6 +88,7 @@ const rows = computed<EffortRow[]>(() => {
           : effort.rssSource && effort.rssSource !== 'power'
             ? `\u2248${effort.rssPerMin.toFixed(2)}`
             : effort.rssPerMin.toFixed(2),
+      compare: orderedSourceScores(effort.sourceScores ?? null),
       isReverse,
       isBest: !isReverse && forwardRank === 1,
     }
@@ -95,7 +109,10 @@ const rows = computed<EffortRow[]>(() => {
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.tempo') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('analysis.laps.power') }}</th>
             <th class="py-2 pe-3 font-medium">{{ t('activities.laps.hr') }}</th>
-            <th class="py-2 font-medium">{{ t('analysis.laps.rssMin') }}</th>
+            <th class="py-2 pe-3 font-medium">{{ t('analysis.laps.rssMin') }}</th>
+            <th v-if="showCompare" class="py-2 font-medium">
+              {{ t('analysis.sources.title') }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -127,7 +144,15 @@ const rows = computed<EffortRow[]>(() => {
             <td class="py-2 pe-3 text-foreground">{{ row.tempo }}</td>
             <td class="py-2 pe-3 tabular-nums text-foreground">{{ row.power }}</td>
             <td class="py-2 pe-3 tabular-nums text-muted-foreground">{{ row.hr }}</td>
-            <td class="py-2 tabular-nums text-muted-foreground">{{ row.rssMin }}</td>
+            <td class="py-2 pe-3 tabular-nums text-muted-foreground">{{ row.rssMin }}</td>
+            <td v-if="showCompare" class="py-2 text-caption tabular-nums text-muted-foreground">
+              <span v-for="(score, order) in row.compare" :key="score.key"
+                ><span v-if="order > 0"> · </span
+                ><span :title="t(`analysis.sources.${score.key}`)"
+                  >{{ sourceShortLabel(score.key) }} {{ score.value.toFixed(2) }}</span
+                ></span
+              >
+            </td>
           </tr>
         </tbody>
       </table>
