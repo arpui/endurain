@@ -10,6 +10,7 @@ from math import exp
 
 import pytest
 
+import modules.analysis.constants as analysis_constants
 import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
 
@@ -488,6 +489,19 @@ class TestWindowStressChain:
             None, None, [160.0] * 100, self.FLAT * 100, 1.0, None, None, 150.0
         )
         assert source == "hr"
+
+    def test_a_gps_speed_spike_credits_only_a_plausible_run(self):
+        """One invented 40 km/h second cannot buy an activity's whole stress."""
+        spiked = [4.0] * 100
+        spiked[50] = 11.5
+        capped = [4.0] * 100
+        capped[50] = analysis_constants.BT_MAX_SPEED_MS
+        spike_score, source = analysis_methods.window_stress_chain(
+            None, spiked, None, [0.0] * 100, 1.0, None, 4.0, None
+        )
+        capped_score, _ = analysis_methods.window_stress_chain(None, capped, None, [0.0] * 100, 1.0, None, 4.0, None)
+        assert source == "pace"
+        assert spike_score == pytest.approx(capped_score)
 
     def test_no_signal_and_threshold_pair_scores_nothing(self):
         score, source = analysis_methods.window_stress_chain([350.0] * 10, None, None, None, 1.0, None, None, None)
