@@ -32,6 +32,7 @@
     "matrixTitle": "Sammenligning per kilde",
     "matrixNote": "Samme aktivitet vurdert etter hver kilde som kunne lese den: watt måles; stigningskorrigert tempo og puls er estimater."
   },
+  "rapNote": "RAP = ekvivalent fart i flatt (stigningskorrigert): den faktiske farten korrigert for stigning, det er fartsformlene poengsetter.",
   "sport": {
     "label": "Idrett",
     "all": "Alle idretter"
@@ -149,6 +150,7 @@
     "effortsMany": "innsatser",
     "colStart": "start",
     "colGrade": "stigning",
+    "colRap": "Equiv.",
     "colDesnivel": "stigning / fall",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Stigning / fall",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS er den intensitetsvektede poengsummen bak den daglige belastningen; radene summeres til aktivitetens total. «≈»: estimert fra (stigningskorrigert) tempo eller puls uten effekt."
   }
 }

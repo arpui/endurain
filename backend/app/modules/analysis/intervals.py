@@ -614,6 +614,8 @@ class TerrainClimb:
         rss_source: Which signal scored it (``power``, ``pace``, ``hr``), ``None`` when
             nothing could.
         rss_per_min: That score per minute of climbing, the mean stress rate.
+        rap_ms: Grade-equivalent pace of the climb (the GAP/RAP the pace chain
+            scores), ``None`` when no critical speed exists.
         source_scores: The same window scored by *every* available signal
             (``power``/``pace``/``hr``), for the side-by-side benchmark.
     """
@@ -632,6 +634,7 @@ class TerrainClimb:
     rss: float | None
     rss_source: str | None
     rss_per_min: float | None
+    rap_ms: float | None = None
     source_scores: dict[str, float] | None = None
 
 
@@ -763,6 +766,11 @@ def terrain_climbs(
             source = chain_source
             per_min = round(score * 60.0 / ((end - start + 1) * period_s), 2)
         scores = {key: round(value, 1) for key, value in all_scores.items()} or None
+        rap: float | None = None
+        if pace_ms is not None:
+            window_pace = list(pace_ms[window])
+            if window_pace:
+                rap = round(sum(window_pace) / len(window_pace), 2)
         climbs.append(
             TerrainClimb(
                 start_m=round(dist[start], 1),
@@ -779,6 +787,7 @@ def terrain_climbs(
                 rss=score,
                 rss_source=source,
                 rss_per_min=per_min,
+                rap_ms=rap,
                 source_scores=scores,
             )
         )

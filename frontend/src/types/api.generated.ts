@@ -9546,6 +9546,8 @@ export interface components {
             /** Intensity Factor */
             intensity_factor: number;
             kind: components["schemas"]["SegmentKind"];
+            /** Pace Adjusted Ms */
+            pace_adjusted_ms?: number | null;
             /** Rss */
             rss?: number | null;
             /** Rss Per Min */
@@ -9614,6 +9616,8 @@ export interface components {
          *             side-by-side benchmark.
          *         rss_per_min: That score per minute of the lap, the mean stress rate;
          *             ``None`` when there is no score.
+         *         rap_ms: Grade-equivalent pace of the lap (the GAP/RAP the pace chain
+         *             scores), ``None`` when no critical speed exists for the sport.
          */
         LapDynamicsRead: {
             /** Avg Power W */
@@ -9624,6 +9628,8 @@ export interface components {
             elevation_loss_m?: number | null;
             /** Lap Id */
             lap_id: number;
+            /** Rap Ms */
+            rap_ms?: number | null;
             /** Rss */
             rss?: number | null;
             /** Rss Per Min */
@@ -10677,6 +10683,8 @@ export interface components {
          *         rss_source: Which signal scored the effort (``power``, ``pace``, ``hr``).
          *         source_scores: The effort's window scored by every available signal
          *             (``power``/``pace``/``hr``), as aRSS per minute, for the benchmark.
+         *         rap_ms: Grade-equivalent pace (GAP/RAP) over the effort, ``None`` when the
+         *             athlete has no critical speed for the sport.
          */
         SegmentEffortRead: {
             /** Activity Id */
@@ -10696,6 +10704,8 @@ export interface components {
             elapsed_seconds: number;
             /** Pass Number */
             pass_number: number;
+            /** Rap Ms */
+            rap_ms?: number | null;
             /** Rss Per Min */
             rss_per_min?: number | null;
             /** Rss Source */
@@ -11385,6 +11395,8 @@ export interface components {
             intensity_factor: number | null;
             /** Length M */
             length_m: number;
+            /** Rap Ms */
+            rap_ms?: number | null;
             /** Rss */
             rss: number | null;
             /** Rss Per Min */

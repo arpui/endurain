@@ -32,6 +32,7 @@
     "matrixTitle": "Jämförelse per källa",
     "matrixNote": "Samma aktivitet poängsatt av varje signal som kunde läsa den: watt mäts; lutningskorrigerad tempo och puls är uppskattningar."
   },
+  "rapNote": "RAP = ekvivalent tempo på plan mark (lutningskorrigerad): den faktiska tempot korrigerad för lutning, det tempot formlerna poängsätter.",
   "sport": {
     "label": "Sport",
     "all": "Alla sporter"
@@ -149,6 +150,7 @@
     "effortsMany": "insatser",
     "colStart": "start",
     "colGrade": "lutning",
+    "colRap": "Ekv.",
     "colDesnivel": "höjdmeter (+/−)",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Höjdmeter (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Ekv.",
     "rssNote": "aRSS är den intensitetsvikta poängen bakom den dagliga belastningen; raderna summerar till aktivitetens total. \"≈\": uppskattat från (lutningskorrigerad) tempo eller puls utan effekt."
   }
 }

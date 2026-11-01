@@ -39,7 +39,8 @@
     "empty": {
       "title": "Nog geen inspanningen",
       "description": "Herbereken de inspanningen om je bestaande activiteiten met dit segment te vergelijken."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Segment importeren",

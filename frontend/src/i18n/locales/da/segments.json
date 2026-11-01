@@ -39,7 +39,8 @@
     "empty": {
       "title": "Ingen indsatser endnu",
       "description": "Beregn indsatserne igen for at sammenligne dine eksisterende aktiviteter med dette segment."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importér segment",

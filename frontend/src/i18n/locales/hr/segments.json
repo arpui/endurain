@@ -39,7 +39,8 @@
     "empty": {
       "title": "Još nema napora",
       "description": "Ponovno izračunaj napore kako bi se usporedili s vašim postojećim aktivnostima."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Uvezi dionicu",

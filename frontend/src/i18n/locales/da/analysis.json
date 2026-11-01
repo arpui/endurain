@@ -32,6 +32,7 @@
     "matrixTitle": "Sammenligning pr. kilde",
     "matrixNote": "Samme aktivitet scoret efter hver kilde, der kunne læse den: watt måles; hældningskorrigeret pace og puls er estimater."
   },
+  "rapNote": "RAP = ækvivalent pace i fladt (hældningskorrigeret): den faktiske pace rettet for hældning, den pace formlerne scorer.",
   "sport": {
     "label": "Sport",
     "all": "Alle sporter"
@@ -149,6 +150,7 @@
     "effortsMany": "anstrengelser",
     "colStart": "start",
     "colGrade": "stigning",
+    "colRap": "Equiv.",
     "colDesnivel": "stigning / fald",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Stigning / fald",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS er den intensitetsvægtede score bag den daglige belastning; rækkerne lægges sammen til aktivitetens total. \"≈\": estimeret fra (hældningskorrigeret) pace eller puls uden effekt."
   }
 }

@@ -32,6 +32,7 @@
     "matrixTitle": "Srovnání podle zdroje",
     "matrixNote": "Stejná aktivita hodnocená podle každého dostupného zdroje: watty se měří; tempo kompenzované sklonem a tepová frekvence jsou odhady."
   },
+  "rapNote": "RAP = ekvivalentní tempo na rovině (kompenzovaný sklonem): skutečné tempo opravené o sklon, to tempo vzorce tempa hodnotí.",
   "sport": {
     "label": "Sport",
     "all": "Všechny sporty"
@@ -149,6 +150,7 @@
     "effortsMany": "úseky",
     "colStart": "začátek",
     "colGrade": "stoupání",
+    "colRap": "Equiv.",
     "colDesnivel": "převýšení (+/−)",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Převýšení (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS je intenzitou vážené skóre za denní zátěží; řádky se sčítají na celkový údaj aktivity. „≈“: odhad z (sklonem kompenzovaného) tempa nebo TF bez měření výkonu."
   }
 }

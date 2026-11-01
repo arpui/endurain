@@ -32,6 +32,7 @@
     "matrixTitle": "Benchmark by source",
     "matrixNote": "The same activity scored by every signal that could read it: watts are measured; gradient-compensated pace and heart rate are estimates."
   },
+  "rapNote": "RAP = grade-equivalent pace: the actual pace corrected for gradient, which is the pace the pace-side formulas score.",
   "sport": {
     "label": "Sport",
     "all": "All sports"
@@ -149,6 +150,7 @@
     "effortsMany": "efforts",
     "colStart": "start",
     "colGrade": "grade",
+    "colRap": "Equiv.",
     "colDesnivel": "ascent / descent",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Ascent / descent",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS is the intensity-weighted score behind the daily load; the rows add up to the activity's total. \"≈\" is estimated from gradient-compensated pace or heart rate when the activity has no power."
   }
 }

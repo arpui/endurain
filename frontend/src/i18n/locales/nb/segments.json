@@ -39,7 +39,8 @@
     "empty": {
       "title": "Ingen innsats ennå",
       "description": "Regn innsatsen på nytt for å sammenligne eksisterende aktiviteter med dette segmentet."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importer segment",

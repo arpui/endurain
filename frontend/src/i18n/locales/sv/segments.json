@@ -39,7 +39,8 @@
     "empty": {
       "title": "Inga insatser ännu",
       "description": "Räkna om insatser för att jämföra dina befintliga aktiviteter med det här segmentet."
-    }
+    },
+    "rap": "Ekv."
   },
   "import": {
     "button": "Importera segment",

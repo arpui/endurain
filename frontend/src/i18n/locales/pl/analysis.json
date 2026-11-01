@@ -32,6 +32,7 @@
     "matrixTitle": "Porównanie według źródła",
     "matrixNote": "Ta sama aktywność oceniona przez każde dostępne źródło: waty są mierzone; tempo skompensowane nachyleniem i HR to szacunki."
   },
+  "rapNote": "RAP = równoważne tempo na płaskim (skompensowane nachyleniem): rzeczywiste tempo skorygowane nachyleniem – to tempo oceniają formuły tempowe.",
   "sport": {
     "label": "Dyscyplina",
     "all": "Wszystkie dyscypliny"
@@ -149,6 +150,7 @@
     "effortsMany": "akcenty",
     "colStart": "start",
     "colGrade": "nachylenie",
+    "colRap": "Equiv.",
     "colDesnivel": "przewyższenie (+/−)",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Przewyższenie (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS to punktacja ważona intensywnością stojąca za dziennym obciążeniem; wiersze sumują się do wartości całej aktywności. „≈”: szacowane z tempa (skompensowanego nachyleniem) lub HR bez pomiaru mocy."
   }
 }

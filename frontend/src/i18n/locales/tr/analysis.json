@@ -32,6 +32,7 @@
     "matrixTitle": "Kaynağa göre karşılaştırma",
     "matrixNote": "Etkinlik, okuyabilen her sinyale göre puanlanır: watt ölçülür; eğim dengelenmiş tempo ve nabız tahmindir."
   },
+  "rapNote": "RAP = düz zemin eşdeğeri tempo (eğim dengelenmiş): gerçek tempodan eğim düzeltilmiş hâli; tempo formüllerinin puanladığı değer budur.",
   "sport": {
     "label": "Spor",
     "all": "Tüm sporlar"
@@ -149,6 +150,7 @@
     "effortsMany": "efor",
     "colStart": "başlangıç",
     "colGrade": "eğim",
+    "colRap": "Eşd.",
     "colDesnivel": "tırmanış / iniş",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Tırmanış / iniş",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Eşd.",
     "rssNote": "aRSS, günlük yükün arkasındaki yoğunluk ağırlıklı puandır; satırlar etkinliğin toplamına ulaşır. \"≈\": güç ölçümü olmayan aktivitelerde (eğim dengelenmiş) tempo veya nabıztan tahmin edilir."
   }
 }

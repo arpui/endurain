@@ -39,7 +39,8 @@
     "empty": {
       "title": "Jeszcze nie ma starań",
       "description": "Przelicz starania, aby porównać istniejące aktywności z tym odcinkiem."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Zaimportuj odcinek",

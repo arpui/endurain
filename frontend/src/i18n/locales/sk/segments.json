@@ -39,7 +39,8 @@
     "empty": {
       "title": "Zatiaľ žiadne výkony",
       "description": "Prepočítaj výkony, aby sa porovnali s tvojimi existujúcimi aktivitami."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importovať sekciu",

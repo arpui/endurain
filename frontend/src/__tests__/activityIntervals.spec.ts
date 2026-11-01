@@ -18,6 +18,7 @@ function makeSegment(overrides: Partial<IntervalSegment> = {}): IntervalSegment 
     contrast: 1.46,
     avgGradePct: 0.4,
     avgSpeedMs: 3.84,
+    paceAdjustedMs: null,
     elevationGainM: 9.5,
     elevationLossM: 4,
     rss: 12.3,
@@ -108,6 +109,7 @@ describe('ActivityIntervalTable terrain climbs', () => {
         rss: 60.2,
         rssSource: 'power',
         rssPerMin: 14.7,
+        rapMs: null,
         sourceScores: null,
       },
     ])
@@ -151,6 +153,7 @@ describe('ActivityIntervalTable terrain climbs', () => {
               rss: 11.0,
               rssSource: 'pace',
               rssPerMin: 22.0,
+              rapMs: null,
               sourceScores: null,
             },
           ],
@@ -220,5 +223,49 @@ describe('ActivityIntervalTable source benchmark', () => {
       global: { plugins: [i18n] },
     })
     expect(wrapper.text()).not.toContain('Benchmark by source')
+  })
+})
+
+describe('ActivityIntervalTable RAP column', () => {
+  it('shows the grade-equivalent pace next to the raw one on climbs', () => {
+    const wrapper = mount(ActivityIntervalTable, {
+      props: {
+        intervals: {
+          shape: 'steady',
+          thresholdW: null,
+          basePowerW: 0,
+          segments: [],
+          climbs: [
+            {
+              startM: 0,
+              endM: 1000,
+              lengthM: 1000,
+              startS: 0,
+              durationS: 300,
+              elevationGainM: 50,
+              elevationLossM: 0,
+              avgGradePct: 5.0,
+              avgPowerW: null,
+              intensityFactor: null,
+              contrast: null,
+              rss: 9.0,
+              rssSource: 'pace',
+              rssPerMin: 1.8,
+              rapMs: 4.6,
+              sourceScores: null,
+            },
+          ],
+          rssBySource: [],
+          rules: null,
+        },
+        activityType: 1,
+        units: 'metric',
+      },
+      global: { plugins: [i18n] },
+    })
+    const text = wrapper.text()
+    // 4.6 m/s reads as 3:37 min/km (1000/4.6 = 217 s)
+    expect(text).toContain('3:37')
+    expect(text).toContain('5.0 %')
   })
 })

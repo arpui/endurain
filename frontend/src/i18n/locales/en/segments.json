@@ -39,7 +39,8 @@
     "empty": {
       "title": "No efforts yet",
       "description": "Recompute efforts to match your existing activities against this segment."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Import segment",

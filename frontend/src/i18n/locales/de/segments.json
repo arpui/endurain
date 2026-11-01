@@ -39,7 +39,8 @@
     "empty": {
       "title": "Noch keine Aufwände",
       "description": "Berechne die Aufwände neu, damit deine vorhandenen Aktivitäten diesem Segment zugeordnet werden."
-    }
+    },
+    "rap": "Äquiv."
   },
   "import": {
     "button": "Segment importieren",

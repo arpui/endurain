@@ -388,6 +388,7 @@ class IntervalSegmentRead(BaseModel):
     contrast: StrictFloat
     avg_grade_pct: StrictFloat | None
     avg_speed_ms: StrictFloat | None
+    pace_adjusted_ms: StrictFloat | None = None
     elevation_gain_m: StrictFloat | None = None
     elevation_loss_m: StrictFloat | None = None
     rss: StrictFloat | None = None
@@ -466,6 +467,7 @@ class TerrainClimbRead(BaseModel):
     rss: StrictFloat | None
     rss_source: StrictStr | None = None
     rss_per_min: StrictFloat | None
+    rap_ms: StrictFloat | None = None
     source_scores: dict[StrictStr, StrictFloat] | None = None
 
 
@@ -580,6 +582,8 @@ class LapDynamicsRead(BaseModel):
             side-by-side benchmark.
         rss_per_min: That score per minute of the lap, the mean stress rate;
             ``None`` when there is no score.
+        rap_ms: Grade-equivalent pace of the lap (the GAP/RAP the pace chain
+            scores), ``None`` when no critical speed exists for the sport.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -592,6 +596,7 @@ class LapDynamicsRead(BaseModel):
     rss: StrictFloat | None = None
     rss_source: StrictStr | None = None
     rss_per_min: StrictFloat | None = None
+    rap_ms: StrictFloat | None = None
     source_scores: dict[StrictStr, StrictFloat] | None = None
 
 

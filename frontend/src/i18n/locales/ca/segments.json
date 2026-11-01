@@ -39,7 +39,8 @@
     "empty": {
       "title": "Encara no hi ha esforços",
       "description": "Recomputa els esforços per comparar les activitats existents amb aquest segment."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importa un segment",

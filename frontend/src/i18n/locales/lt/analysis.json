@@ -32,6 +32,7 @@
     "matrixTitle": "Palyginimas pagal šaltinį",
     "matrixNote": "Ta pati veikla įvertinta pagal kiekvieną signalą, kuris ją galėjo nuskaityti: wattai matuojami; nuolygiu kompensuotas tempas ir širdies ritmas – įverčiai."
   },
+  "rapNote": "RAP = ekvivalentus tempo lygioje (kompensuotas nuolygio): tikrasis tempas, pakoreguotas pagal nuolydį – jį vertina tempo formulės.",
   "sport": {
     "label": "Sportas",
     "all": "Visi sportai"
@@ -149,6 +150,7 @@
     "effortsMany": "krūviai",
     "colStart": "pradžia",
     "colGrade": "nuolydis",
+    "colRap": "Equiv.",
     "colDesnivel": "kylantis / leidžiantis",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Kylantis / leidžiantis",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "aRSS – intensyvumu sveriamas rodiklis, lemiantis dienos krūvį; eilutės sudaro visos veiklos sumą. „≈“: įvertinta iš (nuolygiu kompensuoto) tempo arba širdies ritmo, nėra galios."
   }
 }

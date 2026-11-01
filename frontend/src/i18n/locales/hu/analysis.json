@@ -32,6 +32,7 @@
     "matrixTitle": "Összehasonlítás forrásonként",
     "matrixNote": "Ugyanaz a tevékenység minden elérhető jel szerint értékelve: a watt mért adat; a lejtés-korrigált tempó és a pulzus becslés."
   },
+  "rapNote": "RAP = equivalens tempó sík terepen (lejtés-korrigált): a tényleges tempó lejtéssel korrigálva, ezt értékelik a tempó-formulák.",
   "sport": {
     "label": "Sportág",
     "all": "Minden sportág"
@@ -149,6 +150,7 @@
     "effortsMany": "terhelés",
     "colStart": "kezdés",
     "colGrade": "emelkedő",
+    "colRap": "Equiv.",
     "colDesnivel": "emelkedés / ereszkedés",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Emelkedés / ereszkedés",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Equiv.",
     "rssNote": "Az aRSS a napi terhelés mögötti intenzitással súlyozott pontszám; a sorok az edzés egészére adódnak. „≈”: lejtést korrigáló tempóból vagy pulzásból becsülve, ha nincs teljesítmény."
   }
 }

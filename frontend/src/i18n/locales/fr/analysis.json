@@ -32,6 +32,7 @@
     "matrixTitle": "Comparatif par source",
     "matrixNote": "la même activité notée par chaque signal capable de la lire : les watts sont mesurés ; l’allure compensée en pente et la FC sont estimées."
   },
+  "rapNote": "RAP = allure équivalente en plat (pente compensée) : l’allure réelle corrigée de la pente, celle que notent les formules d’allure.",
   "sport": {
     "label": "Sport",
     "all": "Tous les sports"
@@ -149,6 +150,7 @@
     "effortsMany": "efforts",
     "colStart": "départ",
     "colGrade": "pente",
+    "colRap": "Éq.",
     "colDesnivel": "dénivelé (+/−)",
     "colRss": "aRSS",
     "colRssMin": "aRSS/min",
@@ -190,6 +192,7 @@
     "desnivel": "Dénivelé (+/−)",
     "rss": "aRSS",
     "rssMin": "aRSS/min",
+    "rap": "Éq.",
     "rssNote": "l'aRSS est le score pondéré par l'intensité qui sous-tend la charge quotidienne ; les lignes additionnent le total de la séance. « ≈ » : estimé à partir de l’allure (pente compensée) ou de la FC sans capteur de puissance."
   }
 }

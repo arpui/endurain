@@ -39,7 +39,8 @@
     "empty": {
       "title": "Ainda não há esforços",
       "description": "Recalcula os esforços para comparar as tuas atividades existentes com este segmento."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importar segmento",

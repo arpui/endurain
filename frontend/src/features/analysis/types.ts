@@ -249,6 +249,8 @@ export interface IntervalSegment {
   contrast: number
   avgGradePct: number | null
   avgSpeedMs: number | null
+  /** Grade-equivalent pace (GAP/RAP) of the segment; null without a critical speed. */
+  paceAdjustedMs: number | null
   /** Ground risen through; null when the activity carries no altitude stream. */
   elevationGainM: number | null
   /** Ground fallen through; null when the activity carries no altitude stream. */
@@ -326,6 +328,8 @@ export interface TerrainClimb {
   rssSource: 'power' | 'pace' | 'hr' | null
   /** The score per minute of climbing, the comparable rate across climbs. */
   rssPerMin: number | null
+  /** Grade-equivalent pace (GAP/RAP) of the climb; null without a critical speed. */
+  rapMs: number | null
   /** The climb scored by every available source, for the benchmark. */
   sourceScores: Record<string, number> | null
 }
@@ -372,6 +376,8 @@ export interface LapDynamics {
   rssSource: 'power' | 'pace' | 'hr' | null
   /** That score per minute of the lap, the mean stress rate. */
   rssPerMin: number | null
+  /** Grade-equivalent pace (GAP/RAP) of the lap; null without a critical speed. */
+  rapMs: number | null
   /** The same window scored by every available source, for the benchmark. */
   sourceScores: Record<string, number> | null
 }

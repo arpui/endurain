@@ -39,7 +39,8 @@
     "empty": {
       "title": "Įdėjimų dar nėra",
       "description": "Perskaičiuokite įdėjimus, kad būtų palygintos esamos veiklos su šia atkarpa."
-    }
+    },
+    "rap": "Equiv."
   },
   "import": {
     "button": "Importuoti atkarpą",
