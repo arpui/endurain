@@ -94,6 +94,8 @@ class WindowStats:
             no score.
         source_scores: The window scored by *every* available signal
             (``power``/``pace``/``hr``), for the side-by-side benchmark.
+        rap_ms: Grade-equivalent pace (GAP/RAP) over the window, ``None`` when the
+            athlete has no critical speed for the sport.
     """
 
     avg_power_w: float | None = None
@@ -102,3 +104,4 @@ class WindowStats:
     rss_source: str | None = None
     rss_per_min: float | None = None
     source_scores: dict[str, float] | None = None
+    rap_ms: float | None = None

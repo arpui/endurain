@@ -1173,6 +1173,15 @@ def get_activity_intervals(
         altitudes_m=altitudes_m,
         parameters=dict(data.parameters),
     )
+
+    def _segment_rap_ms(segment: analysis_intervals.IntervalSegment) -> float | None:
+        if ground_pace is None or ground_period <= 0:
+            return None
+        start = int(segment.start_s / ground_period)
+        stop = int((segment.start_s + segment.duration_s) / ground_period)
+        window = ground_pace[start : max(stop, start + 1)]
+        return round(sum(window) / len(window), 2) if window else None
+
     return analysis_schema.ActivityIntervalsRead(
         shape=analysis.shape,
         threshold_w=analysis.threshold_w,
@@ -1189,6 +1198,7 @@ def get_activity_intervals(
                 contrast=segment.contrast,
                 avg_grade_pct=segment.avg_grade_pct,
                 avg_speed_ms=segment.avg_speed_ms,
+                pace_adjusted_ms=_segment_rap_ms(segment),
                 elevation_gain_m=segment.elevation_gain_m,
                 elevation_loss_m=segment.elevation_loss_m,
                 rss=segment.rss,
@@ -1425,6 +1435,10 @@ def _apply_lap_rss(
         score = window_scores.get(source, 0.0) if source else 0.0
         entry.rss = round(score, 1) if score > 0 and source else None
         entry.rss_source = source if entry.rss is not None else None
+        if pace_values is not None:
+            window_pace = pace_values[start:stop]
+            if window_pace:
+                entry.rap_ms = round(sum(window_pace) / len(window_pace), 2)
         elapsed_s = float(lap.total_elapsed_time or 0.0)
         if entry.rss is not None and elapsed_s > 0:
             entry.rss_per_min = round(entry.rss * 60.0 / elapsed_s, 2)
@@ -1492,6 +1506,7 @@ def compute_window_stats(
         score: float | None = None
         source: str | None = None
         per_min: float | None = None
+        rap_ms: float | None = None
         if stamps and period_s > 0 and elapsed_s > 0:
             cut = bisect_left(stamps, start_a)
             stop = bisect_left(stamps, end_a)
@@ -1519,6 +1534,9 @@ def compute_window_stats(
                     source = chain_source
                     per_min = round(score * 60.0 / elapsed_s, 2)
                 scores = {key: round(value, 1) for key, value in all_scores.items()} or None
+                if pace_values is not None and stop > cut:
+                    window_pace = pace_values[cut:stop]
+                    rap_ms = round(sum(window_pace) / len(window_pace), 2) if window_pace else None
         stats.append(
             analysis_contracts.WindowStats(
                 avg_power_w=avg_power,
@@ -1527,6 +1545,7 @@ def compute_window_stats(
                 rss_source=source,
                 rss_per_min=per_min,
                 source_scores=scores,
+                rap_ms=rap_ms,
             )
         )
     return stats

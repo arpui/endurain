@@ -1093,6 +1093,8 @@ class TestTerrainClimbsService:
         assert climb.rss_source == "pace"
         assert climb.rss_per_min is not None
         assert climb.avg_power_w is None
+        # an 8 % climb at 4 m/s reads as a much faster equivalent pace
+        assert climb.rap_ms is not None and climb.rap_ms > 4.0
 
     def test_a_flat_route_answers_no_climbs(self):
         read = self._read(self._streams(10**9, with_power=True))
@@ -1437,6 +1439,7 @@ class TestLapDynamics:
         assert rows[0].rss is not None
         assert rows[0].rss_source == "pace"
         assert rows[0].rss_per_min is not None
+        assert rows[0].rap_ms is not None and rows[0].rap_ms > 4.0  # 10 % climb
 
     def test_a_powered_lap_benchmarks_power_against_heart_rate(self):
         """Watts still score the lap, and the same window reads its HR estimate too."""

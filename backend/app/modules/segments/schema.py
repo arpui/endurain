@@ -162,6 +162,8 @@ class SegmentEffortRead(BaseModel):
         rss_source: Which signal scored the effort (``power``, ``pace``, ``hr``).
         source_scores: The effort's window scored by every available signal
             (``power``/``pace``/``hr``), as aRSS per minute, for the benchmark.
+        rap_ms: Grade-equivalent pace (GAP/RAP) over the effort, ``None`` when the
+            athlete has no critical speed for the sport.
     """
 
     model_config = ConfigDict(from_attributes=True, extra="forbid")
@@ -183,6 +185,7 @@ class SegmentEffortRead(BaseModel):
     rss_per_min: StrictFloat | None = None
     rss_source: StrictStr | None = None
     source_scores: dict[StrictStr, StrictFloat] | None = None
+    rap_ms: StrictFloat | None = None
 
 
 class ActivitySegmentRead(BaseModel):
