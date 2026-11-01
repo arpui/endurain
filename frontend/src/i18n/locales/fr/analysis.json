@@ -18,7 +18,8 @@
     "rss_up": "aRSS côtes",
     "rss_high": "aRSS intense",
     "rss_mid": "aRSS modéré",
-    "rss_low": "aRSS facile"
+    "rss_low": "aRSS facile",
+    "daniels_points": "Points Daniels"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Charge",
     "trimpNote": "Le TRIMP utilise une échelle différente de celle des autres formules et ne s'additionne jamais à elles.",
+    "danielsNote": "les points Daniels utilisent leur propre échelle et ne sont jamais additionnés aux autres formules.",
     "rssNote": "Le aRSS ne mesure que les activités avec puissance. Une activité sans puissance reste hors de cette série ; c'est la charge FC qui la mesure.",
     "bandNote": "Les bandes disent où s'est fait le travail : côtes, intense, modéré, facile. Chaque seconde de puissance compte dans une seule bande, elles s'ajoutent donc au total."
   },

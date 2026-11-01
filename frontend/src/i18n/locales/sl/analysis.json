@@ -18,7 +18,8 @@
     "rss_up": "aRSS vzponi",
     "rss_high": "aRSS visoka",
     "rss_mid": "aRSS srednja",
-    "rss_low": "aRSS nizka"
+    "rss_low": "aRSS nizka",
+    "daniels_points": "Danielske točke"
   },
   "sport": {
     "label": "Šport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Obremenitev",
     "trimpNote": "TRIMP uporablja drugo lestvico kot drugi obrazci in se nikoli ne prišteva k njim.",
+    "danielsNote": "Danielske točke uporabljajo lastno lestvico in se nikoli prištevajo drugim formulam.",
     "rssNote": "aRSS meri samo dejavnosti z močjo. Dejavnost brez moči ostane izven te serije; jo meri obremenitev po utripu.",
     "bandNote": "Pasove povedo, kje je bilo delo: vzponi, visoka, srednja, nizka. Vsaka sekunda z močjo šteje v natanko enem pasu, zato se seštejejo v aRSS skupaj."
   },

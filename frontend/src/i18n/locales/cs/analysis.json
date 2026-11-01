@@ -18,7 +18,8 @@
     "rss_up": "aRSS stoupání",
     "rss_high": "aRSS vysoká",
     "rss_mid": "aRSS střední",
-    "rss_low": "aRSS nízká"
+    "rss_low": "aRSS nízká",
+    "daniels_points": "Daniels body"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Zatížení",
     "trimpNote": "TRIMP používá jinou škálu než ostatní vzorce a nikdy se k nim nepřičítá.",
+    "danielsNote": "Daniels body používají vlastní škálu a nikdy se nesčítají s ostatními vzorci.",
     "rssNote": "aRSS měří jen aktivity s výkonem. Aktivita bez výkonu z této řady vypadává; tu měří zátěž podle tepu.",
     "bandNote": "Pásma říkají, kde byla práce: stoupání, vysoká, střední, nízká. Každá vteřina s výkonem se počítá právě v jednom pásmu, takže se sčítají na aRSS celkem."
   },

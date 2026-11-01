@@ -13,6 +13,7 @@ export const LOAD_METHODS: LoadMethod[] = [
   'rss_high',
   'rss_mid',
   'rss_low',
+  'daniels_points',
 ]
 
 /** True for the exponential family's bands, which split one total into areas. */

@@ -18,7 +18,8 @@
     "rss_up": "aRSS climbs",
     "rss_high": "aRSS high",
     "rss_mid": "aRSS middle",
-    "rss_low": "aRSS low"
+    "rss_low": "aRSS low",
+    "daniels_points": "Daniels points"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Load",
     "trimpNote": "TRIMP uses a different scale than the other formulas and is never added to them.",
+    "danielsNote": "Daniels points use a scale of their own and are never added to the other formulas.",
     "rssNote": "aRSS measures only activities that carry power. An activity without power stays out of this series; heart-rate load is what measures it.",
     "bandNote": "The bands say where the work happened: climbs, high, middle, low. Each powered second counts in exactly one band, so they add up to aRSS total."
   },

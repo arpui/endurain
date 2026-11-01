@@ -18,7 +18,8 @@
     "rss_up": "aRSS emelkedők",
     "rss_high": "aRSS magas",
     "rss_mid": "aRSS közepes",
-    "rss_low": "aRSS alacsony"
+    "rss_low": "aRSS alacsony",
+    "daniels_points": "Daniels-pontok"
   },
   "sport": {
     "label": "Sportág",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Terhelés",
     "trimpNote": "A TRIMP más skálán mér, mint a többi képlet, és soha nem adódik hozzájuk.",
+    "danielsNote": "A Daniels-pontok saját skálát használnak, és soha nem adhatók hozzá a többi formulához.",
     "rssNote": "Az aRSS csak teljesítményt tartalmazó tevékenységeket mér. Teljesítmény nélküli tevékenység kimarad ebből a sorozatból; azt a pulzusterhelés méri.",
     "bandNote": "A sávok megmutatják, hol volt a munka: emelkedők, magas, közepes, alacsony. Minden teljesítmény-másodperc egyetlen sávban számít, ezért az aRSS összesenbe adódnak."
   },

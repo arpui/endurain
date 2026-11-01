@@ -26,6 +26,7 @@ export type LoadMethod =
   | 'skiba_score'
   | 'hr_load'
   | 'trimp'
+  | 'daniels_points'
   | 'rss_total'
   | 'rss_up'
   | 'rss_high'

@@ -18,7 +18,8 @@
     "rss_up": "аRSS успони",
     "rss_high": "аRSS високо",
     "rss_mid": "аRSS средње",
-    "rss_low": "аRSS ниско"
+    "rss_low": "аRSS ниско",
+    "daniels_points": "Daniels bodovi"
   },
   "sport": {
     "label": "Спорт",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Оптерећење",
     "trimpNote": "TRIMP користи другу скалу од осталих формула и никада им се не сабира.",
+    "danielsNote": "Daniels bodovi koriste sopstvenu lestvicu i nikada se ne sabiraju sa ostalim formulama.",
     "rssNote": "аRSS мери само активности са снагом. Активност без снаге остаје ван овог низа; њу мери оптерећење по пулсу.",
     "bandNote": "Траке кажу где је био рад: успони, високо, средње, ниско. Свака секунда са снагом рачуна се у једној траци, зато се сабирају у аRSS укупно."
   },

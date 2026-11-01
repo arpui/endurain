@@ -18,7 +18,8 @@
     "rss_up": "aRSS podbiegi",
     "rss_high": "aRSS wysokie",
     "rss_mid": "aRSS średnie",
-    "rss_low": "aRSS niskie"
+    "rss_low": "aRSS niskie",
+    "daniels_points": "Punkty Danielsa"
   },
   "sport": {
     "label": "Dyscyplina",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Obciążenie",
     "trimpNote": "TRIMP używa innej skali niż pozostałe wzory i nigdy nie jest do nich dodawany.",
+    "danielsNote": "Punkty Daniels mają własną skalę i nigdy nie są sumowane z pozostałymi formułami.",
     "rssNote": "aRSS mierzy tylko aktywności z mocą. Aktywność bez mocy pozostaje poza tą serią; mierzy ją obciążenie tętnem.",
     "bandNote": "Pasma mówią, gdzie była praca: podbiegi, wysokie, średnie, niskie. Każda sekunda z mocą liczy się w jednym pasmie, więc sumują się do aRSS razem."
   },

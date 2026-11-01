@@ -18,7 +18,8 @@
     "rss_up": "aRSS 爬坡",
     "rss_high": "aRSS 高强度",
     "rss_mid": "aRSS 中等",
-    "rss_low": "aRSS 低强度"
+    "rss_low": "aRSS 低强度",
+    "daniels_points": "丹尼尔斯点数"
   },
   "sport": {
     "label": "运动",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "负荷",
     "trimpNote": "TRIMP 使用与其他公式不同的量表，不会与它们相加。",
+    "danielsNote": "丹尼尔斯点数使用独立的量纲，绝不与其他公式的数值相加。",
     "rssNote": "aRSS 只测量带功率的活动。没有功率的活动不计入这条曲线；由心率负荷来测量。",
     "bandNote": "各分区说明负荷来自哪里：爬坡、高强度、中等、低强度。每个功率秒只计入一个分区，因此相加等于 aRSS 总计。"
   },

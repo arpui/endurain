@@ -18,7 +18,8 @@
     "rss_up": "aRSS tırmanışlar",
     "rss_high": "aRSS yüksek",
     "rss_mid": "aRSS orta",
-    "rss_low": "aRSS düşük"
+    "rss_low": "aRSS düşük",
+    "daniels_points": "Daniels puanları"
   },
   "sport": {
     "label": "Spor",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Yük",
     "trimpNote": "TRIMP diğer formüllerden farklı bir ölçek kullanır ve asla onlarla toplanmaz.",
+    "danielsNote": "Daniels puanları kendi ölçeğini kullanır ve diğer formüllerle asla toplanmaz.",
     "rssNote": "aRSS yalnızca güç içeren aktiviteleri ölçer. Gücü olmayan bir aktivite bu serinin dışında kalır; onu nabız yükü ölçer.",
     "bandNote": "Bantlar işin nerede yapıldığını gösterir: tırmanışlar, yüksek, orta, düşük. Her güç saniyesi yalnızca bir bantta sayılır, bu yüzden toplamı aRSS toplam verir."
   },

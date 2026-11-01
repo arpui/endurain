@@ -9697,6 +9697,11 @@ export interface components {
          *     series meaningful. ``TRIMP`` is a different scale (Banister's) and is reported
          *     beside the others, never added to them.
          *
+         *     :attr:`DANIELS` scores effort the way Jack Daniels' pace tables do: one
+         *     second at intensity ``x`` over threshold is worth ``x⁴``, normalized so an
+         *     hour at threshold is 100 points. That fourth power makes it a scale of its
+         *     own like ``TRIMP``: it answers beside the others and is never added to them.
+         *
          *     The ``RSS_*`` methods are one family: an exponential stress kernel summed per
          *     second over the samples of an activity that carries power. :attr:`RSS_TOTAL`
          *     is the family's general load; the other four split it by *where* the effort
@@ -9715,9 +9720,11 @@ export interface components {
          *         RSS_MID: The share taken between the band cutoffs, off climbs.
          *         RSS_LOW: The share taken below a low fraction of threshold, slow and off
          *             climbs.
+         *         DANIELS: Daniels points, intensity to the fourth power (reported,
+         *             not summed).
          * @enum {string}
          */
-        LoadMethod: "coggan_tss" | "skiba_score" | "hr_load" | "trimp" | "rss_total" | "rss_up" | "rss_high" | "rss_mid" | "rss_low";
+        LoadMethod: "coggan_tss" | "skiba_score" | "hr_load" | "trimp" | "rss_total" | "rss_up" | "rss_high" | "rss_mid" | "rss_low" | "daniels_points";
         /**
          * LogoutResponse
          * @description Response payload returned by the logout endpoint.

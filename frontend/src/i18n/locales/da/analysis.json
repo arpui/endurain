@@ -18,7 +18,8 @@
     "rss_up": "aRSS stigninger",
     "rss_high": "aRSS høj",
     "rss_mid": "aRSS middel",
-    "rss_low": "aRSS lav"
+    "rss_low": "aRSS lav",
+    "daniels_points": "Daniels-point"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Belastning",
     "trimpNote": "TRIMP bruger en anden skala end de andre formler og lægges aldrig sammen med dem.",
+    "danielsNote": "Daniels-point bruger en egen skala og lægges aldrig sammen med de andre formler.",
     "rssNote": "aRSS måler kun aktiviteter med effekt. En aktivitet uden effekt er uden for denne serie; pulsbelastningen måler den.",
     "bandNote": "Båndene viser, hvor arbejdet lå: stigninger, høj, middel, lav. Hvert effektsekund tæller i ét bånd, så de lægges sammen til aRSS total."
   },

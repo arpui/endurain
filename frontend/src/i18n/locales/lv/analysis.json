@@ -18,7 +18,8 @@
     "rss_up": "aRSS kāpumi",
     "rss_high": "aRSS augsts",
     "rss_mid": "aRSS vidējs",
-    "rss_low": "aRSS zems"
+    "rss_low": "aRSS zems",
+    "daniels_points": "Daniels punkti"
   },
   "sport": {
     "label": "Sporta veids",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Slodze",
     "trimpNote": "TRIMP izmanto citu skalu nekā pārējās formulas, un tas nekad netiek saskaitīts ar tām.",
+    "danielsNote": "Daniels punkti izmanto savu skalu, un tie nekad netiek saskaitīti ar pārējām formulām.",
     "rssNote": "aRSS mēra tikai aktivitātes ar jaudu. Aktivitāte bez jaudas šajā sērijā netiek iekļauta; to mēra sloga pēc pulsa.",
     "bandNote": "Joslas parāda, kur bija darbs: kāpumi, augsts, vidējs, zems. Katra jaudas sekunde skaitās tikai vienā joslā, tāpēc tās summējas kopā ar aRSS kopā."
   },

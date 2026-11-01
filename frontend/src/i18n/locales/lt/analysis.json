@@ -18,7 +18,8 @@
     "rss_up": "aRSS įkalnės",
     "rss_high": "aRSS aukšta",
     "rss_mid": "aRSS vidutinė",
-    "rss_low": "aRSS žema"
+    "rss_low": "aRSS žema",
+    "daniels_points": "Daniels taškai"
   },
   "sport": {
     "label": "Sportas",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Krūvis",
     "trimpNote": "TRIMP naudoja kitą skalę nei kitos formulės ir niekada su jomis nesumuojamas.",
+    "danielsNote": "Daniels taškai naudoja savo skalę ir niekada nedediami prie kitų formulių.",
     "rssNote": "aRSS matuoja tik veiklas su galia. Veikla be galios į šią seriją nepatenka; ją matuoja pulsine apkrova.",
     "bandNote": "Juostos parodo, kur buvo darbas: įkalnės, aukšta, vidutinė, žema. Kiekviena galios sekundė skaičiuojama tik vienoje juostoje, todėl jos sudaro aRSS bendrą."
   },

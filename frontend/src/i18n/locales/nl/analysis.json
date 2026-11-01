@@ -18,7 +18,8 @@
     "rss_up": "aRSS klimmen",
     "rss_high": "aRSS intens",
     "rss_mid": "aRSS middel",
-    "rss_low": "aRSS licht"
+    "rss_low": "aRSS licht",
+    "daniels_points": "Daniels-punten"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Belasting",
     "trimpNote": "TRIMP gebruikt een andere schaal dan de andere formules en wordt er nooit bij opgeteld.",
+    "danielsNote": "Daniels-punten gebruiken een eigen schaal en worden nooit bij de andere formules opgeteld.",
     "rssNote": "aRSS meet alleen activiteiten met vermogen. Een activiteit zonder vermogen valt buiten deze reeks; hartslagbelasting meet die.",
     "bandNote": "De banden laten zien waar het werk zat: klimmen, intens, middel, licht. Elke vermogensseconde telt in één band, dus ze tellen op bij aRSS totaal."
   },

@@ -18,7 +18,8 @@
     "rss_up": "aRSS urcări",
     "rss_high": "aRSS intens",
     "rss_mid": "aRSS mediu",
-    "rss_low": "aRSS scăzut"
+    "rss_low": "aRSS scăzut",
+    "daniels_points": "Puncte Daniels"
   },
   "sport": {
     "label": "Sport",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Încărcare",
     "trimpNote": "TRIMP folosește o scală diferită de celelalte formule și nu se adună niciodată cu acestea.",
+    "danielsNote": "Punctele Daniels folosesc o scală proprie și nu se adună niciodată cu celelalte formule.",
     "rssNote": "aRSS măsoară doar activitățile cu putere. O activitate fără putere rămâne în afara acestei serii; ea este măsurată de sarcina pe puls.",
     "bandNote": "Benzi arată unde a fost efortul: urcări, intens, mediu, scăzut. Fiecare secundă cu putere contează într-o singură bandă, deci se adună la aRSS total."
   },

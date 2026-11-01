@@ -18,7 +18,8 @@
     "rss_up": "aRSS subidas",
     "rss_high": "aRSS intenso",
     "rss_mid": "aRSS médio",
-    "rss_low": "aRSS fácil"
+    "rss_low": "aRSS fácil",
+    "daniels_points": "Pontos Daniels"
   },
   "sport": {
     "label": "Desporto",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Carga",
     "trimpNote": "O TRIMP usa uma escala diferente das outras fórmulas e nunca é somado a elas.",
+    "danielsNote": "Os pontos Daniels usam uma escala própria e nunca são somados às outras fórmulas.",
     "rssNote": "O aRSS só mede atividades com potência. Uma atividade sem potência fica fora desta série; quem a mede é a carga por FC.",
     "bandNote": "As bandas dizem onde esteve o trabalho: subidas, intenso, médio, fácil. Cada segundo com potência conta numa só banda, por isso somam ao aRSS total."
   },

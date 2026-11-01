@@ -18,7 +18,8 @@
     "rss_up": "aRSS tõusud",
     "rss_high": "aRSS kõrge",
     "rss_mid": "aRSS keskmine",
-    "rss_low": "aRSS madal"
+    "rss_low": "aRSS madal",
+    "daniels_points": "Danielsi punktid"
   },
   "sport": {
     "label": "Ala",
@@ -34,6 +35,7 @@
   "daily": {
     "series": "Koormus",
     "trimpNote": "TRIMP kasutab teistest valemitest erinevat skaalat ega liideta nendega.",
+    "danielsNote": "Danielsi punktid kasutavad oma skaalat ega liida teiste valemitega.",
     "rssNote": "aRSS mõõdab ainult võimsusega tegevusi. Ilma võimsuseta tegevus jääb sellest sarjast välja; seda mõõdab pulssikoormus.",
     "bandNote": "Ribad näitavad, kus töö tehti: tõusud, kõrge, keskmine, madal. Iga võimsusega sekund loendub vaid ühes ribas, seega liidetakse need aRSS kokku väärtuseks."
   },
