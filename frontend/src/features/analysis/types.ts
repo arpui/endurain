@@ -310,8 +310,8 @@ export interface BestTime {
   distanceM: number
   /** Time it took, in seconds. */
   timeS: number
-  /** Mean power across the split, in watts. */
-  avgPowerW: number
+  /** Mean power across the split; null when the activity had no power stream. */
+  avgPowerW: number | null
   activityId: number
   /** Start of the activity holding the split, for the link to its day. */
   startTime: string | null

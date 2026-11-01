@@ -6311,7 +6311,7 @@ export interface components {
             /** Activity Id */
             activity_id: number;
             /** Avg Power W */
-            avg_power_w: number;
+            avg_power_w: number | null;
             /** Distance M */
             distance_m: number;
             /** Start Time */

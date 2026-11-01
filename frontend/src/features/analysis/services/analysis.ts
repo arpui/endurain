@@ -368,7 +368,7 @@ function mapBestTime(dto: BestTimeDto): BestTime {
   return {
     distanceM: dto.distance_m,
     timeS: dto.time_s,
-    avgPowerW: dto.avg_power_w,
+    avgPowerW: dto.avg_power_w ?? null,
     activityId: dto.activity_id,
     startTime: dto.start_time ?? null,
   }
