@@ -458,6 +458,53 @@ def rss_low(data: LoadInput) -> LoadValue | None:
     return _rss_load(data, "low")
 
 
+# --- Daniels points ------------------------------------------------------------
+#
+# Jack Daniels' pace model, kept in the shape GoldenCheetah's metric gives it:
+# one second at intensity ``x`` over threshold is worth ``100/3600 · x⁴``, so
+# an hour at threshold scores 100 points. The fourth power is why this is a
+# scale of its own: an hour at threshold reads 100 like every other method, but
+# away from threshold the curve is far steeper than any of theirs, so Daniels
+# numbers are reported beside the shared scale and never added to it, exactly
+# like TRIMP's. The intensity source follows the chain only as far as pace -
+# watts over critical power, grade-adjusted pace over critical speed - because
+# Daniels never scored heart rate, and neither does this.
+
+
+def daniels_points(data: LoadInput) -> LoadValue | None:
+    """Daniels points over one activity: the fourth power of intensity, summed.
+
+    Returns:
+        The points, with the mean intensity they were built from and the
+        threshold used, or ``None`` when neither watts nor adjusted pace and a
+        matching threshold are available.
+    """
+    if data.moving_seconds <= 0:
+        return None
+    if data.power_w and data.power_threshold_w and data.power_threshold_w > 0:
+        samples: Sequence[float] = data.power_w
+        divisor = float(data.power_threshold_w)
+    elif data.speed_ms and data.speed_threshold_ms and data.speed_threshold_ms > 0:
+        grades = data.grade_pct if data.grade_pct is not None else (0.0,) * len(data.speed_ms)
+        samples = analysis_maths.grade_adjusted_run_speed(data.speed_ms, grades)
+        divisor = float(data.speed_threshold_ms)
+    else:
+        return None
+    total = 0.0
+    for raw in samples:
+        if raw <= 0:
+            continue
+        total += (raw / divisor) ** 4
+    if total <= 0:
+        return None
+    positive = [value for value in samples if value > 0]
+    return LoadValue(
+        load=100.0 * total * (data.period_s or 1.0) / 3600.0,
+        intensity_factor=(arithmetic_mean(positive) / divisor) if positive else None,
+        threshold_used=divisor,
+    )
+
+
 @dataclass(frozen=True)
 class LoadFormula:
     """One entry of the registry.
@@ -486,6 +533,7 @@ LOAD_FORMULAS: tuple[LoadFormula, ...] = (
     LoadFormula(analysis_constants.LoadMethod.RSS_HIGH, "aRSS high band", rss_high),
     LoadFormula(analysis_constants.LoadMethod.RSS_MID, "aRSS middle band", rss_mid),
     LoadFormula(analysis_constants.LoadMethod.RSS_LOW, "aRSS low band", rss_low),
+    LoadFormula(analysis_constants.LoadMethod.DANIELS, "Daniels points", daniels_points),
 )
 
 

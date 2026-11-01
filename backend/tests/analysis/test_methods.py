@@ -416,3 +416,71 @@ class TestRegistry:
         assert value is not None
         assert value.load == pytest.approx(200.0)
         assert value.threshold_used == 400.0
+
+
+class TestDanielsPoints:
+    """Jack Daniels' fourth-power scoring, kept in GoldenCheetah's points shape."""
+
+    @staticmethod
+    def _power(watts: float, seconds: int, threshold: float = 300.0):
+        return analysis_methods.LoadInput(
+            moving_seconds=float(seconds),
+            power_w=(watts,) * seconds,
+            period_s=1.0,
+            power_threshold_w=threshold,
+        )
+
+    def test_one_hour_at_threshold_scores_exactly_a_hundred_points(self):
+        value = analysis_methods.daniels_points(self._power(300.0, 3600))
+        assert value is not None
+        assert value.load == pytest.approx(100.0)
+        assert value.intensity_factor == pytest.approx(1.0)
+        assert value.threshold_used == 300.0
+
+    def test_the_fourth_power_buries_easy_effort_and_crowns_hard_effort(self):
+        easy = analysis_methods.daniels_points(self._power(150.0, 7200))
+        hard = analysis_methods.daniels_points(self._power(600.0, 3600))
+        assert easy.load == pytest.approx(12.5)  # two hours at half threshold
+        assert hard.load == pytest.approx(1600.0)  # one hour at double threshold
+
+    def test_without_watts_the_adjusted_pace_scores_the_activity(self):
+        flat = analysis_methods.LoadInput(
+            moving_seconds=3600.0,
+            speed_ms=(4.0,) * 3600,
+            period_s=1.0,
+            speed_threshold_ms=4.0,
+        )
+        value = analysis_methods.daniels_points(flat)
+        assert value is not None
+        assert value.load == pytest.approx(100.0)
+        # the same ground speed up a 10 % hill costs more, and GAP knows it
+        hilly = analysis_methods.LoadInput(
+            moving_seconds=3600.0,
+            speed_ms=(4.0,) * 3600,
+            grade_pct=(10.0,) * 3600,
+            period_s=1.0,
+            speed_threshold_ms=4.0,
+        )
+        assert analysis_methods.daniels_points(hilly).load > value.load
+
+    def test_heart_rate_alone_scores_no_daniels_points(self):
+        """Daniels never scored heart rate; neither does this method."""
+        data = analysis_methods.LoadInput(
+            moving_seconds=3600.0,
+            average_hr=160.0,
+            hr_threshold_bpm=150.0,
+        )
+        assert analysis_methods.daniels_points(data) is None
+
+    def test_a_powerless_run_with_a_critical_speed_joins_the_registry(self):
+        data = analysis_methods.LoadInput(
+            moving_seconds=3600.0,
+            speed_ms=(4.0,) * 3600,
+            period_s=1.0,
+            speed_threshold_ms=4.0,
+        )
+        measured = {method for method, _ in analysis_methods.compute_all(data)}
+        assert analysis_constants.LoadMethod.DANIELS in measured
+        assert analysis_constants.LoadMethod.COGGAN_TSS not in measured
+        # the exponential family reaches pace-side activities through the chain too
+        assert analysis_constants.LoadMethod.RSS_TOTAL in measured

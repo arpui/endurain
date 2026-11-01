@@ -298,6 +298,11 @@ class LoadMethod(StrEnum):
     series meaningful. ``TRIMP`` is a different scale (Banister's) and is reported
     beside the others, never added to them.
 
+    :attr:`DANIELS` scores effort the way Jack Daniels' pace tables do: one
+    second at intensity ``x`` over threshold is worth ``x⁴``, normalized so an
+    hour at threshold is 100 points. That fourth power makes it a scale of its
+    own like ``TRIMP``: it answers beside the others and is never added to them.
+
     The ``RSS_*`` methods are one family: an exponential stress kernel summed per
     second over the samples of an activity that carries power. :attr:`RSS_TOTAL`
     is the family's general load; the other four split it by *where* the effort
@@ -316,6 +321,8 @@ class LoadMethod(StrEnum):
         RSS_MID: The share taken between the band cutoffs, off climbs.
         RSS_LOW: The share taken below a low fraction of threshold, slow and off
             climbs.
+        DANIELS: Daniels points, intensity to the fourth power (reported,
+            not summed).
     """
 
     COGGAN_TSS = "coggan_tss"
@@ -327,6 +334,7 @@ class LoadMethod(StrEnum):
     RSS_HIGH = "rss_high"
     RSS_MID = "rss_mid"
     RSS_LOW = "rss_low"
+    DANIELS = "daniels_points"
 
 
 class ThresholdSource(StrEnum):
