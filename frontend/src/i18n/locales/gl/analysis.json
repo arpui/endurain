@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. mín (s)",
     "ivClimbGrade": "Subida (%)",
     "ivHint": "Os parámetros de intervalo compáranse cos teus números (umbral e mediana de cada sesión). Baleiro = predeterminado.",
+    "paceSmooth": "Suavizado do ritmo (s)",
+    "paceSmoothHint": "Segundos sobre os que a puntuación do ritmo fai a media: maior suaviza máis o ruído do GPS pero absorbe os picos curtos (por defecto 20 s).",
     "ivEffortIf": "Esf. ×CP"
   },
   "actions": {

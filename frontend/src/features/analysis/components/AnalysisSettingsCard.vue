@@ -57,6 +57,13 @@ const intervals = reactive<Record<string, string>>(
   ),
 )
 
+/** Seconds of GPS pace the intensity formulas average over; empty means the default. */
+const paceSmoothS = ref(
+  props.settings.methodParams['pace_smooth_window_s'] === undefined
+    ? ''
+    : String(props.settings.methodParams['pace_smooth_window_s']),
+)
+
 /** Re-seed the form when the server-side settings change underneath it. */
 watch(
   () => props.settings,
@@ -70,6 +77,10 @@ watch(
     for (const key of INTERVAL_KEYS) {
       intervals[key] = next.methodParams[key] === undefined ? '' : String(next.methodParams[key])
     }
+    paceSmoothS.value =
+      next.methodParams['pace_smooth_window_s'] === undefined
+        ? ''
+        : String(next.methodParams['pace_smooth_window_s'])
   },
 )
 
@@ -99,6 +110,14 @@ const parametersDirty = computed(
 /** The interval knobs as a full parameter document, keeping the other formulas' keys. */
 function buildMethodParams(): Record<string, number> {
   const merged: Record<string, number> = { ...props.settings.methodParams }
+  if (paceSmoothS.value === '') {
+    delete merged['pace_smooth_window_s']
+  } else {
+    const parsed = Number(paceSmoothS.value)
+    if (Number.isFinite(parsed) && parsed > 0) {
+      merged['pace_smooth_window_s'] = parsed
+    }
+  }
   for (const key of INTERVAL_KEYS) {
     const raw = intervals[key]
     if (raw === '') {
@@ -114,14 +133,19 @@ function buildMethodParams(): Record<string, number> {
 }
 
 /** True when the interval knobs deviate from what is stored. */
-const intervalsDirty = computed(() =>
-  INTERVAL_KEYS.some(
-    (key) =>
-      intervals[key] !==
-      (props.settings.methodParams[key] === undefined
+const intervalsDirty = computed(
+  () =>
+    paceSmoothS.value !==
+      (props.settings.methodParams['pace_smooth_window_s'] === undefined
         ? ''
-        : String(props.settings.methodParams[key])),
-  ),
+        : String(props.settings.methodParams['pace_smooth_window_s'])) ||
+    INTERVAL_KEYS.some(
+      (key) =>
+        intervals[key] !==
+        (props.settings.methodParams[key] === undefined
+          ? ''
+          : String(props.settings.methodParams[key])),
+    ),
 )
 
 /** Writes the time constants, formula, fit window and resting heart rate. */
@@ -528,6 +552,15 @@ function queueRecompute(): void {
               : t('analysis.settings.thresholds.sourceAuto')
           }}
         </Badge>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <FormField :label="t('analysis.settings.paceSmooth')" class="w-28">
+          <Input v-model="paceSmoothS" type="number" min="5" max="300" :placeholder="'20'" />
+        </FormField>
+        <p class="text-caption max-w-md text-muted-foreground">
+          {{ t('analysis.settings.paceSmoothHint') }}
+        </p>
       </div>
 
       <div class="flex flex-wrap items-center gap-2">

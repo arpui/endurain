@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Salita (%)",
     "ivHint": "I parametri degli intervalli si confrontano con i tuoi numeri (soglia e mediana della sessione). Vuoto = predefinito.",
+    "paceSmooth": "Smussamento ritmo (s)",
+    "paceSmoothHint": "I secondi su cui la valutazione del ritmo fa la media: più alto attenua più rumore GPS ma assorbe anche gli strappi brevi (default 20 s).",
     "ivEffortIf": "Sforzo ×CP"
   },
   "actions": {

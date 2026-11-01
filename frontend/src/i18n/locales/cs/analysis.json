@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Stoupání (%)",
     "ivHint": "Parametry intervalů se porovnávají s tvými čísly (prah a medián aktivity). Prázdné = výchozí.",
+    "paceSmooth": "Vyhlazení tempa (s)",
+    "paceSmoothHint": "Sekundy, přes které se hodnocení tempa zprůměrovává: větší hodnota vyhladí více šumu GPS, ale pohltí i krátké nástupy (výchoze 20 s).",
     "ivEffortIf": "Úsek ×CP"
   },
   "actions": {

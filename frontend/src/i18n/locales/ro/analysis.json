@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Urcare (%)",
     "ivHint": "Parametrii de interval sunt comparați cu cifrele tale (prag și mediana ședinței). Gol = implicit.",
+    "paceSmooth": "Netezire ritm (s)",
+    "paceSmoothHint": "Secundele peste care nota de ritm face media: mai mare netezește mai mult zgomotul GPS dar absoarbe și atacurile scurte (implicit 20 s).",
     "ivEffortIf": "Efort ×CP"
   },
   "actions": {

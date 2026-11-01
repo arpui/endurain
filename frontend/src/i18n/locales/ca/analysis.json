@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. mín (s)",
     "ivClimbGrade": "Pujada (%)",
     "ivHint": "Els paràmetres d'interval es comparen amb els teus números (llindar i mediana de cada sessió). Buit = valor per defecte.",
+    "paceSmooth": "Suavitzat del ritme (s)",
+    "paceSmoothHint": "Finestra de segons sobre la qual puntuar el ritme: més gran amorteix més el soroll del GPS però s’emporta els pics curts (per defecte 20 s).",
     "ivEffortIf": "Esf. ×CP"
   },
   "actions": {

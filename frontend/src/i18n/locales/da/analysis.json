@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Stigning (%)",
     "ivHint": "Intervalparametre sammenlignes med dine egne tal (tærskel og sessionens median). Tomt = standard.",
+    "paceSmooth": "Pace-udglatning (s)",
+    "paceSmoothHint": "De sekunder, pace-scoren tager gennemsnit over: større udjævner mere GPS-støj men sluger også korte spurt (standard 20 s).",
     "ivEffortIf": "Anstr. ×CP"
   },
   "actions": {

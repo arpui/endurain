@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Anstieg (%)",
     "ivHint": "Intervall-Parameter werden mit deinen eigenen Werten verglichen (Schwelle und Median der Einheit). Leer = Standardwert.",
+    "paceSmooth": "Tempoglättung (s)",
+    "paceSmoothHint": "Die Sekunden, über die die Tempo-Bewertung mittelt: größer glättet mehr GPS-Rauschen, schluckt aber auch kurze Spikes (Standard 20 s).",
     "ivEffortIf": "Belast. ×CP"
   },
   "actions": {

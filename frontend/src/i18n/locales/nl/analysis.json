@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Klim (%)",
     "ivHint": "Intervalparameters worden vergeleken met je eigen getallen (drempel en mediaan van de sessie). Leeg = standaard.",
+    "paceSmooth": "Tempo-gladstrijken (s)",
+    "paceSmoothHint": "De seconden waarover de temposcore het gemiddelde neemt: groter gladstrijkt meer ruis maar slikt ook korte pieken in (standaard 20 s).",
     "ivEffortIf": "Inspan. ×CP"
   },
   "actions": {

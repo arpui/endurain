@@ -266,19 +266,31 @@ def _plausible_speeds(speeds_ms: Sequence[float]) -> tuple[float, ...]:
     return tuple(min(value, ceiling) for value in speeds_ms)
 
 
-def _paced_samples(adjusted_ms: Sequence[float], threshold_ms: float, period_s: float) -> tuple[float, ...]:
+def _pace_window_s(parameters: Mapping[str, float]) -> float:
+    """Return the athlete's smoothing window for pace, bounded to something sane."""
+    raw = parameters.get("pace_smooth_window_s", analysis_constants.PACE_SMOOTH_WINDOW_S)
+    return min(max(float(raw), 5.0), 300.0)
+
+
+def _paced_samples(
+    adjusted_ms: Sequence[float],
+    threshold_ms: float,
+    period_s: float,
+    parameters: Mapping[str, float],
+) -> tuple[float, ...]:
     """Smooth and cap grade-adjusted pace to what the pace chain can vouch for.
 
     GPS speed cannot resolve one second of effort, and a convex kernel turns that
     jitter into a bonus an honest effort never earned: the series is averaged
-    over the window pace actually speaks at (``PACE_SMOOTH_WINDOW_S``) before it
-    is scored. On top, garbage elevation feeding the GAP polynomial can inflate a
-    plausible speed into an impossible flat-ground equivalent, so the intensity
-    over critical speed - the number these methods actually divide - is bounded.
+    over the window pace actually speaks at (``pace_smooth_window_s``, default
+    ``PACE_SMOOTH_WINDOW_S``) before it is scored. On top, garbage elevation
+    feeding the GAP polynomial can inflate a plausible speed into an impossible
+    flat-ground equivalent, so the intensity over critical speed - the number
+    these methods actually divide - is bounded.
     """
     values = list(adjusted_ms)
     if period_s > 0:
-        window = max(round(analysis_constants.PACE_SMOOTH_WINDOW_S / period_s), 1)
+        window = max(round(_pace_window_s(parameters) / period_s), 1)
         if window > 1 and len(values) >= window:
             half = window // 2
             padded = [values[0]] * half + values + [values[-1]] * (window - 1 - half)
@@ -302,6 +314,7 @@ def _pace_signal(
     grades_pct: Sequence[float] | None,
     power_threshold_w: float | None,
     calibration: tuple[float, float] | None,
+    params: Mapping[str, float],
 ) -> tuple[list[float], float]:
     """Return the values and divisor the pace source scores.
 
@@ -316,6 +329,7 @@ def _pace_signal(
         analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades),
         float(speed_threshold_ms),
         period_s,
+        params,
     )
     if calibration and power_threshold_w and power_threshold_w > 0:
         slope, intercept = calibration
@@ -398,7 +412,9 @@ def _pace_window_score(
     calibration: tuple[float, float] | None = None,
 ) -> float:
     """Score a window from grade-adjusted pace: GAP has already paid for the terrain."""
-    values, divisor = _pace_signal(speeds_ms, period_s, speed_threshold_ms, grades_pct, power_threshold_w, calibration)
+    values, divisor = _pace_signal(
+        speeds_ms, period_s, speed_threshold_ms, grades_pct, power_threshold_w, calibration, params
+    )
     return _window_stress_scaled(values, divisor, period_s, None, params, lift_with_grade=False)
 
 
@@ -553,6 +569,7 @@ def _rss_load(data: LoadInput, band: str, source: str | None = None) -> LoadValu
             grades,
             float(threshold) if threshold and threshold > 0 else None,
             data.pace_calibration,
+            parameters,
         )
         lift_with_grade = False
     else:
@@ -673,6 +690,7 @@ def daniels_points(data: LoadInput) -> LoadValue | None:
             analysis_maths.grade_adjusted_run_speed(_plausible_speeds(data.speed_ms), grades),
             float(data.speed_threshold_ms),
             data.period_s or 1.0,
+            data.parameters,
         )
         divisor = float(data.speed_threshold_ms)
     else:

@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Nousu (%)",
     "ivHint": "Intervalliarvot vertaillaan omiin lukuihisi (kynnys ja session mediaani). Tyhjä = oletus.",
+    "paceSmooth": "Vauhdin tasoitus (s)",
+    "paceSmoothHint": "Sekunnit, joiden yli vauhtipistemäärä keskiarvoistetaan: suurempi tasoittaa GPS-kohinaa mutta nielaisee myös lyhyt vetoiset kiristykset (oletus 20 s).",
     "ivEffortIf": "Suoritus ×CP"
   },
   "actions": {

@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Bakke (%)",
     "ivHint": "Intervallparametre sammenlignes med dine egne tall (terskel og øktens median). Tomt = standard.",
+    "paceSmooth": "Fartsutjevning (s)",
+    "paceSmoothHint": "Sekundene fartspoenget gir gjennomsnitt over: større demper mer GPS-støy men tar også korte spurt (standard 20 s).",
     "ivEffortIf": "Innsats ×CP"
   },
   "actions": {

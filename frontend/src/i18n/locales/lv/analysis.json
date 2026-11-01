@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Kāpiens (%)",
     "ivHint": "Intervalu parametri tiek salīdzināti ar taviem skaitļiem (slieksnis un sesijas mediāna). Tukšs = noklusējums.",
+    "paceSmooth": "Tempa izlīdzināšana (s)",
+    "paceSmoothHint": "Sekundes, pa kurām tempa vērtējums tiek vidēji: lielāka vērtība izlīdzina vairāk GPS trokšņa, bet norij arī īsus paātrinājumus (pēc noklusējuma 20 s).",
     "ivEffortIf": "Slodze ×CP"
   },
   "actions": {

@@ -86,6 +86,8 @@
     "ivMinSegmentS": "Int. min (s)",
     "ivClimbGrade": "Tõus (%)",
     "ivHint": "Intervalli parameetrid võrreldakse Sinu enda numbritega (läve ja sessioni mediaan). Tühi = vaikeväärtus.",
+    "paceSmooth": "Tempo silumine (s)",
+    "paceSmoothHint": "Sekundid, mille lõikes temposkoor keskmendab: suurem silub rohkem GPS-müra, kuid neelab ka lühikesed tõusud (vaikimisi 20 s).",
     "ivEffortIf": "Koormus ×CP"
   },
   "actions": {
