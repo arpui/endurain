@@ -503,6 +503,21 @@ class TestWindowStressChain:
         assert source == "pace"
         assert spike_score == pytest.approx(capped_score)
 
+    def test_a_grade_garbage_second_scores_at_the_intensity_ceiling(self):
+        """Elevation noise cannot buy a superhuman surge through the GAP factor."""
+        cs = 3.0
+        spiked_speeds = [4.0] * 100
+        spiked_speeds[50] = 5.0
+        grades = [0.0] * 100
+        grades[50] = 35.0
+        score, _ = analysis_methods.window_stress_chain(None, spiked_speeds, None, grades, 1.0, None, cs, None)
+        capped_speeds = [4.0] * 100
+        capped_speeds[50] = analysis_constants.PACE_INTENSITY_CEILING * cs
+        expected, _ = analysis_methods.window_stress_chain(None, capped_speeds, None, [0.0] * 100, 1.0, None, cs, None)
+        raw_adjusted = analysis_maths.grade_adjusted_run_speed([5.0], [35.0])[0]
+        assert raw_adjusted > analysis_constants.PACE_INTENSITY_CEILING * cs  # the ceiling bites
+        assert score == pytest.approx(expected)
+
     def test_no_signal_and_threshold_pair_scores_nothing(self):
         score, source = analysis_methods.window_stress_chain([350.0] * 10, None, None, None, 1.0, None, None, None)
         assert score == 0.0

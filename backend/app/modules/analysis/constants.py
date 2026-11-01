@@ -236,6 +236,13 @@ GAP_COEFFICIENTS: tuple[float, ...] = (
     +0.9935756154,
 )
 
+#: The ceiling pace-side scoring believes for one second's flat-ground-equivalent
+#: pace, as a multiple of the critical speed. A runner's genuinely hardest second
+#: sits near two times critical; above this the input is GPS or barometric noise
+#: (the grade garbage GAP then compounds), and an exponential or fourth-power
+#: kernel would spend it like a superhuman surge.
+PACE_INTENSITY_CEILING = 2.5
+
 #: A flat grade gets a factor of exactly 1; the polynomial's value at zero is a
 #: hair under it, and flat ground should not be adjusted at all.
 GAP_FLAT_CORRECTION_PCT = 0.0
