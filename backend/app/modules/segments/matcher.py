@@ -372,3 +372,16 @@ def elevation_gain_m(altitudes: Sequence[float]) -> float:
         than two samples.
     """
     return sum(max(later - earlier, 0.0) for earlier, later in itertools.pairwise(altitudes))
+
+
+def elevation_loss_m(altitudes: Sequence[float]) -> float:
+    """Return the accumulated negative altitude change over a sequence.
+
+    Args:
+        altitudes: One altitude per geometry point, in source order.
+
+    Returns:
+        The sum of the negative consecutive differences as a positive number,
+        ``0.0`` for fewer than two samples.
+    """
+    return sum(max(earlier - later, 0.0) for earlier, later in itertools.pairwise(altitudes))

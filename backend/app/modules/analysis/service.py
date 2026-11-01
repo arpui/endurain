@@ -14,7 +14,7 @@ one, and every stored load records the threshold it was divided by.
 
 import calendar
 from bisect import bisect_left
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import UTC, date, datetime, timedelta
 from itertools import accumulate
 from statistics import mean as arithmetic_mean
@@ -1188,10 +1188,7 @@ def _apply_lap_rss(
 
     # Device-written waypoint times carry no offset while the database hands back
     # aware lap starts: put both clocks in UTC before any comparison.
-    def _utc(stamps: tuple[datetime, ...]) -> tuple[datetime, ...]:
-        return tuple(stamp if stamp.tzinfo else stamp.replace(tzinfo=UTC) for stamp in stamps)
-
-    power_stamps = _utc(power_stamps)
+    power_stamps = _utc_stamps(power_stamps)
     _, speeds, speed_stamps = _stream_samples(
         activity_id,
         activity_streams_constants.STREAM_TYPE_SPEED,
@@ -1206,8 +1203,8 @@ def _apply_lap_rss(
         db,
         keep_zeros=True,
     )
-    speed_ms = _align_to_power(speeds, _utc(speed_stamps), power_stamps, period_s)
-    altitude_m = _align_to_power(elevations, _utc(elevation_stamps), power_stamps, period_s)
+    speed_ms = _align_to_power(speeds, _utc_stamps(speed_stamps), power_stamps, period_s)
+    altitude_m = _align_to_power(elevations, _utc_stamps(elevation_stamps), power_stamps, period_s)
     grade_pct = (
         analysis_maths.grade_pct_series(altitude_m, speed_ms, period_s)
         if altitude_m is not None and speed_ms is not None
@@ -1230,6 +1227,116 @@ def _apply_lap_rss(
         elapsed_s = float(lap.total_elapsed_time or 0.0)
         if entry.rss is not None and elapsed_s > 0:
             entry.rss_per_min = round(entry.rss * 60.0 / elapsed_s, 1)
+
+
+def _utc_stamps(stamps: tuple[datetime, ...]) -> tuple[datetime, ...]:
+    """Return the stream's stamps as UTC-aware, whatever clock the device wrote."""
+    return tuple(stamp if stamp.tzinfo else stamp.replace(tzinfo=UTC) for stamp in stamps)
+
+
+def compute_window_stats(
+    activity_id: int,
+    user_id: int,
+    windows: Sequence[tuple[datetime, datetime]],
+    db: Session,
+) -> list[analysis_contracts.WindowStats]:
+    """Return mean power, heart rate and aRSS per minute for time windows of one activity.
+
+    Each window is judged on its own samples - the streams are cut by timestamp
+    half-open, ``[start, end)`` - nothing is resampled - and evaluated with the same
+    machinery the activity's
+    loads use: the athlete's threshold for the sport, the shared aRSS kernel, and
+    the grade floors that lift climbs. A window over an activity without power
+    still returns its heart rate; without a threshold it still returns power and
+    heart rate. Nothing is invented where a stream is simply absent.
+
+    Args:
+        activity_id: The activity whose streams are read.
+        user_id: The athlete whose settings evaluate the windows.
+        windows: ``(start, end)`` wall-clock pairs in the streams' own clock.
+        db: Database session.
+
+    Returns:
+        One stats record per window, in the order given.
+    """
+    if not windows:
+        return []
+    activity = activity_integration.get_activity_for_derivation(activity_id, db)
+    if activity is None:
+        return [analysis_contracts.WindowStats() for _ in windows]
+    settings = get_settings(user_id, db)
+    threshold = settings.power_thresholds.get(sport_group(activity.activity_type))
+    threshold_w = threshold.value_w if threshold else None
+    parameters = dict(settings.method_params)
+
+    period_s, power_values, power_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_POWER,
+        "power",
+        db,
+        keep_zeros=True,
+    )
+    _, hr_values, hr_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_HR,
+        "hr",
+        db,
+        keep_zeros=False,
+    )
+
+    grade_pct: tuple[float, ...] | None = None
+    if power_values and period_s > 0:
+        power_stamps = _utc_stamps(power_stamps)
+        _, speeds, speed_stamps = _stream_samples(
+            activity_id,
+            activity_streams_constants.STREAM_TYPE_SPEED,
+            "vel",
+            db,
+            keep_zeros=True,
+        )
+        _, elevations, elevation_stamps = _stream_samples(
+            activity_id,
+            activity_streams_constants.STREAM_TYPE_ELEVATION,
+            "ele",
+            db,
+            keep_zeros=True,
+        )
+        speed_ms = _align_to_power(speeds, _utc_stamps(speed_stamps), power_stamps, period_s)
+        altitude_m = _align_to_power(elevations, _utc_stamps(elevation_stamps), power_stamps, period_s)
+        if altitude_m is not None and speed_ms is not None:
+            grade_pct = analysis_maths.grade_pct_series(altitude_m, speed_ms, period_s)
+    hr_stamps = _utc_stamps(hr_stamps)
+
+    stats: list[analysis_contracts.WindowStats] = []
+    for start, end in windows:
+        start_a = start if start.tzinfo else start.replace(tzinfo=UTC)
+        end_a = end if end.tzinfo else end.replace(tzinfo=UTC)
+        elapsed_s = (end_a - start_a).total_seconds()
+        avg_power: float | None = None
+        rss_per_min: float | None = None
+        if power_values and period_s > 0 and elapsed_s > 0:
+            cut = bisect_left(power_stamps, start_a)
+            stop = bisect_left(power_stamps, end_a)
+            if stop > cut:
+                avg_power = round(arithmetic_mean(power_values[cut:stop]), 1)
+                if threshold_w:
+                    score = analysis_methods.rss_window_stress(
+                        power_values[cut:stop],
+                        period_s,
+                        threshold_w,
+                        grade_pct[cut:stop] if grade_pct is not None else None,
+                        parameters,
+                    )
+                    if score > 0:
+                        rss_per_min = round(score * 60.0 / elapsed_s, 1)
+        avg_hr: float | None = None
+        if hr_values and elapsed_s > 0:
+            cut = bisect_left(hr_stamps, start_a)
+            stop = bisect_left(hr_stamps, end_a)
+            if stop > cut:
+                avg_hr = round(arithmetic_mean(hr_values[cut:stop]), 0)
+        stats.append(analysis_contracts.WindowStats(avg_power_w=avg_power, avg_hr_bpm=avg_hr, rss_per_min=rss_per_min))
+    return stats
 
 
 def _lap_sample_window(

@@ -221,9 +221,15 @@ class TestGetAndDeleteSegment:
 class TestSegmentEfforts:
     @patch("modules.segments.crud.count_efforts_for_segment")
     @patch("modules.segments.crud.list_efforts_for_segment")
+    @patch("modules.segments.service.analysis_integration")
     @patch("modules.segments.service.activity_integration")
     @patch("modules.segments.crud.get_segment_by_id")
-    def test_efforts_are_a_page_of_the_requester_rows(self, mock_get, mock_activities, mock_list, mock_count, mock_db):
+    def test_efforts_are_a_page_of_the_requester_rows(
+        self, mock_get, mock_activities, mock_analysis, mock_list, mock_count, mock_db
+    ):
+        from modules.analysis import contracts as analysis_contracts
+
+        mock_analysis.window_stream_stats.return_value = [analysis_contracts.WindowStats()]
         from modules.segments import schema as segments_schema
 
         mock_get.return_value = _segment_row()
@@ -240,9 +246,15 @@ class TestSegmentEfforts:
 
     @patch("modules.segments.crud.count_efforts_for_segment")
     @patch("modules.segments.crud.list_efforts_for_segment")
+    @patch("modules.segments.service.analysis_integration")
     @patch("modules.segments.service.activity_integration")
     @patch("modules.segments.crud.get_segment_by_id")
-    def test_default_direction_is_forward(self, mock_get, mock_activities, mock_list, mock_count, mock_db):
+    def test_default_direction_is_forward(
+        self, mock_get, mock_activities, mock_analysis, mock_list, mock_count, mock_db
+    ):
+        from modules.analysis import contracts as analysis_contracts
+
+        mock_analysis.window_stream_stats.return_value = [analysis_contracts.WindowStats()]
         from modules.segments import schema as segments_schema
 
         mock_get.return_value = _segment_row()
@@ -257,11 +269,15 @@ class TestSegmentEfforts:
 
     @patch("modules.segments.crud.count_efforts_for_segment")
     @patch("modules.segments.crud.list_efforts_for_segment")
+    @patch("modules.segments.service.analysis_integration")
     @patch("modules.segments.service.activity_integration")
     @patch("modules.segments.crud.get_segment_by_id")
     def test_direction_all_reaches_the_queries_unfiltered(
-        self, mock_get, mock_activities, mock_list, mock_count, mock_db
+        self, mock_get, mock_activities, mock_analysis, mock_list, mock_count, mock_db
     ):
+        from modules.analysis import contracts as analysis_contracts
+
+        mock_analysis.window_stream_stats.return_value = [analysis_contracts.WindowStats()]
         from modules.segments import schema as segments_schema
 
         mock_get.return_value = _segment_row()
