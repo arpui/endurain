@@ -307,6 +307,31 @@ def _paced_samples(
     return tuple(min(value, cap) for value in values)
 
 
+def pace_series(
+    speeds_ms: Sequence[float],
+    period_s: float,
+    speed_threshold_ms: float,
+    grades_pct: Sequence[float] | None = None,
+    parameters: Mapping[str, float] | None = None,
+) -> tuple[float, ...]:
+    """Build one activity's pace timeline the way the pace chain scores it.
+
+    Capped GPS speed through the GAP polynomial, then smoothed and bounded once
+    over the whole stream. Window scoring slices *this* series rather than
+    smoothing each window on its own: smoothing a window per slice shaves the
+    effort's edges and short repeats end up scored below what the same seconds
+    mean inside the activity. The series is the single truth every pace score -
+    daily load, laps, climbs, segments - divides by.
+    """
+    grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
+    return _paced_samples(
+        analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades),
+        float(speed_threshold_ms),
+        period_s,
+        parameters or {},
+    )
+
+
 def _pace_signal(
     speeds_ms: Sequence[float],
     period_s: float,
@@ -324,13 +349,7 @@ def _pace_signal(
     and is divided by the critical power instead - the same effort read on the
     watts scale the power source uses, which is what makes the two comparable.
     """
-    grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
-    adjusted = _paced_samples(
-        analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades),
-        float(speed_threshold_ms),
-        period_s,
-        params,
-    )
+    adjusted = pace_series(speeds_ms, period_s, speed_threshold_ms, grades_pct, params)
     if calibration and power_threshold_w and power_threshold_w > 0:
         slope, intercept = calibration
         return [slope * value + intercept for value in adjusted], float(power_threshold_w)
@@ -403,18 +422,25 @@ def _power_window_score(
 
 
 def _pace_window_score(
-    speeds_ms: Sequence[float],
+    pace_ms: Sequence[float],
     period_s: float,
     speed_threshold_ms: float,
-    grades_pct: Sequence[float] | None,
     params: Mapping[str, float],
     power_threshold_w: float | None = None,
     calibration: tuple[float, float] | None = None,
 ) -> float:
-    """Score a window from grade-adjusted pace: GAP has already paid for the terrain."""
-    values, divisor = _pace_signal(
-        speeds_ms, period_s, speed_threshold_ms, grades_pct, power_threshold_w, calibration, params
-    )
+    """Score a window from the activity's pace series: GAP has already paid for terrain.
+
+    ``pace_ms`` is the slice of :func:`pace_series` - capped, adjusted and smoothed
+    once over the whole stream - never raw GPS speed.
+    """
+    if calibration and power_threshold_w and power_threshold_w > 0:
+        slope, intercept = calibration
+        values = [slope * value + intercept for value in pace_ms]
+        divisor = float(power_threshold_w)
+    else:
+        values = list(pace_ms)
+        divisor = float(speed_threshold_ms)
     return _window_stress_scaled(values, divisor, period_s, None, params, lift_with_grade=False)
 
 
@@ -430,7 +456,7 @@ def _hr_window_score(
 
 def window_stress_chain(
     power_w: Sequence[float] | None,
-    speeds_ms: Sequence[float] | None,
+    pace_ms: Sequence[float] | None,
     hr_bpm: Sequence[float] | None,
     grades_pct: Sequence[float] | None,
     period_s: float,
@@ -455,7 +481,7 @@ def window_stress_chain(
     """
     scores = window_scores_by_source(
         power_w,
-        speeds_ms,
+        pace_ms,
         hr_bpm,
         grades_pct,
         period_s,
@@ -473,7 +499,7 @@ def window_stress_chain(
 
 def window_scores_by_source(
     power_w: Sequence[float] | None,
-    speeds_ms: Sequence[float] | None,
+    pace_ms: Sequence[float] | None,
     hr_bpm: Sequence[float] | None,
     grades_pct: Sequence[float] | None,
     period_s: float,
@@ -488,7 +514,8 @@ def window_scores_by_source(
     The comparison the chain implies but never shows: what the same seconds look
     like from watts, from adjusted pace and from heart rate at once, so an
     athlete can benchmark the estimates against the measured effort beside them.
-    Sources the activity or the athlete cannot support stay absent.
+    ``pace_ms`` is a slice of :func:`pace_series`, not raw speed. Sources the
+    activity or the athlete cannot support stay absent.
     """
     params = parameters or {}
     scores: dict[str, float] = {}
@@ -498,10 +525,8 @@ def window_scores_by_source(
         score = _power_window_score(power_w, period_s, float(threshold_w), grades_pct, params)
         if score > 0:
             scores["power"] = score
-    if speeds_ms and speed_threshold_ms and speed_threshold_ms > 0:
-        score = _pace_window_score(
-            speeds_ms, period_s, float(speed_threshold_ms), grades_pct, params, threshold_w, pace_calibration
-        )
+    if pace_ms and speed_threshold_ms and speed_threshold_ms > 0:
+        score = _pace_window_score(pace_ms, period_s, float(speed_threshold_ms), params, threshold_w, pace_calibration)
         if score > 0:
             scores["pace"] = score
     if hr_bpm and hr_threshold_bpm and hr_threshold_bpm > 0:
