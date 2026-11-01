@@ -651,6 +651,7 @@ def terrain_climbs(
     parameters: Mapping[str, float] | None = None,
     pace_calibration: tuple[float, float] | None = None,
     pace_ms: Sequence[float] | None = None,
+    pace_raw_ms: Sequence[float] | None = None,
 ) -> list[TerrainClimb]:
     """Return the climbs the smoothed altitude profile shows along the route.
 
@@ -747,9 +748,10 @@ def terrain_climbs(
                 intensity = round(avg_power / threshold_w, 2)
             if base_power_w and avg_power is not None:
                 contrast = round(avg_power / base_power_w, 2)
+        pace_slice = analysis_methods.pace_window(pace_ms, pace_raw_ms, period_s, params, start, end + 1)
         all_scores = analysis_methods.window_scores_by_source(
             list(power_w[window]) if power_w is not None and len(power_w) >= end + 1 else None,
-            list(pace_ms[window]) if pace_ms is not None else None,
+            pace_slice,
             list(hr_bpm[window]) if hr_bpm is not None and len(hr_bpm) >= end + 1 else None,
             sample_grades[window],
             period_s,

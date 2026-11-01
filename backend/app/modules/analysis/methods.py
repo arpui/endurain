@@ -291,20 +291,26 @@ def _paced_samples(
     values = list(adjusted_ms)
     if period_s > 0:
         window = max(round(_pace_window_s(parameters) / period_s), 1)
-        if window > 1 and len(values) >= window:
-            half = window // 2
-            padded = [values[0]] * half + values + [values[-1]] * (window - 1 - half)
-            running = 0.0
-            smoothed: list[float] = []
-            for index, value in enumerate(padded):
-                running += value
-                if index >= window:
-                    running -= padded[index - window]
-                if index >= window - 1:
-                    smoothed.append(running / window)
-            values = smoothed
+        values = _moving_average(values, window)
     cap = analysis_constants.PACE_INTENSITY_CEILING * threshold_ms
     return tuple(min(value, cap) for value in values)
+
+
+def _moving_average(values: list[float], window: int) -> list[float]:
+    """Centre a moving average over ``values``, holding the edges steady."""
+    if window <= 1 or len(values) < window:
+        return values
+    half = window // 2
+    padded = [values[0]] * half + values + [values[-1]] * (window - 1 - half)
+    running = 0.0
+    smoothed: list[float] = []
+    for index, value in enumerate(padded):
+        running += value
+        if index >= window:
+            running -= padded[index - window]
+        if index >= window - 1:
+            smoothed.append(running / window)
+    return smoothed
 
 
 def pace_series(
@@ -330,6 +336,53 @@ def pace_series(
         period_s,
         parameters or {},
     )
+
+
+def pace_raw_series(
+    speeds_ms: Sequence[float],
+    period_s: float,
+    speed_threshold_ms: float,
+    grades_pct: Sequence[float] | None = None,
+    parameters: Mapping[str, float] | None = None,
+) -> tuple[float, ...]:
+    """The activity's adjusted pace timeline *before* smoothing: capped and GAP-ed.
+
+    Short scoring windows re-average this at their own scale instead of slicing
+    the globally smoothed :func:`pace_series` - see :func:`pace_window`.
+    """
+    grades = grades_pct if grades_pct is not None else (0.0,) * len(speeds_ms)
+    adjusted = analysis_maths.grade_adjusted_run_speed(_plausible_speeds(speeds_ms), grades)
+    cap = analysis_constants.PACE_INTENSITY_CEILING * float(speed_threshold_ms)
+    return tuple(min(value, cap) for value in adjusted)
+
+
+def pace_window(
+    pace_smooth_ms: Sequence[float] | None,
+    pace_raw_ms: Sequence[float] | None,
+    period_s: float,
+    parameters: Mapping[str, float],
+    start: int,
+    stop: int,
+) -> list[float] | None:
+    """Return the pace slice ``[start, stop)`` that a window should score.
+
+    A window at least twice as long as the smoothing kernel reads the global
+    series unchanged - nothing moves for long efforts. A shorter window
+    re-averages the unsmoothed series over half its own length: a 27 s repeat
+    inside a 20 s kernel otherwise loses a third of itself to the recoveries
+    beside it, and the recoveries gain it back, so both sides read further from
+    the effort they actually held.
+    """
+    if pace_raw_ms is not None:
+        span = (stop - start) * period_s
+        if 0 < span < 2 * _pace_window_s(parameters):
+            sub = list(pace_raw_ms[start:stop])
+            if sub:
+                half = max(round(max(5.0, span / 2.0) / period_s), 1) if period_s > 0 else 1
+                return _moving_average(sub, half)
+    if pace_smooth_ms is not None:
+        return list(pace_smooth_ms[start:stop])
+    return None
 
 
 def _pace_signal(
