@@ -323,6 +323,7 @@ class TestIntervalsRoute:
                     intensity_factor=1.14,
                     contrast=1.43,
                     rss=45.0,
+                    rss_source="power",
                     rss_per_min=10.8,
                 )
             ],
@@ -344,6 +345,7 @@ class TestIntervalsRoute:
         assert body["segments"][0]["rss_per_min"] == 7.5
         assert body["climbs"][0]["length_m"] == 1000.0
         assert body["climbs"][0]["rss_per_min"] == 10.8
+        assert body["climbs"][0]["rss_source"] == "power"
 
     def test_another_users_activity_is_not_found(self):
         client = TestClient(_build_app(MagicMock()))
@@ -404,6 +406,7 @@ class TestLapDynamicsRoute:
                 elevation_gain_m=10.0,
                 elevation_loss_m=8.0,
                 rss=26.4,
+                rss_source="power",
                 rss_per_min=5.3,
             )
         ]
@@ -413,6 +416,7 @@ class TestLapDynamicsRoute:
         assert response.json()[0]["lap_id"] == 7
         assert response.json()[0]["rss"] == 26.4
         assert response.json()[0]["rss_per_min"] == 5.3
+        assert response.json()[0]["rss_source"] == "power"
         assert response.json()[0]["elevation_loss_m"] == 8.0
 
     def test_another_users_activity_is_not_found(self):

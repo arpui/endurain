@@ -252,7 +252,7 @@ class TestComputeLoads:
         replace.assert_not_called()
         db.commit.assert_not_called()
 
-    def test_without_a_threshold_only_heart_rate_formulas_apply(self):
+    def test_without_a_power_threshold_the_heart_rate_chain_still_feeds_the_loads(self):
         db = _db()
         settings = _settings(
             hr_threshold=analysis_schema.HeartRateThresholdRead(
@@ -268,7 +268,11 @@ class TestComputeLoads:
         ):
             analysis_service.compute_loads_for_activity(1, db)
         methods = {record.method for record in replace.call_args.args[5]}
-        assert methods == {analysis_constants.LoadMethod.HR_LOAD}
+        assert methods == {
+            analysis_constants.LoadMethod.HR_LOAD,
+            analysis_constants.LoadMethod.RSS_TOTAL,
+            analysis_constants.LoadMethod.RSS_MID,
+        }
 
     def test_an_uncategorized_sport_gets_no_power_threshold(self):
         """An activity type outside the sport vocabulary cannot be given a sport's threshold."""
@@ -1040,6 +1044,34 @@ class TestTerrainClimbsService:
         assert climb.avg_power_w is None
         assert climb.rss is None and climb.rss_per_min is None
 
+    def test_a_powerless_route_with_a_critical_speed_scores_its_climbs_by_pace(self):
+        settings_with_cs = _settings(
+            speed_thresholds={
+                "run": analysis_schema.SpeedThresholdRead(value_ms=4.0, source=analysis_constants.ThresholdSource.AUTO)
+            }
+        )
+        db = _db()
+        data = analysis_methods.LoadInput(
+            moving_seconds=1500.0,
+            period_s=1.0,
+            speed_ms=tuple([4.0] * 1500),
+            speed_threshold_ms=4.0,
+            power_threshold_w=None,
+        )
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}._load_input", return_value=data),
+            patch(f"{_SVC}._stream_samples", side_effect=self._streams(600, with_power=False)),
+        ):
+            read = analysis_service.get_activity_intervals(1, 2, db)
+        assert len(read.climbs) == 1
+        climb = read.climbs[0]
+        assert climb.rss is not None
+        assert climb.rss_source == "pace"
+        assert climb.rss_per_min is not None
+        assert climb.avg_power_w is None
+
     def test_a_flat_route_answers_no_climbs(self):
         read = self._read(self._streams(10**9, with_power=True))
         assert read.climbs == []
@@ -1307,6 +1339,39 @@ class TestLapDynamics:
             rows = analysis_service.get_activity_lap_dynamics(1, 2, db)
         assert rows[0].rss is None
         assert rows[0].stride_length_m is not None  # the rest of the view stays
+
+    def test_a_lap_on_a_powerless_run_scores_through_the_pace_source(self):
+        """No watts but speed, altitude and a critical speed: the lap still gets an aRSS."""
+        lap = self._lap(35, distance=1200.0, elapsed=300.0, speed=4.0, cadence=80)
+
+        def _hilly(activity_id, stream_type, _key, _db, *, keep_zeros):
+            stamps = tuple(_T0_UTC + timedelta(seconds=i) for i in range(600))
+            if stream_type == activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, (), ()
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple([4.0] * 600), stamps
+            if stream_type == activity_streams_constants.STREAM_TYPE_ELEVATION:
+                return 1.0, tuple([i * 0.4 for i in range(600)]), stamps  # 10 % climb
+            return 1.0, (), ()
+
+        db = _db()
+        settings = _settings(
+            power_thresholds={},
+            speed_thresholds={
+                "run": analysis_schema.SpeedThresholdRead(value_ms=4.0, source=analysis_constants.ThresholdSource.AUTO)
+            },
+        )
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(f"{_SVC}.activity_integration.get_activity_for_derivation", return_value=_activity()),
+            patch(f"{_SVC}.get_settings", return_value=settings),
+            patch(f"{_SVC}.activity_laps_integration.list_laps_for_derivation", return_value=[lap]),
+            patch(f"{_SVC}._stream_samples", side_effect=_hilly),
+        ):
+            rows = analysis_service.get_activity_lap_dynamics(1, 2, db)
+        assert rows[0].rss is not None
+        assert rows[0].rss_source == "pace"
+        assert rows[0].rss_per_min is not None
 
     def test_streams_without_a_utc_offset_still_locate_the_laps(self):
         """Waypoint times arrive naive while lap start times are aware: one shared UTC clock.

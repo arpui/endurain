@@ -11,6 +11,7 @@ from math import exp
 import pytest
 
 import modules.analysis.maths as analysis_maths
+import modules.analysis.methods as analysis_methods
 
 _T0 = datetime(2026, 10, 15, 16, 0, 0)
 
@@ -452,3 +453,39 @@ class TestGradeAdjustedRunSpeed:
     def test_a_stopped_runner_stays_stopped_hill_or_not(self):
         adjusted = analysis_maths.grade_adjusted_run_speed([0.0, 0.0], [12.0, -30.0])
         assert adjusted == (0.0, 0.0)
+
+
+class TestWindowStressChain:
+    """One score, one scale, whichever signal the device carried."""
+
+    FLAT = (0.0,)
+
+    def test_watts_win_when_the_device_carries_them(self):
+        score, source = analysis_methods.window_stress_chain(
+            [350.0] * 100, [4.0] * 100, [140.0] * 100, self.FLAT * 100, 1.0, 350.0, 4.0, 150.0
+        )
+        assert source == "power"
+        assert score > 0
+
+    def test_without_watts_the_adjusted_pace_scores_the_window(self):
+        score_flat, source = analysis_methods.window_stress_chain(
+            None, [4.0] * 100, None, self.FLAT * 100, 1.0, None, 4.0, None
+        )
+        assert source == "pace"
+        # the same ground speed up a 10 % hill is a harder effort, and GAP knows it
+        score_hill, hill_source = analysis_methods.window_stress_chain(
+            None, [4.0] * 100, None, [10.0] * 100, 1.0, None, 4.0, None
+        )
+        assert hill_source == "pace"
+        assert score_hill > score_flat
+
+    def test_heart_rate_is_the_last_signal_not_the_first(self):
+        _score, source = analysis_methods.window_stress_chain(
+            None, None, [160.0] * 100, self.FLAT * 100, 1.0, None, None, 150.0
+        )
+        assert source == "hr"
+
+    def test_no_signal_and_threshold_pair_scores_nothing(self):
+        score, source = analysis_methods.window_stress_chain([350.0] * 10, None, None, None, 1.0, None, None, None)
+        assert score == 0.0
+        assert source is None

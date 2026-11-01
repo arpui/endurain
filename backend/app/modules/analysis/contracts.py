@@ -87,11 +87,15 @@ class WindowStats:
             power stream.
         avg_hr_bpm: Mean heart rate over the window, sensor dropouts excluded,
             ``None`` without a heart-rate stream.
-        rss_per_min: The shared aRSS score per minute of the window, under the
-            athlete's threshold for the sport; ``None`` when power, a threshold
-            or any gained stress is missing.
+        rss: The shared-scale aRSS score of the window, from the intensity chain
+            (watts, grade-adjusted pace, heart rate); ``None`` when nothing scored.
+        rss_source: Which signal scored it (``power``, ``pace``, ``hr``).
+        rss_per_min: That score per minute of the window; ``None`` when there is
+            no score.
     """
 
     avg_power_w: float | None = None
     avg_hr_bpm: float | None = None
+    rss: float | None = None
+    rss_source: str | None = None
     rss_per_min: float | None = None

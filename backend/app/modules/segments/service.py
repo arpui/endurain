@@ -273,6 +273,7 @@ def _enrich_efforts(
             items[index].avg_power_w = stat.avg_power_w
             items[index].avg_hr_bpm = stat.avg_hr_bpm
             items[index].rss_per_min = stat.rss_per_min
+            items[index].rss_source = stat.rss_source
 
 
 def _kept_direction(direction: segments_schema.EffortDirectionFilter) -> str | None:

@@ -298,28 +298,45 @@ def _load_input(
         db,
         keep_zeros=False,
     )
-    # Speed and elevation answer only for the seconds the power stream covers, so
-    # the per-sample formulas read one aligned timeline rather than three clocks.
-    _, speeds, speed_stamps = _stream_samples(
+    # The per-sample formulas read one aligned timeline rather than three clocks.
+    # The clock is the power stream when the device carried one; without it, the
+    # speed stream anchors, so pace-side formulas still get a ground timeline.
+    _speed_period_s, speeds, speed_stamps = _stream_samples(
         activity.id,
         activity_streams_constants.STREAM_TYPE_SPEED,
         "vel",
         db,
         keep_zeros=True,
     )
-    _, elevations, elevation_stamps = _stream_samples(
+    ele_period_s, elevations, elevation_stamps = _stream_samples(
         activity.id,
         activity_streams_constants.STREAM_TYPE_ELEVATION,
         "ele",
         db,
         keep_zeros=True,
     )
-    speed_ms = _align_to_power(speeds, speed_stamps, power_stamps, period_s) if power_w else None
-    altitude_m = _align_to_power(elevations, elevation_stamps, power_stamps, period_s) if power_w else None
+    if power_w and period_s > 0:
+        anchor_period_s, anchor_stamps = period_s, power_stamps
+    elif speeds and _speed_period_s > 0:
+        anchor_period_s, anchor_stamps = _speed_period_s, speed_stamps
+        period_s = _speed_period_s
+    elif elevations and ele_period_s > 0:
+        anchor_period_s, anchor_stamps = ele_period_s, elevation_stamps
+        period_s = ele_period_s
+    else:
+        anchor_period_s, anchor_stamps = 0.0, ()
+    if anchor_stamps:
+        speed_ms = _align_to_power(speeds, speed_stamps, anchor_stamps, anchor_period_s) if speeds else None
+        altitude_m = (
+            _align_to_power(elevations, elevation_stamps, anchor_stamps, anchor_period_s) if elevations else None
+        )
+    else:
+        speed_ms = altitude_m = None
     grade_pct = None
     if altitude_m is not None and speed_ms is not None:
-        grade_pct = analysis_maths.grade_pct_series(altitude_m, speed_ms, period_s or 1.0)
+        grade_pct = analysis_maths.grade_pct_series(altitude_m, speed_ms, anchor_period_s or 1.0)
     threshold = settings.power_thresholds.get(sport) if sport else None
+    speed_threshold = settings.speed_thresholds.get(sport) if sport else None
     max_hr = activity.max_hr
     if not max_hr and activity.user_id:
         owner = users_integration.get_user(activity.user_id, db)
@@ -339,6 +356,7 @@ def _load_input(
         speed_ms=speed_ms,
         grade_pct=grade_pct,
         power_threshold_w=float(threshold.value_w) if threshold else None,
+        speed_threshold_ms=float(speed_threshold.value_ms) if speed_threshold else None,
         hr_threshold_bpm=float(settings.hr_threshold.value_bpm) if settings.hr_threshold else None,
         resting_hr_bpm=float(settings.resting_hr) if settings.resting_hr else None,
         parameters=dict(settings.method_params),
@@ -1161,6 +1179,8 @@ def get_activity_intervals(
                 period_s=ground_period,
                 power_w=ground_power,
                 threshold_w=analysis.threshold_w,
+                speed_threshold_ms=data.speed_threshold_ms,
+                hr_threshold_bpm=data.hr_threshold_bpm,
                 base_power_w=analysis.base_power_w,
                 parameters=dict(data.parameters),
             )
@@ -1219,47 +1239,68 @@ def get_activity_lap_dynamics(
             )
         )
 
+    speed_threshold = settings.speed_thresholds.get(sport)
+    hr_threshold = settings.hr_threshold
     _apply_lap_rss(
         lap_windows=laps,
         dynamics=dynamics,
         activity_id=activity_id,
-        db=db,
         threshold_w=threshold_w,
-        parameters=settings.method_params,
+        speed_threshold_ms=float(speed_threshold.value_ms) if speed_threshold else None,
+        hr_threshold_bpm=float(hr_threshold.value_bpm) if hr_threshold else None,
+        parameters=dict(settings.method_params),
+        db=db,
     )
     return dynamics
 
 
-def _apply_lap_rss(
-    lap_windows: list[activity_laps_schema.ActivityLapsRead],
-    dynamics: list[analysis_schema.LapDynamicsRead],
+def _ground_timeline(
     activity_id: int,
-    threshold_w: float | None,
-    parameters: Mapping[str, float],
     db: Session,
-) -> None:
-    """Fill each lap's aRSS from the activity's own power and grade samples."""
-    if not threshold_w or not lap_windows:
-        return
-    period_s, power_values, power_stamps = _stream_samples(
+) -> tuple[
+    float,
+    tuple[datetime, ...],
+    tuple[float, ...] | None,
+    tuple[float, ...] | None,
+    tuple[float, ...] | None,
+    tuple[float, ...] | None,
+]:
+    """Return one activity's samples on a single clock: ``(period, stamps, power, speed, grade, hr)``.
+
+    The anchor is the power stream when the device carried one, otherwise the
+    speed stream, otherwise heart rate; every other stream is aligned onto it and
+    the grade series derives from the aligned altitude and speed. A stream the
+    device never recorded comes back ``None``, so the intensity chain can fall
+    through the sources honestly.
+
+    Args:
+        activity_id: The activity whose streams are read.
+        db: Database session.
+
+    Returns:
+        The clock's period and stamps, then the aligned power, speed, grade and
+        heart-rate series (any of which may be ``None``).
+    """
+    power_period, power_values, power_stamps = _stream_samples(
         activity_id,
         activity_streams_constants.STREAM_TYPE_POWER,
         "power",
         db,
         keep_zeros=True,
     )
-    if not power_values or period_s <= 0:
-        return
-
-    # Device-written waypoint times carry no offset while the database hands back
-    # aware lap starts: put both clocks in UTC before any comparison.
-    power_stamps = _utc_stamps(power_stamps)
-    _, speeds, speed_stamps = _stream_samples(
+    speed_period, speeds, speed_stamps = _stream_samples(
         activity_id,
         activity_streams_constants.STREAM_TYPE_SPEED,
         "vel",
         db,
         keep_zeros=True,
+    )
+    hr_period, hr_values, hr_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_HR,
+        "hr",
+        db,
+        keep_zeros=False,
     )
     _, elevations, elevation_stamps = _stream_samples(
         activity_id,
@@ -1268,27 +1309,76 @@ def _apply_lap_rss(
         db,
         keep_zeros=True,
     )
-    speed_ms = _align_to_power(speeds, _utc_stamps(speed_stamps), power_stamps, period_s)
-    altitude_m = _align_to_power(elevations, _utc_stamps(elevation_stamps), power_stamps, period_s)
-    grade_pct = (
-        analysis_maths.grade_pct_series(altitude_m, speed_ms, period_s)
-        if altitude_m is not None and speed_ms is not None
-        else None
+    if power_values and power_period > 0:
+        anchor_period, anchor_stamps = power_period, power_stamps
+        power_aligned: tuple[float, ...] | None = power_values
+    elif speeds and speed_period > 0:
+        anchor_period, anchor_stamps = speed_period, speed_stamps
+        power_aligned = None
+    elif hr_values and hr_period > 0:
+        anchor_period, anchor_stamps = hr_period, hr_stamps
+        power_aligned = None
+    else:
+        return 0.0, (), None, None, None, None
+    stamps = _utc_stamps(anchor_stamps)
+    speed_aligned = (
+        _align_to_power(speeds, _utc_stamps(speed_stamps), stamps, anchor_period)
+        if speeds and anchor_stamps is not speed_stamps
+        else (speeds if speeds else None)
     )
-    parameters = dict(parameters)
+    hr_aligned = (
+        _align_to_power(hr_values, _utc_stamps(hr_stamps), stamps, anchor_period)
+        if hr_values and anchor_stamps is not hr_stamps
+        else (hr_values if hr_values else None)
+    )
+    altitude_m = (
+        _align_to_power(elevations, _utc_stamps(elevation_stamps), stamps, anchor_period) if elevations else None
+    )
+    grades: tuple[float, ...] | None = None
+    if altitude_m is not None and speed_aligned is not None:
+        grades = analysis_maths.grade_pct_series(altitude_m, speed_aligned, anchor_period)
+    return anchor_period, stamps, power_aligned, speed_aligned, grades, hr_aligned
+
+
+def _apply_lap_rss(
+    lap_windows: list[activity_laps_schema.ActivityLapsRead],
+    dynamics: list[analysis_schema.LapDynamicsRead],
+    activity_id: int,
+    threshold_w: float | None,
+    speed_threshold_ms: float | None,
+    hr_threshold_bpm: float | None,
+    parameters: Mapping[str, float],
+    db: Session,
+) -> None:
+    """Fill each lap's aRSS from the activity's own samples, through the intensity chain.
+
+    Watts when the device carried them; otherwise grade-adjusted pace over the
+    athlete's critical speed; otherwise heart rate over the threshold heart rate.
+    Whichever scored a lap is recorded in ``rss_source`` so the table can mark it.
+    """
+    if not lap_windows:
+        return
+    period_s, stamps, power_values, speeds, grades, hr_values = _ground_timeline(activity_id, db)
+    if not stamps or period_s <= 0:
+        return
     for lap, entry in zip(lap_windows, dynamics, strict=True):
-        window = _lap_sample_window(power_stamps, lap.start_time, float(lap.total_elapsed_time or 0.0))
+        window = _lap_sample_window(stamps, lap.start_time, float(lap.total_elapsed_time or 0.0))
         if window is None:
             continue
         start, stop = window
-        score = analysis_methods.rss_window_stress(
-            power_values[start:stop],
+        score, source = analysis_methods.window_stress_chain(
+            power_values[start:stop] if power_values is not None else None,
+            speeds[start:stop] if speeds is not None else None,
+            hr_values[start:stop] if hr_values is not None else None,
+            grades[start:stop] if grades is not None else None,
             period_s,
             threshold_w,
-            grade_pct[start:stop] if grade_pct is not None else None,
+            speed_threshold_ms,
+            hr_threshold_bpm,
             parameters,
         )
-        entry.rss = round(score, 1) if score > 0 else None
+        entry.rss = round(score, 1) if score > 0 and source else None
+        entry.rss_source = source if entry.rss is not None else None
         elapsed_s = float(lap.total_elapsed_time or 0.0)
         if entry.rss is not None and elapsed_s > 0:
             entry.rss_per_min = round(entry.rss * 60.0 / elapsed_s, 2)
@@ -1308,12 +1398,9 @@ def compute_window_stats(
     """Return mean power, heart rate and aRSS per minute for time windows of one activity.
 
     Each window is judged on its own samples - the streams are cut by timestamp
-    half-open, ``[start, end)`` - nothing is resampled - and evaluated with the same
-    machinery the activity's
-    loads use: the athlete's threshold for the sport, the shared aRSS kernel, and
-    the grade floors that lift climbs. A window over an activity without power
-    still returns its heart rate; without a threshold it still returns power and
-    heart rate. Nothing is invented where a stream is simply absent.
+    half-open, ``[start, end)`` on the activity's one ground timeline - and the
+    aRSS follows the intensity chain: watts, grade-adjusted pace, heart rate.
+    Nothing is invented where a stream is simply absent.
 
     Args:
         activity_id: The activity whose streams are read.
@@ -1330,77 +1417,58 @@ def compute_window_stats(
     if activity is None:
         return [analysis_contracts.WindowStats() for _ in windows]
     settings = get_settings(user_id, db)
-    threshold = settings.power_thresholds.get(sport_group(activity.activity_type))
+    sport = sport_group(activity.activity_type)
+    threshold = settings.power_thresholds.get(sport)
     threshold_w = threshold.value_w if threshold else None
+    speed_threshold = settings.speed_thresholds.get(sport)
+    speed_threshold_ms = speed_threshold.value_ms if speed_threshold else None
+    heart_rate_threshold = settings.hr_threshold
+    hr_threshold_bpm = heart_rate_threshold.value_bpm if heart_rate_threshold else None
     parameters = dict(settings.method_params)
 
-    period_s, power_values, power_stamps = _stream_samples(
-        activity_id,
-        activity_streams_constants.STREAM_TYPE_POWER,
-        "power",
-        db,
-        keep_zeros=True,
-    )
-    _, hr_values, hr_stamps = _stream_samples(
-        activity_id,
-        activity_streams_constants.STREAM_TYPE_HR,
-        "hr",
-        db,
-        keep_zeros=False,
-    )
-
-    grade_pct: tuple[float, ...] | None = None
-    if power_values and period_s > 0:
-        power_stamps = _utc_stamps(power_stamps)
-        _, speeds, speed_stamps = _stream_samples(
-            activity_id,
-            activity_streams_constants.STREAM_TYPE_SPEED,
-            "vel",
-            db,
-            keep_zeros=True,
-        )
-        _, elevations, elevation_stamps = _stream_samples(
-            activity_id,
-            activity_streams_constants.STREAM_TYPE_ELEVATION,
-            "ele",
-            db,
-            keep_zeros=True,
-        )
-        speed_ms = _align_to_power(speeds, _utc_stamps(speed_stamps), power_stamps, period_s)
-        altitude_m = _align_to_power(elevations, _utc_stamps(elevation_stamps), power_stamps, period_s)
-        if altitude_m is not None and speed_ms is not None:
-            grade_pct = analysis_maths.grade_pct_series(altitude_m, speed_ms, period_s)
-    hr_stamps = _utc_stamps(hr_stamps)
-
+    period_s, stamps, power_values, speeds, grades, hr_values = _ground_timeline(activity_id, db)
     stats: list[analysis_contracts.WindowStats] = []
     for start, end in windows:
         start_a = start if start.tzinfo else start.replace(tzinfo=UTC)
         end_a = end if end.tzinfo else end.replace(tzinfo=UTC)
         elapsed_s = (end_a - start_a).total_seconds()
         avg_power: float | None = None
-        rss_per_min: float | None = None
-        if power_values and period_s > 0 and elapsed_s > 0:
-            cut = bisect_left(power_stamps, start_a)
-            stop = bisect_left(power_stamps, end_a)
-            if stop > cut:
-                avg_power = round(arithmetic_mean(power_values[cut:stop]), 1)
-                if threshold_w:
-                    score = analysis_methods.rss_window_stress(
-                        power_values[cut:stop],
-                        period_s,
-                        threshold_w,
-                        grade_pct[cut:stop] if grade_pct is not None else None,
-                        parameters,
-                    )
-                    if score > 0:
-                        rss_per_min = round(score * 60.0 / elapsed_s, 2)
         avg_hr: float | None = None
-        if hr_values and elapsed_s > 0:
-            cut = bisect_left(hr_stamps, start_a)
-            stop = bisect_left(hr_stamps, end_a)
+        score: float | None = None
+        source: str | None = None
+        per_min: float | None = None
+        if stamps and period_s > 0 and elapsed_s > 0:
+            cut = bisect_left(stamps, start_a)
+            stop = bisect_left(stamps, end_a)
             if stop > cut:
-                avg_hr = round(arithmetic_mean(hr_values[cut:stop]), 0)
-        stats.append(analysis_contracts.WindowStats(avg_power_w=avg_power, avg_hr_bpm=avg_hr, rss_per_min=rss_per_min))
+                if power_values is not None and any(power_values[cut:stop]):
+                    avg_power = round(arithmetic_mean(power_values[cut:stop]), 1)
+                if hr_values is not None and any(hr_values[cut:stop]):
+                    avg_hr = round(arithmetic_mean([v for v in hr_values[cut:stop] if v > 0]), 0)
+                chain_score, chain_source = analysis_methods.window_stress_chain(
+                    power_values[cut:stop] if power_values is not None else None,
+                    speeds[cut:stop] if speeds is not None else None,
+                    hr_values[cut:stop] if hr_values is not None else None,
+                    grades[cut:stop] if grades is not None else None,
+                    period_s,
+                    threshold_w,
+                    speed_threshold_ms,
+                    hr_threshold_bpm,
+                    parameters,
+                )
+                if chain_score > 0 and chain_source is not None:
+                    score = round(chain_score, 1)
+                    source = chain_source
+                    per_min = round(score * 60.0 / elapsed_s, 2)
+        stats.append(
+            analysis_contracts.WindowStats(
+                avg_power_w=avg_power,
+                avg_hr_bpm=avg_hr,
+                rss=score,
+                rss_source=source,
+                rss_per_min=per_min,
+            )
+        )
     return stats
 
 

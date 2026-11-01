@@ -368,6 +368,12 @@ class TestRegistry:
         assert set(measured) == set(analysis_constants.LoadMethod)
 
     def test_a_no_power_activity_keeps_the_heart_rate_formulas(self):
+        """Without watts or pace to score, the aRSS family falls back to heart rate.
+
+        The chain reaches the stress formulas through the average heart rate over
+        the threshold heart rate - the same reading ``hr_load`` makes - so an
+        activity with only heart rate still feeds the shared scale and the PMC.
+        """
         data = analysis_methods.LoadInput(
             moving_seconds=3600.0,
             average_hr=140.0,
@@ -376,7 +382,12 @@ class TestRegistry:
             resting_hr_bpm=50.0,
         )
         measured = {method for method, _ in analysis_methods.compute_all(data)}
-        assert measured == {analysis_constants.LoadMethod.HR_LOAD, analysis_constants.LoadMethod.TRIMP}
+        assert measured == {
+            analysis_constants.LoadMethod.HR_LOAD,
+            analysis_constants.LoadMethod.TRIMP,
+            analysis_constants.LoadMethod.RSS_TOTAL,
+            analysis_constants.LoadMethod.RSS_MID,
+        }
 
     def test_a_formula_is_added_by_joining_the_registry(self):
         """The extension point: one entry, and its load is stored like any other.
