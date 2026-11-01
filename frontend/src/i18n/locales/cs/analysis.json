@@ -131,7 +131,7 @@
     "colGrade": "stoupání",
     "colDesnivel": "převýšení (+/−)",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Stoupání podle trasy",
     "tcColRange": "úsek",
     "tcNote": "Stoupání se čtou z terénu, bez ohledu na výkon; mohou se překrývat s časovou osou a nesčítají se s ní. aRSS vyžaduje měření výkonu.",
@@ -169,7 +169,7 @@
     "lengthRide": "Převod",
     "desnivel": "Převýšení (+/−)",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS je intenzitou vážené skóre za denní zátěží; řádky se sčítají na celkový údaj aktivity."
   }
 }

@@ -131,7 +131,7 @@
     "colGrade": "inclinação",
     "colDesnivel": "elevação / descida",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Subidas do percurso",
     "tcColRange": "troço",
     "tcNote": "As subidas são lidas do terreno, independentemente da potência; podem sobrepor-se à linha temporal e não são somadas com ela. O aRSS requer um potenciómetro.",
@@ -169,7 +169,7 @@
     "lengthRide": "Desenvolvimento",
     "desnivel": "Elevação / descida",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS é a pontuação ponderada pela intensidade por trás da carga diária; as linhas somam o total da sessão."
   }
 }

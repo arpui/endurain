@@ -131,7 +131,7 @@
     "colGrade": "lutning",
     "colDesnivel": "höjdmeter (+/−)",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Stigningar efter rutten",
     "tcColRange": "sträcka",
     "tcNote": "Stigningar läses från terrängen, oavsett effekt; de kan överlappa tidslinjen och summeras inte med den. aRSS kräver effektmätning.",
@@ -169,7 +169,7 @@
     "lengthRide": "Överväxling",
     "desnivel": "Höjdmeter (+/−)",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS är den intensitetsvikta poängen bakom den dagliga belastningen; raderna summerar till aktivitetens total."
   }
 }

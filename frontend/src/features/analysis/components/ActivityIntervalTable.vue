@@ -46,7 +46,7 @@ interface SegmentRow {
   contrast: string
   desnivel: string
   rss: string
-  rssKm: string
+  rssMin: string
   isEffort: boolean
 }
 
@@ -60,7 +60,7 @@ interface ClimbRow {
   power: string
   intensityFactor: string
   contrast: string
-  rssKm: string
+  rssMin: string
 }
 
 const rows = computed<SegmentRow[]>(() =>
@@ -89,7 +89,7 @@ const rows = computed<SegmentRow[]>(() =>
       contrast: segment.contrast > 0 ? `×${segment.contrast.toFixed(2)}` : '--',
       desnivel: elevationPair(segment),
       rss: segment.rss === null ? '--' : segment.rss.toFixed(1),
-      rssKm: segment.rssPerKm === null ? '--' : segment.rssPerKm.toFixed(1),
+      rssMin: segment.rssPerMin === null ? '--' : segment.rssPerMin.toFixed(1),
       isEffort: EFFORT_KINDS.includes(segment.kind),
     })),
 )
@@ -112,7 +112,7 @@ const climbRows = computed<ClimbRow[]>(() =>
     power: climb.avgPowerW === null ? '--' : `${Math.round(climb.avgPowerW)} W`,
     intensityFactor: climb.intensityFactor === null ? '--' : climb.intensityFactor.toFixed(2),
     contrast: climb.contrast === null ? '--' : `\u00d7${climb.contrast.toFixed(2)}`,
-    rssKm: climb.rssPerKm === null ? '--' : climb.rssPerKm.toFixed(1),
+    rssMin: climb.rssPerMin === null ? '--' : climb.rssPerMin.toFixed(1),
   })),
 )
 
@@ -192,7 +192,7 @@ const rulesNote = computed(() => {
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colGrade') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colDesnivel') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colRss') }}</th>
-              <th class="py-2 font-medium">{{ t('analysis.intervals.colRssKm') }}</th>
+              <th class="py-2 font-medium">{{ t('analysis.intervals.colRssMin') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -213,7 +213,7 @@ const rulesNote = computed(() => {
               <td class="py-2 pe-3 tabular-nums">{{ row.grade }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.desnivel }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.rss }}</td>
-              <td class="py-2 tabular-nums">{{ row.rssKm }}</td>
+              <td class="py-2 tabular-nums">{{ row.rssMin }}</td>
             </tr>
           </tbody>
         </table>
@@ -245,7 +245,7 @@ const rulesNote = computed(() => {
               <th class="py-2 pe-3 font-medium">{{ t('activities.metrics.avgPower') }}</th>
               <th class="py-2 pe-3 font-medium">IF</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.intervals.colContrast') }}</th>
-              <th class="py-2 font-medium">{{ t('analysis.intervals.colRssKm') }}</th>
+              <th class="py-2 font-medium">{{ t('analysis.intervals.colRssMin') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -261,7 +261,7 @@ const rulesNote = computed(() => {
               <td class="py-2 pe-3 tabular-nums">{{ row.power }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.intensityFactor }}</td>
               <td class="py-2 pe-3 tabular-nums">{{ row.contrast }}</td>
-              <td class="py-2 tabular-nums">{{ row.rssKm }}</td>
+              <td class="py-2 tabular-nums">{{ row.rssMin }}</td>
             </tr>
           </tbody>
         </table>

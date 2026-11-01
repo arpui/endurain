@@ -226,8 +226,8 @@ export interface IntervalSegment {
   elevationLossM: number | null
   /** Shared-scale aRSS score of the stretch (same kernel as the daily rss_total). */
   rss: number | null
-  /** That score per kilometre of ground; null when too short to scale up honestly. */
-  rssPerKm: number | null
+  /** That score per minute of the stretch, the mean stress rate. */
+  rssPerMin: number | null
 }
 
 /** The effective numeric gates one session's split used, for the footnote. */
@@ -281,8 +281,8 @@ export interface TerrainClimb {
   intensityFactor: number | null
   contrast: number | null
   rss: number | null
-  /** The score per kilometre, the comparable figure across climbs. */
-  rssPerKm: number | null
+  /** The score per minute of climbing, the comparable rate across climbs. */
+  rssPerMin: number | null
 }
 
 export type BestTimesDto = Schemas['BestTimesRead']
@@ -323,6 +323,6 @@ export interface LapDynamics {
   elevationLossM: number | null
   /** Shared-scale aRSS score of the lap's window; the rows add up to the activity's. */
   rss: number | null
-  /** That score per kilometre of the lap; null when the lap is too short to scale up. */
-  rssPerKm: number | null
+  /** That score per minute of the lap, the mean stress rate. */
+  rssPerMin: number | null
 }

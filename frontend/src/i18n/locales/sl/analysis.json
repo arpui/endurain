@@ -131,7 +131,7 @@
     "colGrade": "strmina",
     "colDesnivel": "višinska razlika (+/−)",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Vzponi po progi",
     "tcColRange": "odsek",
     "tcNote": "Vzponi se berejo iz terena, ne glede na moč; lahko se prekrivajo s časovnico in se z njo ne seštevajo. aRSS zahteva merilnik moči.",
@@ -169,7 +169,7 @@
     "lengthRide": "Prenos",
     "desnivel": "Višinska razlika (+/−)",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS je z intenzivnostjo utežena točka za dnevno obremenitvijo; vrstice se seštejejo v skupni rezultat aktivnosti."
   }
 }

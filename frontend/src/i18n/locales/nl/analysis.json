@@ -131,7 +131,7 @@
     "colGrade": "helling",
     "colDesnivel": "stijging / daling",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Klimmen van de route",
     "tcColRange": "vak",
     "tcNote": "Klimmen worden uit het terrein gelezen, ongeacht het vermogen; ze kunnen de tijdlijn overlappen en worden niet opgeteld. aRSS vereist een vermogensmeter.",
@@ -169,7 +169,7 @@
     "lengthRide": "Overbrenging",
     "desnivel": "Stijging / daling",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS is de intensiteit-gewogen score achter de dagelijkse belasting; de rijen tellen op tot het totaal van de activiteit."
   }
 }

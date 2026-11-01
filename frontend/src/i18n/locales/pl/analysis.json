@@ -131,7 +131,7 @@
     "colGrade": "nachylenie",
     "colDesnivel": "przewyższenie (+/−)",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Podjazdy z trasy",
     "tcColRange": "odcinek",
     "tcNote": "Podjazdy czytamy z terenu, niezależnie od mocy; mogą zachodzić na oś czasu i nie sumują się z nią. aRSS wymaga pomiaru mocy.",
@@ -169,7 +169,7 @@
     "lengthRide": "Przełożenie",
     "desnivel": "Przewyższenie (+/−)",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS to punktacja ważona intensywnością stojąca za dziennym obciążeniem; wiersze sumują się do wartości całej aktywności."
   }
 }

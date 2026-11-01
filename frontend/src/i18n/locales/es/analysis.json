@@ -131,7 +131,7 @@
     "colGrade": "pendiente",
     "colDesnivel": "desnivel (+/−)",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Puertos del recorrido",
     "tcColRange": "tramo",
     "tcNote": "Los puertos se leen del terreno, independientemente de la potencia; pueden solaparse con la línea de tiempo y no se suman con ella. El aRSS requiere potencia.",
@@ -169,7 +169,7 @@
     "lengthRide": "Desarrollo",
     "desnivel": "Desnivel (+/−)",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS es la puntuación ponderada por intensidad que hay detrás de la carga diaria; las filas suman el total de la sesión."
   }
 }

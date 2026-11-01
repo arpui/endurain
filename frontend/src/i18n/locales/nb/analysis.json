@@ -131,7 +131,7 @@
     "colGrade": "stigning",
     "colDesnivel": "stigning / fall",
     "colRss": "aRSS",
-    "colRssKm": "aRSS/km",
+    "colRssMin": "aRSS/min",
     "tcTitle": "Bakker etter ruten",
     "tcColRange": "strekning",
     "tcNote": "Bakkene leses fra terrenget, uavhengig av effekt; de kan overlappe tidslinjen og summeres ikke med den. aRSS krever effektmåler.",
@@ -169,7 +169,7 @@
     "lengthRide": "Utveksling",
     "desnivel": "Stigning / fall",
     "rss": "aRSS",
-    "rssKm": "aRSS/km",
+    "rssMin": "aRSS/min",
     "rssNote": "aRSS er den intensitetsvektede poengsummen bak den daglige belastningen; radene summeres til aktivitetens total."
   }
 }
