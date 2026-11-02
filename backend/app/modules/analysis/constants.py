@@ -328,8 +328,9 @@ class LoadMethod(StrEnum):
     hour at threshold is 100 points. That fourth power makes it a scale of its
     own like ``TRIMP``: it answers beside the others and is never added to them.
 
-    The ``RSS_*`` methods are one family: an exponential stress kernel summed per
-    second over the samples of an activity that carries power. :attr:`RSS_TOTAL`
+    The ``RSS_*`` methods are one family: a stress kernel that grows exponentially
+    with intensity up to a knee and linearly past it, summed per second over the
+    samples of an activity that carries power. :attr:`RSS_TOTAL`
     is the family's general load; the other four split it by *where* the effort
     happened (climbs, high, middle and low intensity), each sample falling in
     exactly one of them. They answer on the shared scale too: the kernel is
@@ -387,11 +388,22 @@ def method_sql_list() -> str:
 #
 # The athlete's own formula, fitted on running power: each second of an activity
 # that carries power contributes a stress rate that grows exponentially with the
-# intensity, and the activity's load is that rate summed over the seconds. The
+# intensity up to a knee, then keeps growing linearly, and the activity's load is
+# that rate summed over the seconds. The
 # defaults below are the fitted constants; every one of them is overridable per
 # athlete through ``analysis_settings.method_params``, keyed as named here.
 
-#: Exponential coefficient ``A`` of the kernel ``B + A · e^(E · power/threshold)``.
+#: Intensity (power over threshold) where the kernel's exponential stops and a
+#: straight line takes over, carrying the curve's value and slope at that point.
+#: The fit was made in an era whose efforts rarely reached this far above threshold,
+#: so past it the unbounded exponential is extrapolation: a capped-linear kernel
+#: keeps going all-out visible as extra cost without multiplying it per second.
+#: An athlete's ``method_params`` key ``rss_kernel_cap_if`` moves the knee; 0 (or
+#: negative) removes it and restores the historical unbounded curve for reviews.
+RSS_KERNEL_CAP_IF = 1.5
+
+#: Exponential coefficient ``A`` of the kernel ``B + A · e^(E · power/threshold)``,
+#: up to the knee above.
 RSS_KERNEL_A = 0.0289929
 
 #: Exponent coefficient ``E`` of the kernel.
