@@ -649,7 +649,7 @@ def terrain_climbs(
     hr_threshold_bpm: float | None = None,
     base_power_w: float = 0.0,
     parameters: Mapping[str, float] | None = None,
-    pace_calibration: tuple[float, float] | None = None,
+    pace_calibration: Sequence[float] | None = None,
     pace_ms: Sequence[float] | None = None,
     pace_raw_ms: Sequence[float] | None = None,
 ) -> list[TerrainClimb]:

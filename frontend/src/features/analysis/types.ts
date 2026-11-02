@@ -69,6 +69,8 @@ export interface PaceCalibration {
   interceptW: number
   /** Squared correlation over the paired samples. */
   r2: number | null
+  /** Watts added per (m/s x grade %) off flat ground; 0 means the plain line. */
+  gradeWPerMsPct: number
   /** Derived from records (manual is reserved). */
   source: ThresholdSource
 }

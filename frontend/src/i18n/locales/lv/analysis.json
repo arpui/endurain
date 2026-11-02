@@ -79,6 +79,7 @@
       "addSpeed": "Pievienot kritisko ātrumu",
       "paceCalib": "Tempa→watu kalibrācija",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "slīpums {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Pielāgošana no (s)",

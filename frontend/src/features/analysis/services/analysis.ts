@@ -71,6 +71,7 @@ export function mapSettings(dto: AnalysisSettingsDto): AnalysisSettings {
       slopeWPerMs: entry.slope_w_per_ms,
       interceptW: entry.intercept_w,
       r2: entry.r2 ?? null,
+      gradeWPerMsPct: entry.grade_w_per_ms_pct ?? 0,
       source: mapSource(entry.source),
     }
   }

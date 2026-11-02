@@ -79,6 +79,7 @@
       "addSpeed": "Add critical speed",
       "paceCalib": "Pace-to-watts calibration",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "grade {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit from (s)",

@@ -79,6 +79,7 @@
       "addSpeed": "Kritieke snelheid toevoegen",
       "paceCalib": "Tempo-naar-watt-kalibratie",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "helling {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit vanaf (s)",

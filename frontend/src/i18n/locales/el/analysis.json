@@ -79,6 +79,7 @@
       "addSpeed": "Προσθήκη κρίσιμης ταχύτητας",
       "paceCalib": "Βαθμονόμηση ρυθμού→watt",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "κλίση {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Προσαρμογή από (s)",

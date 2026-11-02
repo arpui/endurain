@@ -79,6 +79,7 @@
       "addSpeed": "Kritik hız ekle",
       "paceCalib": "Tempo-güç kalibrasyonu",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "eğim {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Uydurma başlangıcı (s)",

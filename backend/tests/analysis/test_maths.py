@@ -704,3 +704,50 @@ class TestAdaptivePaceWindow:
         smooth = analysis_methods.pace_series(speeds, 1.0, 4.0, grades)
         assert raw[10] == pytest.approx(6.0)  # the first hard second is untouched, no kernel
         assert smooth[10] < 6.0  # ...while the smoothed series has already diluted it
+
+
+class TestGradeAwarePaceCalibration:
+    """The pace-to-watts map can carry the grade term the GAP model owes the athlete."""
+
+    def test_old_two_coefficient_maps_complete_to_a_zero_grade_term(self):
+        assert analysis_methods._split_pace_calibration((106.23, -24.0)) == (106.23, -24.0, 0.0)
+        assert analysis_methods._split_pace_calibration((106.23, -24.0, 1.25)) == (106.23, -24.0, 1.25)
+        assert analysis_methods._split_pace_calibration(None) == (0.0, 0.0, 0.0)
+
+    def test_the_grade_term_moves_watts_only_off_flat(self):
+        pace = [4.0, 4.0, 4.0]
+        grades = [5.0, 0.0, -5.0]
+        plain = analysis_methods._pace_watts(pace, grades, 100.0, -50.0, 0.0)
+        assert plain == pytest.approx([350.0, 350.0, 350.0])  # the old line, untouched
+        aware = analysis_methods._pace_watts(pace, grades, 100.0, -50.0, 2.0)
+        assert aware[0] > 350.0  # the climb's extra effort the steady-state model misses
+        assert aware[1] == pytest.approx(350.0)  # flat: bit-for-bit the old map
+        assert aware[2] < 350.0  # descents coast: the model over-reads them
+
+    def test_the_grade_term_saturates_past_the_band_edge(self):
+        cap = analysis_constants.PACE_CAL_GRADE_CAP_PCT
+        steep = analysis_methods._pace_watts([4.0], [25.0], 100.0, -50.0, 2.0)[0]
+        capped = analysis_methods._pace_watts([4.0], [cap], 100.0, -50.0, 2.0)[0]
+        assert steep == pytest.approx(capped)  # trail grades get no runaway correction
+
+    def test_a_window_on_a_climb_scores_above_the_grade_free_map(self):
+        cs, cp = 4.0, 350.0
+        pace = [4.3] * 120
+        grades = [5.0] * 120
+        params = {"pace_smooth_window_s": 20.0}
+        flat_map = analysis_methods._pace_window_score(pace, 1.0, cs, params, cp, (110.0, -30.0), grades)
+        aware_map = analysis_methods._pace_window_score(pace, 1.0, cs, params, cp, (110.0, -30.0, 1.3), grades)
+        assert aware_map > flat_map
+        flat_ground = analysis_methods._pace_window_score(pace, 1.0, cs, params, cp, (110.0, -30.0, 1.3), [0.0] * 120)
+        assert flat_ground == pytest.approx(flat_map)  # grade 0 keeps the line identical
+
+    def test_the_chain_routes_grades_to_the_pace_score(self):
+        pace = analysis_methods.pace_series([4.0] * 120, 1.0, 4.0, [5.0] * 120)
+        grades = [5.0] * 120
+        scores_flat = analysis_methods.window_scores_by_source(
+            None, pace, None, grades, 1.0, 350.0, 4.0, None, {}, (110.0, -30.0)
+        )
+        scores_aware = analysis_methods.window_scores_by_source(
+            None, pace, None, grades, 1.0, 350.0, 4.0, None, {}, (110.0, -30.0, 1.3)
+        )
+        assert scores_aware["pace"] > scores_flat["pace"]

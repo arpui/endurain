@@ -79,6 +79,7 @@
       "addSpeed": "Dodaj prędkość krytyczną",
       "paceCalib": "Kalibracja tempo→waty",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "nachylenie {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Dopasowanie od (s)",

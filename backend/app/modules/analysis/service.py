@@ -359,7 +359,13 @@ def _load_input(
         power_threshold_w=float(threshold.value_w) if threshold else None,
         speed_threshold_ms=float(speed_threshold.value_ms) if speed_threshold else None,
         pace_calibration=(
-            (float(pace_calibration.slope_w_per_ms), float(pace_calibration.intercept_w)) if pace_calibration else None
+            (
+                float(pace_calibration.slope_w_per_ms),
+                float(pace_calibration.intercept_w),
+                float(pace_calibration.grade_w_per_ms_pct),
+            )
+            if pace_calibration
+            else None
         ),
         hr_threshold_bpm=float(settings.hr_threshold.value_bpm) if settings.hr_threshold else None,
         resting_hr_bpm=float(settings.resting_hr) if settings.resting_hr else None,
@@ -546,21 +552,31 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
                 # the athlete's own pace-to-watts map, fit further below.
                 if power_w and period_s > 0:
                     adjusted_on_power_clock = _align_to_power(adjusted, speed_stamps, power_stamps, period_s)
-                    if adjusted_on_power_clock:
+                    grade_on_power_clock = _align_to_power(grades, speed_stamps, power_stamps, period_s)
+                    if adjusted_on_power_clock and grade_on_power_clock:
                         pace_window = (
                             max(int(analysis_methods._pace_window_s(settings.method_params) / period_s), 1) | 1
                         )
                         med_speeds = analysis_maths.moving_median(list(adjusted_on_power_clock), pace_window)
                         med_power = analysis_maths.moving_median(list(power_w), pace_window)
-                        stats = paired_stats_by_sport.setdefault(sport, [0, 0.0, 0.0, 0.0, 0.0, 0.0])
-                        for pace_value, watt_value in zip(med_speeds, med_power, strict=True):
+                        med_grades = analysis_maths.moving_median(list(grade_on_power_clock), pace_window)
+                        stats = paired_stats_by_sport.setdefault(sport, [0] + [0.0] * 9)
+                        grade_cap = analysis_constants.PACE_CAL_GRADE_CAP_PCT
+                        for pace_value, watt_value, grade_value in zip(med_speeds, med_power, med_grades, strict=True):
                             if watt_value > 0 and pace_value > 0:
+                                # the grade regressor: adjusted pace x clipped grade, so the
+                                # correction scales with effort and saturates on steep trails
+                                z = pace_value * min(max(grade_value, -grade_cap), grade_cap)
                                 stats[0] += 1
                                 stats[1] += pace_value
                                 stats[2] += watt_value
                                 stats[3] += pace_value * pace_value
                                 stats[4] += pace_value * watt_value
                                 stats[5] += watt_value * watt_value
+                                stats[6] += z
+                                stats[7] += z * z
+                                stats[8] += z * watt_value
+                                stats[9] += z * pace_value
                 merged_speed = speed_peaks_by_sport.setdefault(sport, {})
                 for duration, value in analysis_maths.best_means(adjusted, vel_period_s).items():
                     if value >= merged_speed.get(duration, 0.0):
@@ -623,7 +639,7 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
         existing_cal = settings.pace_calibrations.get(sport)
         if existing_cal is not None and existing_cal.source is analysis_constants.ThresholdSource.MANUAL:
             continue
-        count, sum_x, sum_y, sum_xx, sum_xy, sum_yy = stats
+        count, sum_x, sum_y, sum_xx, sum_xy, sum_yy, sum_z, sum_zz, sum_zy, sum_zx = stats
         if count < analysis_constants.PACE_CAL_MIN_SECONDS:
             continue
         variance_x = sum_xx - sum_x * sum_x / count
@@ -636,13 +652,28 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
         variance_y = sum_yy - sum_y * sum_y / count
         if variance_y <= 0:
             continue
-        cov = sum_xy - sum_x * sum_y / count
-        r2 = (cov * cov) / (variance_x * variance_y)
+        # the grade term rides the flat map's residuals: the line the flat sessions
+        # fit stays what it was, so zero-grade scoring is untouched by this term
+        grade_coef = 0.0
+        if sum_zz > 0:
+            grade_coef = (sum_zy - slope * sum_zx - intercept * sum_z) / sum_zz
+        sse = (
+            sum_yy
+            - 2.0 * (slope * sum_xy + intercept * sum_y + grade_coef * sum_zy)
+            + slope * slope * sum_xx
+            + intercept * intercept * count
+            + grade_coef * grade_coef * sum_zz
+            + 2.0 * slope * intercept * sum_x
+            + 2.0 * slope * grade_coef * sum_zx
+            + 2.0 * intercept * grade_coef * sum_z
+        )
+        r2 = 1.0 - sse / variance_y / count
         if r2 < analysis_constants.PACE_CAL_MIN_R2:
             continue
         settings.pace_calibrations[sport] = analysis_schema.PaceCalibrationRead(
             slope_w_per_ms=round(slope, 2),
             intercept_w=round(intercept, 1),
+            grade_w_per_ms_pct=round(grade_coef, 3),
             r2=round(r2, 3),
             source=analysis_constants.ThresholdSource.AUTO,
         )
@@ -1302,7 +1333,13 @@ def get_activity_lap_dynamics(
         parameters=dict(settings.method_params),
         db=db,
         pace_calibration=(
-            (float(pace_calibration.slope_w_per_ms), float(pace_calibration.intercept_w)) if pace_calibration else None
+            (
+                float(pace_calibration.slope_w_per_ms),
+                float(pace_calibration.intercept_w),
+                float(pace_calibration.grade_w_per_ms_pct),
+            )
+            if pace_calibration
+            else None
         ),
     )
     return dynamics
@@ -1403,7 +1440,7 @@ def _apply_lap_rss(
     hr_threshold_bpm: float | None,
     parameters: Mapping[str, float],
     db: Session,
-    pace_calibration: tuple[float, float] | None = None,
+    pace_calibration: Sequence[float] | None = None,
 ) -> None:
     """Fill each lap's aRSS from the activity's own samples, through the intensity chain.
 
@@ -1500,7 +1537,13 @@ def compute_window_stats(
     parameters = dict(settings.method_params)
     pace_calibration = settings.pace_calibrations.get(sport)
     calibration_pair = (
-        (float(pace_calibration.slope_w_per_ms), float(pace_calibration.intercept_w)) if pace_calibration else None
+        (
+            float(pace_calibration.slope_w_per_ms),
+            float(pace_calibration.intercept_w),
+            float(pace_calibration.grade_w_per_ms_pct),
+        )
+        if pace_calibration
+        else None
     )
 
     period_s, stamps, power_values, speeds, grades, hr_values, _altitude = _ground_timeline(activity_id, db)

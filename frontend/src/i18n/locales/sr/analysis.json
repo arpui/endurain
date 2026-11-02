@@ -79,6 +79,7 @@
       "addSpeed": "Dodaj kritičnu brzinu",
       "paceCalib": "Kalibracija tempo→vati",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "nagib {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Прилагођавање од (s)",

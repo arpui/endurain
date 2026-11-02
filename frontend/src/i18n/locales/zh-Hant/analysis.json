@@ -79,6 +79,7 @@
       "addSpeed": "添加臨界速度",
       "paceCalib": "配速→功率校準",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "坡度 {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "擬合起點 (s)",
