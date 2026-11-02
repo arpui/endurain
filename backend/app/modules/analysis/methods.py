@@ -197,10 +197,23 @@ def trimp(data: LoadInput) -> LoadValue | None:
 
 
 def _rss_kernel(intensity: float, parameters: Mapping[str, float]) -> float:
-    """Return the fitted stress rate of one second at ``intensity`` over threshold."""
-    return parameters.get("rss_kernel_b", analysis_constants.RSS_KERNEL_B) + parameters.get(
-        "rss_kernel_a", analysis_constants.RSS_KERNEL_A
-    ) * exp(parameters.get("rss_kernel_e", analysis_constants.RSS_KERNEL_E) * intensity)
+    """Return the fitted stress rate of one second at ``intensity`` over threshold.
+
+    Up to the knee (``rss_kernel_cap_if``, default ``RSS_KERNEL_CAP_IF``) this is
+    exactly the fitted exponential. Past the knee the exponential's value and slope
+    are carried into a straight line: the fit was made where the athlete's efforts
+    rarely reached, so an unbounded tail turns each all-out second into minutes of
+    threshold stress. ``rss_kernel_cap_if: 0`` removes the knee and restores the
+    historical curve for reviewing stored history.
+    """
+    a = parameters.get("rss_kernel_a", analysis_constants.RSS_KERNEL_A)
+    e = parameters.get("rss_kernel_e", analysis_constants.RSS_KERNEL_E)
+    b = parameters.get("rss_kernel_b", analysis_constants.RSS_KERNEL_B)
+    cap = parameters.get("rss_kernel_cap_if", analysis_constants.RSS_KERNEL_CAP_IF)
+    if cap <= 0 or intensity <= cap:
+        return b + a * exp(e * intensity)
+    knee = a * exp(e * cap)
+    return b + knee + knee * e * (intensity - cap)
 
 
 def _rss_sample_band(

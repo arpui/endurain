@@ -751,3 +751,47 @@ class TestGradeAwarePaceCalibration:
             None, pace, None, grades, 1.0, 350.0, 4.0, None, {}, (110.0, -30.0, 1.3)
         )
         assert scores_aware["pace"] > scores_flat["pace"]
+
+
+class TestKernelCap:
+    """The stress kernel's exponential stops at a knee and a straight line takes over."""
+
+    @staticmethod
+    def _uncapped(i: float) -> float:
+        return analysis_constants.RSS_KERNEL_B + analysis_constants.RSS_KERNEL_A * exp(
+            analysis_constants.RSS_KERNEL_E * i
+        )
+
+    def test_below_the_knee_the_curve_is_the_fitted_exponential(self):
+        for i in (0.2, 0.9, 1.37, 1.5):
+            assert analysis_methods._rss_kernel(i, {}) == pytest.approx(self._uncapped(i), rel=0.0, abs=1e-12)
+
+    def test_the_knee_continues_the_curve_and_its_slope(self):
+        cap = analysis_constants.RSS_KERNEL_CAP_IF
+        e = analysis_constants.RSS_KERNEL_E
+        at_knee = analysis_methods._rss_kernel(cap, {})
+        just_past = analysis_methods._rss_kernel(cap + 0.01, {})
+        slope_at_knee = e * (at_knee - analysis_constants.RSS_KERNEL_B)
+        assert just_past == pytest.approx(at_knee + slope_at_knee * 0.01)
+        assert analysis_methods._rss_kernel(2.0, {}) < self._uncapped(2.0)  # the tail is cut
+        assert analysis_methods._rss_kernel(2.0, {}) > at_knee  # but effort still counts
+
+    def test_a_zero_cap_restores_the_historical_unbounded_curve(self):
+        pars = {"rss_kernel_cap_if": 0.0}
+        for i in (1.8, 2.5, 3.4):
+            assert analysis_methods._rss_kernel(i, pars) == pytest.approx(self._uncapped(i))
+
+    def test_a_window_above_the_knee_scores_below_the_uncapped_one(self):
+        cp = 350.0
+        watts = [700.0] * 30  # 2x CP: entirely past the knee
+        capped = analysis_methods.window_scores_by_source(watts, None, None, None, 1.0, cp, None, None)
+        uncapped = analysis_methods.window_scores_by_source(
+            watts, None, None, None, 1.0, cp, None, None, {"rss_kernel_cap_if": 0.0}
+        )
+        assert 0 < capped["power"] < uncapped["power"]
+        steady = [360.0] * 30  # 1.03x CP: under the knee, both kernels agree
+        assert analysis_methods.window_scores_by_source(steady, None, None, None, 1.0, cp, None, None) == pytest.approx(
+            analysis_methods.window_scores_by_source(
+                steady, None, None, None, 1.0, cp, None, None, {"rss_kernel_cap_if": 0.0}
+            )
+        )
