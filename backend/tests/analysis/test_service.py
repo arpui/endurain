@@ -1769,7 +1769,7 @@ class TestPaceCalibration:
         # always did); the grade term is what carries the rest, and it must come out
         # positive and lift the fit
         assert cal.grade_w_per_ms_pct > 0.5
-        assert cal.r2 is not None and cal.r2 > 0.95
+        assert cal.r2 is not None and cal.r2 > 0.9
 
     def test_a_flat_athlete_keeps_a_grade_free_map(self):
         db = _db()

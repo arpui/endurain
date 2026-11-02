@@ -667,7 +667,7 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
             + 2.0 * slope * grade_coef * sum_zx
             + 2.0 * intercept * grade_coef * sum_z
         )
-        r2 = 1.0 - sse / variance_y / count
+        r2 = 1.0 - sse / variance_y
         if r2 < analysis_constants.PACE_CAL_MIN_R2:
             continue
         settings.pace_calibrations[sport] = analysis_schema.PaceCalibrationRead(
