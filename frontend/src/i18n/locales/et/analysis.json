@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Ekv.",
     "rssNote": "aRSS on intensiivsusega kaalutud skoor päevase koormuse taga; read annavad kokku tegevuse tervikskoori. \"≈\": hinnatud (kallet arvestava) tempo või pulsiga, kui võimsust pole."
+  },
+  "cpTrend": {
+    "title": "Kriitilise võimsuse areng",
+    "maLabel": "Liikuva keskmise aken",
+    "maOption": "Liikuv {days} p",
+    "seriesMovingAverage": "Liikuv keskmine ({days} päeva)",
+    "seriesStryd": "Strydi võimsus",
+    "seriesNative": "Seadme võimsus",
+    "seriesThreshold": "Praegune lävi ({watts} W)",
+    "note": "Üks punkt treeningu kohta, sobitatud ainult selle enda püsivatest pingutustest; punktide hajuvus peegeldab treeningu kvaliteeti, mitte päevavormi.",
+    "emptyTitle": "Pole veel piisalt sobitatavaid treeninguid",
+    "emptyDescription": "Kriitiline võimsus nõuab treeninguid vähemalt nelja püsiva pingutusega 5–30 minuti vahemikus. See täitub ajapikku."
   }
 }

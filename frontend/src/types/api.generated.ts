@@ -739,6 +739,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/cp-trend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cp Trend
+         * @description Return the caller's critical-power evolution for one sport.
+         *
+         *     One point per session, each fit from that session's own sustained efforts;
+         *     the stored threshold comes back as the reference line. ``window`` narrows
+         *     the history without dropping sessions outside it from other views.
+         */
+        get: operations["get_cp_trend_api_v1_analysis_cp_trend_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/fitness": {
         parameters: {
             query?: never;
@@ -6449,6 +6473,57 @@ export interface components {
          */
         Color: "brown" | "dark_brown" | "light_brown" | "yellow" | "green" | "black" | "red" | "white";
         /**
+         * CpTrendPointRead
+         * @description Serialized one session's fitted critical power.
+         *
+         *     Attributes:
+         *         activity_id: The session the fit came from.
+         *         date: When the session started (server date, for chart positioning).
+         *         cp_w: Fitted critical power from this session alone, in watts.
+         *         w_prime_j: Fitted anaerobic work capacity in joules, an index tied to
+         *             the duration window the fit used.
+         *         cv_pct: Fit error as a percentage of the mean.
+         *         power_source: Where the session's watts came from (``stryd``,
+         *             ``garmin_native``, ...), or ``None`` when untagged.
+         */
+        CpTrendPointRead: {
+            /** Activity Id */
+            activity_id: number;
+            /** Cp W */
+            cp_w: number;
+            /** Cv Pct */
+            cv_pct: number;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Power Source */
+            power_source: string | null;
+            /** W Prime J */
+            w_prime_j: number;
+        };
+        /**
+         * CpTrendRead
+         * @description Serialized critical-power evolution of one athlete and sport.
+         *
+         *     Attributes:
+         *         sport: The sport group the fits belong to.
+         *         window_days: Days of history covered, or ``None`` for all of it.
+         *         threshold: The power threshold the loads of this sport are currently
+         *             measured against, as the reference line, or ``None`` when unset.
+         *         points: Per-session CP fits, oldest first.
+         */
+        CpTrendRead: {
+            /** Points */
+            points: components["schemas"]["CpTrendPointRead"][];
+            /** Sport */
+            sport: string;
+            threshold: components["schemas"]["PowerThresholdRead"] | null;
+            /** Window Days */
+            window_days: number | null;
+        };
+        /**
          * Currency
          * @description An enumeration representing supported currencies.
          *
@@ -9725,8 +9800,9 @@ export interface components {
          *     hour at threshold is 100 points. That fourth power makes it a scale of its
          *     own like ``TRIMP``: it answers beside the others and is never added to them.
          *
-         *     The ``RSS_*`` methods are one family: an exponential stress kernel summed per
-         *     second over the samples of an activity that carries power. :attr:`RSS_TOTAL`
+         *     The ``RSS_*`` methods are one family: a stress kernel that grows exponentially
+         *     with intensity up to a knee and linearly past it, summed per second over the
+         *     samples of an activity that carries power. :attr:`RSS_TOTAL`
          *     is the family's general load; the other four split it by *where* the effort
          *     happened (climbs, high, middle and low intensity), each sample falling in
          *     exactly one of them. They answer on the shared scale too: the kernel is
@@ -14897,6 +14973,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BestTimesRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_cp_trend_api_v1_analysis_cp_trend_get: {
+        parameters: {
+            query: {
+                sport: string;
+                /** @description Days of history; omit for all */
+                window?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CpTrendRead"];
                 };
             };
             /** @description Validation Error */

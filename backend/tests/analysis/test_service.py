@@ -45,6 +45,7 @@ def _activity(
     start_time: datetime | None = _T0_UTC,
     timezone: str | None = "Europe/Madrid",
     name: str | None = "Morning run",
+    import_info: dict | None = None,
 ) -> SimpleNamespace:
     """Return an activity shaped like the activities module's read schema."""
     return SimpleNamespace(
@@ -54,6 +55,7 @@ def _activity(
         start_time=start_time,
         timezone=timezone,
         name=name,
+        import_info=import_info,
         total_timer_time=seconds,
         total_elapsed_time=seconds,
         average_hr=average_hr,
@@ -794,6 +796,75 @@ class TestPowerDuration:
             pytest.raises(core_exceptions.InvalidInputError),
         ):
             analysis_service.get_power_duration(2, "run", _db(), fit_from_s=1800, fit_to_s=300)
+
+
+class TestCpTrend:
+    def _streams(self, watts_by_id: dict[int, list[float]]):
+        def _side_effect(activity_id, stream_type, _key, _db, *, keep_zeros):
+            if stream_type != activity_streams_constants.STREAM_TYPE_POWER:
+                return 1.0, (), ()
+            watts = watts_by_id.get(activity_id)
+            return (1.0, tuple(watts), ()) if watts else (1.0, (), ())
+
+        return _side_effect
+
+    def _run(self, activities, watts_by_id, settings=None, window_days=None):
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings or _settings()),
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}._stream_samples", side_effect=self._streams(watts_by_id)),
+        ):
+            return analysis_service.get_cp_trend(2, "run", _db(), window_days=window_days)
+
+    def test_sessions_that_define_a_line_each_get_one_point(self):
+        """Long varied efforts fit oldest-first; a short flat one cannot and is skipped."""
+        varied = [350.0] * 300 + [320.0] * 300 + [300.0] * 600 + [280.0] * 800
+        varied_old = [330.0] * 300 + [310.0] * 300 + [290.0] * 600 + [270.0] * 800
+        activities = [
+            _activity(1, start_time=_T0_UTC),
+            _activity(2, start_time=_T0_UTC - timedelta(days=5)),
+            _activity(3, start_time=_T0_UTC - timedelta(days=9)),  # only 600 s long
+        ]
+        series = self._run(activities, {1: varied, 2: varied_old, 3: [250.0] * 600})
+        assert [point.activity_id for point in series.points] == [2, 1]  # oldest first
+        point = series.points[-1]
+        assert point.cp_w > 0 and point.w_prime_j > 0 and point.cv_pct >= 0.0
+        assert point.date == _T0_UTC.date()
+        assert point.power_source is None
+
+    def test_the_power_source_tag_travels_to_the_point(self):
+        varied = [350.0] * 300 + [320.0] * 300 + [300.0] * 600 + [280.0] * 800
+        activity = _activity(1, start_time=_T0_UTC, import_info={"power_source": "stryd"})
+        series = self._run([activity], {1: varied})
+        assert series.points[0].power_source == "stryd"
+
+    def test_the_window_only_admits_recent_sessions(self):
+        varied = [350.0] * 300 + [320.0] * 300 + [300.0] * 600 + [280.0] * 800
+        recent = _activity(1, start_time=datetime.now(UTC) - timedelta(days=10))
+        old = _activity(2, start_time=datetime.now(UTC) - timedelta(days=500))
+        series = self._run([recent, old], {1: varied, 2: varied}, window_days=90)
+        assert [point.activity_id for point in series.points] == [1]
+        assert series.window_days == 90
+
+    def test_the_current_threshold_rides_along_as_reference(self):
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=250.0,
+                    w_prime_j=20000.0,
+                    source=analysis_constants.ThresholdSource.AUTO,
+                    cv_pct=2.0,
+                )
+            }
+        )
+        series = self._run([], {}, settings=settings)
+        assert series.points == []
+        assert series.threshold is not None
+        assert series.threshold.value_w == 250.0
+
+    def test_unknown_sport_is_refused(self):
+        with pytest.raises(core_exceptions.InvalidInputError):
+            analysis_service.get_cp_trend(2, "kitesurfing", _db())
 
 
 class TestWprimeBalance:

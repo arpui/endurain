@@ -19,6 +19,8 @@ export type PowerDurationOverlayDto = Schemas['PowerDurationOverlayRead']
 export type PowerDurationSessionDto = Schemas['PowerDurationSessionRead']
 export type WprimeBalanceDto = Schemas['WprimeBalanceRead']
 export type WprimePointDto = Schemas['WprimePointRead']
+export type CpTrendDto = Schemas['CpTrendRead']
+export type CpTrendPointDto = Schemas['CpTrendPointRead']
 
 /** Load formula keys, mirroring the backend `LoadMethod` enum. */
 export type LoadMethod =
@@ -200,6 +202,31 @@ export interface PowerDuration {
   threshold: PowerThreshold | null
   sessions: PowerDurationSession[]
   overlays: PowerDurationOverlay[]
+}
+
+/** One session's own fitted critical power, oldest first in the trend. */
+export interface CpTrendPoint {
+  activityId: number
+  /** Server date the session belongs to. */
+  date: string
+  /** Critical power fitted from this session's sustained efforts, in watts. */
+  cpW: number
+  /** Anaerobic work capacity fitted alongside, an index tied to the window. */
+  wPrimeJ: number
+  /** Fit error as a percentage of the mean. */
+  cvPct: number
+  /** Where the session's watts came from, when tagged (`stryd`, ...). */
+  powerSource: string | null
+}
+
+/** Critical-power evolution of one athlete and sport. */
+export interface CpTrend {
+  sport: string
+  /** Days of history covered, `null` for all of it. */
+  windowDays: number | null
+  /** The threshold the sport's loads currently use, the reference line. */
+  threshold: PowerThreshold | null
+  points: CpTrendPoint[]
 }
 
 /** One sample of a W' balance series. */

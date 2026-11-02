@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS to punktacja ważona intensywnością stojąca za dziennym obciążeniem; wiersze sumują się do wartości całej aktywności. „≈”: szacowane z tempa (skompensowanego nachyleniem) lub HR bez pomiaru mocy."
+  },
+  "cpTrend": {
+    "title": "Ewolucja mocy krytycznej",
+    "maLabel": "Okno średniej kroczącej",
+    "maOption": "Śr. krocząca {days} d",
+    "seriesMovingAverage": "Średnia krocząca ({days} dni)",
+    "seriesStryd": "Moc Stryd",
+    "seriesNative": "Moc z urządzenia",
+    "seriesThreshold": "Aktualny próg ({watts} W)",
+    "note": "Jeden punkt na sesję, dopasowany tylko z jej własnych utrzymywanych wysiłków; rozrzut punktów odzwierciedla jakość sesji, nie formę dnia.",
+    "emptyTitle": "Za mało nadających się sesji",
+    "emptyDescription": "Moc krytyczna wymaga sesji z co najmniej czterema utrzymywanymi wysiłkami między 5 a 30 minutami. Uzupełni się z czasem."
   }
 }

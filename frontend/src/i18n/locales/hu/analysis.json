@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "Az aRSS a napi terhelés mögötti intenzitással súlyozott pontszám; a sorok az edzés egészére adódnak. „≈”: lejtést korrigáló tempóból vagy pulzásból becsülve, ha nincs teljesítmény."
+  },
+  "cpTrend": {
+    "title": "A kritikus teljesítmény fejlődése",
+    "maLabel": "Görgetett átlag ablaka",
+    "maOption": "Görgetett {days} n",
+    "seriesMovingAverage": "Görgetett átlag ({days} nap)",
+    "seriesStryd": "Stryd teljesítmény",
+    "seriesNative": "Eszköz teljesítmény",
+    "seriesThreshold": "Jelenlegi küszöb ({watts} W)",
+    "note": "Minden edzéshez egy pont, csak a saját kitartó terheléseib illesztve; a pontok szórása az edzés minőségét tükrözi, nem a napi formát.",
+    "emptyTitle": "Még kevés az értelmezhető edzés",
+    "emptyDescription": "A kritikus teljesítményhez legalább négy kitartó terhelés kell 5 és 30 perc között. Idővel feltöltődik."
   }
 }

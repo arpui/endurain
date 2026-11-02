@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS is de intensiteit-gewogen score achter de dagelijkse belasting; de rijen tellen op tot het totaal van de activiteit. \"≈\": geschat uit (hellinggecompenseerd) tempo of hartslag zonder vermogensmeter."
+  },
+  "cpTrend": {
+    "title": "Ontwikkeling van kritisch vermogen",
+    "maLabel": "Venster voor gemiddelde",
+    "maOption": "Gemiddelde {days} d",
+    "seriesMovingAverage": "Voortschrijdend gemiddelde ({days} dagen)",
+    "seriesStryd": "Stryd-vermogen",
+    "seriesNative": "Apparaatvermogen",
+    "seriesThreshold": "Huidige drempel ({watts} W)",
+    "note": "Eén punt per sessie, alleen uit haar eigen volgehouden inspanningen past; de spreiding weerspiegelt de kwaliteit van elke sessie, niet de vorm van de dag.",
+    "emptyTitle": "Nog te weinig bruikbare sessies",
+    "emptyDescription": "Kritisch vermogen vereist sessies met minstens vier volgehouden inspanningen tussen 5 en 30 minuten. Het vult zich naarmate je ze verzamelt."
   }
 }

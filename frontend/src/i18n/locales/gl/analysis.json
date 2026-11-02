@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS é a puntuación ponderada pola intensidade que hai detrás da carga diaria; as filas suman o total da sesión. «≈»: estimado polo ritmo (pendente compensado) ou a FC cando non hai potencia."
+  },
+  "cpTrend": {
+    "title": "Evolución da potencia crítica",
+    "maLabel": "Ventá da media móbil",
+    "maOption": "Media móbil {days} d",
+    "seriesMovingAverage": "Media móbil ({days} días)",
+    "seriesStryd": "Potencia Stryd",
+    "seriesNative": "Potencia do dispositivo",
+    "seriesThreshold": "Umbral actual ({watts} W)",
+    "note": "Un punto por sesión, axustado só cos seus esforzos sostidos; a dispersión dos puntos reflicte a calidade de cada sesión, non a forma do día.",
+    "emptyTitle": "Aínda non hai sesións dabondo",
+    "emptyDescription": "A potencia crítica precisa sesións con polo menos catro esforzos sostidos entre 5 e 30 minutos. Encherase co tempo."
   }
 }

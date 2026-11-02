@@ -17,6 +17,7 @@ import {
 import { LOAD_METHODS, SPORT_GROUPS } from '@/features/analysis/constants'
 import { toIsoDate } from '@/utils/datetime'
 import AnalysisPmcChart from '@/features/analysis/components/AnalysisPmcChart.vue'
+import AnalysisCpTrendChart from '@/features/analysis/components/AnalysisCpTrendChart.vue'
 import AnalysisSettingsCard from '@/features/analysis/components/AnalysisSettingsCard.vue'
 
 const { t } = useI18n()
@@ -197,6 +198,8 @@ const seriesParams = computed(() => ({
         />
       </template>
     </template>
+
+    <AnalysisCpTrendChart />
 
     <Skeleton v-if="settingsQuery.isPending.value" class="h-64 w-full" />
     <AnalysisSettingsCard

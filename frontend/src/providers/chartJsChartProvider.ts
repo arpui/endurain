@@ -114,26 +114,26 @@ export function buildChartConfiguration(
         yAxisID,
         borderColor: color,
         backgroundColor: series.area ? withAlpha(color, AREA_FILL_ALPHA) : color,
-        borderWidth: 2,
+        borderWidth: series.dots ? 0 : 2,
         borderDash: series.dashed ? [6, 6] : undefined,
         fill: series.area ? 'origin' : false,
         tension: series.dashed ? 0 : 0.3,
-        pointRadius: 0,
+        pointRadius: series.dots ? 3 : 0,
       }
     }
     // Line/area charts get a flat translucent fill below the line (a calm tint,
     // not a gradient — per the design system); bars stay solid.
-    const filled = type === 'line'
+    const filled = type === 'line' && !series.dots
     return {
       label: series.label,
       data: series.data,
       yAxisID,
       borderColor: color,
       backgroundColor: filled ? withAlpha(color, AREA_FILL_ALPHA) : color,
-      borderWidth: 2,
+      borderWidth: series.dots ? 0 : 2,
       fill: filled,
       tension: 0.3,
-      pointRadius: 0,
+      pointRadius: series.dots ? 3 : 0,
     }
   })
 

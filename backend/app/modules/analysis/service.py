@@ -1061,6 +1061,81 @@ def get_power_duration(
     )
 
 
+def get_cp_trend(
+    user_id: int,
+    sport: str,
+    db: Session,
+    *,
+    window_days: int | None = None,
+) -> analysis_schema.CpTrendRead:
+    """Return one critical-power point per session, oldest first.
+
+    Each session's own samples give its own duration-intensity curve; fitting
+    that curve with the default 5-30 min window answers "what was this athlete's
+    critical power *that day*", the evolution the single all-time curve cannot
+    show. Sessions too short to hold efforts across four window durations cannot
+    define a line and are skipped, exactly as in the threshold pass. The stored
+    threshold rides along as the reference line the points move around.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group to read.
+        db: Database session.
+        window_days: Restrict to sessions started within this many days.
+
+    Returns:
+        The per-session fits plus the current threshold, for one sport.
+
+    Raises:
+        InvalidInputError: If the sport is unknown.
+    """
+    if sport not in activity_constants.ACTIVITY_TYPES_BY_SPORT:
+        raise core_exceptions.InvalidInputError(f"Unknown sport '{sport}'")
+    settings = get_settings(user_id, db)
+    earliest: datetime | None = None
+    if window_days is not None:
+        earliest = datetime.now(UTC) - timedelta(days=window_days)
+
+    points: list[analysis_schema.CpTrendPointRead] = []
+    activities = activity_integration.list_user_activities(user_id, db)
+    for activity in sorted(activities, key=lambda item: item.start_time or datetime.min.replace(tzinfo=UTC)):
+        if sport_group(activity.activity_type) != sport:
+            continue
+        started = activity.start_time
+        if started is None or (earliest is not None and started < earliest):
+            continue
+        period_s, power_w, _ = _stream_samples(
+            activity.id,
+            activity_streams_constants.STREAM_TYPE_POWER,
+            "power",
+            db,
+            keep_zeros=True,
+        )
+        if not power_w:
+            continue
+        means = analysis_maths.best_means(power_w, period_s)
+        fit = analysis_maths.fit_cp_wprime(means)
+        if fit is None:
+            continue
+        points.append(
+            analysis_schema.CpTrendPointRead(
+                activity_id=activity.id,
+                date=started.date(),
+                cp_w=round(fit[0], 1),
+                w_prime_j=round(fit[1], 1),
+                cv_pct=round(fit[2], 2),
+                power_source=(activity.import_info or {}).get("power_source"),
+            )
+        )
+
+    return analysis_schema.CpTrendRead(
+        sport=sport,
+        window_days=window_days,
+        threshold=settings.power_thresholds.get(sport),
+        points=points,
+    )
+
+
 def get_wprime_balance(
     activity_id: int,
     requester_user_id: int,

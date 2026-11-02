@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS ir ar intensitāti svērts rādītājs aiz dienas slodzes; rindas summējas aktivitātes kopsummā. „≈“: novērtēts no (slīpumu kompensējoša) tempa vai sirdsdarbības bez jaudas mērījuma."
+  },
+  "cpTrend": {
+    "title": "Kritiskās jaudas attīstība",
+    "maLabel": "Slīdošā vidējā logs",
+    "maOption": "Slīdošais {days} d",
+    "seriesMovingAverage": "Slīdošais vidējais ({days} dienas)",
+    "seriesStryd": "Stryd jauda",
+    "seriesNative": "Ierīces jauda",
+    "seriesThreshold": "Pašreizējais slieksnis ({watts} W)",
+    "note": "Viens punkts par nodarbību, pielāgots tikai no tās pašas izturīgajiem pūliņiem; punktu izkliede atspilda nodarbības kvalitāti, ne dienas formu.",
+    "emptyTitle": "Vēl par maz izmantojamu nodarbību",
+    "emptyDescription": "Kritiskajai jaudai nepieciešamas nodarbības ar vismaz četriem izturīgiem pūliņiem no 5 līdz 30 minūtēm. Laika gaitā aizpildās."
   }
 }

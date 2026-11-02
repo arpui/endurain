@@ -427,6 +427,13 @@ export const queryKeys = {
      */
     bestTimes: (months: number | null) => ['analysis', 'best-times', months] as const,
     /**
+     * @param sport - Sport group the trend belongs to.
+     * @param windowDays - Days of history, `null` for all of it.
+     * @returns A critical-power trend key scoped to the given view.
+     */
+    cpTrend: (sport: string, windowDays: number | null) =>
+      ['analysis', 'cp-trend', sport, windowDays] as const,
+    /**
      * @param id - Activity whose per-lap dynamics are keyed.
      * @returns A lap-dynamics query key for one activity.
      */

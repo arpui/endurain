@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS je ocena ponderisana intenzitetom iza dnevne opterećenosti; redovi se sabiraju u ukupan zbir aktivnosti. „≈”: procenjeno iz (nagibom kompenzovanog) tempa ili FT bez snage."
+  },
+  "cpTrend": {
+    "title": "Кретање критичне снаге",
+    "maLabel": "Прозор клизне средње вредности",
+    "maOption": "Клизно {days} д",
+    "seriesMovingAverage": "Клизни просек ({days} дана)",
+    "seriesStryd": "Stryd снага",
+    "seriesNative": "Снага уређаја",
+    "seriesThreshold": "Тренутни праг ({watts} W)",
+    "note": "Једна тачка по сесији, прилагођена само из сопствених издржљивих напора; расејаност тачака одражава квалитет сесије, не форму дана.",
+    "emptyTitle": "Још има премало употребљивих сесија",
+    "emptyDescription": "Критична снага захтева сесије са бар четири издржљива напора између 5 и 30 минута. Попуњава се временом."
   }
 }

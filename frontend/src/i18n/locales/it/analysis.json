@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS è il punteggio ponderato per intensità alla base del carico giornaliero; le righe sommano il totale dell'attività. «≈»: stimato da ritmo (pendenza compensata) o FC quando non cè potenza."
+  },
+  "cpTrend": {
+    "title": "Evoluzione della potenza critica",
+    "maLabel": "Finestra media mobile",
+    "maOption": "Media mobile {days} g",
+    "seriesMovingAverage": "Media mobile ({days} giorni)",
+    "seriesStryd": "Potenza Stryd",
+    "seriesNative": "Potenza del dispositivo",
+    "seriesThreshold": "Soglia attuale ({watts} W)",
+    "note": "Un punto per sessione, adattato solo dai suoi sforzi sostenuti; la dispersione dei punti riflette la qualità di ogni sessione, non la forma del giorno.",
+    "emptyTitle": "Ancora non ci sono abbastanza sessioni idonee",
+    "emptyDescription": "La potenza critica richiede sessioni con almeno quattro sforzi sostenuti tra 5 e 30 minuti. Si riempirà con il tempo."
   }
 }
