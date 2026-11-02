@@ -6,7 +6,10 @@
     "label": "Zakres czasu",
     "30": "30 dni",
     "90": "90 dni",
-    "365": "365 dni"
+    "365": "365 dni",
+    "1095": "1095 dni",
+    "all": "Cała historia",
+    "730": "730 dni"
   },
   "method": {
     "label": "Wzór obciążenia",

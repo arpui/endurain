@@ -6,7 +6,10 @@
     "label": "Zeitraum",
     "30": "30 Tage",
     "90": "90 Tage",
-    "365": "365 Tage"
+    "365": "365 Tage",
+    "1095": "1095 Tage",
+    "all": "Gesamter Zeitraum",
+    "730": "730 Tage"
   },
   "method": {
     "label": "Belastungsformel",

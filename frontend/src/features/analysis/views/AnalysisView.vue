@@ -22,7 +22,7 @@ import AnalysisSettingsCard from '@/features/analysis/components/AnalysisSetting
 const { t } = useI18n()
 
 /** Selectable history windows, in days, in display order. */
-const WINDOW_OPTIONS = [30, 90, 365]
+const WINDOW_OPTIONS = [30, 90, 365, 730, 1095, 0]
 
 const windowDays = ref(90)
 const method = ref<LoadMethod>('coggan_tss')
@@ -42,7 +42,7 @@ function buildQuery(): FitnessQuery {
   return {
     method: method.value,
     sport: sport.value === '' ? undefined : sport.value,
-    fromDate: daysAgo(windowDays.value - 1),
+    fromDate: windowDays.value === 0 ? undefined : daysAgo(windowDays.value - 1),
     toDate: today(),
   }
 }
@@ -134,7 +134,7 @@ const seriesParams = computed(() => ({
         @change="applyQuery"
       >
         <option v-for="days in WINDOW_OPTIONS" :key="days" :value="days">
-          {{ t(`analysis.window.${days}`) }}
+          {{ t(`analysis.window.${days === 0 ? 'all' : days}`) }}
         </option>
       </Select>
       <Select

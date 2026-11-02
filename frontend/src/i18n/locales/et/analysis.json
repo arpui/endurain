@@ -6,7 +6,10 @@
     "label": "Ajavahemik",
     "30": "30 päeva",
     "90": "90 päeva",
-    "365": "365 päeva"
+    "365": "365 päeva",
+    "1095": "1095 päeva",
+    "all": "Kogu ajalugu",
+    "730": "730 päeva"
   },
   "method": {
     "label": "Koormuse valem",
