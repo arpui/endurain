@@ -841,3 +841,58 @@ class TestParseFrameActivity:
     def test_accepts_utc_plus_14_boundary(self):
         frame = _RawFrame(timestamp=1_000_000, local_timestamp=1_000_000 + 14 * 3600)
         assert fit_frames.parse_frame_activity(frame) == 14 * 3600
+
+
+class TestStrydDeveloperPowerField:
+    """Stryd writes ``Power`` as a developer field on watches lacking a power field."""
+
+    @staticmethod
+    def _record_frame(**values):
+        return _MockFrame(**values)
+
+    def test_power_falls_back_to_the_developer_field(self):
+        frame = self._record_frame(
+            position_lat=None,
+            position_long=None,
+            enhanced_altitude=None,
+            timestamp=datetime(2026, 1, 16, 14, 4, 26, tzinfo=UTC),
+            heart_rate=150,
+            cadence=170,
+            Power=251,
+            temperature=None,
+        )
+        *_, power, _temperature = fit_frames.parse_frame_record(frame)
+        assert power == 251
+
+    def test_the_standard_field_wins_over_the_developer_field(self):
+        frame = self._record_frame(
+            position_lat=None,
+            position_long=None,
+            enhanced_altitude=None,
+            timestamp=datetime(2026, 1, 16, 14, 4, 26, tzinfo=UTC),
+            heart_rate=150,
+            cadence=170,
+            power=240,
+            Power=999,
+            temperature=None,
+        )
+        *_, power, _temperature = fit_frames.parse_frame_record(frame)
+        assert power == 240
+
+    def test_a_run_with_only_developer_power_gets_its_power_metrics_computed(self):
+        """The session carries no power summary; the waypoints drive avg/max/NP."""
+        record = _session_record("garmin", "fenix 6X")
+        record["is_power_set"] = True
+        record["power_waypoints"] = [
+            {"time": "2026-01-16T14:04:26", "power": 250},
+            {"time": "2026-01-16T14:04:27", "power": 300},
+            {"time": "2026-01-16T14:04:28", "power": 250},
+        ]
+        record["session"]["avg_power"] = None
+        record["session"]["max_power"] = None
+        record["session"]["np"] = None
+        created = fit_utils.create_activity_objects([record], user_id=1, default_timezone=_SERVER_TZ)
+        activity = created[0]["activity"]
+        assert activity.average_power == 267  # mean of 250/300/250 rounded
+        assert activity.max_power == 300
+        assert activity.normalized_power is not None and activity.normalized_power >= 250

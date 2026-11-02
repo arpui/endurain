@@ -122,6 +122,11 @@ def parse_frame_record(frame):
     heart_rate = get_value_from_frame(frame, "heart_rate")
     cadence = get_value_from_frame(frame, "cadence")
     power = get_value_from_frame(frame, "power")
+    if power is None:
+        # Stryd writes its reading to a developer field named "Power" on watches
+        # without a standard power field (the fenix6x era); fall back to it so
+        # pod-metered runs score as powered activities.
+        power = get_value_from_frame(frame, "Power")
     temperature = get_value_from_frame(frame, "temperature")
 
     latitude, longitude = convert_coordinates_to_degrees(latitude, longitude)
