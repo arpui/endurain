@@ -6,7 +6,10 @@
     "label": "Période",
     "30": "30 jours",
     "90": "90 jours",
-    "365": "365 jours"
+    "365": "365 jours",
+    "1095": "1095 jours",
+    "all": "Tout l’historique",
+    "730": "730 jours"
   },
   "method": {
     "label": "Formule de charge",

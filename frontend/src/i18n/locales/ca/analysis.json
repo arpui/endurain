@@ -6,7 +6,10 @@
     "label": "Finestra temporal",
     "30": "30 dies",
     "90": "90 dies",
-    "365": "365 dies"
+    "365": "365 dies",
+    "1095": "1095 dies",
+    "all": "Tot",
+    "730": "730 dies"
   },
   "method": {
     "label": "Fórmula de càrrega",

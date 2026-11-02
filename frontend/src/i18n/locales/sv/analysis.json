@@ -6,7 +6,10 @@
     "label": "Period",
     "30": "30 dagar",
     "90": "90 dagar",
-    "365": "365 dagar"
+    "365": "365 dagar",
+    "1095": "1095 dagar",
+    "all": "All tid",
+    "730": "730 dagar"
   },
   "method": {
     "label": "Belastningsformel",

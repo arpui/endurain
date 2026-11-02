@@ -6,7 +6,10 @@
     "label": "Razdoblje",
     "30": "30 dana",
     "90": "90 dana",
-    "365": "365 dana"
+    "365": "365 dana",
+    "1095": "1095 dana",
+    "all": "Cijela povijest",
+    "730": "730 dana"
   },
   "method": {
     "label": "Formula opterećenja",

@@ -6,7 +6,10 @@
     "label": "Laikotarpis",
     "30": "30 d.",
     "90": "90 d.",
-    "365": "365 d."
+    "365": "365 d.",
+    "1095": "1095 d.",
+    "all": "Visa istorija",
+    "730": "730 d."
   },
   "method": {
     "label": "Krūvio formulė",

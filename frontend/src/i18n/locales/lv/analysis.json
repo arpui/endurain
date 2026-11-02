@@ -6,7 +6,10 @@
     "label": "Laika posms",
     "30": "30 dienas",
     "90": "90 dienas",
-    "365": "365 dienas"
+    "365": "365 dienas",
+    "1095": "1095 dienas",
+    "all": "Visa vēsture",
+    "730": "730 dienas"
   },
   "method": {
     "label": "Slodzes formula",
