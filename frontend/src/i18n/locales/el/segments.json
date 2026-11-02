@@ -3,6 +3,7 @@
   "subtitle": "Τμήματα διαδρομής μετρημένα στις δραστηριότητές σου.",
   "loading": "Φόρτωση τμημάτων…",
   "sourceStrava": "από Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "ορισμένο εδώ",
   "elevation": "Υψομετρική διαφορά",
   "map": {

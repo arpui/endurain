@@ -3,6 +3,7 @@
   "subtitle": "Ruteseksjoner målt på tvers av aktivitetene dine.",
   "loading": "Laster segmenter…",
   "sourceStrava": "fra Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definert her",
   "elevation": "Stigning",
   "map": {

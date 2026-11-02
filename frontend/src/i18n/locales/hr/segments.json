@@ -3,6 +3,7 @@
   "subtitle": "Dionice rute mjerene kroz vaše aktivnosti.",
   "loading": "Učitavanje dionica…",
   "sourceStrava": "sa Strave",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definirano ovdje",
   "elevation": "Visinska razlika",
   "map": {

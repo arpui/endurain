@@ -3,6 +3,7 @@
   "subtitle": "Deoni poti, merjeni po svojih aktivnostih.",
   "loading": "Nalaganje odsekov…",
   "sourceStrava": "iz Strave",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "določen tukaj",
   "elevation": "Višinska razlika",
   "map": {

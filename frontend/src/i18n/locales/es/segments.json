@@ -3,6 +3,7 @@
   "subtitle": "Tramos medidos dentro de tus actividades.",
   "loading": "Cargando segmentos…",
   "sourceStrava": "de Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definido aquí",
   "elevation": "Altitud",
   "map": {

@@ -3,6 +3,7 @@
   "subtitle": "Ділянки маршруту, виміряні у ваших активностях.",
   "loading": "Завантаження відрізків…",
   "sourceStrava": "зі Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "визначено тут",
   "elevation": "Підйом",
   "map": {

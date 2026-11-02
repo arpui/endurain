@@ -3,6 +3,7 @@
   "subtitle": "Etkinliklerinde ölçülen rota bölümleri.",
   "loading": "Segmentler yükleniyor…",
   "sourceStrava": "Strava'dan",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "burada tanımlandı",
   "elevation": "Yükselme",
   "map": {

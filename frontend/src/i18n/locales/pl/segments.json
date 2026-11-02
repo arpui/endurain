@@ -3,6 +3,7 @@
   "subtitle": "Fragmenty trasy mierzone w Twoich aktywnościach.",
   "loading": "Wczytywanie odcinków…",
   "sourceStrava": "ze Stravy",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "zdefiniowany tutaj",
   "elevation": "Przewyższenie",
   "map": {

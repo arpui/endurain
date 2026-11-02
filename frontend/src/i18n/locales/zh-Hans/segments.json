@@ -3,6 +3,7 @@
   "subtitle": "在你的活动中测量的路段。",
   "loading": "正在加载路段…",
   "sourceStrava": "来自 Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "在此定义",
   "elevation": "海拔",
   "map": {

@@ -3,6 +3,7 @@
   "subtitle": "Trams mesurats dins de les teves activitats.",
   "loading": "Carregant segments…",
   "sourceStrava": "de Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definit aquí",
   "elevation": "Altitud",
   "map": {

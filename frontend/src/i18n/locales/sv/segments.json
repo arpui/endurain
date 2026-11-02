@@ -3,6 +3,7 @@
   "subtitle": "Västräckor mätta över dina aktiviteter.",
   "loading": "Laddar segment…",
   "sourceStrava": "från Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definierad här",
   "elevation": "Höjdmeter",
   "map": {

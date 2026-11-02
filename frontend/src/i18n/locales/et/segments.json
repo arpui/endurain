@@ -3,6 +3,7 @@
   "subtitle": "Maršruudi lõigud, mida mõõdetakse sinu tegevustes.",
   "loading": "Lõikude laadimine…",
   "sourceStrava": "Stravast",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "määratletud siin",
   "elevation": "Tõus",
   "map": {
