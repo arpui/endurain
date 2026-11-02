@@ -58,7 +58,7 @@ class LoadInput:
     grade_pct: tuple[float, ...] | None = None
     power_threshold_w: float | None = None
     speed_threshold_ms: float | None = None
-    pace_calibration: tuple[float, float] | None = None
+    pace_calibration: Sequence[float] | None = None
     hr_threshold_bpm: float | None = None
     resting_hr_bpm: float | None = None
     parameters: Mapping[str, float] = field(default_factory=dict)
@@ -385,13 +385,54 @@ def pace_window(
     return None
 
 
+def _split_pace_calibration(calibration: Sequence[float] | None) -> tuple[float, float, float]:
+    """Return the pace-to-watts map as ``(slope, intercept, grade_w_per_ms_pct)``.
+
+    Maps stored before the grade term carried only two coefficients; the grade
+    term completes as zero, which keeps their scoring bit-for-bit the old one.
+    """
+    if not calibration:
+        return 0.0, 0.0, 0.0
+    return (
+        float(calibration[0]),
+        float(calibration[1]),
+        float(calibration[2]) if len(calibration) > 2 else 0.0,
+    )
+
+
+def _pace_watts(
+    pace_ms: Sequence[float],
+    grades_pct: Sequence[float] | None,
+    slope: float,
+    intercept: float,
+    grade_coef: float,
+) -> list[float]:
+    """Walk the athlete's pace series through the pace-to-watts map.
+
+    With a grade term fitted, each second's watts also ride the sample's own
+    grade (clipped at ``PACE_CAL_GRADE_CAP_PCT``): the steady-state GAP model
+    under-reads effort on moderate climbs and over-reads it on descents, and the
+    term is what the athlete's paired streams say the model owes them. On flat
+    ground - or without the term - the map is exactly the fitted line.
+    """
+    if grade_coef == 0.0 or not grades_pct:
+        return [slope * value + intercept for value in pace_ms]
+    cap = analysis_constants.PACE_CAL_GRADE_CAP_PCT
+    values: list[float] = []
+    for index, value in enumerate(pace_ms):
+        grade = grades_pct[index] if index < len(grades_pct) else 0.0
+        clipped = min(max(float(grade), -cap), cap)
+        values.append(slope * value + intercept + grade_coef * value * clipped)
+    return values
+
+
 def _pace_signal(
     speeds_ms: Sequence[float],
     period_s: float,
     speed_threshold_ms: float,
     grades_pct: Sequence[float] | None,
     power_threshold_w: float | None,
-    calibration: tuple[float, float] | None,
+    calibration: Sequence[float] | None,
     params: Mapping[str, float],
 ) -> tuple[list[float], float]:
     """Return the values and divisor the pace source scores.
@@ -404,8 +445,8 @@ def _pace_signal(
     """
     adjusted = pace_series(speeds_ms, period_s, speed_threshold_ms, grades_pct, params)
     if calibration and power_threshold_w and power_threshold_w > 0:
-        slope, intercept = calibration
-        return [slope * value + intercept for value in adjusted], float(power_threshold_w)
+        slope, intercept, grade_coef = _split_pace_calibration(calibration)
+        return _pace_watts(adjusted, grades_pct, slope, intercept, grade_coef), float(power_threshold_w)
     return list(adjusted), float(speed_threshold_ms)
 
 
@@ -480,16 +521,18 @@ def _pace_window_score(
     speed_threshold_ms: float,
     params: Mapping[str, float],
     power_threshold_w: float | None = None,
-    calibration: tuple[float, float] | None = None,
+    calibration: Sequence[float] | None = None,
+    grades_pct: Sequence[float] | None = None,
 ) -> float:
     """Score a window from the activity's pace series: GAP has already paid for terrain.
 
     ``pace_ms`` is the slice of :func:`pace_series` - capped, adjusted and smoothed
-    once over the whole stream - never raw GPS speed.
+    once over the whole stream - never raw GPS speed. ``grades_pct`` is the aligned
+    grade slice, used only when the athlete's map carries a grade term.
     """
     if calibration and power_threshold_w and power_threshold_w > 0:
-        slope, intercept = calibration
-        values = [slope * value + intercept for value in pace_ms]
+        slope, intercept, grade_coef = _split_pace_calibration(calibration)
+        values = _pace_watts(pace_ms, grades_pct, slope, intercept, grade_coef)
         divisor = float(power_threshold_w)
     else:
         values = list(pace_ms)
@@ -517,7 +560,7 @@ def window_stress_chain(
     speed_threshold_ms: float | None,
     hr_threshold_bpm: float | None,
     parameters: Mapping[str, float] | None = None,
-    pace_calibration: tuple[float, float] | None = None,
+    pace_calibration: Sequence[float] | None = None,
 ) -> tuple[float, str | None]:
     """Return a window's shared-scale aRSS from the best signal the device carried.
 
@@ -560,7 +603,7 @@ def window_scores_by_source(
     speed_threshold_ms: float | None,
     hr_threshold_bpm: float | None,
     parameters: Mapping[str, float] | None = None,
-    pace_calibration: tuple[float, float] | None = None,
+    pace_calibration: Sequence[float] | None = None,
 ) -> dict[str, float]:
     """Score one window with *every* signal and threshold pair it can read.
 
@@ -579,7 +622,9 @@ def window_scores_by_source(
         if score > 0:
             scores["power"] = score
     if pace_ms and speed_threshold_ms and speed_threshold_ms > 0:
-        score = _pace_window_score(pace_ms, period_s, float(speed_threshold_ms), params, threshold_w, pace_calibration)
+        score = _pace_window_score(
+            pace_ms, period_s, float(speed_threshold_ms), params, threshold_w, pace_calibration, grades_pct
+        )
         if score > 0:
             scores["pace"] = score
     if hr_bpm and hr_threshold_bpm and hr_threshold_bpm > 0:

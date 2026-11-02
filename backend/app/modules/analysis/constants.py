@@ -249,6 +249,11 @@ PACE_INTENSITY_CEILING = 2.5
 #: seconds, so that is the resolution pace scores at.
 PACE_SMOOTH_WINDOW_S = 20.0
 
+#: Grade clip (percent) for the calibration's grade term: what the steady-state
+#: GAP model under-reads grows with grade to ~8-10 % and flips past that, so the
+#: correction saturates at this band edge rather than extrapolating steep trails.
+PACE_CAL_GRADE_CAP_PCT = 6.0
+
 #: Minimum paired samples (seconds) before a pace-to-watts calibration is trusted.
 PACE_CAL_MIN_SECONDS = 1800
 

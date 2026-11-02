@@ -82,6 +82,12 @@ class PaceCalibrationRead(BaseModel):
         slope_w_per_ms: Watts gained per metre/second of adjusted pace.
         intercept_w: Watts the line assigns to standing still; an artefact of the
             fit, only the line over the athlete's real pace range is meaningful.
+        grade_w_per_ms_pct: Watts added per (metre/second x grade percent) of the
+            sample's own grade, clipped to the grade band the GAP model is trusted
+            in. It carries the effort the steady-state cost model misses on moderate
+            climbs and the coasting it over-reads on descents; on flat ground it
+            changes nothing. ``0.0`` means no term (maps stored before it existed
+            keep scoring exactly as before).
         r2: Squared correlation over the paired samples; low values mean the
             athlete's pace explains little of their power.
         source: Whether the map was derived from records or stated by the athlete.
@@ -91,6 +97,7 @@ class PaceCalibrationRead(BaseModel):
 
     slope_w_per_ms: StrictFloat
     intercept_w: StrictFloat
+    grade_w_per_ms_pct: StrictFloat = 0.0
     r2: StrictFloat | None = None
     source: analysis_constants.ThresholdSource
 
