@@ -3,6 +3,7 @@
   "subtitle": "Участъци от маршрута, мерени в активностите ти.",
   "loading": "Зареждане на сегментите…",
   "sourceStrava": "от Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "дефиниран тук",
   "elevation": "Изкачване",
   "map": {

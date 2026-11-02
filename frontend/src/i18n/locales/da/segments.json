@@ -3,6 +3,7 @@
   "subtitle": "Rutestrækninger målt på tværs af dine aktiviteter.",
   "loading": "Indlæser segmenter…",
   "sourceStrava": "fra Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "defineret her",
   "elevation": "Højdemeter",
   "map": {

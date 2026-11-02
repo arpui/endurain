@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RefreshCw, Trash2 } from '@lucide/vue'
+import { ExternalLink, RefreshCw, Trash2 } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import type { EffortDirectionFilter, SegmentEffort } from '@/features/segments/types'
@@ -85,6 +85,15 @@ const metaLine = computed(() => {
   return parts.join(' · ')
 })
 
+/** Where the segment came from: the Strava page, when the source carries its id. */
+const stravaUrl = computed(() => {
+  const current = segment.value
+  if (!current || current.source !== 'strava' || !current.sourceId) {
+    return null
+  }
+  return `https://www.strava.com/segments/${current.sourceId}`
+})
+
 const backfillMutation = useSegmentsBackfillMutation()
 
 /** Queues a re-match; useful when the effort list is empty for an imported segment. */
@@ -134,6 +143,17 @@ function confirmDelete(): void {
           <p class="text-body text-muted-foreground">
             {{ metaLine }} ·
             {{ t(segment.source === 'manual' ? 'segments.sourceManual' : 'segments.sourceStrava') }}
+
+            <a
+              v-if="stravaUrl"
+              :href="stravaUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 underline underline-offset-2"
+            >
+              <ExternalLink class="size-3" aria-hidden="true" />
+              {{ t('segments.stravaLink', { id: segment.sourceId }) }}
+            </a>
           </p>
         </div>
         <div class="flex flex-wrap gap-2">

@@ -3,6 +3,7 @@
   "subtitle": "Streckenabschnitte, gemessen über deine Aktivitäten.",
   "loading": "Segmente werden geladen …",
   "sourceStrava": "von Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "hier definiert",
   "elevation": "Höhe",
   "map": {

@@ -3,6 +3,7 @@
   "subtitle": "Route sections measured across your activities.",
   "loading": "Loading segments…",
   "sourceStrava": "from Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "defined here",
   "elevation": "Elevation",
   "map": {

@@ -3,6 +3,7 @@
   "subtitle": "Reittiosuuksia, mitattuna aktiviteeteissasi.",
   "loading": "Ladataan osioita…",
   "sourceStrava": "Stravasta",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "määritelty täällä",
   "elevation": "Nousu",
   "map": {

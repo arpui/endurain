@@ -3,6 +3,7 @@
   "subtitle": "Delovi rute mereni kroz vaše aktivnosti.",
   "loading": "Učitavanje deonica…",
   "sourceStrava": "sa Strave",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definisan ovde",
   "elevation": "Visinska razlika",
   "map": {

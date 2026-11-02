@@ -3,6 +3,7 @@
   "subtitle": "Maršruto atkarpos, matuojamos tavo veiklose.",
   "loading": "Įkeliama atkarpos…",
   "sourceStrava": "iš Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "apibrėžta čia",
   "elevation": "Aukščio pokytis",
   "map": {

@@ -3,6 +3,7 @@
   "subtitle": "Úseky trate merané naprieč tvojimi aktivitami.",
   "loading": "Načítam sekcie…",
   "sourceStrava": "zo Stravy",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definované tu",
   "elevation": "Prevýšenie",
   "map": {

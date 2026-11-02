@@ -3,6 +3,7 @@
   "subtitle": "Routestukken gemeten over je activiteiten.",
   "loading": "Segmenten laden…",
   "sourceStrava": "van Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "hier gedefinieerd",
   "elevation": "Hoogte",
   "map": {

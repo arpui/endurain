@@ -3,6 +3,7 @@
   "subtitle": "Troços de percurso medidos nas tuas atividades.",
   "loading": "A carregar segmentos…",
   "sourceStrava": "do Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definido aqui",
   "elevation": "Elevação",
   "map": {

@@ -3,6 +3,7 @@
   "subtitle": "Útvonal-szakaszok, amelyeket a tevékenységeidben mérsz.",
   "loading": "Szakaszok betöltése…",
   "sourceStrava": "Stravából",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "itt definiálva",
   "elevation": "Szintemelkedés",
   "map": {

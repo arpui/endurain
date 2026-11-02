@@ -3,6 +3,7 @@
   "subtitle": "Úseky tratě měřené napříč tvými aktivitami.",
   "loading": "Načítám sekce…",
   "sourceStrava": "ze Stravy",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definováno zde",
   "elevation": "Převýšení",
   "map": {

@@ -3,6 +3,7 @@
   "subtitle": "Tramos de ruta medidos nas túas actividades.",
   "loading": "Cargando segmentos…",
   "sourceStrava": "de Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definido aquí",
   "elevation": "Desnivel",
   "map": {

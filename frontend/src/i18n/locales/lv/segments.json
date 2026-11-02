@@ -3,6 +3,7 @@
   "subtitle": "Maršruta posmi, mērīti tavās aktivitātēs.",
   "loading": "Ielādē posmus…",
   "sourceStrava": "no Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definēts šeit",
   "elevation": "Augstuma ieguvums",
   "map": {

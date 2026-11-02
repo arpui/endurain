@@ -3,6 +3,7 @@
   "subtitle": "Tratti di percorso misurati nelle tue attività.",
   "loading": "Caricamento segmenti…",
   "sourceStrava": "da Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definito qui",
   "elevation": "Dislivello",
   "map": {

@@ -133,6 +133,7 @@ function sourceLabelKey(source: string): string {
             </span>
             <span class="text-caption shrink-0 text-muted-foreground">
               {{ t(sourceLabelKey(segment.source)) }}
+              <span v-if="segment.sourceId"> · {{ segment.sourceId }}</span>
               <span v-if="segment.effortCount > 0">
                 · {{ t('segments.effortCount', { count: segment.effortCount }) }}
               </span>

@@ -3,6 +3,7 @@
   "subtitle": "Sections de parcours mesurées sur vos activités.",
   "loading": "Chargement des segments…",
   "sourceStrava": "de Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "défini ici",
   "elevation": "Dénivelé",
   "map": {

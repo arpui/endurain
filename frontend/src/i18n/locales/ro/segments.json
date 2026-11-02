@@ -3,6 +3,7 @@
   "subtitle": "Porțiuni de traseu măsurate în activitățile tale.",
   "loading": "Se încarcă segmentele…",
   "sourceStrava": "din Strava",
+  "stravaLink": "Strava #{id}",
   "sourceManual": "definit aici",
   "elevation": "Diferență de nivel",
   "map": {
