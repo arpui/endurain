@@ -79,6 +79,7 @@
       "addSpeed": "Додати критичну швидкість",
       "paceCalib": "Калібрування темп→вати",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "ухил {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Апроксимація від (s)",

@@ -79,6 +79,7 @@
       "addSpeed": "Aggiungi velocità critica",
       "paceCalib": "Calibrazione ritmo→watt",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "pendenza {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Fit da (s)",

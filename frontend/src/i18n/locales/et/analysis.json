@@ -79,6 +79,7 @@
       "addSpeed": "Lisa kriitiline kiirus",
       "paceCalib": "Tempo-vati kalibreerimine",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "kalle {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Sobitamine alates (s)",

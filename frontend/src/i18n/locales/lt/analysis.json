@@ -79,6 +79,7 @@
       "addSpeed": "Pridėti kritinį greitį",
       "paceCalib": "Tempo→vatų kalibracija",
       "paceCalibR2": "r²",
+      "paceCalibGrade": "nuolydis {grade} W",
       "bpmPlaceholder": "bpm"
     },
     "fitFromS": "Derinimas nuo (s)",

@@ -545,6 +545,13 @@ function queueRecompute(): void {
           {{ Math.round(cal.slopeWPerMs) }} W · {{ t('analysis.settings.thresholds.paceCalibR2') }}
           {{ cal.r2 === null ? '--' : cal.r2.toFixed(2) }}
         </span>
+        <span v-if="cal.gradeWPerMsPct !== 0" class="text-body tabular-nums text-muted-foreground">
+          {{
+            t('analysis.settings.thresholds.paceCalibGrade', {
+              grade: cal.gradeWPerMsPct.toFixed(1),
+            })
+          }}
+        </span>
         <Badge variant="secondary">
           {{
             cal.source === 'manual'
