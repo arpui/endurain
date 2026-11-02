@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS er den intensitetsvektede poengsummen bak den daglige belastningen; radene summeres til aktivitetens total. «≈»: estimert fra (stigningskorrigert) tempo eller puls uten effekt."
+  },
+  "cpTrend": {
+    "title": "Kritisk effekt over tid",
+    "maLabel": "Rullende gjennomsnittsvindu",
+    "maOption": "Rullende {days} d",
+    "seriesMovingAverage": "Rullende gjennomsnitt ({days} dager)",
+    "seriesStryd": "Stryd-effekt",
+    "seriesNative": "Enhetseffekt",
+    "seriesThreshold": "Nåværende terskel ({watts} W)",
+    "note": "Ett punkt per økt, tilpasset kun fra øktas egne vedvarende innsatser; spredningen speiler hver økts kvalitet, ikke dagsformen.",
+    "emptyTitle": "For få brukbare økter ennå",
+    "emptyDescription": "Kritisk effekt krever økter med minst fire vedvarende innsatser mellom 5 og 30 minutter. Den fylles etter hvert."
   }
 }

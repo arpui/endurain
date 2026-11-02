@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Ekv.",
     "rssNote": "aRSS on intensiteettipainotettu pisteluku päivittäisen kuorman takana; rivit sumaantuvat harjoituksen kokonaisarvoksi. \"≈\": arvioitu (kaltevakorjatusta) vauhdista tai sykkeestä tehomittarittomissa lenkeissä."
+  },
+  "cpTrend": {
+    "title": "Kriittisen tehon kehitys",
+    "maLabel": "Liukuvan keskiarvon ikkuna",
+    "maOption": "Liukuva {days} pv",
+    "seriesMovingAverage": "Liukuva keskiarvo ({days} pv)",
+    "seriesStryd": "Stryd-teho",
+    "seriesNative": "Laitteen teho",
+    "seriesThreshold": "Nykyinen kynnys ({watts} W)",
+    "note": "Yksi piste per harjoitus, sovitettu vain harjoituksen omista kestävistä suorituksista; pisteiden hajonta kuvaa harjoituksen laatua, ei päivän kuntoa.",
+    "emptyTitle": "Ei vielä tarpeeksi soveliaita harjoituksia",
+    "emptyDescription": "Kriittinen teho vaatii harjoituksia, joissa on vähintään neljä kestävää suoritusta 5–30 minuutin välillä. Se täydentyy ajan myötä."
   }
 }

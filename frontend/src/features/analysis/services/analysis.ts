@@ -32,6 +32,8 @@ import type {
   PowerDurationDto,
   PowerDurationFit,
   PowerDurationFitDto,
+  CpTrend,
+  CpTrendDto,
   ThresholdSource,
   WprimeBalance,
   WprimeBalanceDto,
@@ -287,6 +289,51 @@ export async function fetchWprimeBalance(
 ): Promise<WprimeBalance> {
   const dto = await apiFetch<WprimeBalanceDto>(`/activities/${activityId}/wprime`, { signal })
   return mapWprimeBalance(dto)
+}
+
+/**
+ * Fetches the caller's critical-power evolution for one sport.
+ *
+ * @param sport - Sport group to read.
+ * @param windowDays - Days of history, `null` for all of it.
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns The per-session CP fits and the current reference threshold.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchCpTrend(
+  sport: string,
+  windowDays: number | null,
+  signal?: AbortSignal,
+): Promise<CpTrend> {
+  const params = new URLSearchParams({ sport })
+  if (windowDays !== null) params.set('window', String(windowDays))
+  const dto = await apiFetch<CpTrendDto>(`/analysis/cp-trend?${params.toString()}`, { signal })
+  return mapCpTrend(dto)
+}
+
+/** Maps a critical-power trend DTO (points, reference threshold) to the domain model. */
+function mapCpTrend(dto: CpTrendDto): CpTrend {
+  const entry = dto.threshold
+  return {
+    sport: dto.sport,
+    windowDays: dto.window_days ?? null,
+    threshold: entry
+      ? {
+          valueW: entry.value_w,
+          wPrimeJ: entry.w_prime_j ?? null,
+          source: mapSource(entry.source),
+          cvPct: entry.cv_pct ?? null,
+        }
+      : null,
+    points: (dto.points ?? []).map((point) => ({
+      activityId: point.activity_id,
+      date: point.date,
+      cpW: point.cp_w,
+      wPrimeJ: point.w_prime_j,
+      cvPct: point.cv_pct,
+      powerSource: point.power_source ?? null,
+    })),
+  }
 }
 
 /** Maps one segment of the interval analysis to the domain model. */

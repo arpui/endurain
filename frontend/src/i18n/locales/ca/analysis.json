@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS és la puntuació ponderada per intensitat que hi ha darrere la càrrega diària; les files sumen el total de la sessió. «≈»: estimat amb ritme (pendent compensat) o freqüència cardíaca quan no hi ha potència."
+  },
+  "cpTrend": {
+    "title": "Evolució de la potència crítica",
+    "maLabel": "Finestra de la mitjana mòbil",
+    "maOption": "Mitjana mòbil {days} d",
+    "seriesMovingAverage": "Mitjana mòbil ({days} dies)",
+    "seriesStryd": "Potència Stryd",
+    "seriesNative": "Potència del dispositiu",
+    "seriesThreshold": "Llindar actual ({watts} W)",
+    "note": "Un punt per sessió, ajustat només amb els seus propis esforços sostinguts; la dispersió dels punts reflecteix la qualitat de cada sessió, no la forma del dia.",
+    "emptyTitle": "Encara no hi ha prou sessions ajustables",
+    "emptyDescription": "La potència crítica requereix sessions amb almenys quatre esforços sostinguts entre 5 i 30 minuts. S'omplirà a mesura que n'acumulis."
   }
 }

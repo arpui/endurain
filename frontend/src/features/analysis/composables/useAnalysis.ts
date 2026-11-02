@@ -18,6 +18,7 @@ import {
   fetchActivityLapDynamics,
   fetchAnalysisSettings,
   fetchBestTimes,
+  fetchCpTrend,
   fetchFitnessSeries,
   fetchPowerDuration,
   fetchWprimeBalance,
@@ -58,6 +59,27 @@ export function useFitnessSeriesQuery(query: MaybeRefOrGetter<FitnessQuery>) {
     queryFn: ({ signal }) => fetchFitnessSeries(toValue(query), signal),
     placeholderData: keepPreviousData,
     enabled: isAuthenticated,
+  })
+}
+
+/**
+ * The per-session critical-power evolution for one sport and history window.
+ *
+ * @param sport - Reactive sport group to read.
+ * @param windowDays - Reactive days of history, `null` for all of it.
+ * @returns The TanStack query result for the trend.
+ */
+export function useCpTrendQuery(
+  sport: MaybeRefOrGetter<string>,
+  windowDays: MaybeRefOrGetter<number | null>,
+) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.cpTrend(toValue(sport), toValue(windowDays))),
+    queryFn: ({ signal }) => fetchCpTrend(toValue(sport), toValue(windowDays), signal),
+    placeholderData: keepPreviousData,
+    enabled: computed(() => isAuthenticated.value && toValue(sport) !== ''),
   })
 }
 

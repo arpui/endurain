@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS este scorul ponderat cu intensitate din spatele sarcii zilnice; rândurile însumează totalul activității. „≈”: estimat din ritm (compensat cu pantă) sau FC fără senzor de putere."
+  },
+  "cpTrend": {
+    "title": "Evoluția puterii critice",
+    "maLabel": "Fereastra mediei mobile",
+    "maOption": "Medie mobilă {days} z",
+    "seriesMovingAverage": "Medie mobilă ({days} zile)",
+    "seriesStryd": "Putere Stryd",
+    "seriesNative": "Putere dispozitiv",
+    "seriesThreshold": "Prag actual ({watts} W)",
+    "note": "Un punct pe sesiune, ajustat doar din eforturile susținute ale acesteia; împrăștierea punctelor reflectă calitatea fiecărei sesiuni, nu forma zilei.",
+    "emptyTitle": "Încă puține sesiuni utilizabile",
+    "emptyDescription": "Puterea critică necesită sesiuni cu cel puțin patru eforturi susținute între 5 și 30 de minute. Se completează în timp."
   }
 }

@@ -108,6 +108,26 @@ def get_power_duration(
 
 
 @router.get(
+    "/cp-trend",
+    response_model=analysis_schema.CpTrendRead,
+)
+def get_cp_trend(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+    sport: Annotated[str, Query(max_length=32)],
+    window: Annotated[int | None, Query(ge=30, le=3650, description="Days of history; omit for all")] = None,
+) -> analysis_schema.CpTrendRead:
+    """Return the caller's critical-power evolution for one sport.
+
+    One point per session, each fit from that session's own sustained efforts;
+    the stored threshold comes back as the reference line. ``window`` narrows
+    the history without dropping sessions outside it from other views.
+    """
+    return analysis_service.get_cp_trend(token_user_id, sport, db, window_days=window)
+
+
+@router.get(
     "/best-times",
     response_model=analysis_schema.BestTimesRead,
 )

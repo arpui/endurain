@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Eşd.",
     "rssNote": "aRSS, günlük yükün arkasındaki yoğunluk ağırlıklı puandır; satırlar etkinliğin toplamına ulaşır. \"≈\": güç ölçümü olmayan aktivitelerde (eğim dengelenmiş) tempo veya nabıztan tahmin edilir."
+  },
+  "cpTrend": {
+    "title": "Kritik gücün gelişimi",
+    "maLabel": "Hareketli ortalama penceresi",
+    "maOption": "Hareketli {days} g",
+    "seriesMovingAverage": "Hareketli ortalama ({days} gün)",
+    "seriesStryd": "Stryd gücü",
+    "seriesNative": "Cihaz gücü",
+    "seriesThreshold": "Güncel eşik ({watts} W)",
+    "note": "Antrenman başına bir nokta, yalnızca kendi kararlı yüklenmelerinden uyarlanır; nokta saçılımı günün formunu değil antrenmanın kalitesini yansıtır.",
+    "emptyTitle": "Henüz yeterince kullanılabilir antrenman yok",
+    "emptyDescription": "Kritik güç, 5 ile 30 dakika arasında en az dört kararlı yüklenme gerektirir. Zamanla dolar."
   }
 }

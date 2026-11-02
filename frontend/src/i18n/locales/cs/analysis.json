@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS je intenzitou vážené skóre za denní zátěží; řádky se sčítají na celkový údaj aktivity. „≈“: odhad z (sklonem kompenzovaného) tempa nebo TF bez měření výkonu."
+  },
+  "cpTrend": {
+    "title": "Vývoj kritického výkonu",
+    "maLabel": "Okno klouzavého průměru",
+    "maOption": "Klouzavý {days} d",
+    "seriesMovingAverage": "Klouzavý průměr ({days} dní)",
+    "seriesStryd": "Výkon Stryd",
+    "seriesNative": "Výkon ze zařízení",
+    "seriesThreshold": "Aktuální prahová hodnota ({watts} W)",
+    "note": "Jeden bod za relaci, fitovaný pouze z jejích vlastních vytrvalých úsilí; rozptyl bodů odráží kvalitu relace, nikoli formu dne.",
+    "emptyTitle": "Zatím málo použitelných relací",
+    "emptyDescription": "Kritický výkon vyžaduje relace s alespoň čtyřmi vytrvalými úsilí mezi 5 a 30 minutami. Časem se doplní."
   }
 }

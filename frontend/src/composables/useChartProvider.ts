@@ -17,8 +17,11 @@ export type ChartKind = 'line' | 'area' | 'bar'
 export interface ChartSeries {
   /** Series label shown in legends/tooltips. */
   label: string
-  /** Numeric values aligned to {@link ChartRenderOptions.labels}. */
-  data: number[]
+  /**
+   * Values aligned to {@link ChartRenderOptions.labels}; ``null`` marks a gap —
+   * the x slot carries no value for this series and nothing is drawn there.
+   */
+  data: (number | null)[]
   /** Optional explicit colour; providers may fall back to a palette. */
   color?: string
   /**
@@ -48,6 +51,11 @@ export interface ChartSeries {
    * to ``primary``, the axis every chart already has.
    */
   axis?: 'primary' | 'secondary'
+  /**
+   * Renders the series as visible dots without a connecting line — a scatter
+   * overlay, e.g. one fitted value per session. Implies no area fill.
+   */
+  dots?: boolean
 }
 
 /** Options controlling a single chart render. */

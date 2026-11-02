@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Ekv.",
     "rssNote": "aRSS är den intensitetsvikta poängen bakom den dagliga belastningen; raderna summerar till aktivitetens total. \"≈\": uppskattat från (lutningskorrigerad) tempo eller puls utan effekt."
+  },
+  "cpTrend": {
+    "title": "Kritisk effekt över tid",
+    "maLabel": "Rullande medelfönster",
+    "maOption": "Rullande {days} d",
+    "seriesMovingAverage": "Rullande medelvärde ({days} dagar)",
+    "seriesStryd": "Stryd-effekt",
+    "seriesNative": "Enhetseffekt",
+    "seriesThreshold": "Aktuell tröskel ({watts} W)",
+    "note": "En punkt per pass, anpassad bara från passets uthålliga insatser; spridningen speglar varje passes kvalitet, inte dagens form.",
+    "emptyTitle": "Inte tillräckligt många användbara pass",
+    "emptyDescription": "Kritisk effekt kräver pass med minst fyra uthålliga insatser mellan 5 och 30 minuter. Den fylls efter hand."
   }
 }

@@ -323,6 +323,49 @@ class PowerDurationRead(BaseModel):
     overlays: list[PowerDurationOverlayRead] = []
 
 
+class CpTrendPointRead(BaseModel):
+    """Serialized one session's fitted critical power.
+
+    Attributes:
+        activity_id: The session the fit came from.
+        date: When the session started (server date, for chart positioning).
+        cp_w: Fitted critical power from this session alone, in watts.
+        w_prime_j: Fitted anaerobic work capacity in joules, an index tied to
+            the duration window the fit used.
+        cv_pct: Fit error as a percentage of the mean.
+        power_source: Where the session's watts came from (``stryd``,
+            ``garmin_native``, ...), or ``None`` when untagged.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    activity_id: StrictInt
+    date: date_type
+    cp_w: StrictFloat
+    w_prime_j: StrictFloat
+    cv_pct: StrictFloat
+    power_source: StrictStr | None
+
+
+class CpTrendRead(BaseModel):
+    """Serialized critical-power evolution of one athlete and sport.
+
+    Attributes:
+        sport: The sport group the fits belong to.
+        window_days: Days of history covered, or ``None`` for all of it.
+        threshold: The power threshold the loads of this sport are currently
+            measured against, as the reference line, or ``None`` when unset.
+        points: Per-session CP fits, oldest first.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    sport: StrictStr
+    window_days: StrictInt | None
+    threshold: PowerThresholdRead | None
+    points: list[CpTrendPointRead]
+
+
 class WprimePointRead(BaseModel):
     """Serialized one sample of a W' balance series.
 

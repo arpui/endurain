@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS is the intensity-weighted score behind the daily load; the rows add up to the activity's total. \"≈\" is estimated from gradient-compensated pace or heart rate when the activity has no power."
+  },
+  "cpTrend": {
+    "title": "Critical power evolution",
+    "maLabel": "Moving average window",
+    "maOption": "Moving avg {days} d",
+    "seriesMovingAverage": "Moving average ({days} days)",
+    "seriesStryd": "Stryd power",
+    "seriesNative": "Device power",
+    "seriesThreshold": "Current threshold ({watts} W)",
+    "note": "One point per session, fitted from its own sustained efforts alone; how scattered the dots are reflects each session's quality, not the day's form.",
+    "emptyTitle": "Not enough fittable sessions yet",
+    "emptyDescription": "Critical power needs sessions with at least four sustained efforts between 5 and 30 minutes. It fills in as you collect them."
   }
 }

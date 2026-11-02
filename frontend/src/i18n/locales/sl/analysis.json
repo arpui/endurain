@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS je z intenzivnostjo utežena točka za dnevno obremenitvijo; vrstice se seštejejo v skupni rezultat aktivnosti. „≈“: ocenjeno iz (naklonom popravljenega) tempa ali UT brez merjenja moči."
+  },
+  "cpTrend": {
+    "title": "Razvoj kritične moči",
+    "maLabel": "Okno drsečega povprečja",
+    "maOption": "Drseče {days} d",
+    "seriesMovingAverage": "Drseče povprečje ({days} dni)",
+    "seriesStryd": "Moč Stryd",
+    "seriesNative": "Moč naprave",
+    "seriesThreshold": "Trenutni prag ({watts} W)",
+    "note": "Ena točka na sejo, prilagojena le iz njenih lastnih vztrajnih naporov; razpršenost točk odraža kakovost seje, ne formo dneva.",
+    "emptyTitle": "Še prem uporabnih sej",
+    "emptyDescription": "Kritična moč zahteva seje z vsaj štirimi vztrajnimi napori med 5 in 30 minutami. Sčasoma se napolni."
   }
 }

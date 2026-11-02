@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Equiv.",
     "rssNote": "aRSS je rezultat ponderiran intenzitetom koji stoji iza dnevnog opterećenja; retci zbrojeni daju ukupan zbroj aktivnosti. „≈”: procijenjeno iz (nagnutom kompenziranog) tempa ili FT bez snage."
+  },
+  "cpTrend": {
+    "title": "Kretija kritične snage",
+    "maLabel": "Prozor klizećeg prosjeka",
+    "maOption": "Klizeći {days} d",
+    "seriesMovingAverage": "Klizeći prosjek ({days} dana)",
+    "seriesStryd": "Stryd snaga",
+    "seriesNative": "Snaga uređaja",
+    "seriesThreshold": "Trenutni prag ({watts} W)",
+    "note": "Jedna točka po sesiji, prilagođena samo iz njezinih vlastnih izdržljivih napora; raspršenost točaka odražava kvalitetu sesije, ne formu dana.",
+    "emptyTitle": "Još nema dovoljno iskoristivih sesija",
+    "emptyDescription": "Kritična snaga zahtijeva sesije s barem četiri izdržljiva napora između 5 i 30 minuta. Popunjava se vremenom."
   }
 }

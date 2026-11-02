@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "等效",
     "rssNote": "aRSS 是構成每日訓練負荷的強度加權分值；各行相加即為該活動的總分。 「≈」：無功率數據時由坡度補償配速或心率估算。"
+  },
+  "cpTrend": {
+    "title": "臨界功率演變",
+    "maLabel": "移動平均窗口",
+    "maOption": "移動平均 {days} 天",
+    "seriesMovingAverage": "移動平均（{days} 天）",
+    "seriesStryd": "Stryd 功率",
+    "seriesNative": "裝置功率",
+    "seriesThreshold": "目前閾值（{watts} W）",
+    "note": "每次訓練一個點，僅由該訓練自身的持續輸出擬合；點的離散程度反映訓練品質，而非當天狀態。",
+    "emptyTitle": "可擬合的訓練還不足",
+    "emptyDescription": "臨界功率需要至少包含 4 個 5–30 分鐘持續輸出的訓練。隨著累積會逐漸填充。"
   }
 }

@@ -198,5 +198,17 @@
     "rssMin": "aRSS/min",
     "rap": "Äquiv.",
     "rssNote": "aRSS ist der intensivitätsgewichtete Wert hinter der Tagesbelastung; die Zeilen summieren sich zum Aktivitätsgesamt. „≈“: ohne Leistungsmessung aus (steigkorrigiertem) Tempo oder Herzfrequenz geschätzt."
+  },
+  "cpTrend": {
+    "title": "Verlauf der kritischen Leistung",
+    "maLabel": "Gleitendes-Fenster",
+    "maOption": "Gleitend {days} T",
+    "seriesMovingAverage": "Gleitender Durchschnitt ({days} Tage)",
+    "seriesStryd": "Stryd-Leistung",
+    "seriesNative": "Geräteleistung",
+    "seriesThreshold": "Aktuelle Schwelle ({watts} W)",
+    "note": "Ein Punkt pro Einheit, nur aus deren eigenen nachhaltigen Belastungen angepasst; die Streuung der Punkte spiegelt die Qualität der Einheit wider, nicht die Tagesform.",
+    "emptyTitle": "Noch zu wenige auswertbare Einheiten",
+    "emptyDescription": "Kritische Leistung braucht Einheiten mit mindestens vier nachhaltigen Belastungen zwischen 5 und 30 Minuten. Sie füllt sich mit der Zeit."
   }
 }

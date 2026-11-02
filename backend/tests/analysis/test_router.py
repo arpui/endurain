@@ -246,6 +246,62 @@ class TestPowerDurationRoute:
         assert response.status_code == 422
 
 
+class TestCpTrendRoute:
+    def _read(self) -> analysis_schema.CpTrendRead:
+        return analysis_schema.CpTrendRead(
+            sport="run",
+            window_days=365,
+            threshold=analysis_schema.PowerThresholdRead(
+                value_w=393.3, w_prime_j=21000.0, source=analysis_constants.ThresholdSource.AUTO, cv_pct=3.0
+            ),
+            points=[
+                analysis_schema.CpTrendPointRead(
+                    activity_id=320,
+                    date=date(2026, 1, 16),
+                    cp_w=285.0,
+                    w_prime_j=18000.0,
+                    cv_pct=4.5,
+                    power_source="stryd",
+                )
+            ],
+        )
+
+    def test_points_and_reference_threshold_come_back(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.router.analysis_service.get_cp_trend", return_value=self._read()):
+            response = client.get("/analysis/cp-trend", params={"sport": "run", "window": 365})
+        assert response.status_code == 200
+        body = response.json()
+        assert body["points"][0]["activity_id"] == 320
+        assert body["points"][0]["power_source"] == "stryd"
+        assert body["threshold"]["value_w"] == 393.3
+
+    def test_sport_and_window_reach_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.router.analysis_service.get_cp_trend", return_value=self._read()) as get_trend:
+            response = client.get("/analysis/cp-trend", params={"sport": "bike", "window": 730})
+        assert response.status_code == 200
+        assert get_trend.call_args.args[1] == "bike"
+        assert get_trend.call_args.kwargs == {"window_days": 730}
+
+    def test_omitting_the_window_asks_for_all_history(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.router.analysis_service.get_cp_trend", return_value=self._read()) as get_trend:
+            response = client.get("/analysis/cp-trend", params={"sport": "run"})
+        assert response.status_code == 200
+        assert get_trend.call_args.kwargs == {"window_days": None}
+
+    def test_sport_is_required(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/cp-trend")
+        assert response.status_code == 422
+
+    def test_an_absurd_window_is_refused_before_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/cp-trend", params={"sport": "run", "window": 5})
+        assert response.status_code == 422
+
+
 class TestWprimeRoute:
     def _read(self) -> analysis_schema.WprimeBalanceRead:
         return analysis_schema.WprimeBalanceRead(
