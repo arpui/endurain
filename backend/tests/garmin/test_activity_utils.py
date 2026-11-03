@@ -246,6 +246,19 @@ class TestLegacyTotalsFileGuard:
         _stored, _parse, ingest = self._run(monkeypatch, entry, _parsed_file(datetime(1999, 1, 1, tzinfo=UTC)))
         assert ingest.call_count == 1
 
+    def test_a_matching_start_with_a_whole_period_distance_is_still_rejected(self):
+        """The first entry of a month matches the batch's opening track: the distance gives it away."""
+        same_minute = datetime(2008, 12, 21, 10, 22, 47, tzinfo=UTC)
+        entry = dict(self.ENTRY, distance=9058.58)  # the API entry's own true distance
+        monster = SimpleNamespace(
+            activities=[SimpleNamespace(activity=SimpleNamespace(start_time=same_minute, distance=195255))]
+        )
+        honest = SimpleNamespace(
+            activities=[SimpleNamespace(activity=SimpleNamespace(start_time=same_minute, distance=9058))]
+        )
+        assert activity_utils._file_agrees_with_api_entry(monster, entry) is False
+        assert activity_utils._file_agrees_with_api_entry(honest, entry) is True
+
     def test_a_preview_parse_error_defers_to_the_regular_path(self, monkeypatch):
         parse = Mock(side_effect=RuntimeError("broken"))
         monkeypatch.setattr(

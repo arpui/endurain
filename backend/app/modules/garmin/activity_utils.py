@@ -83,14 +83,22 @@ def _file_agrees_with_api_entry(parsed: object | None, api_activity: dict) -> bo
     if api_start is None:
         return True
     tolerance = timedelta(seconds=_ENTRY_FILE_TOLERANCE_S)
+    api_distance = api_activity.get("distance")
     for parsed_activity in activities:
         started = getattr(parsed_activity.activity, "start_time", None)
         if started is None:
             return True  # an activity without a timestamp cannot be contradicted
         if started.tzinfo is None:
             started = started.replace(tzinfo=UTC)
-        if abs(started - api_start) <= tolerance:
-            return True
+        if abs(started - api_start) > tolerance:
+            continue
+        # A batch merged whole also carries the whole period's distance; an
+        # honest single activity lands within a factor of three of the entry.
+        if api_distance and api_distance > 0:
+            file_distance = getattr(parsed_activity.activity, "distance", None)
+            if file_distance and not (api_distance / 3 <= file_distance <= api_distance * 3):
+                continue
+        return True
     return False
 
 
