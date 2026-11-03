@@ -303,5 +303,8 @@
       "outcome_span_short": "Частковий прохід",
       "outcome_no_plausible": "Перевірка часу не пройдена"
     }
+  },
+  "power": {
+    "recalibrated": "Потужність Stryd перекалібровано до поточної шкали"
   }
 }

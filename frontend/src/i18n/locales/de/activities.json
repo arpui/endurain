@@ -303,5 +303,8 @@
       "outcome_span_short": "Teilweise durchfahren",
       "outcome_no_plausible": "Zeitprüfung fehlgeschlagen"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd-Leistung auf die aktuelle Skala neu kalibriert"
   }
 }

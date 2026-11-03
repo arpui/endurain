@@ -303,5 +303,8 @@
       "outcome_span_short": "Μερική διέλευση",
       "outcome_no_plausible": "Αποτυχία ελέγχου χρόνου"
     }
+  },
+  "power": {
+    "recalibrated": "Η ισχύς Stryd recalibrate στην τρέχουσα κλίμακα"
   }
 }

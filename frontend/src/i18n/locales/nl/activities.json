@@ -303,5 +303,8 @@
       "outcome_span_short": "Gedeeltelijke doorrit",
       "outcome_no_plausible": "Tijdcontrole mislukt"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd-vermogen geherkalibreerd naar de huidige schaal"
   }
 }

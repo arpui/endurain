@@ -303,5 +303,8 @@
       "outcome_span_short": "Kısmen geçildi",
       "outcome_no_plausible": "Zaman kontrolü başarısız"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd gücü mevcut ölçeğe yeniden kalibre edildi"
   }
 }

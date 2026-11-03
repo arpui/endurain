@@ -17,6 +17,7 @@ import modules.activities.activity.constants as activity_constants
 import modules.activities.activity.contracts as activity_contracts
 import modules.activities.activity_file_import.fit_frames as activity_file_import_fit_frames
 import modules.activities.activity_file_import.parser_utils as activity_file_import_parser_utils
+import modules.activities.activity_streams.constants as activity_streams_constants
 import modules.activities.computation as activities_computation
 
 logger = core_logger.get_logger(__name__)
@@ -246,6 +247,23 @@ def create_activity_objects(
                 if ele_loss is None and computed_loss is not None:
                     ele_loss = round(computed_loss)
 
+            # A pod-metered session's device-reported summary watts (session
+            # scalars and lap fields) are on the pod's scale: recalibrate them
+            # once at import so the stored scalars and the read-time-scaled
+            # power stream agree. The stream waypoints themselves stay raw.
+            if session_record.get("power_source") == activity_streams_constants.POWER_SOURCE_STRYD:
+                scale = activity_streams_constants.STRYD_POWER_SCALE
+                if avg_power:
+                    avg_power = round(avg_power * scale)
+                if max_power:
+                    max_power = round(max_power * scale)
+                if np_power:
+                    np_power = round(np_power * scale)
+                for lap in session_record["laps"]:
+                    for power_key in ("avg_power", "max_power"):
+                        if lap.get(power_key):
+                            lap[power_key] = round(lap[power_key] * scale)
+
             activity = activity_contracts.ActivityCore(
                 user_id=user_id,
                 name=activity_name,
@@ -310,6 +328,7 @@ def create_activity_objects(
                 session_record["laps"],
                 extras,
             )
+            parsed_activity["power_source"] = session_record.get("power_source")
 
             activities.append(parsed_activity)
 
@@ -487,6 +506,11 @@ def split_records_by_activity(parsed_data: dict) -> list[dict]:
             if filtered["power_waypoints"]:
                 parsed_session["power_waypoints"] = filtered["power_waypoints"]
                 parsed_session["is_power_set"] = True
+                parsed_session["power_source"] = (
+                    activity_streams_constants.POWER_SOURCE_STRYD
+                    if parsed_data.get("power_is_pod")
+                    else activity_streams_constants.POWER_SOURCE_DEVICE
+                )
 
         if is_velocity_set:
             activity_waypoints[i]["vel_waypoints"] = filtered["vel_waypoints"]
@@ -549,6 +573,7 @@ class FitParseState:
     is_lat_lon_set: bool = False
     is_elevation_set: bool = False
     is_power_set: bool = False
+    power_is_pod: bool = False
     is_heart_rate_set: bool = False
     is_cadence_set: bool = False
     is_velocity_set: bool = False
@@ -575,6 +600,7 @@ class FitParseState:
             "ele_waypoints": self.ele_waypoints,
             "is_power_set": self.is_power_set,
             "power_waypoints": self.power_waypoints,
+            "power_is_pod": self.power_is_pod,
             "is_heart_rate_set": self.is_heart_rate_set,
             "hr_waypoints": self.hr_waypoints,
             "is_velocity_set": self.is_velocity_set,
@@ -744,6 +770,8 @@ def _handle_record_frame(frame, state: FitParseState) -> None:
         state.is_cadence_set = True
     if power is not None:
         state.is_power_set = True
+        if activity_file_import_fit_frames.frame_power_is_pod(frame):
+            state.power_is_pod = True
     if temperature is not None:
         state.is_temperature_set = True
 

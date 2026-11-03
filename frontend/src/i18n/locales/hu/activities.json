@@ -303,5 +303,8 @@
       "outcome_span_short": "Részleges áthaladás",
       "outcome_no_plausible": "Időellenőrzés megbukott"
     }
+  },
+  "power": {
+    "recalibrated": "A Stryd teljesítmény újrakalibrálva a jelenlegi skálára"
   }
 }

@@ -303,5 +303,8 @@
     "inlineSkating": "Inline skating",
     "hiit": "HIIT",
     "jumpRope": "Jump rope"
+  },
+  "power": {
+    "recalibrated": "Stryd power recalibrated to the current scale"
   }
 }

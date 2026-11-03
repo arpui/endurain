@@ -15,6 +15,7 @@ class ParsedStream:
 
     stream_type: int
     stream_waypoints: list
+    power_source: str | None = None
 
 
 class ActivityStreamsCreate(activity_streams_schema.ActivityStreamsBase):

@@ -303,5 +303,8 @@
       "outcome_span_short": "部分完成",
       "outcome_no_plausible": "未通過時間檢查"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd 功率已重新校準到當前量表"
   }
 }

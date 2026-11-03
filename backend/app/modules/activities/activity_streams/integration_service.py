@@ -59,6 +59,7 @@ def _persist_ingestion_component(
             activity_id=activity.id,
             stream_type=stream.stream_type,
             stream_waypoints=stream.stream_waypoints,
+            power_source=stream.power_source,
             strava_activity_stream_id=None,
         )
         for stream in data

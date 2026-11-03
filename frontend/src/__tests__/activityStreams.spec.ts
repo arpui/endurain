@@ -14,7 +14,7 @@ import { makeActivity } from './fixtures/activity'
 
 /** Builds a stream fixture. */
 function stream(streamType: number, waypoints: ActivityStream['waypoints']): ActivityStream {
-  return { id: streamType, streamType, waypoints, hrZones: null }
+  return { id: streamType, streamType, waypoints, hrZones: null, powerSource: null }
 }
 
 describe('buildStreamChart', () => {

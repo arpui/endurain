@@ -303,5 +303,8 @@
       "outcome_span_short": "Percurso parcial",
       "outcome_no_plausible": "Falha na verificação de tempo"
     }
+  },
+  "power": {
+    "recalibrated": "Potência Stryd recalibrada para a escala atual"
   }
 }

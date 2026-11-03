@@ -303,5 +303,8 @@
       "outcome_span_short": "Dalinis pravažiavimas",
       "outcome_no_plausible": "Laiko patikrinimas nepavyko"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd galia perskalibra iki dabartinės skalės"
   }
 }

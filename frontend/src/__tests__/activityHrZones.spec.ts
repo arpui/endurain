@@ -6,7 +6,7 @@ import { extractHrZones, HR_ZONE_COLORS, hrZoneColor } from '@/features/activiti
 
 /** Builds a stream fixture carrying optional HR zones. */
 function stream(streamType: number, hrZones: HrZoneBucket[] | null = null): ActivityStream {
-  return { id: streamType, streamType, waypoints: [], hrZones }
+  return { id: streamType, streamType, waypoints: [], hrZones, powerSource: null }
 }
 
 const ZONES: HrZoneBucket[] = [
