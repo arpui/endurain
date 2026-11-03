@@ -212,5 +212,11 @@
     "note": "One point per session, fitted from its own sustained efforts alone; how scattered the dots are reflects each session's quality, not the day's form.",
     "emptyTitle": "Not enough fittable sessions yet",
     "emptyDescription": "Critical power needs sessions with at least four sustained efforts between 5 and 30 minutes. It fills in as you collect them."
+  },
+  "scores": {
+    "rss": "aRSS",
+    "daniels": "Daniels",
+    "trimp": "TRIMP",
+    "tss": "TSS"
   }
 }

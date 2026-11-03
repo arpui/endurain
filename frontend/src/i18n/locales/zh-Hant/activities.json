@@ -42,7 +42,9 @@
       "paceSpeed": "配速 / 速度",
       "elevation": "海拔",
       "calories": "卡路里",
-      "avgHr": "平均心率"
+      "avgHr": "平均心率",
+      "power": "功率",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "尚無活動",

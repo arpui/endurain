@@ -212,5 +212,11 @@
     "note": "Jedna točka po sesiji, prilagođena samo iz njezinih vlastnih izdržljivih napora; raspršenost točaka odražava kvalitetu sesije, ne formu dana.",
     "emptyTitle": "Još nema dovoljno iskoristivih sesija",
     "emptyDescription": "Kritična snaga zahtijeva sesije s barem četiri izdržljiva napora između 5 i 30 minuta. Popunjava se vremenom."
+  },
+  "scores": {
+    "rss": "aRSS",
+    "daniels": "Daniels",
+    "trimp": "TRIMP",
+    "tss": "TSS"
   }
 }

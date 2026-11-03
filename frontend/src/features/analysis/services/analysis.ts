@@ -37,6 +37,10 @@ import type {
   ThresholdSource,
   WprimeBalance,
   WprimeBalanceDto,
+  ActivityLoad,
+  ActivityLoadDto,
+  ActivityLoadsSummary,
+  ActivityLoadsSummaryDto,
 } from '../types'
 import type { Schemas } from '@/types'
 
@@ -504,4 +508,48 @@ export async function fetchActivityLapDynamics(
     signal,
   })
   return (dtos ?? []).map(mapLapDynamics)
+}
+
+/** Maps one stored load row. */
+function mapActivityLoad(dto: ActivityLoadDto): ActivityLoad {
+  return {
+    method: dto.method as ActivityLoad['method'],
+    load: dto.load,
+    intensityFactor: dto.intensity_factor ?? null,
+    thresholdUsed: dto.threshold_used ?? null,
+  }
+}
+
+/** Maps one activity's loads into a lookup keyed by formula. */
+function mapActivityLoadsSummary(dto: ActivityLoadsSummaryDto): ActivityLoadsSummary {
+  const loads: ActivityLoadsSummary['loads'] = {}
+  for (const row of dto.loads ?? []) {
+    const load = mapActivityLoad(row)
+    loads[load.method] = load
+  }
+  return { powerRecalibrated: dto.power_recalibrated === true, loads }
+}
+
+/**
+ * Fetches the stored loads and power provenance of many activities in one call.
+ *
+ * The activities list asks for the ids of the page it shows; the activity detail
+ * asks for its own single id (it also wants the recalibration flag, which the
+ * plain `/activities/{id}/loads` endpoint does not carry).
+ *
+ * @param activityIds - Activities to summarize (max 50 per call).
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns Activity id to its summary; unscored, untagged ids are absent.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchActivityLoadsSummaries(
+  activityIds: number[],
+  signal?: AbortSignal,
+): Promise<Map<number, ActivityLoadsSummary>> {
+  if (activityIds.length === 0) {
+    return new Map()
+  }
+  const params = activityIds.map((id) => `activity_ids=${id}`).join('&')
+  const dtos = await apiFetch<ActivityLoadsSummaryDto[]>(`/analysis/loads?${params}`, { signal })
+  return new Map(dtos.map((dto) => [dto.activity_id, mapActivityLoadsSummary(dto)]))
 }

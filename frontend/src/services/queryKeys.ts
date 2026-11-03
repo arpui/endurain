@@ -412,6 +412,11 @@ export const queryKeys = {
     powerDuration: (sport: string, fitFromS: number | null, fitToS: number | null) =>
       ['analysis', 'power-duration', sport, fitFromS, fitToS] as const,
     /**
+     * @param idsKey - Joined activity ids of one batch request (display order).
+     * @returns A batched-loads query key for one page of activities.
+     */
+    loads: (idsKey: string) => ['analysis', 'loads', idsKey] as const,
+    /**
      * @param id - Activity whose W' balance is keyed.
      * @returns A W' balance query key for one activity.
      */

@@ -42,7 +42,9 @@
       "paceSpeed": "Ritmo / Velocidade",
       "elevation": "Elevação",
       "calories": "Calorias",
-      "avgHr": "FC média"
+      "avgHr": "FC média",
+      "power": "Potência",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Ainda sem atividades",

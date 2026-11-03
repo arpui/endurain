@@ -410,3 +410,29 @@ export interface LapDynamics {
   /** The same window scored by every available source, for the benchmark. */
   sourceScores: Record<string, number> | null
 }
+
+/** DTO of the batched per-activity loads endpoint. */
+export type ActivityLoadsSummaryDto = Schemas['ActivityLoadsSummaryRead']
+
+/** DTO of one stored load row. */
+export type ActivityLoadDto = Schemas['ActivityLoadRead']
+
+/** One stored load of an activity, as measured by one formula. */
+export interface ActivityLoad {
+  /** Formula that produced it. */
+  method: LoadMethod
+  /** Stress score (100 = one hour held at threshold). */
+  load: number
+  /** Intensity the load was derived from, when the formula has one. */
+  intensityFactor: number | null
+  /** Threshold value the formula divided by, when it used one. */
+  thresholdUsed: number | null
+}
+
+/** Everything the list and the detail strip need to know about one activity's scores. */
+export interface ActivityLoadsSummary {
+  /** Whether the watts shown for this activity were recalibrated (Stryd-era). */
+  powerRecalibrated: boolean
+  /** Every formula's load, keyed for O(1) lookup in cards and strips. */
+  loads: Partial<Record<LoadMethod, ActivityLoad>>
+}

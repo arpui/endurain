@@ -42,7 +42,9 @@
       "paceSpeed": "Tempo / Rychlost",
       "elevation": "Převýšení",
       "calories": "Kalorie",
-      "avgHr": "Prům. TF"
+      "avgHr": "Prům. TF",
+      "power": "Výkon",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Zatím žádné aktivity",

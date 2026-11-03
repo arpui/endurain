@@ -42,6 +42,10 @@ const props = defineProps<{
   units: Units
   /** The columns to render, shared with the list header so they line up. */
   columns: readonly ActivityMetricColumn[]
+  /** The athlete's aRSS score for this activity; null/undefined hides the cell. */
+  rssScore?: number | null
+  /** Whether the activity's watts are Stryd-era recalibrated (shows a `*`). */
+  powerRecalibrated?: boolean
 }>()
 
 const { locale } = useI18n()
@@ -86,6 +90,19 @@ const avgHrMetric = computed<FormattedMetric>(() => {
     ? { value: String(Math.round(hr)), unit: 'bpm' }
     : NA_METRIC
 })
+const powerMetric = computed<FormattedMetric>(() => {
+  const power = props.activity.averagePower
+  if (power === null || power === undefined || !Number.isFinite(power)) {
+    return NA_METRIC
+  }
+  return { value: String(Math.round(power)) + (props.powerRecalibrated ? '*' : ''), unit: 'W' }
+})
+const rssMetric = computed<FormattedMetric>(() => {
+  const rss = props.rssScore
+  return rss !== null && rss !== undefined && Number.isFinite(rss)
+    ? { value: String(Math.round(rss)), unit: '' }
+    : NA_METRIC
+})
 
 /**
  * The formatted metric for each column, keyed for the template and the mobile
@@ -98,6 +115,8 @@ const cells = computed<Record<ActivityMetricKey, FormattedMetric>>(() => ({
   duration: { value: durationLabel.value, unit: '' },
   paceSpeed: isDistanceBased.value ? tempoMetric.value : NA_METRIC,
   elevation: isDistanceBased.value ? elevationMetric.value : NA_METRIC,
+  power: powerMetric.value,
+  rss: rssMetric.value,
   calories: caloriesMetric.value,
   avgHr: avgHrMetric.value,
 }))

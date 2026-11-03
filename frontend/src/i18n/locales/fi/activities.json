@@ -42,7 +42,9 @@
       "paceSpeed": "Tahti / Nopeus",
       "elevation": "Nousu",
       "calories": "Kalorit",
-      "avgHr": "Keskisyke"
+      "avgHr": "Keskisyke",
+      "power": "Teho",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Ei vielä aktiviteetteja",

@@ -42,7 +42,9 @@
       "paceSpeed": "Tempo / Prędkość",
       "elevation": "Przewyższenie",
       "calories": "Kalorie",
-      "avgHr": "Śr. tętno"
+      "avgHr": "Śr. tętno",
+      "power": "Moc",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Brak aktywności",

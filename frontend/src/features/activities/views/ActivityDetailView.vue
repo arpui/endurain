@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
 import ActivityDetailHeader from '@/features/activities/components/ActivityDetailHeader.vue'
 import ActivityIntervalTable from '@/features/analysis/components/ActivityIntervalTable.vue'
+import ActivityLoadScores from '@/features/analysis/components/ActivityLoadScores.vue'
 import LapDynamicsTable from '@/features/analysis/components/LapDynamicsTable.vue'
 import {
   useActivityIntervalsQuery,
@@ -336,6 +337,7 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
           <p v-if="powerRecalibrated" class="text-caption mt-2 text-muted-foreground">
             * {{ t('activities.power.recalibrated') }}
           </p>
+          <ActivityLoadScores :activity-id="activityId" />
         </div>
       </Card>
 

@@ -42,7 +42,9 @@
       "paceSpeed": "Tempo / Hız",
       "elevation": "Yükseklik",
       "calories": "Kalori",
-      "avgHr": "Ort. nabız"
+      "avgHr": "Ort. nabız",
+      "power": "Güç",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Henüz etkinlik yok",

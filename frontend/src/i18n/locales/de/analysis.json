@@ -212,5 +212,11 @@
     "note": "Ein Punkt pro Einheit, nur aus deren eigenen nachhaltigen Belastungen angepasst; die Streuung der Punkte spiegelt die Qualität der Einheit wider, nicht die Tagesform.",
     "emptyTitle": "Noch zu wenige auswertbare Einheiten",
     "emptyDescription": "Kritische Leistung braucht Einheiten mit mindestens vier nachhaltigen Belastungen zwischen 5 und 30 Minuten. Sie füllt sich mit der Zeit."
+  },
+  "scores": {
+    "rss": "aRSS",
+    "daniels": "Daniels",
+    "trimp": "TRIMP",
+    "tss": "TSS"
   }
 }

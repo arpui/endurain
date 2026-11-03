@@ -212,5 +212,11 @@
     "note": "Un punto por sesión, axustado só cos seus esforzos sostidos; a dispersión dos puntos reflicte a calidade de cada sesión, non a forma do día.",
     "emptyTitle": "Aínda non hai sesións dabondo",
     "emptyDescription": "A potencia crítica precisa sesións con polo menos catro esforzos sostidos entre 5 e 30 minutos. Encherase co tempo."
+  },
+  "scores": {
+    "rss": "aRSS",
+    "daniels": "Daniels",
+    "trimp": "TRIMP",
+    "tss": "TSS"
   }
 }

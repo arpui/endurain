@@ -212,5 +212,11 @@
     "note": "Üks punkt treeningu kohta, sobitatud ainult selle enda püsivatest pingutustest; punktide hajuvus peegeldab treeningu kvaliteeti, mitte päevavormi.",
     "emptyTitle": "Pole veel piisalt sobitatavaid treeninguid",
     "emptyDescription": "Kriitiline võimsus nõuab treeninguid vähemalt nelja püsiva pingutusega 5–30 minuti vahemikus. See täitub ajapikku."
+  },
+  "scores": {
+    "rss": "aRSS",
+    "daniels": "Daniels",
+    "trimp": "TRIMP",
+    "tss": "TSS"
   }
 }

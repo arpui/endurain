@@ -42,7 +42,9 @@
       "paceSpeed": "Ritm / Viteză",
       "elevation": "Diferență de nivel",
       "calories": "Calorii",
-      "avgHr": "Puls mediu"
+      "avgHr": "Puls mediu",
+      "power": "Putere",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Încă nicio activitate",
