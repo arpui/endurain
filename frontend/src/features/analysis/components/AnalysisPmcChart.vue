@@ -89,11 +89,18 @@ const chartRender = computed<ChartRenderOptions>(() => {
         area: true,
       },
       {
-        // TSB crosses zero; filling it would shade both sides of the axis.
+        // TSB crosses zero: the fill is its integral, shaded two ways so the
+        // sign is visible as area, not just the line's position — a softer blue
+        // under the axis (fatigue side) and a deeper one above it (freshness).
         label: t('analysis.pmc.seriesForm'),
         data: props.points.map((point) => Math.round(point.balance)),
         color: FORM_COLOR,
         line: true,
+        area: true,
+        areaColors: {
+          above: themeColorAlpha('--color-info', theme.value === 'dark' ? 0.38 : 0.3),
+          below: themeColorAlpha('--color-info', theme.value === 'dark' ? 0.12 : 0.1),
+        },
       },
       {
         label: t('analysis.daily.series'),
@@ -105,6 +112,9 @@ const chartRender = computed<ChartRenderOptions>(() => {
     labels,
     valueFormat: (value) => String(Math.round(value)),
     sharedTooltip: true,
+    // Wheel + drag (pinch on touch) along the date axis: the whole point of the
+    // PMC is reading stretches — blocks, taper weeks — at their own scale.
+    zoom: true,
   }
 })
 

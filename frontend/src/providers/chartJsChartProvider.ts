@@ -107,6 +107,18 @@ export function buildChartConfiguration(
     // is the same overlay without the dash: a curve (PMC, trend) read against
     // bars (daily values). With `area` the curve also fills down to zero.
     if (series.dashed || series.line) {
+      // A two-tone fill needs the Filler plugin's object form: the same curve's
+      // integral, shaded differently on each side of the zero line.
+      const fill: 'origin' | false | { target: 'origin'; above: string; below: string } =
+        !series.area
+          ? false
+          : series.areaColors
+            ? {
+                target: 'origin',
+                above: series.areaColors.above ?? withAlpha(color, AREA_FILL_ALPHA),
+                below: series.areaColors.below ?? withAlpha(color, AREA_FILL_ALPHA),
+              }
+            : 'origin'
       return {
         type: 'line',
         label: series.label,
@@ -116,7 +128,7 @@ export function buildChartConfiguration(
         backgroundColor: series.area ? withAlpha(color, AREA_FILL_ALPHA) : color,
         borderWidth: series.dots ? 0 : 2,
         borderDash: series.dashed ? [6, 6] : undefined,
-        fill: series.area ? 'origin' : false,
+        fill,
         tension: series.dashed ? 0 : 0.3,
         pointRadius: series.dots ? 3 : 0,
       }

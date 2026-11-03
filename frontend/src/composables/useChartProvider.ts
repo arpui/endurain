@@ -44,6 +44,13 @@ export interface ChartSeries {
    */
   area?: boolean
   /**
+   * Two-tone area fill for a line series that crosses zero: `above` shades the
+   * area between the curve and the zero line where the series is positive,
+   * `below` where it is negative. The integral read as a sign. Requires
+   * `area`; providers without two-tone support keep the single translucent fill.
+   */
+  areaColors?: { above?: string; below?: string }
+  /**
    * Which y-axis the series is measured on. ``secondary`` puts the series on a
    * second, independently scaled axis on the right, with its own grid hidden:
    * the way a bar series of a different magnitude (daily load peaking at 170)

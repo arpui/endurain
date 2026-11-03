@@ -4,16 +4,16 @@ import type { LoadMethod } from '@/features/analysis/types'
 
 /** Load formulas the server can measure with, in display order. */
 export const LOAD_METHODS: LoadMethod[] = [
-  'coggan_tss',
-  'skiba_score',
-  'hr_load',
-  'trimp',
   'rss_total',
+  'trimp',
+  'coggan_tss',
   'rss_up',
   'rss_high',
   'rss_mid',
   'rss_low',
   'daniels_points',
+  'skiba_score',
+  'hr_load',
 ]
 
 /** True for the exponential family's bands, which split one total into areas. */
