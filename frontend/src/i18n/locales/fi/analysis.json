@@ -6,10 +6,12 @@
     "label": "Aikaväli",
     "30": "30 pv",
     "90": "90 pv",
-    "365": "365 pv",
-    "1095": "1095 pv",
+    "365": "1 vuosi",
+    "1095": "3 vuotta",
     "all": "Koko historia",
-    "730": "730 pv"
+    "730": "2 vuotta",
+    "1460": "4 vuotta",
+    "1825": "5 vuotta"
   },
   "method": {
     "label": "Kuormakaava",

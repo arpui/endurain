@@ -6,10 +6,12 @@
     "label": "Perioadă",
     "30": "30 de zile",
     "90": "90 de zile",
-    "365": "365 de zile",
-    "1095": "1095 de zile",
+    "365": "1 an",
+    "1095": "3 ani",
     "all": "Tot istoricul",
-    "730": "730 de zile"
+    "730": "2 ani",
+    "1460": "4 ani",
+    "1825": "5 ani"
   },
   "method": {
     "label": "Formula de încărcare",

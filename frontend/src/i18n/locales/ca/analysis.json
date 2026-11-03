@@ -6,10 +6,12 @@
     "label": "Finestra temporal",
     "30": "30 dies",
     "90": "90 dies",
-    "365": "365 dies",
-    "1095": "1095 dies",
+    "365": "1 any",
+    "1095": "3 anys",
     "all": "Tot",
-    "730": "730 dies"
+    "730": "2 anys",
+    "1460": "4 anys",
+    "1825": "5 anys"
   },
   "method": {
     "label": "Fórmula de càrrega",
