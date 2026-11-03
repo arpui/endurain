@@ -282,6 +282,26 @@
     "reverse": "Vastasuunta",
     "pass": "Ohitus {number}",
     "best": "Paras",
-    "slowerThanBest": "{delta} hitaammin"
+    "slowerThanBest": "{delta} hitaammin",
+    "debug": {
+      "button": "Segmenttianalyysi",
+      "noneStored": "Tämä toiminto ei merkinnyt yhtään segmenttiä.",
+      "title": "Segmenttien täsmäytyksen analyysi",
+      "description": "Miksi jokainen toiminnon lähellä oleva segmentti merkitsi tai ei.",
+      "failed": "Analyysia ei voitu ladata.",
+      "none": "Yksikään segmentti ei kulje toiminnon lähellä.",
+      "outcome": "Tuomio",
+      "candidates": "GPS-pisteet",
+      "bestSpan": "Paras ulottuma",
+      "coverage": "Kattavuus",
+      "passesRejected": "{count} ohitusta hylätty",
+      "outcome_matched": "Täsmää",
+      "outcome_no_geometry": "Vikainen geometria",
+      "outcome_no_waypoints": "GPS liian lyhyt",
+      "outcome_no_candidates": "Ei koskaan tarpeeksi lähellä",
+      "outcome_no_passes": "Ei yhtenäistä ohitusta",
+      "outcome_span_short": "Osittainen kulku",
+      "outcome_no_plausible": "Aikatesti epäonnistui"
+    }
   }
 }

@@ -282,6 +282,26 @@
     "reverse": "Suprotan smer",
     "pass": "Prolazak {number}",
     "best": "Najbolji",
-    "slowerThanBest": "{delta} sporije"
+    "slowerThanBest": "{delta} sporije",
+    "debug": {
+      "button": "Дијагностика сегмената",
+      "noneStored": "Ова активност није оценила ниједан сегмент.",
+      "title": "Дијагностика поклапања сегмената",
+      "description": "Зашто је сваки сегмент близу активности оценио или није.",
+      "failed": "Учитавање дијагностике није успело.",
+      "none": "Ниједан сегмент не пролази близу ове активности.",
+      "outcome": "Пресуда",
+      "candidates": "GPS тачке",
+      "bestSpan": "Најбољи опсег",
+      "coverage": "Покривеност",
+      "passesRejected": "{count} пролаза одбијено",
+      "outcome_matched": "Поклапа се",
+      "outcome_no_geometry": "Неисправна геометрија",
+      "outcome_no_waypoints": "GPS прекратак",
+      "outcome_no_candidates": "Никада довољно близу",
+      "outcome_no_passes": "Нема континуираног пролаза",
+      "outcome_span_short": "Делимичан пролаз",
+      "outcome_no_plausible": "Провера времена није успела"
+    }
   }
 }

@@ -282,6 +282,26 @@
     "reverse": "Ters yön",
     "pass": "Geçiş {number}",
     "best": "En iyi",
-    "slowerThanBest": "{delta} yavaş"
+    "slowerThanBest": "{delta} yavaş",
+    "debug": {
+      "button": "Segment teşhisi",
+      "noneStored": "Bu etkinlik hiçbir segmenti puanlamadı.",
+      "title": "Segment eşleşme teşhisi",
+      "description": "Etkinliğin yakınındaki her segmentin neden puanlayıp puanlamadığı.",
+      "failed": "Teşhi yüklenemedi.",
+      "none": "Hiçbir segment bu etkinliğin yakınından geçmiyor.",
+      "outcome": "Karar",
+      "candidates": "GPS noktaları",
+      "bestSpan": "En iyi genişlik",
+      "coverage": "Kapsama",
+      "passesRejected": "{count} geçiş reddedildi",
+      "outcome_matched": "Eşleşti",
+      "outcome_no_geometry": "Bozuk geometri",
+      "outcome_no_waypoints": "GPS çok kısa",
+      "outcome_no_candidates": "Hiç yeterince yakın değil",
+      "outcome_no_passes": "Kesintisiz geçiş yok",
+      "outcome_span_short": "Kısmen geçildi",
+      "outcome_no_plausible": "Zaman kontrolü başarısız"
+    }
   }
 }

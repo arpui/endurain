@@ -11,6 +11,7 @@ import {
   deleteSegment,
   fetchSegmentById,
   fetchSegmentEfforts,
+  fetchSegmentMatchDebug,
   fetchSegments,
   importSegment,
   queueSegmentsBackfill,
@@ -163,5 +164,27 @@ export function useSegmentsBackfillMutation() {
     mutationKey: ['segments', 'backfill'],
     mutationFn: queueSegmentsBackfill,
     invalidateKey: queryKeys.segments.all(),
+  })
+}
+
+/**
+ * The segment match-debug trail for one activity: why each candidate segment
+ * did or did not score. Lazy — enabled only while the debug dialog is open.
+ *
+ * @param activityId - Reactive activity id.
+ * @param enabled - Reactive gate (auth + dialog open).
+ * @returns The TanStack query result for the verdict list.
+ */
+export function useSegmentMatchDebugQuery(
+  activityId: MaybeRefOrGetter<number | null | undefined>,
+  enabled: MaybeRefOrGetter<boolean>,
+) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => resolveId(activityId))
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.segments.activityDebug(id.value)),
+    queryFn: ({ signal }) => fetchSegmentMatchDebug(id.value, signal),
+    enabled: computed(() => isAuthenticated.value && toValue(enabled) && id.value > 0),
   })
 }

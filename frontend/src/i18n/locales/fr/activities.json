@@ -282,6 +282,26 @@
     "reverse": "Sens inverse",
     "pass": "Passage {number}",
     "best": "Meilleur",
-    "slowerThanBest": "{delta} plus lent"
+    "slowerThanBest": "{delta} plus lent",
+    "debug": {
+      "button": "Diagnostic segments",
+      "noneStored": "Cette activité n'a marqué aucun segment.",
+      "title": "Diagnostic de correspondance des segments",
+      "description": "Pourquoi chaque segment proche de cette activité l'a marqué ou non.",
+      "failed": "Impossible de charger le diagnostic.",
+      "none": "Aucun segment ne passe près de cette activité.",
+      "outcome": "Verdict",
+      "candidates": "Points GPS",
+      "bestSpan": "Meilleure portée",
+      "coverage": "Couverture",
+      "passesRejected": "{count} passages rejetés",
+      "outcome_matched": "Correspond",
+      "outcome_no_geometry": "Géométrie défectueuse",
+      "outcome_no_waypoints": "GPS trop court",
+      "outcome_no_candidates": "Jamais assez proche",
+      "outcome_no_passes": "Aucun passage continu",
+      "outcome_span_short": "Parcours partiel",
+      "outcome_no_plausible": "Échec du contrôle de temps"
+    }
   }
 }

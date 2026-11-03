@@ -282,6 +282,26 @@
     "reverse": "Motsatt riktning",
     "pass": "Passage {number}",
     "best": "Bästa",
-    "slowerThanBest": "{delta} långsammare"
+    "slowerThanBest": "{delta} långsammare",
+    "debug": {
+      "button": "Segmentdiagnostik",
+      "noneStored": "Aktiviteten registrerade inget segment.",
+      "title": "Diagnostik av segmentmatchning",
+      "description": "Varför varje segment nära aktiviteten registrerade den eller inte.",
+      "failed": "Kunde inte läsa in diagnostiken.",
+      "none": "Inget segment passerar nära aktiviteten.",
+      "outcome": "Bedömning",
+      "candidates": "GPS-punkter",
+      "bestSpan": "Bästa spänn",
+      "coverage": "Täckning",
+      "passesRejected": "{count} passager förkastade",
+      "outcome_matched": "Matchar",
+      "outcome_no_geometry": "Defekt geometri",
+      "outcome_no_waypoints": "GPS för kort",
+      "outcome_no_candidates": "Aldrig tillräckligt nära",
+      "outcome_no_passes": "Ingen sammanhängande passage",
+      "outcome_span_short": "Delvis genomfart",
+      "outcome_no_plausible": "Tidkontrollen godkändes inte"
+    }
   }
 }

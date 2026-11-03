@@ -123,7 +123,27 @@
     "reverse": "Sentido inverso",
     "pass": "Pass {number}",
     "best": "Mejor",
-    "slowerThanBest": "{delta} más lento"
+    "slowerThanBest": "{delta} más lento",
+    "debug": {
+      "button": "Diagnóstico de segmentos",
+      "noneStored": "Esta actividad no puntuó ningún segmento.",
+      "title": "Diagnóstico de coincidencia de segmentos",
+      "description": "Por qué cada segmento cerca de esta actividad la puntuó o no.",
+      "failed": "No se ha podido cargar el diagnóstico.",
+      "none": "Ningún segmento pasa cerca de esta actividad.",
+      "outcome": "Veredicto",
+      "candidates": "Puntos GPS",
+      "bestSpan": "Mejor alcance",
+      "coverage": "Cobertura",
+      "passesRejected": "{count} pasadas descartadas",
+      "outcome_matched": "Coincide",
+      "outcome_no_geometry": "Geometría defectuosa",
+      "outcome_no_waypoints": "GPS demasiado corto",
+      "outcome_no_candidates": "Nunca lo bastante cerca",
+      "outcome_no_passes": "Ninguna pasada continua",
+      "outcome_span_short": "Recorrido parcial",
+      "outcome_no_plausible": "No supera el control de tiempo"
+    }
   },
   "workout": {
     "title": "Entrenamiento",

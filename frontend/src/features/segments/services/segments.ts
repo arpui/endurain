@@ -9,6 +9,8 @@ import type {
   SegmentEffortsPage,
   SegmentImportInput,
   SegmentImportPayload,
+  SegmentMatchDebug,
+  SegmentMatchDebugDto,
   SegmentSummary,
   SegmentSummaryDto,
   SegmentsPage,
@@ -97,6 +99,42 @@ export async function fetchSegments(
     items: (response.items ?? []).map(mapSegmentSummary),
     total: response.total ?? 0,
   }
+}
+
+/** Maps a segment-debug verdict DTO to the domain model. */
+export function mapSegmentMatchDebug(dto: SegmentMatchDebugDto): SegmentMatchDebug {
+  return {
+    segmentId: dto.segment_id,
+    name: dto.name,
+    distanceM: dto.distance_m,
+    outcome: dto.outcome as SegmentMatchDebug['outcome'],
+    candidateCount: dto.candidate_count ?? 0,
+    acceptedPassCount: dto.accepted_pass_count ?? 0,
+    rejectedPassCount: dto.rejected_pass_count ?? 0,
+    bestSpanFrac: dto.best_span_frac ?? 0,
+    bestCoverage: dto.best_coverage ?? 0,
+  }
+}
+
+/**
+ * Fetches the segment match-debug trail for one activity: one verdict per
+ * segment whose bounding box reaches the activity, matches first. Owner-only
+ * (the route 404s for foreign activities).
+ *
+ * @param activityId - Activity to diagnose.
+ * @param signal - Optional abort signal.
+ * @returns The verdicts, in the order the backend sorted them.
+ * @throws {HttpError} 404 when the activity does not exist or is not the reader's.
+ */
+export async function fetchSegmentMatchDebug(
+  activityId: number,
+  signal?: AbortSignal,
+): Promise<SegmentMatchDebug[]> {
+  const response = await apiFetch<SegmentMatchDebugDto[]>(
+    `/segments/debug/activity/${activityId}`,
+    { signal },
+  )
+  return (response ?? []).map(mapSegmentMatchDebug)
 }
 
 /**

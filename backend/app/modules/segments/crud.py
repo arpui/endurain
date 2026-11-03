@@ -162,10 +162,12 @@ def list_matchable_segments(db: Session) -> list[segments_contracts.SegmentMatch
         db: Database session.
 
     Returns:
-        All segments as ``SegmentMatchTarget`` (id, distance, geometry).
+        All segments as ``SegmentMatchTarget`` (id, name, distance, geometry).
     """
     return [
-        segments_contracts.SegmentMatchTarget(id=segment.id, distance_m=segment.distance_m, geometry=segment.geometry)
+        segments_contracts.SegmentMatchTarget(
+            id=segment.id, name=segment.name, distance_m=segment.distance_m, geometry=segment.geometry
+        )
         for segment in db.scalars(select(segments_models.Segment)).all()
     ]
 

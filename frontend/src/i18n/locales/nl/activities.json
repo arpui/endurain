@@ -282,6 +282,26 @@
     "reverse": "Terugrichting",
     "pass": "Doorgang {number}",
     "best": "Beste",
-    "slowerThanBest": "{delta} langzamer"
+    "slowerThanBest": "{delta} langzamer",
+    "debug": {
+      "button": "Segmentediagnose",
+      "noneStored": "Deze activiteit heeft geen enkel segment gescoord.",
+      "title": "Diagnose segmentovereenkomst",
+      "description": "Waarom elk segment dicht bij deze activiteit wel of niet scoorde.",
+      "failed": "Kan de diagnose niet laden.",
+      "none": "Geen enkel segment komt in de buurt van deze activiteit.",
+      "outcome": "Oordeel",
+      "candidates": "GPS-punten",
+      "bestSpan": "Beste bereik",
+      "coverage": "Dekking",
+      "passesRejected": "{count} doorgangen verworpen",
+      "outcome_matched": "Komt overeen",
+      "outcome_no_geometry": "Defecte geometrie",
+      "outcome_no_waypoints": "GPS te kort",
+      "outcome_no_candidates": "Nooit dicht genoeg",
+      "outcome_no_passes": "Geen samenhangende doorgang",
+      "outcome_span_short": "Gedeeltelijke doorrit",
+      "outcome_no_plausible": "Tijdcontrole mislukt"
+    }
   }
 }

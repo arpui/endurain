@@ -282,6 +282,26 @@
     "reverse": "Sens invers",
     "pass": "Trecere {number}",
     "best": "Cel mai bun",
-    "slowerThanBest": "{delta} mai lent"
+    "slowerThanBest": "{delta} mai lent",
+    "debug": {
+      "button": "Diagnostic segmente",
+      "noneStored": "Această activitate nu a punctat niciun segment.",
+      "title": "Diagnostic potrivire segmente",
+      "description": "De ce fiecare segment de lângă activitate l-a punctat sau nu.",
+      "failed": "Nu s-a putut încărca diagnosticul.",
+      "none": "Niciun segment nu trece aproape de activitate.",
+      "outcome": "Verdict",
+      "candidates": "Puncte GPS",
+      "bestSpan": "Cel mai bun interval",
+      "coverage": "Acoperire",
+      "passesRejected": "{count} treceri respinse",
+      "outcome_matched": "Se potrivește",
+      "outcome_no_geometry": "Geometrie defectă",
+      "outcome_no_waypoints": "GPS prea scurt",
+      "outcome_no_candidates": "Niciodată suficient de aproape",
+      "outcome_no_passes": "Nicio trecere continuă",
+      "outcome_span_short": "Traversare parțială",
+      "outcome_no_plausible": "Verificarea timpului a eșuat"
+    }
   }
 }

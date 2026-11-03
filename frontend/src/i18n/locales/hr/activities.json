@@ -282,6 +282,26 @@
     "reverse": "Obrnuti smjer",
     "pass": "Prolazak {number}",
     "best": "Najbolji",
-    "slowerThanBest": "{delta} sporije"
+    "slowerThanBest": "{delta} sporije",
+    "debug": {
+      "button": "Dijagnostika segmenta",
+      "noneStored": "Ova aktivnost nije ocijenila nijedan segment.",
+      "title": "Dijagnostika podudaranja segmenta",
+      "description": "Zašto je svaki segment blizu aktivnosti ocijenio ili nije.",
+      "failed": "Učitavanje dijagnostike nije uspjelo.",
+      "none": "Nijedan segment ne prolazi blizu ove aktivnosti.",
+      "outcome": "Presuda",
+      "candidates": "GPS točke",
+      "bestSpan": "Najbolji raspon",
+      "coverage": "Pokrivenost",
+      "passesRejected": "{count} prolaza odbačeno",
+      "outcome_matched": "Podudara se",
+      "outcome_no_geometry": "Neispravna geometrija",
+      "outcome_no_waypoints": "GPS prekratak",
+      "outcome_no_candidates": "Nikad dovoljno blizu",
+      "outcome_no_passes": "Nema kontinuiranog prolaza",
+      "outcome_span_short": "Djelomičan prolaz",
+      "outcome_no_plausible": "Provjera vremena nije uspjela"
+    }
   }
 }

@@ -282,6 +282,26 @@
     "reverse": "Sentido inverso",
     "pass": "Passagem {number}",
     "best": "Melhor",
-    "slowerThanBest": "{delta} mais lento"
+    "slowerThanBest": "{delta} mais lento",
+    "debug": {
+      "button": "Diagnóstico de segmentos",
+      "noneStored": "Esta atividade não pontuou nenhum segmento.",
+      "title": "Diagnóstico de correspondência de segmentos",
+      "description": "Porque é que cada segmento próximo desta atividade a pontuou ou não.",
+      "failed": "Não foi possível carregar o diagnóstico.",
+      "none": "Nenhum segmento passa perto desta atividade.",
+      "outcome": "Veredicto",
+      "candidates": "Pontos GPS",
+      "bestSpan": "Melhor alcance",
+      "coverage": "Cobertura",
+      "passesRejected": "{count} passagens rejeitadas",
+      "outcome_matched": "Corresponde",
+      "outcome_no_geometry": "Geometria defeituosa",
+      "outcome_no_waypoints": "GPS demasiado curto",
+      "outcome_no_candidates": "Nunca suficientemente perto",
+      "outcome_no_passes": "Nenhuma passagem contínua",
+      "outcome_span_short": "Percurso parcial",
+      "outcome_no_plausible": "Falha na verificação de tempo"
+    }
   }
 }

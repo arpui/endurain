@@ -468,6 +468,11 @@ export const queryKeys = {
      */
     detail: (id: number) => ['segments', 'detail', id] as const,
     /**
+     * @param activityId - Activity the match-debug trail belongs to.
+     * @returns A query key for one activity's segment verdicts.
+     */
+    activityDebug: (activityId: number) => ['segments', 'activity-debug', activityId] as const,
+    /**
      * @param id - Segment the efforts belong to.
      * @param direction - The direction filter the page was read with.
      * @returns A query key for one effort page.

@@ -282,6 +282,26 @@
     "reverse": "Motsatt retning",
     "pass": "Passasje {number}",
     "best": "Best",
-    "slowerThanBest": "{delta} tregere"
+    "slowerThanBest": "{delta} tregere",
+    "debug": {
+      "button": "Segmentdiagnostikk",
+      "noneStored": "Aktiviteten slo ingen segmenter.",
+      "title": "Diagnostikk av segmentsamsvar",
+      "description": "Hvorfor hvert segment nær aktiviteten slo det eller ikke.",
+      "failed": "Kunne ikke laste diagnostikken.",
+      "none": "Ingen segmenter passerer nær aktiviteten.",
+      "outcome": "Dom",
+      "candidates": "GPS-punkter",
+      "bestSpan": "Beste spenn",
+      "coverage": "Dekning",
+      "passesRejected": "{count} passeringer forkastet",
+      "outcome_matched": "Samvarer",
+      "outcome_no_geometry": "Defekt geometri",
+      "outcome_no_waypoints": "GPS for kort",
+      "outcome_no_candidates": "Aldri nær nok",
+      "outcome_no_passes": "Ingen sammenhengende passering",
+      "outcome_span_short": "Delvis gjennomkjøring",
+      "outcome_no_plausible": "Tidskontroll feilet"
+    }
   }
 }

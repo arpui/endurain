@@ -10,6 +10,7 @@ export type SegmentSummaryDto = Schemas['SegmentListItemRead']
 export type SegmentBaseDto = Schemas['SegmentRead']
 export type SegmentDetailDto = Schemas['SegmentDetailRead']
 export type SegmentEffortDto = Schemas['SegmentEffortRead']
+export type SegmentMatchDebugDto = Schemas['SegmentMatchDebugItem']
 export type SegmentImportPayload = Schemas['SegmentImport']
 
 /** The fields every stored segment carries, listed or detailed. */
@@ -101,4 +102,31 @@ export interface SegmentImportInput {
   /** Cumulative distance per point; the server uses the last value as length. */
   distance: number[] | null
   source: 'strava' | 'manual'
+}
+
+/** Why the matcher did (or did not) score one segment for one activity. */
+export type SegmentMatchOutcome =
+  | 'matched'
+  | 'no_geometry'
+  | 'no_waypoints'
+  | 'no_candidates'
+  | 'no_passes'
+  | 'span_short'
+  | 'no_plausible'
+
+/** One segment's verdict in the activity's match-debug trail. */
+export interface SegmentMatchDebug {
+  segmentId: number
+  name: string
+  /** Segment length in metres, for context next to the verdict. */
+  distanceM: number
+  outcome: SegmentMatchOutcome
+  /** Activity waypoints that fell within the match radius. */
+  candidateCount: number
+  acceptedPassCount: number
+  rejectedPassCount: number
+  /** Largest span fraction any attempt reached, 0..1. */
+  bestSpanFrac: number
+  /** Largest coverage fraction any attempt reached, 0..1. */
+  bestCoverage: number
 }

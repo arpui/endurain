@@ -282,6 +282,26 @@
     "reverse": "Pretējs virziens",
     "pass": "Brauciens {number}",
     "best": "Labākais",
-    "slowerThanBest": "{delta} lēnāk"
+    "slowerThanBest": "{delta} lēnāk",
+    "debug": {
+      "button": "Segmentu diagnostika",
+      "noneStored": "Šī aktivitāte neieguva ne viena segmenta rezultātu.",
+      "title": "Segmentu atbilstības diagnostika",
+      "description": "Kāpēc katrs aktivitātes tuvumā esošais segments to izvērtēja vai ne.",
+      "failed": "Diagnostiku nevarēja ielādēt.",
+      "none": "Neviens segments neiziet tuvumā šai aktivitātei.",
+      "outcome": "Spriedums",
+      "candidates": "GPS punkti",
+      "bestSpan": "Labākais garums",
+      "coverage": "Pārklājums",
+      "passesRejected": "{count} braucienu atmests",
+      "outcome_matched": "Sakrīt",
+      "outcome_no_geometry": "Nederīga ģeometrija",
+      "outcome_no_waypoints": "GPS par īsu",
+      "outcome_no_candidates": "Nekad pietiekami tuvu",
+      "outcome_no_passes": "Nav nepārtraukta brauciena",
+      "outcome_span_short": "Daļēja izbraukšana",
+      "outcome_no_plausible": "Laika pārbaude neizturēta"
+    }
   }
 }

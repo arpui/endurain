@@ -53,11 +53,13 @@ class SegmentMatchTarget:
 
     Attributes:
         id: Segment identifier, echoed into each match.
+        name: Segment name, for the debug trail (the matcher itself ignores it).
         distance_m: Length along the geometry, used for average speed.
         geometry: Ordered ``[[lat, lng], ...]`` polyline.
     """
 
     id: int
+    name: str
     distance_m: float
     geometry: Sequence[Sequence[float]]
 

@@ -374,3 +374,45 @@ class TestActivitySegments:
 
         assert response.status_code == 404
         mock_rows.assert_not_called()
+
+
+class TestActivityMatchDebug:
+    @patch("modules.segments.service.get_activity_match_debug")
+    def test_debug_lists_verdicts_for_the_requester(self, mock_debug, mock_db):
+        from modules.segments import schema as segments_schema
+
+        mock_debug.return_value = [
+            segments_schema.SegmentMatchDebugItem(
+                segment_id=43,
+                name="Capdella-Pontet de Rus",
+                distance_m=3647.3,
+                outcome="span_short",
+                candidate_count=626,
+                accepted_pass_count=0,
+                rejected_pass_count=1,
+                best_span_frac=0.754,
+                best_coverage=0.74,
+            )
+        ]
+
+        response = TestClient(_build_app(mock_db)).get(
+            "/segments/debug/activity/36", headers={"Authorization": "Bearer x"}
+        )
+
+        assert response.status_code == 200
+        body = response.json()
+        assert body[0]["outcome"] == "span_short"
+        assert body[0]["name"] == "Capdella-Pontet de Rus"
+        assert mock_debug.call_args.kwargs == {"activity_id": 36, "requester_user_id": 2}
+
+    @patch("modules.segments.service.get_activity_match_debug")
+    def test_nonexistent_activity_is_404(self, mock_debug, mock_db):
+        import core.exceptions as core_exceptions
+
+        mock_debug.side_effect = core_exceptions.NotFoundError("Activity 999 not found")
+
+        response = TestClient(_build_app(mock_db)).get(
+            "/segments/debug/activity/999", headers={"Authorization": "Bearer x"}
+        )
+
+        assert response.status_code == 404

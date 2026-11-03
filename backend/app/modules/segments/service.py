@@ -14,6 +14,7 @@ import core.logger as core_logger
 import modules.activities.activity.integration_service as activity_integration
 import modules.activities.activity_streams.integration_service as activity_streams_integration
 import modules.analysis.integration_service as analysis_integration
+import modules.segments.constants as segments_constants
 import modules.segments.contracts as segments_contracts
 import modules.segments.crud as segments_crud
 import modules.segments.matcher as segments_matcher
@@ -344,6 +345,56 @@ def rescan_all_efforts(db: Session) -> int:
         The number of efforts stored.
     """
     return _walk_and_match(db, only_missing=False)
+
+
+def get_activity_match_debug(
+    db: Session,
+    *,
+    activity_id: int,
+    requester_user_id: int,
+) -> list[segments_schema.SegmentMatchDebugItem]:
+    """Explain why each candidate segment did or did not match one activity.
+
+    Re-runs the matcher over the segments whose bounding box reaches the
+    activity and reports the full audit trail: the verdict, how many waypoints
+    were coincident, and the best span/coverage any attempt reached. Segments
+    rejected by the bounding-box pre-filter are omitted — they are not near the
+    activity at all.
+
+    Args:
+        db: Database session.
+        activity_id: Activity to diagnose.
+        requester_user_id: Who asked; only their own activities can be debugged.
+
+    Returns:
+        One item per candidate segment, matches first, then by span (descending).
+
+    Raises:
+        NotFoundError: When the activity does not exist or is not the requester's.
+    """
+    if not activity_integration.owns_activity(activity_id, requester_user_id, db):
+        raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
+    waypoints = activity_streams_integration.get_gps_waypoints_for_activities([activity_id], db).get(activity_id, [])
+    items: list[segments_schema.SegmentMatchDebugItem] = []
+    for segment in segments_crud.list_matchable_segments(db):
+        audit = segments_matcher.audit_segment_match(segment.id, segment.geometry, segment.distance_m, waypoints)
+        if audit.outcome is segments_constants.MatchOutcome.BBOX_FAR:
+            continue
+        items.append(
+            segments_schema.SegmentMatchDebugItem(
+                segment_id=audit.segment_id,
+                name=segment.name,
+                distance_m=segment.distance_m,
+                outcome=audit.outcome,
+                candidate_count=audit.candidate_count,
+                accepted_pass_count=audit.accepted_pass_count,
+                rejected_pass_count=audit.rejected_pass_count,
+                best_span_frac=audit.best_span_frac,
+                best_coverage=audit.best_coverage,
+            )
+        )
+    items.sort(key=lambda item: (item.outcome is not segments_constants.MatchOutcome.MATCHED, -item.best_span_frac))
+    return items
 
 
 def _walk_and_match(db: Session, *, only_missing: bool) -> int:

@@ -282,6 +282,26 @@
     "reverse": "Priešinga kryptis",
     "pass": "Pravažiavimas {number}",
     "best": "Geriausias",
-    "slowerThanBest": "{delta} lėčiau"
+    "slowerThanBest": "{delta} lėčiau",
+    "debug": {
+      "button": "Segmentų diagnostika",
+      "noneStored": "Ši veikla neįvertino nė vieno segmento.",
+      "title": "Segmentų atitikties diagnostika",
+      "description": "Kodėl kiekvienas veiklos apylinkėje esantis segmentas įvertino arba ne.",
+      "failed": "Nepavyko įkelti diagnostikos.",
+      "none": "Nė vienas segmentas nepraeina šalia šios veiklos.",
+      "outcome": "Verdiktas",
+      "candidates": "GPS taškai",
+      "bestSpan": "Geriausia apimtis",
+      "coverage": "Padengimas",
+      "passesRejected": "{count} pravažų atmesta",
+      "outcome_matched": "Sutampa",
+      "outcome_no_geometry": "Bloga geometrija",
+      "outcome_no_waypoints": "GPS per trumpas",
+      "outcome_no_candidates": "Niekada pakankamai arti",
+      "outcome_no_passes": "Nėra vientiso pravaž",
+      "outcome_span_short": "Dalinis pravažiavimas",
+      "outcome_no_plausible": "Laiko patikrinimas nepavyko"
+    }
   }
 }

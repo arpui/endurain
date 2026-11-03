@@ -123,7 +123,27 @@
     "reverse": "Sentit invers",
     "pass": "Passada {number}",
     "best": "Millor",
-    "slowerThanBest": "{delta} més lent"
+    "slowerThanBest": "{delta} més lent",
+    "debug": {
+      "button": "Diagnòstic de segments",
+      "noneStored": "Aquesta activitat no ha puntuat cap segment.",
+      "title": "Diagnòstic de coincidència de segments",
+      "description": "Per què cada segment a prop d'aquesta activitat l'ha puntuada o no.",
+      "failed": "No s'ha pogut carregar el diagnòstic.",
+      "none": "Cap segment passa a prop d'aquesta activitat.",
+      "outcome": "Veredicte",
+      "candidates": "Punts GPS",
+      "bestSpan": "Millor abast",
+      "coverage": "Cobertura",
+      "passesRejected": "{count} passades descartades",
+      "outcome_matched": "Coincideix",
+      "outcome_no_geometry": "Geometria defectuosa",
+      "outcome_no_waypoints": "GPS massa curt",
+      "outcome_no_candidates": "Mai prou a prop",
+      "outcome_no_passes": "Cap passada continuada",
+      "outcome_span_short": "Recorregut parcial",
+      "outcome_no_plausible": "No passa el control de temps"
+    }
   },
   "workout": {
     "title": "Entrenament",
