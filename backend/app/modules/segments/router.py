@@ -28,6 +28,7 @@ def list_segments(
     token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
     db: Annotated[Session, Depends(core_database.get_db)],
     page: Annotated[core_pagination.PageParams, Depends(core_pagination.list_page_params)],
+    name_search: Annotated[str | None, Query(alias="name")] = None,
 ) -> segments_schema.SegmentPage:
     """Return one page of the segment library, with the matching total."""
     return segments_service.list_segments(
@@ -35,6 +36,7 @@ def list_segments(
         page_number=page.page_number,
         num_records=page.num_records,
         requester_user_id=token_user_id,
+        name_search=name_search,
     )
 
 

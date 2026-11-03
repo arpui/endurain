@@ -92,6 +92,7 @@ def list_segments(
     page_number: int,
     num_records: int,
     activity_ids: Sequence[int],
+    name_search: str | None = None,
 ) -> list[segments_schema.SegmentListItemRead]:
     """List segments ordered by name, paginated, with the reader's effort count.
 
@@ -100,6 +101,7 @@ def list_segments(
         page_number: 1-based page number.
         num_records: Page size.
         activity_ids: Whose efforts to count; the caller resolves the scoping.
+        name_search: Case-insensitive substring the name must contain, if any.
 
     Returns:
         The page of segments, each carrying how many counted (forward) efforts the
@@ -123,6 +125,8 @@ def list_segments(
         .offset((page_number - 1) * num_records)
         .limit(num_records)
     )
+    if name_search:
+        stmt = stmt.where(func.lower(segments_models.Segment.name).like(f"%{name_search.lower().strip()}%"))
     items: list[segments_schema.SegmentListItemRead] = []
     for segment, count in db.execute(stmt).all():
         item = segments_schema.SegmentListItemRead.model_validate(segment)
@@ -133,16 +137,19 @@ def list_segments(
     return items
 
 
-def count_segments(db: Session) -> int:
-    """Count every stored segment.
+def count_segments(db: Session, *, name_search: str | None = None) -> int:
+    """Count every stored segment, optionally those whose name contains a term.
 
     Args:
         db: Database session.
+        name_search: Case-insensitive substring the name must contain, if any.
 
     Returns:
-        The total number of segments.
+        The number of segments matching.
     """
     stmt = select(func.count()).select_from(segments_models.Segment)
+    if name_search:
+        stmt = stmt.where(func.lower(segments_models.Segment.name).like(f"%{name_search.lower().strip()}%"))
     return int(db.scalar(stmt) or 0)
 
 

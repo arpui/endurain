@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Activity as ActivityIcon, Search, Users as UsersIcon, Wrench, X } from '@lucide/vue'
+import { Activity as ActivityIcon, Route, Search, Users as UsersIcon, Wrench, X } from '@lucide/vue'
 import type { LucideIcon } from '@lucide/vue'
 
 import type { SearchScope } from '@/features/search/types'
 
 import ActivityResultItem from '@/features/search/components/ActivityResultItem.vue'
 import GearResultItem from '@/features/search/components/GearResultItem.vue'
+import SegmentResultItem from '@/features/search/components/SegmentResultItem.vue'
 import UserResultItem from '@/features/search/components/UserResultItem.vue'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -39,6 +40,7 @@ const {
   userResults,
   activityResults,
   gearResults,
+  segmentResults,
   clearSearch,
   refetchActive,
 } = useSearch()
@@ -48,6 +50,7 @@ const SCOPE_OPTIONS: ReadonlyArray<{ value: SearchScope; labelKey: string; icon:
   { value: 'users', labelKey: 'search.scopes.users', icon: UsersIcon },
   { value: 'activities', labelKey: 'search.scopes.activities', icon: ActivityIcon },
   { value: 'gears', labelKey: 'search.scopes.gears', icon: Wrench },
+  { value: 'segments', labelKey: 'search.scopes.segments', icon: Route },
 ]
 
 /**
@@ -76,7 +79,7 @@ const scopeModel = computed<string>({
     <!-- Controls: scope tab options + the debounced search box. -->
     <Card class="flex flex-col gap-3">
       <Tabs v-model="scopeModel">
-        <TabsList class="grid w-full grid-cols-3" :aria-label="t('search.title')">
+        <TabsList class="grid w-full grid-cols-4" :aria-label="t('search.title')">
           <TabsTrigger
             v-for="option in SCOPE_OPTIONS"
             :key="option.value"
@@ -193,9 +196,14 @@ const scopeModel = computed<string>({
             <ActivityResultItem :activity="activity" />
           </li>
         </template>
-        <template v-else>
+        <template v-else-if="scope === 'gears'">
           <li v-for="gear in gearResults" :key="gear.id">
             <GearResultItem :gear="gear" />
+          </li>
+        </template>
+        <template v-else>
+          <li v-for="segment in segmentResults" :key="segment.id">
+            <SegmentResultItem :segment="segment" />
           </li>
         </template>
       </ul>

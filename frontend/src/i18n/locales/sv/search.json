@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Användare",
     "activities": "Aktiviteter",
-    "gears": "Utrustning"
+    "gears": "Utrustning",
+    "segments": "Segment"
   },
   "filters": {
     "all": "Alla typer",

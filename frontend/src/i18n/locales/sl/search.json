@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Uporabniki",
     "activities": "Aktivnosti",
-    "gears": "Oprema"
+    "gears": "Oprema",
+    "segments": "Segmenti"
   },
   "filters": {
     "all": "Vse vrste",

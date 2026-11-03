@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Brugere",
     "activities": "Aktiviteter",
-    "gears": "Udstyr"
+    "gears": "Udstyr",
+    "segments": "Segmenter"
   },
   "filters": {
     "all": "Alle typer",

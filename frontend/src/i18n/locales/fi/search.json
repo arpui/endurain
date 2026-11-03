@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Käyttäjät",
     "activities": "Aktiviteetit",
-    "gears": "Varusteet"
+    "gears": "Varusteet",
+    "segments": "Segmentit"
   },
   "filters": {
     "all": "Kaikki tyypit",

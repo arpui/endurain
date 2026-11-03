@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Gebruikers",
     "activities": "Activiteiten",
-    "gears": "Uitrusting"
+    "gears": "Uitrusting",
+    "segments": "Segmenten"
   },
   "filters": {
     "all": "Alle types",
