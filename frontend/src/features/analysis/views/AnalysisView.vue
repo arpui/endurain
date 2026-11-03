@@ -22,8 +22,12 @@ import AnalysisSettingsCard from '@/features/analysis/components/AnalysisSetting
 
 const { t } = useI18n()
 
-/** Selectable history windows, in days, in display order. */
-const WINDOW_OPTIONS = [30, 90, 365, 730, 1095, 0]
+/** Selectable history windows, in days, in display order; 0 means all time. */
+const WINDOW_OPTIONS = [30, 90, 365, 730, 1095, 1460, 1825, 0]
+
+/** Explicit floor for the all-time choice: omitting `from` makes the backend
+ * apply its own short default window, which is not "everything". */
+const ALL_TIME_FROM = '1970-01-01'
 
 const windowDays = ref(90)
 const method = ref<LoadMethod>('coggan_tss')
@@ -43,7 +47,7 @@ function buildQuery(): FitnessQuery {
   return {
     method: method.value,
     sport: sport.value === '' ? undefined : sport.value,
-    fromDate: windowDays.value === 0 ? undefined : daysAgo(windowDays.value - 1),
+    fromDate: windowDays.value === 0 ? ALL_TIME_FROM : daysAgo(windowDays.value - 1),
     toDate: today(),
   }
 }
@@ -131,7 +135,7 @@ const seriesParams = computed(() => ({
       <Select
         v-model="windowDays"
         :aria-label="t('analysis.window.label')"
-        class="w-28"
+        class="w-32"
         @change="applyQuery"
       >
         <option v-for="days in WINDOW_OPTIONS" :key="days" :value="days">

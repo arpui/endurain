@@ -6,10 +6,12 @@
     "label": "Laika posms",
     "30": "30 dienas",
     "90": "90 dienas",
-    "365": "365 dienas",
-    "1095": "1095 dienas",
+    "365": "1 gads",
+    "1095": "3 gadi",
     "all": "Visa vēsture",
-    "730": "730 dienas"
+    "730": "2 gadi",
+    "1460": "4 gadi",
+    "1825": "5 gadi"
   },
   "method": {
     "label": "Slodzes formula",

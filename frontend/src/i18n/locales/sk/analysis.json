@@ -6,10 +6,12 @@
     "label": "Obdobie",
     "30": "30 dní",
     "90": "90 dní",
-    "365": "365 dní",
-    "1095": "1095 dní",
+    "365": "1 rok",
+    "1095": "3 roky",
     "all": "Celá história",
-    "730": "730 dní"
+    "730": "2 roky",
+    "1460": "4 roky",
+    "1825": "5 rokov"
   },
   "method": {
     "label": "Vzorec zaťaženia",
