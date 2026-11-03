@@ -282,6 +282,26 @@
     "reverse": "Ellentétes irány",
     "pass": "Áthaladás {number}",
     "best": "Legjobb",
-    "slowerThanBest": "{delta} lassabb"
+    "slowerThanBest": "{delta} lassabb",
+    "debug": {
+      "button": "Szekció-diagnosztika",
+      "noneStored": "Ez a tevékenység egyetlen szekciót sem pontozott.",
+      "title": "Szekció-egyezési diagnosztika",
+      "description": "Miért pontozta vagy nem minden, a tevékenység közelében lévő szekció.",
+      "failed": "Nem sikerült betölteni a diagnosztikát.",
+      "none": "Egyik szekció sem halad a tevékenység közelében.",
+      "outcome": "Ítélet",
+      "candidates": "GPS-pontok",
+      "bestSpan": "Legjobb terjedelem",
+      "coverage": "Lefedettség",
+      "passesRejected": "{count} átmenet elutasítva",
+      "outcome_matched": "Egyezik",
+      "outcome_no_geometry": "Hibás geometria",
+      "outcome_no_waypoints": "Túl rövid GPS",
+      "outcome_no_candidates": "Soha nem elég közel",
+      "outcome_no_passes": "Nincs összefüggő átmenet",
+      "outcome_span_short": "Részleges áthaladás",
+      "outcome_no_plausible": "Időellenőrzés megbukott"
+    }
   }
 }

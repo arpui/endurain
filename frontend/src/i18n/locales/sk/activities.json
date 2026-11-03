@@ -282,6 +282,26 @@
     "reverse": "Opačný smer",
     "pass": "Prejazd {number}",
     "best": "Najlepší",
-    "slowerThanBest": "{delta} pomalší"
+    "slowerThanBest": "{delta} pomalší",
+    "debug": {
+      "button": "Diagnostika segmentov",
+      "noneStored": "Táto aktivita neskrórovala žiadny segment.",
+      "title": "Diagnostika zhody segmentov",
+      "description": "Prečo každý segment v blízkosti aktivity skóroval alebo nie.",
+      "failed": "Diagnostiku sa nepodarilo načítať.",
+      "none": "Žiadny segment neprechádza v blízkosti aktivity.",
+      "outcome": "Verdikt",
+      "candidates": "Body GPS",
+      "bestSpan": "Najlepší rozsah",
+      "coverage": "Pokrytie",
+      "passesRejected": "{count} prejazdov zamietnuté",
+      "outcome_matched": "Zhoduje sa",
+      "outcome_no_geometry": "Chybná geometria",
+      "outcome_no_waypoints": "GPS príliš krátke",
+      "outcome_no_candidates": "Nikdy dostatočne blízko",
+      "outcome_no_passes": "Žiadny súvislý prejazd",
+      "outcome_span_short": "Čiastočná trasa",
+      "outcome_no_plausible": "Kontrola času zlyhala"
+    }
   }
 }

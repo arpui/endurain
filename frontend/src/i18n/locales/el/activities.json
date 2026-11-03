@@ -282,6 +282,26 @@
     "reverse": "Αντίθετη κατεύθυνση",
     "pass": "Διέλευση {number}",
     "best": "Καλύτερη",
-    "slowerThanBest": "{delta} πιο αργά"
+    "slowerThanBest": "{delta} πιο αργά",
+    "debug": {
+      "button": "Διάγνωση τμημάτων",
+      "noneStored": "Αυτή η δραστηριότητα δεν βαθμολόγησε κανένα τμήμα.",
+      "title": "Διάγνωση αντιστοίχισης τμημάτων",
+      "description": "Γιατί κάθε τμήμα κοντά στη δραστηριότητα τη βαθμολόγησε ή όχι.",
+      "failed": "Δεν ήταν δυνατή η φόρτωση της διάγνωσης.",
+      "none": "Κανένα τμήμα δεν περνά κοντά στη δραστηριότητα.",
+      "outcome": "Ετυμηγορία",
+      "candidates": "Σημεία GPS",
+      "bestSpan": "Καλύτερη έκταση",
+      "coverage": "Κάλυψη",
+      "passesRejected": "{count} διέλευση απορρίφθηκαν",
+      "outcome_matched": "Ταιριάζει",
+      "outcome_no_geometry": "Ελαττωματική γεωμετρία",
+      "outcome_no_waypoints": "GPS πολύ σύντομο",
+      "outcome_no_candidates": "Ποτέ αρκετά κοντά",
+      "outcome_no_passes": "Καμία συνεχής διέλευση",
+      "outcome_span_short": "Μερική διέλευση",
+      "outcome_no_plausible": "Αποτυχία ελέγχου χρόνου"
+    }
   }
 }

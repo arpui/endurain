@@ -282,6 +282,26 @@
     "reverse": "Obrácený směr",
     "pass": "Průjezd {number}",
     "best": "Nejlepší",
-    "slowerThanBest": "{delta} pomalejší"
+    "slowerThanBest": "{delta} pomalejší",
+    "debug": {
+      "button": "Diagnostika segmentů",
+      "noneStored": "Tato aktivita neskorovala žádný segment.",
+      "title": "Diagnostika shody segmentů",
+      "description": "Proč každý segment poblíž aktivity skoroval nebo ne.",
+      "failed": "Diagnostiku se nepodařilo načíst.",
+      "none": "Žádný segment neprochází poblíž aktivity.",
+      "outcome": "Verdikt",
+      "candidates": "Body GPS",
+      "bestSpan": "Nejlepší rozsah",
+      "coverage": "Pokrytí",
+      "passesRejected": "{count} průjezdů zamítnuto",
+      "outcome_matched": "Shoduje se",
+      "outcome_no_geometry": "Chybná geometrie",
+      "outcome_no_waypoints": "GPS příliš krátké",
+      "outcome_no_candidates": "Nikdy dost blízko",
+      "outcome_no_passes": "Žádný souvislý průjezd",
+      "outcome_span_short": "Částečná trasa",
+      "outcome_no_plausible": "Kontrola času selhala"
+    }
   }
 }

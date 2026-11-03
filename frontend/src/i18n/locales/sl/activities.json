@@ -282,6 +282,26 @@
     "reverse": "Nasprotna smer",
     "pass": "Prehod {number}",
     "best": "Najboljši",
-    "slowerThanBest": "{delta} počasnejši"
+    "slowerThanBest": "{delta} počasnejši",
+    "debug": {
+      "button": "Diagnostika segmentov",
+      "noneStored": "Ta aktivnost ni točkovala nobenega segmenta.",
+      "title": "Diagnostika ujemanja segmentov",
+      "description": "Zakaj je vsak segment v bližini aktivnosti točkoval ali ne.",
+      "failed": "Diagnostike ni bilo mogoče naložiti.",
+      "none": "Noben segment ne poteka v bližini te aktivnosti.",
+      "outcome": "Razsodba",
+      "candidates": "Točke GPS",
+      "bestSpan": "Najboljši obseg",
+      "coverage": "Pokritost",
+      "passesRejected": "{count} prehodov zavrnjenih",
+      "outcome_matched": "Ujema se",
+      "outcome_no_geometry": "Pokvarjena geometrija",
+      "outcome_no_waypoints": "GPS prekratek",
+      "outcome_no_candidates": "Nikoli dovolj blizu",
+      "outcome_no_passes": "Ni neprekinjenega prehoda",
+      "outcome_span_short": "Delni prehod",
+      "outcome_no_plausible": "Časovni preizkus ni uspel"
+    }
   }
 }

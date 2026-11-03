@@ -282,6 +282,26 @@
     "reverse": "Odwrotny kierunek",
     "pass": "Przejazd {number}",
     "best": "Najlepszy",
-    "slowerThanBest": "{delta} wolniej"
+    "slowerThanBest": "{delta} wolniej",
+    "debug": {
+      "button": "Diagnostyka segmentów",
+      "noneStored": "Ta aktywność nie zdobyła żadnego segmentu.",
+      "title": "Diagnostyka dopasowania segmentów",
+      "description": "Dlaczego każdy segment w pobliżu tej aktywności zdobył ją lub nie.",
+      "failed": "Nie udało się wczytać diagnostyki.",
+      "none": "Żaden segment nie przebiega w pobliżu tej aktywności.",
+      "outcome": "Werdykt",
+      "candidates": "Punkty GPS",
+      "bestSpan": "Najlepszy zakres",
+      "coverage": "Pokrycie",
+      "passesRejected": "{count} przejazdów odrzuconych",
+      "outcome_matched": "Dopasowane",
+      "outcome_no_geometry": "Uszkodzona geometria",
+      "outcome_no_waypoints": "GPS zbyt krótki",
+      "outcome_no_candidates": "Nigdy dość blisko",
+      "outcome_no_passes": "Brak ciągłego przejazdu",
+      "outcome_span_short": "Częściowy przejazd",
+      "outcome_no_plausible": "Kontrola czasu nieudana"
+    }
   }
 }

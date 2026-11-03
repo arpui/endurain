@@ -81,6 +81,24 @@ def queue_backfill(
 
 
 @router.get(
+    "/debug/activity/{activity_id}",
+    response_model=list[segments_schema.SegmentMatchDebugItem],
+)
+def get_activity_match_debug(
+    activity_id: core_dependencies.PositiveId,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["segments:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> list[segments_schema.SegmentMatchDebugItem]:
+    """Explain why each segment near the activity did or did not match it.
+
+    Declared before ``/{segment_id}`` for the same literal-path reason as
+    ``/backfill``.
+    """
+    return segments_service.get_activity_match_debug(db, activity_id=activity_id, requester_user_id=token_user_id)
+
+
+@router.get(
     "/{segment_id}",
     response_model=segments_schema.SegmentDetailRead,
 )

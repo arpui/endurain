@@ -282,6 +282,26 @@
     "reverse": "Обратна посока",
     "pass": "Минаване {number}",
     "best": "Най-добро",
-    "slowerThanBest": "{delta} по-бавно"
+    "slowerThanBest": "{delta} по-бавно",
+    "debug": {
+      "button": "Диагностика на сегменти",
+      "noneStored": "Тази активност не оцени нито един сегмент.",
+      "title": "Диагностика на съвпадение на сегменти",
+      "description": "Защо всеки сегмент близо до активността я е оценил или не.",
+      "failed": "Диагностиката не можа да се зареди.",
+      "none": "Нито един сегмент не минава близо до тази активност.",
+      "outcome": "Присъда",
+      "candidates": "GPS точки",
+      "bestSpan": "Най-добър обхват",
+      "coverage": "Покрытие",
+      "passesRejected": "{count} преминавания отхвърлени",
+      "outcome_matched": "Съвпада",
+      "outcome_no_geometry": "Дефектна геометрия",
+      "outcome_no_waypoints": "GPS твърде кратък",
+      "outcome_no_candidates": "Никога достатъчно близо",
+      "outcome_no_passes": "Няма непрекъснато преминаване",
+      "outcome_span_short": "Частично преминаване",
+      "outcome_no_plausible": "Проверката на времето е неуспешна"
+    }
   }
 }

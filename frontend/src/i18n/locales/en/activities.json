@@ -123,7 +123,27 @@
     "reverse": "Reverse",
     "pass": "Pass {number}",
     "best": "Best",
-    "slowerThanBest": "{delta} slower"
+    "slowerThanBest": "{delta} slower",
+    "debug": {
+      "button": "Match debug",
+      "noneStored": "This activity did not score any segment.",
+      "title": "Segment match debug",
+      "description": "Why each segment near this activity did or did not score it.",
+      "failed": "Could not load the debug trail.",
+      "none": "No segment comes near this activity.",
+      "outcome": "Verdict",
+      "candidates": "GPS points",
+      "bestSpan": "Best span",
+      "coverage": "Coverage",
+      "passesRejected": "{count} passes rejected",
+      "outcome_matched": "Matched",
+      "outcome_no_geometry": "Broken geometry",
+      "outcome_no_waypoints": "GPS too short",
+      "outcome_no_candidates": "Never close enough",
+      "outcome_no_passes": "No continuous pass",
+      "outcome_span_short": "Partial traverse",
+      "outcome_no_plausible": "Time check failed"
+    }
   },
   "workout": {
     "title": "Workout",

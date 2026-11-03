@@ -4525,6 +4525,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/segments/debug/activity/{activity_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Activity Match Debug
+         * @description Explain why each segment near the activity did or did not match it.
+         *
+         *     Declared before ``/{segment_id}`` for the same literal-path reason as
+         *     ``/backfill``.
+         */
+        get: operations["get_activity_match_debug_api_v1_segments_debug_activity__activity_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/segments/{segment_id}": {
         parameters: {
             query?: never;
@@ -10031,6 +10054,25 @@ export interface components {
             mfa_enabled: boolean;
         };
         /**
+         * MatchOutcome
+         * @description Verdict of one matcher attempt: one activity against one segment.
+         *
+         *     Produced by the matcher's audit path for every segment that survives the
+         *     bounding-box pre-filter, so a non-match always carries its reason.
+         *
+         *     Attributes:
+         *         MATCHED: At least one plausible traverse was found.
+         *         NO_GEOMETRY: The stored polyline has fewer than two points.
+         *         NO_WAYPOINTS: The activity GPS stream is too short to traverse anything.
+         *         BBOX_FAR: The activity bounding box cannot reach the segment's.
+         *         NO_CANDIDATES: No waypoint came within the match radius of the geometry.
+         *         NO_PASSES: Coincident waypoints exist but never formed a pass long enough.
+         *         SPAN_SHORT: Passes exist, but none extended over the required span.
+         *         NO_PLAUSIBLE: Full-span passes existed but failed the time/speed checks.
+         * @enum {string}
+         */
+        MatchOutcome: "matched" | "no_geometry" | "no_waypoints" | "bbox_far" | "no_candidates" | "no_passes" | "span_short" | "no_plausible";
+        /**
          * MobileSessionResponse
          * @description Response for mobile password login with PKCE exchange flow.
          *
@@ -10901,6 +10943,40 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+        };
+        /**
+         * SegmentMatchDebugItem
+         * @description One segment's match verdict for one activity (debug trail).
+         *
+         *     Attributes:
+         *         segment_id: Segment the matcher attempted.
+         *         name: Segment name, as the debug panel labels the row.
+         *         distance_m: Segment length, for context next to the verdict.
+         *         outcome: Verdict: matched, or which stage rejected every attempt.
+         *         candidate_count: Activity waypoints that fell within the match radius.
+         *         accepted_pass_count: Passes stored as efforts.
+         *         rejected_pass_count: Passes dropped by the span or time/speed checks.
+         *         best_span_frac: Largest span fraction any attempt reached.
+         *         best_coverage: Largest coverage fraction any attempt reached.
+         */
+        SegmentMatchDebugItem: {
+            /** Accepted Pass Count */
+            accepted_pass_count: number;
+            /** Best Coverage */
+            best_coverage: number;
+            /** Best Span Frac */
+            best_span_frac: number;
+            /** Candidate Count */
+            candidate_count: number;
+            /** Distance M */
+            distance_m: number;
+            /** Name */
+            name: string;
+            outcome: components["schemas"]["MatchOutcome"];
+            /** Rejected Pass Count */
+            rejected_pass_count: number;
+            /** Segment Id */
+            segment_id: number;
         };
         /**
          * SegmentRead
@@ -20132,6 +20208,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BackfillQueued"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_activity_match_debug_api_v1_segments_debug_activity__activity_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SegmentMatchDebugItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Unexpected error */

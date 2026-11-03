@@ -282,6 +282,26 @@
     "reverse": "Modsat retning",
     "pass": "Passage {number}",
     "best": "Bedste",
-    "slowerThanBest": "{delta} langsommere"
+    "slowerThanBest": "{delta} langsommere",
+    "debug": {
+      "button": "Segmentdiagnosticering",
+      "noneStored": "Aktiviteten scorede ikke noget segment.",
+      "title": "Diagnosticering af segmentmatch",
+      "description": "Hvorfor hvert segment tæt på aktiviteten scorede det eller ej.",
+      "failed": "Kunne ikke indlæse diagnosticeringen.",
+      "none": "Intet segment passerer tæt på aktiviteten.",
+      "outcome": "Dom",
+      "candidates": "GPS-punkter",
+      "bestSpan": "Bedste spænd",
+      "coverage": "Dækning",
+      "passesRejected": "{count} passager kasseret",
+      "outcome_matched": "Matcher",
+      "outcome_no_geometry": "Defekt geometri",
+      "outcome_no_waypoints": "GPS for kort",
+      "outcome_no_candidates": "Aldrig tæt nok på",
+      "outcome_no_passes": "Ingen sammenhængende passage",
+      "outcome_span_short": "Delvis gennemkørsel",
+      "outcome_no_plausible": "Tidskontrol fejlede"
+    }
   }
 }

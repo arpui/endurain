@@ -282,6 +282,26 @@
     "reverse": "反向",
     "pass": "第 {number} 次通过",
     "best": "最佳",
-    "slowerThanBest": "慢 {delta}"
+    "slowerThanBest": "慢 {delta}",
+    "debug": {
+      "button": "路段匹配诊断",
+      "noneStored": "本次运动未记录任何路段。",
+      "title": "路段匹配诊断",
+      "description": "为什么运动附近的每个路段记录了或没有记录本次运动。",
+      "failed": "无法加载诊断信息。",
+      "none": "没有路段经过本次运动附近。",
+      "outcome": "结论",
+      "candidates": "GPS 点数",
+      "bestSpan": "最佳跨度",
+      "coverage": "覆盖率",
+      "passesRejected": "已拒绝 {count} 次通过",
+      "outcome_matched": "匹配",
+      "outcome_no_geometry": "几何数据异常",
+      "outcome_no_waypoints": "GPS 数据过短",
+      "outcome_no_candidates": "从未足够接近",
+      "outcome_no_passes": "没有连续的通过",
+      "outcome_span_short": "部分完成",
+      "outcome_no_plausible": "未通过时间检查"
+    }
   }
 }

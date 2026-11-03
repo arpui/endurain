@@ -282,6 +282,26 @@
     "reverse": "Зворотний напрям",
     "pass": "Прохід {number}",
     "best": "Найкраще",
-    "slowerThanBest": "{delta} повільніше"
+    "slowerThanBest": "{delta} повільніше",
+    "debug": {
+      "button": "Діагностика сегментів",
+      "noneStored": "Ця активність не зарахувала жодного сегмента.",
+      "title": "Діагностика збігу сегментів",
+      "description": "Чому кожен сегмент поблизу активності зарахував її чи ні.",
+      "failed": "Не вдалося завантажити діагностику.",
+      "none": "Жоден сегмент не проходить поблизу активності.",
+      "outcome": "Вердикт",
+      "candidates": "Точки GPS",
+      "bestSpan": "Найбільший діапазон",
+      "coverage": "Покриття",
+      "passesRejected": "{count} проходів відхилено",
+      "outcome_matched": "Збіг",
+      "outcome_no_geometry": "Пошкоджена геометрія",
+      "outcome_no_waypoints": "GPS закороткий",
+      "outcome_no_candidates": "Ніколи достатньо близько",
+      "outcome_no_passes": "Немає безперервного проходу",
+      "outcome_span_short": "Частковий прохід",
+      "outcome_no_plausible": "Перевірка часу не пройдена"
+    }
   }
 }

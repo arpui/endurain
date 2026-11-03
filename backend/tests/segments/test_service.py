@@ -399,7 +399,9 @@ class TestSegmentDescent:
 class TestMatchOrchestration:
     def _target(self, segment_id: int = 1) -> segments_contracts.SegmentMatchTarget:
         geometry = [[41.0, 2.0 + i * 0.0005] for i in range(21)]
-        return segments_contracts.SegmentMatchTarget(id=segment_id, distance_m=840.0, geometry=geometry)
+        return segments_contracts.SegmentMatchTarget(
+            id=segment_id, name="Test tram", distance_m=840.0, geometry=geometry
+        )
 
     def _waypoints(self, reverse: bool = False) -> list[dict]:
         indices = list(range(22, -3, -1)) if reverse else list(range(-2, 23))
@@ -504,3 +506,78 @@ class TestMatchOrchestration:
 
         assert service.rescan_all_efforts(db) == 0
         mock_crud.activity_ids_with_efforts.assert_not_called()
+
+
+class TestMatchDebug:
+    """The debug trail: one verdict per candidate segment, bbox-far ones omitted."""
+
+    def _target(self, segment_id: int, name: str, lat_offset: float = 0.0) -> segments_contracts.SegmentMatchTarget:
+        geometry = [[41.0 + lat_offset, 2.0 + i * 0.0005] for i in range(21)]
+        return segments_contracts.SegmentMatchTarget(id=segment_id, name=name, distance_m=840.0, geometry=geometry)
+
+    def _waypoints(self) -> list[dict]:
+        return [
+            {
+                "lat": 41.0,
+                "lon": 2.0 + index * 0.0005,
+                "time": (_T0 + timedelta(seconds=position * 8)).isoformat(),
+            }
+            for position, index in enumerate(range(-2, 23))
+        ]
+
+    @patch("modules.segments.service.activity_streams_integration")
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.service.segments_crud")
+    def test_one_verdict_per_near_segment_and_far_ones_dropped(self, mock_crud, mock_activities, mock_streams):
+        from modules.segments import constants as segments_constants
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_activities.owns_activity.return_value = True
+        mock_streams.get_gps_waypoints_for_activities.return_value = {5: self._waypoints()}
+        mock_crud.list_matchable_segments.return_value = [
+            self._target(1, "Up the hill"),
+            self._target(2, "Far away", lat_offset=1.0),
+        ]
+
+        items = service.get_activity_match_debug(db, activity_id=5, requester_user_id=2)
+
+        assert len(items) == 1
+        item = items[0]
+        assert item.segment_id == 1
+        assert item.name == "Up the hill"
+        assert item.outcome is segments_constants.MatchOutcome.MATCHED
+        assert item.accepted_pass_count == 1
+        assert item.best_span_frac >= 0.9
+
+    @patch("modules.segments.service.activity_streams_integration")
+    @patch("modules.segments.service.activity_integration")
+    @patch("modules.segments.service.segments_crud")
+    def test_partial_traverses_sort_after_matches(self, mock_crud, mock_activities, mock_streams):
+        from modules.segments import constants as segments_constants
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_activities.owns_activity.return_value = True
+        # The trace only rides the western half of the second segment.
+        mock_streams.get_gps_waypoints_for_activities.return_value = {5: self._waypoints()[:12]}
+        mock_crud.list_matchable_segments.return_value = [
+            self._target(2, "Half ridden", lat_offset=0.0),
+        ]
+
+        items = service.get_activity_match_debug(db, activity_id=5, requester_user_id=2)
+
+        assert len(items) == 1
+        assert items[0].outcome is segments_constants.MatchOutcome.SPAN_SHORT
+        assert 0.0 < items[0].best_span_frac < 0.9
+
+    @patch("modules.segments.service.activity_integration")
+    def test_someone_elses_activity_is_not_found(self, mock_activities):
+        import core.exceptions as core_exceptions
+        from modules.segments import service
+
+        db = MagicMock()
+        mock_activities.owns_activity.return_value = False
+
+        with pytest.raises(core_exceptions.NotFoundError):
+            service.get_activity_match_debug(db, activity_id=5, requester_user_id=2)

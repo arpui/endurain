@@ -282,6 +282,26 @@
     "reverse": "Vastassuund",
     "pass": "Läbimine {number}",
     "best": "Parim",
-    "slowerThanBest": "{delta} aeglasem"
+    "slowerThanBest": "{delta} aeglasem",
+    "debug": {
+      "button": "Segmentide diagnostika",
+      "noneStored": "See tegevus ei punktidanud ühtki segmenti.",
+      "title": "Segmentide kokkulangevuse diagnostika",
+      "description": "Miks iga tegevuse lähedal olev segment punktas või mitte.",
+      "failed": "Diagnostika laadimine ebaõnnestus.",
+      "none": "Ükski segment ei lähe selle tegevuse lähedalt.",
+      "outcome": "Otsus",
+      "candidates": "GPS punktid",
+      "bestSpan": "Parim ulatus",
+      "coverage": "Kattevus",
+      "passesRejected": "{count} ühisõitu heideti kõrvale",
+      "outcome_matched": "Kattub",
+      "outcome_no_geometry": "Defektne geomeetria",
+      "outcome_no_waypoints": "GPS liiga lühike",
+      "outcome_no_candidates": "Mitte kunagi piisavalt lähedal",
+      "outcome_no_passes": "Pole katkestusteta ühisõitu",
+      "outcome_span_short": "Osaline läbisõit",
+      "outcome_no_plausible": "Ajakontroll ei õnnestunud"
+    }
   }
 }

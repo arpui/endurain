@@ -282,6 +282,26 @@
     "reverse": "Gegenrichtung",
     "pass": "Passage {number}",
     "best": "Beste",
-    "slowerThanBest": "{delta} langsamer"
+    "slowerThanBest": "{delta} langsamer",
+    "debug": {
+      "button": "Segment-Diagnose",
+      "noneStored": "Diese Aktivität hat kein Segment gewertet.",
+      "title": "Segment-Abgleich-Diagnose",
+      "description": "Warum jedes Segment in der Nähe dieser Aktivität sie gewertet hat oder nicht.",
+      "failed": "Diagnose konnte nicht geladen werden.",
+      "none": "Kein Segment kommt nahe an dieser Aktivität vorbei.",
+      "outcome": "Urteil",
+      "candidates": "GPS-Punkte",
+      "bestSpan": "Beste Spanne",
+      "coverage": "Abdeckung",
+      "passesRejected": "{count} Durchfahrten verworfen",
+      "outcome_matched": "Übereinstimmung",
+      "outcome_no_geometry": "Defekte Geometrie",
+      "outcome_no_waypoints": "GPS zu kurz",
+      "outcome_no_candidates": "Nie nah genug",
+      "outcome_no_passes": "Keine durchgehende Durchfahrt",
+      "outcome_span_short": "Teilweise durchfahren",
+      "outcome_no_plausible": "Zeitprüfung fehlgeschlagen"
+    }
   }
 }

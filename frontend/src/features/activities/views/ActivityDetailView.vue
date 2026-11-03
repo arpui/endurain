@@ -29,6 +29,7 @@ import ActivityPrivacyAlerts from '@/features/activities/components/ActivityPriv
 import ActivitySegmentsTable from '@/features/activities/components/ActivitySegmentsTable.vue'
 import ActivityStreamChart from '@/features/activities/components/ActivityStreamChart.vue'
 import ActivityWorkoutSets from '@/features/activities/components/ActivityWorkoutSets.vue'
+import SegmentMatchDebugDialog from '@/features/segments/components/SegmentMatchDebugDialog.vue'
 import {
   useActivityExerciseTitlesQuery,
   useActivityLapsQuery,
@@ -147,6 +148,10 @@ const showLaps = computed(
 )
 
 const showSegments = computed(() => !!activity.value && (segments.value?.length ?? 0) > 0)
+
+// The owner can always open the segment match-debug trail: it answers why an
+// activity scored (or missed) the nearby segments, empty list included.
+const segmentsDebugOpen = ref(false)
 
 // Workout steps/sets. Fetched for every activity (like laps/streams); the
 // section self-hides when there is no data, mirroring v1 which fetches these
@@ -410,11 +415,25 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
         />
       </Card>
 
-      <Card v-if="showSegments" class="flex flex-col gap-3">
-        <h2 class="text-card-heading">{{ t('activities.segments.title') }}</h2>
+      <Card v-if="showSegments || isOwner" class="flex flex-col gap-3">
+        <div class="flex items-center justify-between gap-2">
+          <h2 class="text-card-heading">{{ t('activities.segments.title') }}</h2>
+          <Button v-if="isOwner" variant="outline" size="sm" @click="segmentsDebugOpen = true">
+            {{ t('activities.segments.debug.button') }}
+          </Button>
+        </div>
         <ActivitySegmentsTable
+          v-if="showSegments"
           :segments="segments ?? []"
           :activity-type="activity?.activityType ?? 0"
+          :units="units"
+        />
+        <p v-else class="text-hint text-muted-foreground">
+          {{ t('activities.segments.debug.noneStored') }}
+        </p>
+        <SegmentMatchDebugDialog
+          v-model:open="segmentsDebugOpen"
+          :activity-id="activityId ?? 0"
           :units="units"
         />
       </Card>

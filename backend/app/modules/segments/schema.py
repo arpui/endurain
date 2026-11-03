@@ -222,5 +222,31 @@ class BackfillQueued(BaseModel):
 
 #: Page envelopes matching the rest of the API. The library page carries the
 #: reader's effort count, so its item type is the list schema, not the plain one.
+class SegmentMatchDebugItem(BaseModel):
+    """One segment's match verdict for one activity (debug trail).
+
+    Attributes:
+        segment_id: Segment the matcher attempted.
+        name: Segment name, as the debug panel labels the row.
+        distance_m: Segment length, for context next to the verdict.
+        outcome: Verdict: matched, or which stage rejected every attempt.
+        candidate_count: Activity waypoints that fell within the match radius.
+        accepted_pass_count: Passes stored as efforts.
+        rejected_pass_count: Passes dropped by the span or time/speed checks.
+        best_span_frac: Largest span fraction any attempt reached.
+        best_coverage: Largest coverage fraction any attempt reached.
+    """
+
+    segment_id: StrictInt
+    name: StrictStr
+    distance_m: StrictFloat
+    outcome: segments_constants.MatchOutcome
+    candidate_count: StrictInt
+    accepted_pass_count: StrictInt
+    rejected_pass_count: StrictInt
+    best_span_frac: StrictFloat
+    best_coverage: StrictFloat
+
+
 SegmentPage = core_pagination.Page[SegmentListItemRead]
 SegmentEffortPage = core_pagination.Page[SegmentEffortRead]
