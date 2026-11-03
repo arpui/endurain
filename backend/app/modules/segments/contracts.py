@@ -72,8 +72,8 @@ class SegmentMatch:
         pass_number: 1-based index among passes in this direction.
         elapsed_seconds: Time between the bracket waypoints.
         avg_speed_mps: Segment distance over elapsed time.
-        coverage: Fraction of distinct segment points touched.
-        span: Fraction of the segment index range the pass extended over.
+        coverage: Fraction of the segment's vertices lying near the pass trace.
+        span: Fraction of the segment's arc length the pass extended over.
         time_start: Wall-clock time of the first bracket waypoint (naive).
         time_end: Wall-clock time of the last bracket waypoint (naive).
         stream_index_start: GPS-stream index of the first bracket waypoint.
@@ -91,3 +91,30 @@ class SegmentMatch:
     time_end: datetime
     stream_index_start: int
     stream_index_end: int
+
+
+@dataclass(frozen=True)
+class SegmentMatchAudit:
+    """Why one activity did or did not score against one segment.
+
+    The matcher's debug trail: same computation as the match path, but it
+    reports the verdict and the statistics that produced it, so "only one
+    effort" questions can be answered without rerunning anything by hand.
+
+    Attributes:
+        segment_id: The segment the attempt ran against.
+        outcome: The verdict (matched, or which check rejected every attempt).
+        candidate_count: Waypoints that came within the match radius.
+        accepted_pass_count: Passes stored as matches.
+        rejected_pass_count: Passes dropped by the span or time/speed checks.
+        best_span_frac: Largest span fraction any pass fragment reached.
+        best_coverage: Largest coverage fraction any pass fragment reached.
+    """
+
+    segment_id: int
+    outcome: segments_constants.MatchOutcome
+    candidate_count: int
+    accepted_pass_count: int
+    rejected_pass_count: int
+    best_span_frac: float
+    best_coverage: float

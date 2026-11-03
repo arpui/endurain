@@ -9,16 +9,18 @@ bounding-box pre-filter) is exercised here without any database.
 import math
 from datetime import datetime, timedelta
 
+import numpy as np
 import pytest
 
 import modules.segments.constants as segments_constants
-from modules.segments.matcher import elevation_gain_m, match_segment_passes, polyline_length_m
+from modules.segments.matcher import audit_segment_match, elevation_gain_m, match_segment_passes, polyline_length_m
 
 _SEG_LAT = 41.0
 _SEG_START_LNG = 2.0
 _LNG_STEP = 0.0005  # ~42 m at this latitude
 _N_POINTS = 21  # segment point indices 0..20
 _STEP_M = _LNG_STEP * 111_320.0 * math.cos(math.radians(_SEG_LAT))
+_M_PER_DEG_LNG = _STEP_M / _LNG_STEP  # metres per degree of longitude on the test line
 _T0 = datetime(2026, 5, 1, 8, 0, 0)
 
 
@@ -216,3 +218,122 @@ class TestGeometryHelpers:
     def test_elevation_gain_ignores_descents(self):
         assert elevation_gain_m([10.0, 20.0, 15.0, 30.0]) == 25.0
         assert elevation_gain_m([]) == 0.0
+
+
+class TestDensityInvariance:
+    """The outcome must not depend on how finely the polyline samples the road.
+
+    The bug this pins: a Strava polyline with vertices every ~2 m fragmented
+    passes at index-based thresholds and recorded nothing, while the same road
+    drawn every ~7 m recorded every traverse. Both drawings, and jittered ones,
+    must now return the same efforts.
+    """
+
+    @staticmethod
+    def _jittered_line(length_m: float, step_m: float, jitter_m: float, seed: int) -> list[list[float]]:
+        """Return an east-west line sampled every ``step_m`` with lateral vertex jitter."""
+        rng = np.random.default_rng(seed)
+        n = max(2, int(length_m // step_m) + 1)
+        lat_j = rng.uniform(-jitter_m, jitter_m, size=n) / 111_320.0
+        lng = _SEG_START_LNG + np.arange(n) * step_m / _M_PER_DEG_LNG
+        return [[_SEG_LAT + float(d), float(g)] for d, g in zip(lat_j, lng, strict=True)]
+
+    @staticmethod
+    def _noisy_trace(geometry_len: float, *, seed: int, speed_mps: float = 5.0) -> list[dict]:
+        """Return a forward traverse GPS-sampled every ~5 m with ±12 m lateral noise."""
+        rng = np.random.default_rng(seed)
+        waypoints: list[dict] = []
+        t = _T0
+        along = -30.0
+        while along <= geometry_len + 30.0:
+            lat_j = float(rng.uniform(-12.0, 12.0)) / 111_320.0
+            lng = _SEG_START_LNG + along / _M_PER_DEG_LNG
+            waypoints.append({"lat": _SEG_LAT + lat_j, "lon": lng, "time": t.isoformat()})
+            along += 5.0
+            t += timedelta(seconds=1.0)
+        return waypoints
+
+    def test_dense_and_coarse_drawings_of_one_road_agree(self):
+        length_m = 840.0
+        dense = self._jittered_line(length_m, 1.9, 4.0, seed=7)
+        coarse = self._jittered_line(length_m, 6.9, 4.0, seed=11)
+        assert len(dense) > 3 * len(coarse)
+
+        trace = self._noisy_trace(length_m, seed=3)
+        m_dense = match_segment_passes(7, dense, length_m, trace)
+        m_coarse = match_segment_passes(7, coarse, length_m, trace)
+
+        assert [m.direction for m in m_dense] == [segments_constants.SegmentDirection.FORWARD]
+        assert [m.direction for m in m_coarse] == [segments_constants.SegmentDirection.FORWARD]
+        assert m_dense[0].coverage >= 0.9
+        assert m_coarse[0].coverage >= 0.9
+        assert abs(m_dense[0].elapsed_seconds - m_coarse[0].elapsed_seconds) <= 20
+
+    def test_noisy_dense_geometry_still_scores_a_clean_traverse(self):
+        dense = self._jittered_line(840.0, 1.9, 6.0, seed=23)
+        trace = _trace(-2.0, 21.0, sample_m=5.0)
+
+        (match,) = match_segment_passes(7, dense, 840.0, trace)
+
+        assert match.direction is segments_constants.SegmentDirection.FORWARD
+        assert match.coverage >= 0.9
+
+
+class TestMatchAudit:
+    """The audit trail states why a segment matched or did not."""
+
+    def test_match_reports_matched_with_pass_stats(self):
+        result = audit_segment_match(7, _geometry(), _length_m(), _trace(-2.0, float(_N_POINTS + 1)))
+
+        assert result.outcome is segments_constants.MatchOutcome.MATCHED
+        assert result.accepted_pass_count == 1
+        assert result.candidate_count >= 3
+        assert result.best_span_frac >= 0.9
+
+    def test_partial_traverse_reports_span_short_with_the_best_span(self):
+        result = audit_segment_match(7, _geometry(), _length_m(), _trace(-2.0, 8.0))
+
+        assert result.outcome is segments_constants.MatchOutcome.SPAN_SHORT
+        assert 0.3 < result.best_span_frac < 0.6
+        assert result.accepted_pass_count == 0
+
+    def test_far_activity_reports_bbox_far_before_any_distance_work(self):
+        waypoints = [
+            {"lat": wp["lat"] + 1.0, "lon": wp["lon"], "time": wp["time"]} for wp in _trace(-2.0, float(_N_POINTS + 1))
+        ]
+
+        result = audit_segment_match(7, _geometry(), _length_m(), waypoints)
+
+        assert result.outcome is segments_constants.MatchOutcome.BBOX_FAR
+
+    def test_trace_across_the_hole_of_a_three_sided_loop_finds_no_candidates(self):
+        # Three sides of a fat rectangle: the bbox interior holds points far
+        # from every leg, so a trace straight through it passes the bbox filter
+        # and must fail at the candidate stage.
+        leg: list[list[float]] = [[_SEG_LAT + i * _LNG_STEP, _SEG_START_LNG] for i in range(11)]
+        leg += [[_SEG_LAT + 0.005, _SEG_START_LNG + i * _LNG_STEP] for i in range(1, 11)]
+        leg += [[_SEG_LAT + 0.005 - i * _LNG_STEP, _SEG_START_LNG + 10 * _LNG_STEP] for i in range(1, 11)]
+        waypoints = [
+            {
+                "lat": _SEG_LAT + 0.0025,
+                "lon": _SEG_START_LNG + x / _M_PER_DEG_LNG,
+                "time": (_T0 + timedelta(seconds=x)).isoformat(),
+            }
+            for x in range(100, 321, 5)
+        ]
+
+        result = audit_segment_match(7, leg, polyline_length_m(leg), waypoints)
+
+        assert result.outcome is segments_constants.MatchOutcome.NO_CANDIDATES
+
+    def test_impossibly_fast_traverse_reports_no_plausible_pass(self):
+        result = audit_segment_match(7, _geometry(), _length_m(), _trace(-2.0, float(_N_POINTS + 1), speed_mps=60.0))
+
+        assert result.outcome is segments_constants.MatchOutcome.NO_PLAUSIBLE
+        assert result.best_span_frac >= 0.9
+        assert result.rejected_pass_count == 1
+
+    def test_short_stream_reports_no_waypoints(self):
+        result = audit_segment_match(7, _geometry(), _length_m(), _trace(0.0, 0.1))
+
+        assert result.outcome is segments_constants.MatchOutcome.NO_WAYPOINTS

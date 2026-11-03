@@ -36,3 +36,30 @@ class SegmentSource(StrEnum):
 
     STRAVA = "strava"
     MANUAL = "manual"
+
+
+class MatchOutcome(StrEnum):
+    """Verdict of one matcher attempt: one activity against one segment.
+
+    Produced by the matcher's audit path for every segment that survives the
+    bounding-box pre-filter, so a non-match always carries its reason.
+
+    Attributes:
+        MATCHED: At least one plausible traverse was found.
+        NO_GEOMETRY: The stored polyline has fewer than two points.
+        NO_WAYPOINTS: The activity GPS stream is too short to traverse anything.
+        BBOX_FAR: The activity bounding box cannot reach the segment's.
+        NO_CANDIDATES: No waypoint came within the match radius of the geometry.
+        NO_PASSES: Coincident waypoints exist but never formed a pass long enough.
+        SPAN_SHORT: Passes exist, but none extended over the required span.
+        NO_PLAUSIBLE: Full-span passes existed but failed the time/speed checks.
+    """
+
+    MATCHED = "matched"
+    NO_GEOMETRY = "no_geometry"
+    NO_WAYPOINTS = "no_waypoints"
+    BBOX_FAR = "bbox_far"
+    NO_CANDIDATES = "no_candidates"
+    NO_PASSES = "no_passes"
+    SPAN_SHORT = "span_short"
+    NO_PLAUSIBLE = "no_plausible"
