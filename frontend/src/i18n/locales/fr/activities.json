@@ -303,5 +303,8 @@
       "outcome_span_short": "Parcours partiel",
       "outcome_no_plausible": "Échec du contrôle de temps"
     }
+  },
+  "power": {
+    "recalibrated": "Puissance Stryd recalibrée à l’échelle actuelle"
   }
 }

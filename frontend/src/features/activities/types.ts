@@ -98,6 +98,8 @@ export interface ActivityStream {
   waypoints: StreamWaypoint[]
   /** Decoded heart-rate zone buckets, present only on the HR stream. */
   hrZones: HrZoneBucket[] | null
+  /** Power-stream provenance ('stryd' | 'device'); null for other streams. */
+  powerSource: string | null
 }
 
 /** A single lap/split within an activity. */

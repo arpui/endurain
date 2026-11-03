@@ -6162,6 +6162,8 @@ export interface components {
             activity_id: number;
             /** Id */
             id: number;
+            /** Power Source */
+            power_source?: string | null;
             /** Strava Activity Stream Id */
             strava_activity_stream_id?: number | null;
             /** Stream Type */

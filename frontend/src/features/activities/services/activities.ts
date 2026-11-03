@@ -206,6 +206,7 @@ export function mapActivityStream(dto: ActivityStreamDto): ActivityStream {
     streamType: dto.stream_type,
     waypoints: (dto.stream_waypoints ?? []) as StreamWaypoint[],
     hrZones: mapHrZones(dto.zone_percentages),
+    powerSource: dto.power_source ?? null,
   }
 }
 

@@ -303,5 +303,8 @@
       "outcome_span_short": "Делимичан пролаз",
       "outcome_no_plausible": "Провера времена није успела"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd snaga recalibrirana na trenutnu lestvicu"
   }
 }

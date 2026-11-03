@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { RouterLink, useRoute } from 'vue-router'
 import { ArrowLeft } from '@lucide/vue'
 
+import { STREAM_TYPE } from '@/features/activities/types'
 import type { ActivityOwner, HrZoneBucket } from '@/features/activities/types'
 import type { StreamChart } from '@/features/activities/utils/streams'
 
@@ -152,6 +153,15 @@ const showSegments = computed(() => !!activity.value && (segments.value?.length 
 // The owner can always open the segment match-debug trail: it answers why an
 // activity scored (or missed) the nearby segments, empty list included.
 const segmentsDebugOpen = ref(false)
+
+// Stryd-era power streams are served recalibrated to the athlete's current
+// scale (the backend applies the stored factor at read); flag those activities
+// so a wattage is never read as if it were the older pod scale.
+const powerRecalibrated = computed(() =>
+  (streams.value ?? []).some(
+    (s) => s.streamType === STREAM_TYPE.power && s.powerSource === 'stryd',
+  ),
+)
 
 // Workout steps/sets. Fetched for every activity (like laps/streams); the
 // section self-hides when there is no data, mirroring v1 which fetches these
@@ -323,6 +333,9 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
         />
         <div class="border-t border-border pt-4">
           <ActivityMetricsGrid :activity="activity" :units="units" :visibility="metricVisibility" />
+          <p v-if="powerRecalibrated" class="text-caption mt-2 text-muted-foreground">
+            * {{ t('activities.power.recalibrated') }}
+          </p>
         </div>
       </Card>
 

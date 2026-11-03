@@ -94,7 +94,19 @@ describe('mapActivityStream', () => {
       streamType: 1,
       waypoints: [{ hr: 120 }],
       hrZones: null,
+      powerSource: null,
     })
+  })
+
+  it('carries the power-stream provenance through', () => {
+    const dto: ActivityStreamDto = {
+      id: 4,
+      activity_id: 5,
+      stream_type: 2,
+      stream_waypoints: [{ power: 354.5 }],
+      power_source: 'stryd',
+    }
+    expect(mapActivityStream(dto).powerSource).toBe('stryd')
   })
 
   it('decodes the HR zone_percentages block into ordered buckets', () => {

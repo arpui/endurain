@@ -303,5 +303,8 @@
       "outcome_span_short": "Částečná trasa",
       "outcome_no_plausible": "Kontrola času selhala"
     }
+  },
+  "power": {
+    "recalibrated": "Výkon Stryd rekalibrován na aktuální škálu"
   }
 }

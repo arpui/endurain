@@ -303,5 +303,8 @@
       "outcome_span_short": "Daļēja izbraukšana",
       "outcome_no_plausible": "Laika pārbaude neizturēta"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd jauda pārskalibretta uz pašreizējo skalu"
   }
 }

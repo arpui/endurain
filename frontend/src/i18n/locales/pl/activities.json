@@ -303,5 +303,8 @@
       "outcome_span_short": "Częściowy przejazd",
       "outcome_no_plausible": "Kontrola czasu nieudana"
     }
+  },
+  "power": {
+    "recalibrated": "Moc Stryd skalibrowana ponownie do obecnej skali"
   }
 }

@@ -303,5 +303,8 @@
       "outcome_span_short": "Delni prehod",
       "outcome_no_plausible": "Časovni preizkus ni uspel"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd moč recalibrirana na trenutno lestvico"
   }
 }

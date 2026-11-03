@@ -303,5 +303,8 @@
     "inlineSkating": "Patinatge en línia",
     "hiit": "HIIT",
     "jumpRope": "Saltar corda"
+  },
+  "power": {
+    "recalibrated": "Potència Stryd recalibrada a l'escala actual"
   }
 }

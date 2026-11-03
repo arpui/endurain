@@ -303,5 +303,8 @@
       "outcome_span_short": "Čiastočná trasa",
       "outcome_no_plausible": "Kontrola času zlyhala"
     }
+  },
+  "power": {
+    "recalibrated": "Výkon Stryd rekalibrovaný na aktuálnu stupnicu"
   }
 }

@@ -303,5 +303,8 @@
       "outcome_span_short": "Osittainen kulku",
       "outcome_no_plausible": "Aikatesti epäonnistui"
     }
+  },
+  "power": {
+    "recalibrated": "Stryd-teho recalibroitu nykyiseen asteeseen"
   }
 }
