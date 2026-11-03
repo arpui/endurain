@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import Mock
 
 import pytest
@@ -184,3 +185,76 @@ class TestWorkDirectoryIsPrivate:
 
         assert not Path(seen["upload_dir"]).exists()
         assert seen["dest_dir"].startswith(seen["upload_dir"])
+
+
+def _parsed_file(*start_times: datetime) -> object:
+    """A ParsedFile stand-in whose activities start at the given instants."""
+    return SimpleNamespace(activities=[SimpleNamespace(activity=SimpleNamespace(start_time=st)) for st in start_times])
+
+
+class TestLegacyTotalsFileGuard:
+    """The legacy bulk re-uploads ship ORIGINAL files that are month-totals records."""
+
+    ENTRY = {  # noqa: RUF012 - read-only fixture shared by the class
+        "activityId": 12345,
+        "activityName": "Barcelona Sin clasificar",
+        "startTimeGMT": "2008-12-21 10:22:45",
+    }
+
+    def _run(self, monkeypatch, entry, preview):
+        client = _make_garminconnect_client()
+        client.get_activities_by_date.return_value = [entry]
+        monkeypatch.setattr(
+            activity_utils.file_uploads, "extract_validated_zip_sync", Mock(return_value=[Path("/work/a.tcx")])
+        )
+        parse = Mock(return_value=preview)
+        monkeypatch.setattr(activity_utils.activity_ingestion_integration, "parse_activity_file", parse)
+        ingest = Mock(return_value=[Mock()])
+        monkeypatch.setattr(activity_utils.activity_ingestion_integration, "ingest_activity_file", ingest)
+        stored = _call(client)
+        return stored, parse, ingest
+
+    def test_a_totals_file_far_from_the_entry_start_is_never_stored(self, monkeypatch):
+        totals_start = datetime(2008, 12, 31, 16, 29, 12, tzinfo=UTC)  # end of the month, 10 days late
+        stored, _parse, ingest = self._run(monkeypatch, self.ENTRY, _parsed_file(totals_start))
+        assert ingest.call_count == 0
+        assert stored is None
+        assert "legacy totals file" in activity_utils.logger.warning.call_args.args[0]
+
+    def test_a_file_matching_the_entry_start_is_stored_normally(self, monkeypatch):
+        honest_start = datetime(2008, 12, 21, 11, 22, 45, tzinfo=UTC)  # that very day
+        _stored, _parse, ingest = self._run(monkeypatch, self.ENTRY, _parsed_file(honest_start))
+        assert ingest.call_count == 1
+
+    def test_a_multi_session_file_is_kept_when_any_part_matches_the_entry(self, monkeypatch):
+        parts = _parsed_file(
+            datetime(2008, 12, 31, 16, 29, 12, tzinfo=UTC),
+            datetime(2008, 12, 21, 10, 30, 0, tzinfo=UTC),
+        )
+        _stored, _parse, ingest = self._run(monkeypatch, self.ENTRY, parts)
+        assert ingest.call_count == 1
+
+    def test_epoch_millisecond_starts_are_understood(self, monkeypatch):
+        entry = dict(self.ENTRY)
+        entry["startTimeGMT"] = 1229854965000  # 2008-12-21 10:22:45Z
+        honest = datetime(2008, 12, 21, 10, 23, 0, tzinfo=UTC)
+        _stored, _parse, ingest = self._run(monkeypatch, entry, _parsed_file(honest))
+        assert ingest.call_count == 1
+
+    def test_entries_without_a_usable_start_keep_the_old_behaviour(self, monkeypatch):
+        entry = {"activityId": 12345, "activityName": "Morning Run"}
+        _stored, _parse, ingest = self._run(monkeypatch, entry, _parsed_file(datetime(1999, 1, 1, tzinfo=UTC)))
+        assert ingest.call_count == 1
+
+    def test_a_preview_parse_error_defers_to_the_regular_path(self, monkeypatch):
+        parse = Mock(side_effect=RuntimeError("broken"))
+        monkeypatch.setattr(
+            activity_utils.file_uploads, "extract_validated_zip_sync", Mock(return_value=[Path("/work/a.tcx")])
+        )
+        monkeypatch.setattr(activity_utils.activity_ingestion_integration, "parse_activity_file", parse)
+        ingest = Mock(return_value=[Mock()])
+        monkeypatch.setattr(activity_utils.activity_ingestion_integration, "ingest_activity_file", ingest)
+        client = _make_garminconnect_client()
+        client.get_activities_by_date.return_value = [self.ENTRY]
+        _call(client)
+        assert ingest.call_count == 1
