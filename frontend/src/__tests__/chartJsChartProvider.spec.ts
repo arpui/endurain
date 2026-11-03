@@ -38,6 +38,64 @@ describe('buildChartConfiguration', () => {
     expect(dataset?.fill).toBe(true)
   })
 
+  it('shades a crossing line series with two area colours on each side of zero', () => {
+    const config = buildChartConfiguration({
+      kind: 'bar',
+      series: [
+        {
+          label: 'TSB',
+          data: [5, -4],
+          line: true,
+          area: true,
+          areaColors: { above: 'rgba(59, 130, 246, 0.3)', below: 'rgba(59, 130, 246, 0.1)' },
+        },
+      ],
+    })
+
+    const dataset = config.data.datasets[0] as Record<string, unknown> | undefined
+    expect(dataset?.fill).toEqual({
+      target: 'origin',
+      above: 'rgba(59, 130, 246, 0.3)',
+      below: 'rgba(59, 130, 246, 0.1)',
+    })
+  })
+
+  it('falls back to one translucent fill when only one area colour is given', () => {
+    const config = buildChartConfiguration({
+      kind: 'bar',
+      series: [
+        {
+          label: 'TSB',
+          data: [5, -4],
+          color: '#3b82f6',
+          line: true,
+          area: true,
+          areaColors: { above: 'rgba(59, 130, 246, 0.3)' },
+        },
+      ],
+    })
+
+    const dataset = config.data.datasets[0] as Record<string, unknown> | undefined
+    const fill = dataset?.fill as Record<string, unknown>
+    expect(fill?.target).toBe('origin')
+    expect(fill?.above).toBe('rgba(59, 130, 246, 0.3)')
+    expect(fill?.below).toBe('rgba(59, 130, 246, 0.15)')
+  })
+
+  it('enables x-axis zoom when the chart asks for it', () => {
+    const config = buildChartConfiguration({
+      kind: 'line',
+      series: [{ label: 'Fitness', data: [1, 2] }],
+      zoom: true,
+    })
+
+    const options = config.options as Record<string, unknown>
+    const plugins = options?.plugins as Record<string, unknown>
+    const zoom = plugins?.zoom as Record<string, unknown>
+    expect(zoom?.zoom).toBeDefined()
+    expect(zoom?.pan).toBeDefined()
+  })
+
   it('maps bar charts to the bar type', () => {
     const config = buildChartConfiguration({
       kind: 'bar',

@@ -17,6 +17,14 @@ import { formatMediumDate } from '@/utils/datetime'
 
 const { t, locale } = useI18n()
 
+const props = defineProps<{
+  /**
+   * Days of history to fit, mirroring the page's window selector so the trend
+   * and the curves above it are read over the same span; 0 means all time.
+   */
+  windowDays?: number
+}>()
+
 /** The sports the chart answers for: only these derive a critical power. */
 const SPORT_OPTIONS = ['run', 'bike']
 /** Selectable moving-average widths, in days each point looks back. */
@@ -30,7 +38,10 @@ const NATIVE_COLOR = themeColor('--color-brand-mid')
 const MA_COLOR = themeColor('--color-info')
 const THRESHOLD_COLOR = themeColor('--color-muted-foreground')
 
-const trendQuery = useCpTrendQuery(sport, null)
+const trendWindow = computed(() =>
+  props.windowDays && props.windowDays > 0 ? props.windowDays : null,
+)
+const trendQuery = useCpTrendQuery(sport, trendWindow)
 const trend = computed<CpTrend | undefined>(() => trendQuery.data.value)
 
 /** Moving average over sessions whose date falls within `maDays` of each point.
@@ -98,6 +109,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
     labels,
     valueFormat: (value) => `${Math.round(value)} W`,
     sharedTooltip: true,
+    zoom: true,
   }
 })
 

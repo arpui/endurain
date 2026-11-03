@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AnalysisSectionsNav from '@/features/analysis/components/AnalysisSectionsNav.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import type { FitnessQuery, FitnessPoint, LoadMethod } from '@/features/analysis/types'
@@ -30,7 +30,7 @@ const WINDOW_OPTIONS = [30, 90, 365, 730, 1095, 1460, 1825, 0]
 const ALL_TIME_FROM = '1970-01-01'
 
 const windowDays = ref(90)
-const method = ref<LoadMethod>('coggan_tss')
+const method = ref<LoadMethod>('rss_total')
 const sport = ref('')
 
 /** ISO date `days` before today, local calendar. */
@@ -60,6 +60,24 @@ function applyQuery(): void {
 
 const settingsQuery = useAnalysisSettingsQuery()
 const fitnessQuery = useFitnessSeriesQuery(seriesQuery)
+
+// The page opens on the athlete's stored primary formula (so the list default
+// and their settings agree); the selector takes over once they touch it.
+const methodTouched = ref(false)
+watch(
+  () => settingsQuery.data.value?.primaryMethod,
+  (primary) => {
+    if (primary && !methodTouched.value && primary !== method.value) {
+      method.value = primary
+      applyQuery()
+    }
+  },
+)
+
+function onMethodChange(): void {
+  methodTouched.value = true
+  applyQuery()
+}
 
 const points = computed<FitnessPoint[]>(() => fitnessQuery.data.value?.points ?? [])
 const latest = computed<FitnessPoint | undefined>(() => points.value[points.value.length - 1])
@@ -146,7 +164,7 @@ const seriesParams = computed(() => ({
         v-model="method"
         :aria-label="t('analysis.method.label')"
         class="w-64"
-        @change="applyQuery"
+        @change="onMethodChange"
       >
         <option v-for="option in LOAD_METHODS" :key="option" :value="option">
           {{ t(`analysis.method.${option}`) }}
@@ -203,7 +221,7 @@ const seriesParams = computed(() => ({
       </template>
     </template>
 
-    <AnalysisCpTrendChart />
+    <AnalysisCpTrendChart :window-days="windowDays" />
 
     <Skeleton v-if="settingsQuery.isPending.value" class="h-64 w-full" />
     <AnalysisSettingsCard
