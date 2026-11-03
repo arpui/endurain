@@ -1668,6 +1668,73 @@ class TestWindowStreamStats:
         assert stat.avg_power_w == 400.0
 
 
+class TestNoSignalPowerGate:
+    """A power channel that never leaves the noise floor reads as absent."""
+
+    @staticmethod
+    def _power_read(values: list[float]):
+        import modules.activities.activity_streams.schema as activity_streams_schema
+
+        return activity_streams_schema.ActivityStreamsRead(
+            id=1,
+            activity_id=1,
+            stream_type=activity_streams_constants.STREAM_TYPE_POWER,
+            stream_waypoints=[
+                {"time": (_T0_UTC + timedelta(seconds=i)).isoformat(), "power": v} for i, v in enumerate(values)
+            ],
+        )
+
+    def _samples(self, values: list[float]):
+        db = _db()
+        with patch(
+            f"{_SVC}.activity_streams_integration.get_stream_for_derivation",
+            return_value=self._power_read(values),
+        ):
+            return analysis_service._stream_samples(
+                1,
+                activity_streams_constants.STREAM_TYPE_POWER,
+                "power",
+                db,
+                keep_zeros=True,
+            )
+
+    def test_a_pod_less_column_of_zeros_reads_as_absent(self):
+        _period, values, _stamps = self._samples([0.0] * 600)
+        assert values == ()
+
+    def test_a_noise_floor_channel_reads_as_absent(self):
+        _period, values, _stamps = self._samples([0.0, 4.0, 2.0, 0.0, 9.0] * 60)
+        assert values == ()
+
+    def test_a_real_channel_keeps_its_stop_zeros(self):
+        _period, values, _stamps = self._samples([0.0, 0.0, 180.0, 0.0, 220.0] * 60)
+        assert len(values) == 300
+        assert values[0] == 0.0
+
+    def test_heart_rate_zeros_keep_their_own_rule(self):
+        """The gate is power-only: an HR stream with real beats and zeros still reads."""
+        import modules.activities.activity_streams.schema as activity_streams_schema
+
+        db = _db()
+        read = activity_streams_schema.ActivityStreamsRead(
+            id=2,
+            activity_id=1,
+            stream_type=activity_streams_constants.STREAM_TYPE_HR,
+            stream_waypoints=[
+                {"time": (_T0_UTC + timedelta(seconds=i)).isoformat(), "hr": (0 if i % 3 else 150)} for i in range(30)
+            ],
+        )
+        with patch(f"{_SVC}.activity_streams_integration.get_stream_for_derivation", return_value=read):
+            _period, values, _stamps = analysis_service._stream_samples(
+                1,
+                activity_streams_constants.STREAM_TYPE_HR,
+                "hr",
+                db,
+                keep_zeros=False,
+            )
+        assert all(v > 0 for v in values) and len(values) == 10
+
+
 class TestCriticalSpeedDerivation:
     """The pace-side twin of the CP fit: critical speed from grade-adjusted peaks."""
 

@@ -172,7 +172,10 @@ def _stream_samples(
 
     Power keeps its zeros (a stopped athlete does no work, and that is what the
     stored Normalized Power counts); heart-rate streams drop zeros, which are the
-    sensor's "no signal" sentinel.
+    sensor's "no signal" sentinel. A power stream that never rises above
+    :data:`~modules.analysis.constants.POWER_NO_SIGNAL_MAX_W` is reported as
+    absent: a pod-less session is a column of zeros, and the intensity chain
+    must fall through to pace/heart rate rather than score it at zero.
 
     Args:
         activity_id: The activity whose stream is read.
@@ -199,6 +202,14 @@ def _stream_samples(
         stamps.append(datetime.fromisoformat(point["time"]))
         values.append(value)
     if not values:
+        return 0.0, (), ()
+    if (
+        stream_type == activity_streams_constants.STREAM_TYPE_POWER
+        and max(values) < analysis_constants.POWER_NO_SIGNAL_MAX_W
+    ):
+        # A power channel that never left the noise floor carries no signal:
+        # treat it as absent so the intensity chain scores the activity from
+        # pace or heart rate instead of from zeros.
         return 0.0, (), ()
     return analysis_maths.sample_period_s(stamps), tuple(values), tuple(stamps)
 

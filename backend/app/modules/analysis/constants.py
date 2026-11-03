@@ -122,6 +122,13 @@ FIT_MIN_ACTIVITIES = 3
 #: mesocycle, with the decay still seeded from the athlete's first measured day.
 FITNESS_WINDOW_DEFAULT_DAYS = 90
 
+#: A power stream whose highest sample sits below this is treated as absent by the
+#: analysis module: a pod-less session records as a column of zeros (Garmin writes
+#: the channel even when Stryd is off), and letting it score zero watts would
+#: hijack the intensity chain from the pace/HR sources that do have signal. No
+#: real effort peaks below this floor, so max-over-stream separates cleanly.
+POWER_NO_SIGNAL_MAX_W: float = 30.0
+
 #: Activities offered on the power-duration response as W' balance candidates,
 #: newest first: enough to pick from without shipping the whole history.
 POWER_DURATION_SESSIONS_MAX = 50
