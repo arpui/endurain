@@ -859,12 +859,16 @@ def get_fitness_series(
     tau_chronic = chronic_days if chronic_days is not None else settings.chronic_days
     end = to_date or date.today()
     start = from_date or end - timedelta(days=analysis_constants.FITNESS_WINDOW_DEFAULT_DAYS)
-    if start > end:
-        raise core_exceptions.InvalidInputError("'from' must not be after 'to'")
 
     totals = analysis_crud.daily_load_totals(user_id, chosen.value, db, sport=sport)
     load_by_day = {day: value for day, value in totals}
     first_measured = totals[0][0] if totals else start
+    # A caller asking for the whole archive names a floor far in the past; clamp
+    # the plotted start up to the first recorded day so they are not shown the
+    # empty runway before it. EWMA is still seeded from that first measured day.
+    start = max(start, first_measured)
+    if start > end:
+        raise core_exceptions.InvalidInputError("'from' must not be after 'to'")
     seed_from = min(start, first_measured)
 
     days = [seed_from + timedelta(days=offset) for offset in range((end - seed_from).days + 1)]

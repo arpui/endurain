@@ -521,6 +521,22 @@ class TestFitnessSeries:
         assert points[date(2026, 10, 2)].acute < 100.0  # decayed, not reset
         assert points[date(2026, 10, 2)].acute > points[date(2026, 10, 4)].acute
 
+    def test_a_floor_before_the_first_record_plots_from_that_day(self):
+        """The all-time choice must not draw an empty runway before the first load."""
+        totals = [(date(2026, 9, 20) + timedelta(days=offset), 100.0) for offset in range(10)]
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.analysis_crud.daily_load_totals", return_value=totals),
+        ):
+            series = analysis_service.get_fitness_series(
+                2,
+                _db(),
+                from_date=date(1970, 1, 1),
+                to_date=date(2026, 9, 30),
+            )
+        assert series.points[0].date == date(2026, 9, 20)
+        assert len(series.points) == 11
+
     def test_the_series_is_seeded_before_the_plotted_window(self):
         """A window starting mid-history must not ramp up from zero on its first day."""
         totals = [(date(2026, 9, 1) + timedelta(days=offset), 100.0) for offset in range(40)]
