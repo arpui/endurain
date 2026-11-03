@@ -258,3 +258,74 @@ class TestLegacyTotalsFileGuard:
         client.get_activities_by_date.return_value = [self.ENTRY]
         _call(client)
         assert ingest.call_count == 1
+
+
+BATCH_GPX = """<?xml version="1.0" encoding="utf-8"?>
+<gpx creator="Garmin Desktop App" version="1.1" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata><time>2016-10-05T15:17:22Z</time></metadata>
+  <trk><name>2008-12-01T18:19:59Z</name><trkseg>
+    <trkpt lat="41.3" lon="2.1"><ele>10</ele><time>2008-12-01T18:19:59Z</time></trkpt>
+    <trkpt lat="41.4" lon="2.2"><ele>12</ele><time>2008-12-01T18:49:59Z</time></trkpt>
+  </trkseg></trk>
+  <trk><name>2008-12-21T10:22:45Z</name><trkseg>
+    <trkpt lat="42.4" lon="1.5"><ele>80</ele><time>2008-12-21T10:22:45Z</time></trkpt>
+    <trkpt lat="42.5" lon="1.6"><ele>95</ele><time>2008-12-21T11:02:45Z</time></trkpt>
+  </trkseg></trk>
+</gpx>
+"""
+
+
+class TestLegacyBatchTrackExtraction:
+    """The Desktop-era batch GPX holds one trk per activity; the entry's own is the real one."""
+
+    ENTRY = {  # noqa: RUF012 - read-only fixture shared by the class
+        "activityId": 1392533481,
+        "activityName": "Barcelona Sin clasificar",
+        "startTimeGMT": "2008-12-21 10:22:45",
+    }
+
+    def _run(self, monkeypatch, tmp_path, entry):
+        batch_file = tmp_path / "1392533481_UNKNOWN.gpx"
+        batch_file.write_text(BATCH_GPX, encoding="utf-8")
+        client = _make_garminconnect_client()
+        client.get_activities_by_date.return_value = [entry]
+        monkeypatch.setattr(activity_utils.file_uploads, "extract_validated_zip_sync", Mock(return_value=[batch_file]))
+        # the preview sees the merged month-monster: first track's start, whole-period totals
+        monkeypatch.setattr(
+            activity_utils.activity_ingestion_integration,
+            "parse_activity_file",
+            Mock(return_value=_parsed_file(datetime(2008, 12, 1, 18, 19, 59, tzinfo=UTC))),
+        )
+        seen: dict = {}
+
+        def _ingest(**kwargs):
+            seen["file_path"] = kwargs["file_path"]
+            return [Mock()]
+
+        monkeypatch.setattr(activity_utils.activity_ingestion_integration, "ingest_activity_file", _ingest)
+        stored = _call(client)
+        return stored, seen
+
+    def test_the_entrys_own_track_is_extracted_and_ingested(self, monkeypatch, tmp_path):
+        stored, seen = self._run(monkeypatch, tmp_path, self.ENTRY)
+        assert stored is not None
+        ingested = Path(seen["file_path"])
+        assert ingested.suffix == ".gpx" and ingested.name.endswith(".track.gpx")
+        text = ingested.read_text(encoding="utf-8")
+        assert "2008-12-21T10:22:45Z" in text  # the entry's own track survived
+        assert "2008-12-01T18:19:59Z" not in text  # the neighbours' tracks did not
+        assert text.lstrip().startswith("<?xml")
+        assert text.rstrip().endswith("</gpx>")
+
+    def test_an_entry_without_a_matching_track_is_still_skipped(self, monkeypatch, tmp_path):
+        entry = dict(self.ENTRY)
+        entry["startTimeGMT"] = "2008-12-25 00:00:00"
+        stored, seen = self._run(monkeypatch, tmp_path, entry)
+        assert seen == {}
+        assert stored is None
+        assert "legacy totals file" in activity_utils.logger.warning.call_args.args[0]
+
+    def test_single_track_files_never_reach_the_splitter(self, monkeypatch):
+        """An honest file previews matching, so no split is attempted."""
+        honest = _parsed_file(datetime(2008, 12, 21, 10, 25, 0, tzinfo=UTC))
+        assert activity_utils._file_agrees_with_api_entry(honest, self.ENTRY) is True

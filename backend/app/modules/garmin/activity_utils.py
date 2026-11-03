@@ -1,6 +1,8 @@
 import os
+import re
 import tempfile
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 import garminconnect
 from sqlalchemy.orm import Session
@@ -36,6 +38,9 @@ def _unlink_expired_account(user_id: int) -> None:
     core_async_bridge.dispatch(
         websocket_integration.push_to_user(user_id, {"message": ws_message, "notification_id": notification.id})
     )
+
+
+_LEGACY_TRACK_TOLERANCE_S = 900  # a batch track names itself within seconds of the entry's listed start
 
 
 def _api_entry_start_utc(api_activity: dict) -> datetime | None:
@@ -86,6 +91,50 @@ def _file_agrees_with_api_entry(parsed: object | None, api_activity: dict) -> bo
         if abs(started - api_start) <= tolerance:
             return True
     return False
+
+
+def _parse_iso_utc(text: str) -> datetime | None:
+    """Parse one ISO-8601 instant (with or without a Z suffix) as aware UTC."""
+    try:
+        parsed = datetime.fromisoformat(text.strip())
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=UTC)
+    return parsed.astimezone(UTC)
+
+
+def _track_start(track_xml: str) -> datetime | None:
+    """The instant one GPX track begins: its <name> when that is a timestamp, else its first point."""
+    named = re.search(r"<name>([^<]+)</name>", track_xml)
+    if named:
+        started = _parse_iso_utc(named.group(1))
+        if started is not None:
+            return started
+    first_time = re.search(r"<time>([^<]+)</time>", track_xml)
+    return _parse_iso_utc(first_time.group(1)) if first_time else None
+
+
+def _extract_track_for_entry(file_text: str, api_activity: dict) -> str | None:
+    """Rebuild a legacy batch GPX as the single track belonging to the API entry.
+
+    The Garmin Desktop uploads of the pre-2010 era stored whole periods in one
+    GPX - one ``<trk>`` per day, each named with its own start instant - and the
+    same file rides along with every activity id of that period. The track named
+    at the entry's own ``startTimeGMT`` is exactly the activity Garmin listed, so
+    extracting it turns the batch into a faithful single-activity file. Returns
+    ``None`` when the file is not a split-able batch or holds no track matching
+    the entry; the caller then keeps the mismatch skip as the safety net.
+    """
+    api_start = _api_entry_start_utc(api_activity)
+    tracks = list(re.finditer(r"<trk[ >].*?</trk>", file_text, re.DOTALL))
+    if api_start is None or len(tracks) < 2:
+        return None
+    for track in tracks:
+        started = _track_start(track.group(0))
+        if started is not None and abs((started - api_start).total_seconds()) <= _LEGACY_TRACK_TOLERANCE_S:
+            return file_text[: tracks[0].start()] + track.group(0) + file_text[tracks[-1].end() :]
+    return None
 
 
 def _download_and_ingest_activity(
@@ -161,19 +210,36 @@ def _download_and_ingest_activity(
                     f"User {user_id}: Pre-ingest preview of Garmin activity {activity_id} file failed: {type(err).__name__}",
                     exc_info=err,
                 )
+            file_to_ingest = str(full_file_path)
             if not _file_agrees_with_api_entry(preview, activity):
-                file_start = (
-                    getattr(preview.activities[0].activity, "start_time", None) if preview is not None else None
+                split = None
+                if extension == ".gpx":
+                    try:
+                        batch_text = Path(file_to_ingest).read_text(encoding="utf-8", errors="replace")
+                        split = _extract_track_for_entry(batch_text, activity)
+                    except OSError as err:
+                        logger.debug(
+                            f"User {user_id}: Could not read Garmin batch file for activity {activity_id}: {err}",
+                            exc_info=err,
+                        )
+                if split is None:
+                    file_start = (
+                        getattr(preview.activities[0].activity, "start_time", None) if preview is not None else None
+                    )
+                    logger.warning(
+                        f"User {user_id}: Garmin file for activity {activity_id} starts at {file_start}, far from the "
+                        f"entry's own start {activity.get('startTimeGMT')}; legacy totals file, not the activity. Skipped."
+                    )
+                    continue
+                file_to_ingest = f"{full_file_path}.track.gpx"
+                Path(file_to_ingest).write_text(split, encoding="utf-8")
+                logger.info(
+                    f"User {user_id}: activity {activity_id}: extracted this entry's own track from a legacy batch file."
                 )
-                logger.warning(
-                    f"User {user_id}: Garmin file for activity {activity_id} starts at {file_start}, far from the "
-                    f"entry's own start {activity.get('startTimeGMT')}; legacy totals file, not the activity. Skipped."
-                )
-                continue
             with SessionLocal() as db:
                 parsed_result = activity_ingestion_integration.ingest_activity_file(
                     user_id=user_id,
-                    file_path=str(full_file_path),
+                    file_path=file_to_ingest,
                     db=db,
                     source=activity_ingestion_integration.GarminSource(
                         # Resolved here rather than inside ingestion: which local gear
