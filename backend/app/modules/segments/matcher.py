@@ -348,13 +348,30 @@ def _match_core(
     cum = np.concatenate(([0.0], np.cumsum(edge_lens)))
     arc_len_m = float(cum[-1])
 
-    # Along-track abscissa and polyline distance for every activity waypoint.
-    s_all, d_all = _arc_positions(act_x, act_y, seg_x, seg_y, cum, edge_lens)
+    # Cheap vertex-distance pre-reduction before the (more expensive) continuous
+    # projection: any waypoint within MATCH_RADIUS_M of the polyline is within
+    # MATCH_RADIUS_M + max edge length of some vertex, so keeping only those
+    # discards nothing whenever the geometry has no huge straight edges.
+    keep = np.arange(len(act_x))
+    max_edge = float(edge_lens.max()) if edge_lens.size else 0.0
+    if max_edge <= 250.0 and len(act_x) > 0:
+        near = np.empty(len(act_x), dtype=bool)
+        r_keep = (MATCH_RADIUS_M + max_edge) ** 2
+        for i0 in range(0, len(act_x), _PROJ_CHUNK):
+            dx = act_x[i0 : i0 + _PROJ_CHUNK, None] - seg_x[None, :]
+            dy = act_y[i0 : i0 + _PROJ_CHUNK, None] - seg_y[None, :]
+            near[i0 : i0 + _PROJ_CHUNK] = (dx * dx + dy * dy <= r_keep).any(axis=1)
+        keep = np.nonzero(near)[0]
+        if keep.size == 0:
+            return [], audit(segments_constants.MatchOutcome.NO_CANDIDATES)
 
-    cand = np.nonzero(d_all <= MATCH_RADIUS_M)[0]
-    if cand.size == 0:
+    # Along-track abscissa and polyline distance for every kept waypoint.
+    s_all, d_all = _arc_positions(act_x[keep], act_y[keep], seg_x, seg_y, cum, edge_lens)
+
+    sel = np.nonzero(d_all <= MATCH_RADIUS_M)[0]
+    if sel.size == 0:
         return [], audit(segments_constants.MatchOutcome.NO_CANDIDATES)
-    s = s_all[cand]
+    cand, s = keep[sel], s_all[sel]
     # Distance of every candidate to the geometry's first and last point: what the
     # endpoint anchoring below reads.
     d_first = np.hypot(act_x[cand] - seg_x[0], act_y[cand] - seg_y[0])
