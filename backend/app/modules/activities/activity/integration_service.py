@@ -314,6 +314,22 @@ def owns_activity(activity_id: int, user_id: int, db: Session) -> bool:
     return activity_service.owns_activity(activity_id, user_id, db)
 
 
+def owned_activity_ids(activity_ids: list[int], user_id: int, db: Session) -> set[int]:
+    """Return which of the given activities belong to the user.
+
+    The batch form of :func:`owns_activity`: one query for a page of ids.
+
+    Args:
+        activity_ids: The activities to check.
+        user_id: The claimed owner.
+        db: Database session.
+
+    Returns:
+        The IDs of activities that exist and belong to the user.
+    """
+    return activity_service.owned_activity_ids(activity_ids, user_id, db)
+
+
 # Derived-artifact maintenance. The thumbnail and geocoding subsystems reach the
 # activity row through these. They are system-level operations with no requester
 # to authorize, no event and no invariant beyond the payload, so they go straight

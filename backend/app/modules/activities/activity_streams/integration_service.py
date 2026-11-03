@@ -153,6 +153,26 @@ def get_stream_for_derivation(
     return activity_streams_crud.get_activity_stream_by_type(activity_id, stream_type, db)
 
 
+def get_power_sources(
+    activity_ids: list[int],
+    db: Session,
+) -> dict[int, str]:
+    """Return power-stream provenance for the given activities.
+
+    The caller owns the access decision: pass ids already scoped to the
+    requester.
+
+    Args:
+        activity_ids: Activities to read.
+        db: Database session.
+
+    Returns:
+        Activity id to provenance tag (``stryd``/``device``); activities
+        without a tagged power stream are absent.
+    """
+    return activity_streams_crud.get_power_sources(activity_ids, db)
+
+
 def get_gps_waypoints_for_activities(activity_ids: list[int], db: Session) -> dict[int, list]:
     """Return GPS waypoints for several activities in one query.
 

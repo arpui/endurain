@@ -177,6 +177,37 @@ def list_activity_loads(
     return [analysis_schema.ActivityLoadRead.model_validate(row) for row in db.scalars(stmt).all()]
 
 
+def list_loads_for_activities(
+    user_id: int,
+    activity_ids: Sequence[int],
+    db: Session,
+) -> dict[int, list[analysis_schema.ActivityLoadRead]]:
+    """Return the stored loads of several of one athlete's activities in one read.
+
+    Args:
+        user_id: The loads are scoped to this athlete (the rows copy it at measure time).
+        activity_ids: Activities to read.
+        db: Database session.
+
+    Returns:
+        Activity id to its loads in formula order; activities without rows are absent.
+    """
+    if not activity_ids:
+        return {}
+    stmt = (
+        select(analysis_models.ActivityLoad)
+        .where(
+            analysis_models.ActivityLoad.user_id == user_id,
+            analysis_models.ActivityLoad.activity_id.in_(activity_ids),
+        )
+        .order_by(analysis_models.ActivityLoad.activity_id, analysis_models.ActivityLoad.method)
+    )
+    grouped: dict[int, list[analysis_schema.ActivityLoadRead]] = {}
+    for row in db.scalars(stmt).all():
+        grouped.setdefault(row.activity_id, []).append(analysis_schema.ActivityLoadRead.model_validate(row))
+    return grouped
+
+
 def activity_ids_with_loads(activity_ids: Sequence[int], db: Session) -> set[int]:
     """Return which of the given activities already have a load row.
 

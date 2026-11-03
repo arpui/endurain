@@ -854,3 +854,17 @@ def owns_activity(activity_id: int, user_id: int, db: Session) -> bool:
         True when the activity exists and belongs to the user.
     """
     return activity_crud.get_activity_by_id_from_user_id(activity_id, user_id, db) is not None
+
+
+def owned_activity_ids(activity_ids: list[int], user_id: int, db: Session) -> set[int]:
+    """Return which of the given activities belong to the user.
+
+    Args:
+        activity_ids: The activities to check.
+        user_id: The claimed owner.
+        db: Database session.
+
+    Returns:
+        The IDs of activities that exist and belong to the user.
+    """
+    return activity_crud.get_owned_activity_ids(activity_ids, user_id, db)

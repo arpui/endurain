@@ -817,6 +817,45 @@ def list_activity_loads(
     return analysis_crud.list_activity_loads(activity_id, db)
 
 
+def list_loads_summaries(
+    user_id: int,
+    activity_ids: list[int],
+    db: Session,
+) -> list[analysis_schema.ActivityLoadsSummaryRead]:
+    """Return the stored loads and power provenance of many of the athlete's activities.
+
+    Built for the activities list, which shows one score per row: ownership is
+    resolved once for the whole page, then the load rows (already scoped by the
+    copied ``user_id``) and the stream tags are read in one query each, so a page
+    costs three queries rather than one endpoint call per activity.
+
+    Args:
+        user_id: The athlete; only their rows and streams are read.
+        activity_ids: Activities to summarize, in display order.
+        db: Database session.
+
+    Returns:
+        One summary per requested id that has loads or a tagged power stream,
+        following the request's order.
+    """
+    owned = sorted(activity_integration.owned_activity_ids(activity_ids, user_id, db))
+    loads_by_id = analysis_crud.list_loads_for_activities(user_id, owned, db)
+    sources = activity_streams_integration.get_power_sources(owned, db)
+    summaries: list[analysis_schema.ActivityLoadsSummaryRead] = []
+    for activity_id in dict.fromkeys(activity_ids):
+        loads = loads_by_id.get(activity_id, [])
+        if not loads and activity_id not in sources:
+            continue
+        summaries.append(
+            analysis_schema.ActivityLoadsSummaryRead(
+                activity_id=activity_id,
+                power_recalibrated=sources.get(activity_id) == activity_streams_constants.POWER_SOURCE_STRYD,
+                loads=loads,
+            )
+        )
+    return summaries
+
+
 def get_fitness_series(
     user_id: int,
     db: Session,
