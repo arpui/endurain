@@ -1643,6 +1643,7 @@ def compute_window_stats(
         source: str | None = None
         per_min: float | None = None
         rap_ms: float | None = None
+        scores: dict[str, float] | None = None
         if stamps and period_s > 0 and elapsed_s > 0:
             cut = bisect_left(stamps, start_a)
             stop = bisect_left(stamps, end_a)

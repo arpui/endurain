@@ -1640,6 +1640,13 @@ class TestWindowStreamStats:
         assert stat.avg_power_w == 400.0
         assert stat.rss_per_min is None
 
+    def test_a_window_after_the_last_sample_answers_blank_without_crashing(self):
+        """A window past the stream must not trip the unassigned per-source scores."""
+        (stat,) = self._stats([(_T0_UTC + timedelta(seconds=1000), _T0_UTC + timedelta(seconds=1100))])
+        assert stat.avg_power_w is None
+        assert stat.rss is None
+        assert stat.source_scores is None
+
     def test_windows_given_on_the_naive_device_clock_still_cut(self):
         (stat,) = self._stats([(_T0, _T0 + timedelta(seconds=300))])
         assert stat.avg_power_w == 400.0
