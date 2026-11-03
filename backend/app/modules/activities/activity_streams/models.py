@@ -17,6 +17,9 @@ class ActivityStreams(Base):
         activity_id: FK to the parent activity.
         stream_type: Stream type integer code.
         stream_waypoints: JSON waypoint data.
+        power_source: Provenance of a power stream (``stryd`` for pod-metered
+            readings from a developer field, ``device`` for a standard power
+            field); ``None`` for other stream kinds and legacy rows.
         strava_activity_stream_id: Strava stream ID.
     """
 
@@ -43,6 +46,10 @@ class ActivityStreams(Base):
         JSON,
         nullable=False,
         comment="Store waypoints data",
+    )
+    power_source: Mapped[str | None] = mapped_column(
+        nullable=True,
+        comment="Power stream provenance: stryd (pod developer field) or device (standard field)",
     )
     strava_activity_stream_id: Mapped[int | None] = mapped_column(
         nullable=True,

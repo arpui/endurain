@@ -4,6 +4,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     StrictInt,
+    StrictStr,
 )
 
 import core.pagination as core_pagination
@@ -17,6 +18,9 @@ class ActivityStreamsBase(BaseModel):
         activity_id: Parent activity identifier.
         stream_type: Stream type code (1-7).
         stream_waypoints: Waypoint data points.
+        power_source: Power-stream provenance (``stryd``/``device``), ``None``
+            for other stream kinds and legacy rows. Power from ``stryd`` is
+            served recalibrated to the athlete's current scale.
         strava_activity_stream_id: Strava stream ID.
     """
 
@@ -28,6 +32,7 @@ class ActivityStreamsBase(BaseModel):
     activity_id: StrictInt
     stream_type: StrictInt
     stream_waypoints: list[dict]
+    power_source: StrictStr | None = None
     strava_activity_stream_id: StrictInt | None = None
 
 

@@ -152,6 +152,7 @@ def create_activity_streams(
             activity_id=stream.activity_id,
             stream_type=stream.stream_type,
             stream_waypoints=stream.stream_waypoints,
+            power_source=stream.power_source,
             strava_activity_stream_id=stream.strava_activity_stream_id,
         )
         for stream in activity_streams

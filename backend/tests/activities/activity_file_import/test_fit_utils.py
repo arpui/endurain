@@ -896,3 +896,72 @@ class TestStrydDeveloperPowerField:
         assert activity.average_power == 267  # mean of 250/300/250 rounded
         assert activity.max_power == 300
         assert activity.normalized_power is not None and activity.normalized_power >= 250
+
+
+class TestPowerProvenanceTagging:
+    """The pod-vs-device distinction the fallback already makes becomes stored provenance."""
+
+    def test_frame_power_is_pod_flags_only_the_developer_field(self):
+        pod = _MockFrame(
+            position_lat=None,
+            position_long=None,
+            enhanced_altitude=None,
+            timestamp=datetime(2026, 1, 16, 14, 4, 26, tzinfo=UTC),
+            heart_rate=150,
+            cadence=170,
+            Power=251,
+            temperature=None,
+        )
+        standard = _MockFrame(
+            position_lat=None,
+            position_long=None,
+            enhanced_altitude=None,
+            timestamp=datetime(2026, 1, 16, 14, 4, 26, tzinfo=UTC),
+            heart_rate=150,
+            cadence=170,
+            power=240,
+            Power=999,
+            temperature=None,
+        )
+        assert fit_frames.frame_power_is_pod(pod) is True
+        assert fit_frames.frame_power_is_pod(standard) is False
+
+    def test_a_pod_session_scales_its_summary_scalars(self):
+        """Stryd sessions store scalars already on the native scale; streams stay raw."""
+        import modules.activities.activity_streams.constants as stream_constants
+
+        record = _session_record("garmin", "fenix 6X")
+        record["is_power_set"] = True
+        record["power_source"] = "stryd"
+        record["power_waypoints"] = [
+            {"time": "2026-01-16T14:04:26", "power": 250},
+            {"time": "2026-01-16T14:04:27", "power": 300},
+            {"time": "2026-01-16T14:04:28", "power": 250},
+        ]
+        record["session"]["avg_power"] = None
+        record["session"]["max_power"] = None
+        record["session"]["np"] = None
+        record["laps"] = [{"avg_power": 260, "max_power": 320}]
+
+        created = fit_utils.create_activity_objects([record], user_id=1, default_timezone=_SERVER_TZ)
+
+        activity = created[0]["activity"]
+        scale = stream_constants.STRYD_POWER_SCALE
+        assert activity.average_power == round(266.6667 * scale)
+        assert activity.max_power == round(300 * scale)
+        assert created[0]["power_source"] == "stryd"
+        # Waypoints reach the adapter raw; the read path scales them.
+        assert created[0]["power_waypoints"][0]["power"] == 250
+
+    def test_a_device_session_keeps_scalars_unscaled(self):
+        record = _session_record("garmin", "forerunner 961")
+        record["is_power_set"] = True
+        record["power_source"] = "device"
+        record["session"]["avg_power"] = 240
+        record["session"]["max_power"] = 410
+        record["session"]["np"] = 255
+
+        created = fit_utils.create_activity_objects([record], user_id=1, default_timezone=_SERVER_TZ)
+
+        assert created[0]["activity"].average_power == 240
+        assert created[0]["power_source"] == "device"

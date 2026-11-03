@@ -82,6 +82,9 @@ def parsed_info_to_parsed_activity(
         activity_streams_contracts.ParsedStream(
             stream_type=stream_type,
             stream_waypoints=_stream_waypoints(stream_type, parsed_info.get(waypoints_key, [])),
+            power_source=(
+                parsed_info.get("power_source") if stream_type == activity_streams_constants.STREAM_TYPE_POWER else None
+            ),
         )
         for stream_type, (is_set_key, waypoints_key) in _STREAM_MAPPING.items()
         if parsed_info.get(is_set_key, False)

@@ -135,6 +135,23 @@ def parse_frame_record(frame):
     return latitude, longitude, elevation, time, heart_rate, cadence, power, temperature
 
 
+def frame_power_is_pod(frame) -> bool:
+    """Return whether this record's power came from the pod developer field.
+
+    A standard ``power`` field means the head unit or watch metered it itself;
+    only when it is absent and the Stryd developer field ``Power`` carries the
+    reading is the sample pod-metered — the provenance that marks a whole power
+    stream for read-time recalibration.
+
+    Args:
+        frame: The decoded FIT data message.
+
+    Returns:
+        ``True`` when power is present only as the developer-field fallback.
+    """
+    return get_value_from_frame(frame, "power") is None and get_value_from_frame(frame, "Power") is not None
+
+
 def parse_frame_lap(frame):
     """Extract the lap fields from a FIT lap frame.
 

@@ -110,3 +110,33 @@ class TestParsedInfoToParsedActivity:
             "sets": [{"set": 1}],
             "workout_steps": [{"step": 1}],
         }
+
+
+class TestPowerSourcePassthrough:
+    def test_power_stream_carries_the_parser_provenance(self):
+        import modules.activities.activity_file_import.adapter as adapter
+
+        parsed = adapter.parsed_info_to_parsed_activity(
+            {
+                "activity": _activity(),
+                "is_power_set": True,
+                "power_waypoints": [{"time": "t", "power": 250}],
+                "power_source": "stryd",
+            }
+        )
+        (stream,) = [s for s in parsed.components["streams"] if s.stream_waypoints and s.stream_type == 2]
+        assert stream.power_source == "stryd"
+
+    def test_other_streams_never_carry_a_power_source(self):
+        import modules.activities.activity_file_import.adapter as adapter
+
+        parsed = adapter.parsed_info_to_parsed_activity(
+            {
+                "activity": _activity(),
+                "is_heart_rate_set": True,
+                "hr_waypoints": [{"time": "t", "hr": 150}],
+                "power_source": "stryd",
+            }
+        )
+        (stream,) = parsed.components["streams"]
+        assert stream.power_source is None
