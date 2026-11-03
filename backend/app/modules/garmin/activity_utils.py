@@ -41,6 +41,7 @@ def _unlink_expired_account(user_id: int) -> None:
 
 
 _LEGACY_TRACK_TOLERANCE_S = 900  # a batch track names itself within seconds of the entry's listed start
+_ENTRY_FILE_TOLERANCE_S = 300  # an honest file's own start lands on the entry's to the second; the month batches do not
 
 
 def _api_entry_start_utc(api_activity: dict) -> datetime | None:
@@ -81,7 +82,7 @@ def _file_agrees_with_api_entry(parsed: object | None, api_activity: dict) -> bo
     api_start = _api_entry_start_utc(api_activity)
     if api_start is None:
         return True
-    tolerance = timedelta(hours=48)
+    tolerance = timedelta(seconds=_ENTRY_FILE_TOLERANCE_S)
     for parsed_activity in activities:
         started = getattr(parsed_activity.activity, "start_time", None)
         if started is None:
@@ -157,7 +158,7 @@ def _download_and_ingest_activity(
         The activities stored from the downloaded files.
     """
     activity_id = activity["activityId"]
-    activity_name = activity["activityName"]
+    activity_name = activity.get("activityName") or ""
 
     activity_gear = garminconnect_client.get_activity_gear(activity_id)
     zip_data = garminconnect_client.download_activity(

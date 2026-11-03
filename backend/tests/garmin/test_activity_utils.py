@@ -222,14 +222,14 @@ class TestLegacyTotalsFileGuard:
         assert "legacy totals file" in activity_utils.logger.warning.call_args.args[0]
 
     def test_a_file_matching_the_entry_start_is_stored_normally(self, monkeypatch):
-        honest_start = datetime(2008, 12, 21, 11, 22, 45, tzinfo=UTC)  # that very day
+        honest_start = datetime(2008, 12, 21, 10, 24, 0, tzinfo=UTC)  # same minute as the entry
         _stored, _parse, ingest = self._run(monkeypatch, self.ENTRY, _parsed_file(honest_start))
         assert ingest.call_count == 1
 
     def test_a_multi_session_file_is_kept_when_any_part_matches_the_entry(self, monkeypatch):
         parts = _parsed_file(
             datetime(2008, 12, 31, 16, 29, 12, tzinfo=UTC),
-            datetime(2008, 12, 21, 10, 30, 0, tzinfo=UTC),
+            datetime(2008, 12, 21, 10, 23, 0, tzinfo=UTC),
         )
         _stored, _parse, ingest = self._run(monkeypatch, self.ENTRY, parts)
         assert ingest.call_count == 1
