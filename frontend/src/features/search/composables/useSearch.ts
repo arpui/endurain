@@ -9,6 +9,7 @@ import { queryKeys } from '@/services/queryKeys'
 import { searchActivitiesByName } from '@/features/activities/services/activities'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import { useGearSearchQuery } from '@/features/gears/composables/useGears'
+import { useSegmentSearchQuery } from '@/features/segments/composables/useSegments'
 import { useUserSearchQuery } from '@/features/users/composables/useUsers'
 import {
   ALL_ACTIVITY_CATEGORIES,
@@ -76,10 +77,12 @@ export function useSearch() {
   const userTerm = computed(() => (scope.value === 'users' ? debouncedSearch.value : ''))
   const activityTerm = computed(() => (scope.value === 'activities' ? debouncedSearch.value : ''))
   const gearTerm = computed(() => (scope.value === 'gears' ? debouncedSearch.value : ''))
+  const segmentTerm = computed(() => (scope.value === 'segments' ? debouncedSearch.value : ''))
 
   const userQuery = useUserSearchQuery(userTerm)
   const activityQuery = useActivitySearchQuery(activityTerm)
   const gearQuery = useGearSearchQuery(gearTerm)
+  const segmentQuery = useSegmentSearchQuery(segmentTerm)
 
   // Sub-type filters applied client-side to the active scope's results, mirroring
   // the v1 search page. Cleared whenever the scope changes (see watch below).
@@ -97,36 +100,38 @@ export function useSearch() {
   const gearResults = computed(() =>
     filterGearsByType(gearQuery.data.value ?? [], gearTypeFilter.value),
   )
+  const segmentResults = computed(() => segmentQuery.data.value?.items ?? [])
 
   /** Whether a (debounced) search is currently in flight or showing results. */
   const isSearching = computed(() => debouncedSearch.value.trim().length > 0)
 
   // Each derived flag reads only the active scope's query so the disabled
   // queries (which report `pending`) never leak into the UI state.
-  const isPending = computed<boolean>(() => {
+  /** The query of whichever scope is active; inactive ones stay disabled. */
+  function activeQuery() {
     if (scope.value === 'activities') {
-      return activityQuery.isPending.value
+      return activityQuery
     }
     if (scope.value === 'gears') {
-      return gearQuery.isPending.value
+      return gearQuery
     }
-    return userQuery.isPending.value
-  })
-  const isError = computed<boolean>(() => {
-    if (scope.value === 'activities') {
-      return activityQuery.isError.value
+    if (scope.value === 'segments') {
+      return segmentQuery
     }
-    if (scope.value === 'gears') {
-      return gearQuery.isError.value
-    }
-    return userQuery.isError.value
-  })
+    return userQuery
+  }
+
+  const isPending = computed<boolean>(() => activeQuery().isPending.value)
+  const isError = computed<boolean>(() => activeQuery().isError.value)
   const resultCount = computed<number>(() => {
     if (scope.value === 'activities') {
       return activityResults.value.length
     }
     if (scope.value === 'gears') {
       return gearResults.value.length
+    }
+    if (scope.value === 'segments') {
+      return segmentResults.value.length
     }
     return userResults.value.length
   })
@@ -147,15 +152,7 @@ export function useSearch() {
 
   /** Refetches the active scope's query (used by the error-state retry). */
   function refetchActive(): void {
-    if (scope.value === 'activities') {
-      void activityQuery.refetch()
-      return
-    }
-    if (scope.value === 'gears') {
-      void gearQuery.refetch()
-      return
-    }
-    void userQuery.refetch()
+    void activeQuery().refetch()
   }
 
   return {
@@ -171,6 +168,7 @@ export function useSearch() {
     userResults,
     activityResults,
     gearResults,
+    segmentResults,
     clearSearch,
     refetchActive,
   }

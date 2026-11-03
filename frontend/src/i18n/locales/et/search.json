@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Kasutajad",
     "activities": "Tegevused",
-    "gears": "Varustus"
+    "gears": "Varustus",
+    "segments": "Segmendid"
   },
   "filters": {
     "all": "Kõik tüübid",

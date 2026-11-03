@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Utilizatori",
     "activities": "Activități",
-    "gears": "Echipament"
+    "gears": "Echipament",
+    "segments": "Segmente"
   },
   "filters": {
     "all": "Toate tipurile",

@@ -123,6 +123,7 @@ def list_segments(
     page_number: int,
     num_records: int,
     requester_user_id: int,
+    name_search: str | None = None,
 ) -> segments_schema.SegmentPage:
     """List the segment library, paginated.
 
@@ -135,6 +136,8 @@ def list_segments(
         page_number: 1-based page number.
         num_records: Page size.
         requester_user_id: The user asking; only their activities are counted.
+        name_search: Case-insensitive substring the name must contain, if any
+            (the global search's segment scope uses it).
 
     Returns:
         One page of segments with the matching total.
@@ -145,8 +148,9 @@ def list_segments(
         page_number=page_number,
         num_records=num_records,
         activity_ids=activity_ids,
+        name_search=name_search,
     )
-    total = segments_crud.count_segments(db)
+    total = segments_crud.count_segments(db, name_search=name_search)
     return segments_schema.SegmentPage.build(items, total, page_number, num_records)
 
 

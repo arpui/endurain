@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Naudotojai",
     "activities": "Veiklos",
-    "gears": "Įranga"
+    "gears": "Įranga",
+    "segments": "Segmentai"
   },
   "filters": {
     "all": "Visi tipai",

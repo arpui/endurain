@@ -20035,6 +20035,7 @@ export interface operations {
     list_segments_api_v1_segments_get: {
         parameters: {
             query?: {
+                name?: string | null;
                 page_number?: number | null;
                 num_records?: number | null;
             };

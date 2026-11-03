@@ -71,19 +71,22 @@ export function mapSegmentEffort(dto: SegmentEffortDto): SegmentEffort {
  * segment is listed for every user, which is why the route needs only a read
  * scope and no owner filter.
  *
- * @param params - Page number and size.
+ * @param params - Page number, size, and an optional name substring (search).
  * @param signal - Optional abort signal for TanStack Query cancellation.
  * @returns The page's segments plus the total record count.
  * @throws {HttpError} When the request fails.
  */
 export async function fetchSegments(
-  { page, numRecords }: { page: number; numRecords: number },
+  { page, numRecords, name }: { page: number; numRecords: number; name?: string },
   signal?: AbortSignal,
 ): Promise<SegmentsPage> {
   const params = new URLSearchParams({
     page_number: String(page),
     num_records: String(numRecords),
   })
+  if (name) {
+    params.set('name', name)
+  }
   const response = await apiFetch<Schemas['Page_SegmentListItemRead_']>(
     `/segments?${params.toString()}`,
     {

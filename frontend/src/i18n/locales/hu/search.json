@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Felhasználók",
     "activities": "Tevékenységek",
-    "gears": "Felszerelés"
+    "gears": "Felszerelés",
+    "segments": "Szekciók"
   },
   "filters": {
     "all": "Minden típus",

@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Kullanıcılar",
     "activities": "Etkinlikler",
-    "gears": "Ekipman"
+    "gears": "Ekipman",
+    "segments": "Segmentler"
   },
   "filters": {
     "all": "Tüm türler",

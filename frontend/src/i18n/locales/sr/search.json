@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Korisnici",
     "activities": "Aktivnosti",
-    "gears": "Oprema"
+    "gears": "Oprema",
+    "segments": "Сегменти"
   },
   "filters": {
     "all": "Svi tipovi",

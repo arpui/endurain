@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Používatelia",
     "activities": "Aktivity",
-    "gears": "Vybavenie"
+    "gears": "Vybavenie",
+    "segments": "Segmenty"
   },
   "filters": {
     "all": "Všetky typy",

@@ -6,7 +6,8 @@
   "scopes": {
     "users": "用户",
     "activities": "活动",
-    "gears": "装备"
+    "gears": "装备",
+    "segments": "赛段"
   },
   "filters": {
     "all": "所有类型",

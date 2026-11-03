@@ -456,6 +456,11 @@ export const queryKeys = {
      * @returns A list query key scoped to the given filters.
      */
     list: (filters: Record<string, unknown> = {}) => ['segments', 'list', filters] as const,
+    /**
+     * @param term - The (trimmed) name substring the library is searched by.
+     * @returns A segment-search query key scoped to the given term.
+     */
+    search: (term: string) => ['segments', 'search', term.trim()] as const,
     details: () => ['segments', 'detail'] as const,
     /**
      * @param id - Segment identifier.

@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Utilisateurs",
     "activities": "Activités",
-    "gears": "Équipements"
+    "gears": "Équipements",
+    "segments": "Segments"
   },
   "filters": {
     "all": "Tous les types",

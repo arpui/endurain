@@ -22,6 +22,9 @@ function resolveId(id: MaybeRefOrGetter<number | null | undefined>): number {
   return typeof value === 'number' && value > 0 ? value : 0
 }
 
+/** Segment-search page size: a search page, not the library, so a bounded first page. */
+const SEGMENT_SEARCH_MAX = 25
+
 /**
  * One page of the segment library. Numbered pagination so the page size honours
  * the server's `num_records_per_page` setting, with `keepPreviousData` so paging
@@ -50,12 +53,32 @@ export function useSegmentsQuery(
 }
 
 /**
+ * Segment-name search for the global search page: the first page of the
+ * library filtered by a name substring. Mirrors the gears/users/activities
+ * search composables — enabled only while the (debounced) term is non-empty,
+ * gated on authentication.
+ *
+ * @param term - Reactive search term.
+ * @returns The TanStack query result for the matching segments.
+ */
+export function useSegmentSearchQuery(term: MaybeRefOrGetter<string>) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const trimmed = computed(() => toValue(term).trim())
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.segments.search(trimmed.value)),
+    queryFn: ({ signal }) =>
+      fetchSegments({ page: 1, numRecords: SEGMENT_SEARCH_MAX, name: trimmed.value }, signal),
+    enabled: computed(() => isAuthenticated.value && trimmed.value.length > 0),
+  })
+}
+
+/**
  * One segment definition (geometry and altitudes), for the detail page.
  *
  * @param id - Reactive segment id.
  * @returns The TanStack query result for the segment.
- */
-export function useSegmentDetailQuery(id: MaybeRefOrGetter<number | null | undefined>) {
+ */ export function useSegmentDetailQuery(id: MaybeRefOrGetter<number | null | undefined>) {
   const { isAuthenticated } = storeToRefs(useAuthStore())
 
   return useQuery({

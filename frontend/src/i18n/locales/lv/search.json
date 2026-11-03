@@ -6,7 +6,8 @@
   "scopes": {
     "users": "Lietotāji",
     "activities": "Aktivitātes",
-    "gears": "Inventārs"
+    "gears": "Inventārs",
+    "segments": "Segmenti"
   },
   "filters": {
     "all": "Visi veidi",

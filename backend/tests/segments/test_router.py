@@ -127,6 +127,23 @@ class TestListSegments:
         )
         assert response.status_code == 422
 
+    @patch("modules.segments.crud.count_segments")
+    @patch("modules.segments.crud.list_segments")
+    @patch("modules.segments.service.activity_integration")
+    def test_the_name_filter_reaches_both_queries(self, mock_activities, mock_list, mock_count, mock_db):
+        """A search narrows the page and the total together, never one of them."""
+        mock_activities.list_user_activities.return_value = []
+        mock_list.return_value = []
+        mock_count.return_value = 0
+
+        response = TestClient(_build_app(mock_db)).get(
+            "/segments?name=coll%20par", headers={"Authorization": "Bearer x"}
+        )
+
+        assert response.status_code == 200
+        assert mock_list.call_args.kwargs["name_search"] == "coll par"
+        assert mock_count.call_args.kwargs["name_search"] == "coll par"
+
 
 class TestImportSegment:
     @patch("modules.segments.crud.create_segment")

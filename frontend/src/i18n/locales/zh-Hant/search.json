@@ -6,7 +6,8 @@
   "scopes": {
     "users": "使用者",
     "activities": "活動",
-    "gears": "裝備"
+    "gears": "裝備",
+    "segments": "賽段"
   },
   "filters": {
     "all": "所有類型",
