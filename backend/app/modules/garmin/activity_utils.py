@@ -1,6 +1,6 @@
 import os
 import tempfile
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 
 import garminconnect
 from sqlalchemy.orm import Session
@@ -36,6 +36,56 @@ def _unlink_expired_account(user_id: int) -> None:
     core_async_bridge.dispatch(
         websocket_integration.push_to_user(user_id, {"message": ws_message, "notification_id": notification.id})
     )
+
+
+def _api_entry_start_utc(api_activity: dict) -> datetime | None:
+    """Return one Garmin list entry's start instant, in UTC, however it was sent.
+
+    The list endpoints hand back either an epoch-milliseconds number or a naive
+    GMT string, depending on the endpoint and library version.
+    """
+    raw = api_activity.get("startTimeGMT")
+    if raw is None:
+        return None
+    if isinstance(raw, (int, float)):
+        return datetime.fromtimestamp(raw / 1000, tz=UTC)
+    text = str(raw)
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        try:
+            parsed = datetime.strptime(text, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return None
+    return parsed.replace(tzinfo=UTC) if parsed.tzinfo is None else parsed.astimezone(UTC)
+
+
+def _file_agrees_with_api_entry(parsed: object | None, api_activity: dict) -> bool:
+    """Whether one downloaded file plausibly describes the API entry it came from.
+
+    The legacy bulk re-uploads in this account's history carry ORIGINAL files that
+    are period-totals records rather than the activity itself: every December
+    entry yields the same monthly distance and the file's own start is the end of
+    the month. The list and detail APIs still hold the truth, so when no activity
+    in the file starts within a couple of days of when Garmin says the entry
+    happened, the file is not that activity and must not be stored.
+    """
+    activities = getattr(parsed, "activities", None)
+    if not activities:
+        return True  # nothing previewed (or a parse error): the regular path logs its own verdict
+    api_start = _api_entry_start_utc(api_activity)
+    if api_start is None:
+        return True
+    tolerance = timedelta(hours=48)
+    for parsed_activity in activities:
+        started = getattr(parsed_activity.activity, "start_time", None)
+        if started is None:
+            return True  # an activity without a timestamp cannot be contradicted
+        if started.tzinfo is None:
+            started = started.replace(tzinfo=UTC)
+        if abs(started - api_start) <= tolerance:
+            return True
+    return False
 
 
 def _download_and_ingest_activity(
@@ -100,6 +150,26 @@ def _download_and_ingest_activity(
             return stored
 
         for full_file_path in extracted_paths:
+            extension = os.path.splitext(str(full_file_path))[1].lower()
+            try:
+                preview = activity_ingestion_integration.parse_activity_file(
+                    user_id, extension, str(full_file_path), activity_name
+                )
+            except Exception as err:
+                preview = None
+                logger.debug(
+                    f"User {user_id}: Pre-ingest preview of Garmin activity {activity_id} file failed: {type(err).__name__}",
+                    exc_info=err,
+                )
+            if not _file_agrees_with_api_entry(preview, activity):
+                file_start = (
+                    getattr(preview.activities[0].activity, "start_time", None) if preview is not None else None
+                )
+                logger.warning(
+                    f"User {user_id}: Garmin file for activity {activity_id} starts at {file_start}, far from the "
+                    f"entry's own start {activity.get('startTimeGMT')}; legacy totals file, not the activity. Skipped."
+                )
+                continue
             with SessionLocal() as db:
                 parsed_result = activity_ingestion_integration.ingest_activity_file(
                     user_id=user_id,

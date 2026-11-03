@@ -12,9 +12,11 @@ import jasil.providers as platform_providers
 import jasil.runtime as platform_runtime
 from sqlalchemy.orm import Session
 
+import modules.activities.activity.contracts as activity_contracts
 import modules.activities.activity.schema as activity_schema
 import modules.activities.activity_ingestion.background as activity_ingestion_background
 import modules.activities.activity_ingestion.contracts as activity_ingestion_contracts
+import modules.activities.activity_ingestion.pipeline_service as activity_ingestion_pipeline_service
 import modules.activities.activity_ingestion.provider_entry_service as activity_ingestion_provider_entry_service
 import modules.activities.activity_ingestion.provider_registry as activity_ingestion_provider_registry
 import modules.activities.activity_ingestion.schema as activity_ingestion_schema
@@ -61,6 +63,30 @@ def ingest_activity_file(
     return activity_ingestion_provider_entry_service.store_activity_file(
         user_id, file_path, platform_runtime.get_active_platform().storage, db, source=source
     )
+
+
+def parse_activity_file(
+    user_id: int,
+    file_extension: str,
+    file_path: str,
+    activity_name: str | None = None,
+) -> activity_contracts.ParsedFile | None:
+    """Parse one on-disk activity file without storing anything.
+
+    Providers use it to sanity-check a downloaded file against their own API
+    metadata (the entry they clicked) before committing it to ingestion; the
+    parse itself is the same pipeline the store would run.
+
+    Args:
+        user_id: The owner the parsed activities would belong to.
+        file_extension: The file's extension, e.g. ``".tcx"``.
+        file_path: Absolute path to the file.
+        activity_name: Optional name override, as at store time.
+
+    Returns:
+        The parsed file, or ``None`` for the bulk-import package marker.
+    """
+    return activity_ingestion_pipeline_service.parse_file(user_id, file_extension, file_path, activity_name)
 
 
 def register_activity_provider(
