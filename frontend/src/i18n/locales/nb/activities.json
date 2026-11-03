@@ -42,7 +42,9 @@
       "paceSpeed": "Tempo / Fart",
       "elevation": "Stigning",
       "calories": "Kalorier",
-      "avgHr": "Gj.sn. puls"
+      "avgHr": "Gj.sn. puls",
+      "power": "Effekt",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Ingen aktiviteter ennå",

@@ -212,5 +212,11 @@
     "note": "Jeden punkt na sesję, dopasowany tylko z jej własnych utrzymywanych wysiłków; rozrzut punktów odzwierciedla jakość sesji, nie formę dnia.",
     "emptyTitle": "Za mało nadających się sesji",
     "emptyDescription": "Moc krytyczna wymaga sesji z co najmniej czterema utrzymywanymi wysiłkami między 5 a 30 minutami. Uzupełni się z czasem."
+  },
+  "scores": {
+    "rss": "aRSS",
+    "daniels": "Daniels",
+    "trimp": "TRIMP",
+    "tss": "TSS"
   }
 }

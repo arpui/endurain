@@ -20,6 +20,7 @@ import { ListPanel } from '@/components/ui/list-panel'
 import { Select } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
+import { useActivityLoadsSummariesQuery } from '@/features/analysis/composables/useAnalysis'
 import { useRecordsPerPage } from '@/features/config/composables/useRecordsPerPage'
 import { useListPagination } from '@/composables/useListPagination'
 import {
@@ -152,6 +153,11 @@ const listQuery = useUserActivitiesQuery(userId, page, recordsPerPage, filters, 
 const activities = computed(() => listQuery.data.value?.records ?? [])
 /** Server-reported total across all pages for the active filters. */
 const totalCount = computed(() => listQuery.data.value?.total ?? 0)
+
+// Each row's aRSS and power-provenance marker come from one batched analysis
+// call per page, not one per card.
+const pageActivityIds = computed(() => activities.value.map((activity) => activity.id))
+const loadsQuery = useActivityLoadsSummariesQuery(pageActivityIds)
 
 // Numbered pagination: derives the page count and clamps the page when the
 // total shrinks (e.g. after a filter narrows the result set).
@@ -372,7 +378,15 @@ useRouteQueryReplacement(activitiesQueryState)
           </div>
           <ul class="divide-y divide-border">
             <li v-for="activity in activities" :key="activity.id">
-              <ActivityListItem :activity="activity" :units="units" :columns="visibleColumns" />
+              <ActivityListItem
+                :activity="activity"
+                :units="units"
+                :columns="visibleColumns"
+                :rss-score="loadsQuery.data.value?.get(activity.id)?.loads.rss_total?.load ?? null"
+                :power-recalibrated="
+                  loadsQuery.data.value?.get(activity.id)?.powerRecalibrated ?? false
+                "
+              />
             </li>
           </ul>
         </div>

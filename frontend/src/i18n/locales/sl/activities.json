@@ -42,7 +42,9 @@
       "paceSpeed": "Tempo / Hitrost",
       "elevation": "Višinska razlika",
       "calories": "Kalorije",
-      "avgHr": "Povp. utrip"
+      "avgHr": "Povp. utrip",
+      "power": "Moč",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Še ni aktivnosti",

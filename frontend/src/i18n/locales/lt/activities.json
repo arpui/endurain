@@ -42,7 +42,9 @@
       "paceSpeed": "Tempas / greitis",
       "elevation": "Aukščio pokytis",
       "calories": "Kalorijos",
-      "avgHr": "Vid. pulsas"
+      "avgHr": "Vid. pulsas",
+      "power": "Galia",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Veiklų dar nėra",

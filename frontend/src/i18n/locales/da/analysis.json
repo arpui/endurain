@@ -212,5 +212,11 @@
     "note": "Et punkt pr. session, tilpasset alene fra sessionens egne vedvarende anstrengelser; spredningen afspejler hver sessions kvalitet, ikke dagens form.",
     "emptyTitle": "Ikke nok brugbare sessioner endnu",
     "emptyDescription": "Kritisk effekt kræver sessioner med mindst fire vedvarende anstrengelser mellem 5 og 30 minutter. Den fyldes op efterhånden."
+  },
+  "scores": {
+    "rss": "aRSS",
+    "daniels": "Daniels",
+    "trimp": "TRIMP",
+    "tss": "TSS"
   }
 }

@@ -42,7 +42,9 @@
       "paceSpeed": "Pace / Speed",
       "elevation": "Elevation",
       "calories": "Calories",
-      "avgHr": "Avg HR"
+      "avgHr": "Avg HR",
+      "power": "Power",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "No activities yet",

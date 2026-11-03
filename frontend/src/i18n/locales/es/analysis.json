@@ -212,5 +212,11 @@
     "note": "Un punto por sesión, ajustado solo con sus propios esfuerzos sostenidos; la dispersión de los puntos refleja la calidad de cada sesión, no la forma del día.",
     "emptyTitle": "Aún no hay sesiones suficientes",
     "emptyDescription": "La potencia crítica requiere sesiones con al menos cuatro esfuerzos sostenidos entre 5 y 30 minutos. Se completará a medida que acumules."
+  },
+  "scores": {
+    "rss": "aRSS",
+    "daniels": "Daniels",
+    "trimp": "TRIMP",
+    "tss": "TSS"
   }
 }

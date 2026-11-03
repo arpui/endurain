@@ -3,7 +3,7 @@
 from collections.abc import Mapping
 from datetime import date as date_type
 
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 
 import modules.analysis.constants as analysis_constants
 import modules.analysis.intervals as analysis_intervals
@@ -27,6 +27,23 @@ class ActivityLoadRead(BaseModel):
     intensity_factor: StrictFloat | None
     threshold_used: StrictFloat | None
     duration_s: StrictFloat
+
+
+class ActivityLoadsSummaryRead(BaseModel):
+    """One activity's loads plus its power provenance, for list rendering.
+
+    Attributes:
+        activity_id: The activity measured.
+        power_recalibrated: Whether its power stream is Stryd-era, so the shown
+            watts are recalibrated to the athlete's current scale.
+        loads: Every formula's load, in formula order; empty when unscored.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    activity_id: StrictInt
+    power_recalibrated: StrictBool
+    loads: list[ActivityLoadRead]
 
 
 class PowerThresholdRead(BaseModel):

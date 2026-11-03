@@ -1,5 +1,7 @@
 """CRUD operations for activity stream data."""
 
+from collections.abc import Sequence
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -95,6 +97,35 @@ def get_activity_stream_by_type(
         return None
 
     return activity_streams_serializers.to_read_schema(activity_stream)
+
+
+def get_power_sources(
+    activity_ids: Sequence[int],
+    db: Session,
+) -> dict[int, str]:
+    """Return the provenance tag of the power stream of the given activities.
+
+    Performs no ownership check: the caller scopes the ids first.
+
+    Args:
+        activity_ids: Activities to read.
+        db: Database session.
+
+    Returns:
+        Activity id to provenance (``stryd``/``device``); activities without a
+        tagged power stream are absent.
+    """
+    if not activity_ids:
+        return {}
+    stmt = select(
+        activity_streams_models.ActivityStreams.activity_id,
+        activity_streams_models.ActivityStreams.power_source,
+    ).where(
+        activity_streams_models.ActivityStreams.activity_id.in_(activity_ids),
+        activity_streams_models.ActivityStreams.stream_type == activity_streams_constants.STREAM_TYPE_POWER,
+        activity_streams_models.ActivityStreams.power_source.is_not(None),
+    )
+    return {int(activity_id): str(source) for activity_id, source in db.execute(stmt).all()}
 
 
 def get_gps_stream_waypoints_for_activities(

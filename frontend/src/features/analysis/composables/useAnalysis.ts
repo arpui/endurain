@@ -16,6 +16,7 @@ import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
   fetchActivityLapDynamics,
+  fetchActivityLoadsSummaries,
   fetchAnalysisSettings,
   fetchBestTimes,
   fetchCpTrend,
@@ -195,6 +196,25 @@ export function useActivityIntervalsQuery(
     queryKey: computed(() => queryKeys.analysis.intervals(id.value)),
     queryFn: ({ signal }) => fetchActivityIntervals(id.value, signal),
     enabled: computed(() => id.value > 0 && toValue(enabled) && isAuthenticated.value),
+  })
+}
+
+/**
+ * The stored loads and power provenance of a set of activities, fetched in one
+ * call: the activities list asks for the page it shows, the detail strip for
+ * its own id. Rows are the athlete's own; ids of others read as absent.
+ *
+ * @param activityIds - Reactive list of activity ids to summarize.
+ * @returns The TanStack query result for a map of activity id to its summary.
+ */
+export function useActivityLoadsSummariesQuery(activityIds: MaybeRefOrGetter<number[]>) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const ids = computed(() => toValue(activityIds))
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.loads(ids.value.join(','))),
+    queryFn: ({ signal }) => fetchActivityLoadsSummaries(ids.value, signal),
+    enabled: computed(() => ids.value.length > 0 && isAuthenticated.value),
   })
 }
 

@@ -131,6 +131,34 @@ class TestActivityLoadsRoute:
         assert response.status_code == 404
 
 
+class TestLoadsBatchRoute:
+    def test_the_page_reads_many_activities_in_one_call(self):
+        client = TestClient(_build_app(MagicMock()))
+        summaries = [
+            analysis_schema.ActivityLoadsSummaryRead(
+                activity_id=5,
+                power_recalibrated=True,
+                loads=[],
+            )
+        ]
+        with patch("modules.analysis.router.analysis_service.list_loads_summaries", return_value=summaries) as svc:
+            response = client.get("/analysis/loads?activity_ids=5&activity_ids=7")
+        assert response.status_code == 200
+        assert svc.call_args.args[0] == 2
+        assert svc.call_args.args[1] == [5, 7]
+        assert response.json()[0]["power_recalibrated"] is True
+
+    def test_an_empty_page_is_refused_before_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/loads")
+        assert response.status_code == 422
+
+    def test_a_page_larger_than_the_list_page_size_is_refused(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/loads?" + "&".join(f"activity_ids={i}" for i in range(51)))
+        assert response.status_code == 422
+
+
 class TestFitnessRoute:
     def _series(self) -> analysis_schema.FitnessSeriesRead:
         return analysis_schema.FitnessSeriesRead(

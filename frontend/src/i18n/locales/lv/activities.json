@@ -42,7 +42,9 @@
       "paceSpeed": "Temps / Ātrums",
       "elevation": "Augstuma ieguvums",
       "calories": "Kalorijas",
-      "avgHr": "Vid. pulss"
+      "avgHr": "Vid. pulss",
+      "power": "Jauda",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Vēl nav aktivitāšu",

@@ -500,6 +500,50 @@ class TestLocalDay:
         assert analysis_service._local_day(_activity(start_time=None)) is None
 
 
+class TestLoadsSummaries:
+    """Serving the activities list: loads plus power provenance, one page per call."""
+
+    @staticmethod
+    def _load(method: str, value: float) -> analysis_schema.ActivityLoadRead:
+        return analysis_schema.ActivityLoadRead(
+            method=method,
+            load=value,
+            intensity_factor=None,
+            threshold_used=None,
+            duration_s=3600.0,
+        )
+
+    def test_rows_and_tags_merge_in_request_order(self):
+        with (
+            patch(f"{_SVC}.activity_integration.owned_activity_ids", return_value={5, 7}),
+            patch(
+                f"{_SVC}.analysis_crud.list_loads_for_activities",
+                return_value={5: [self._load("rss_total", 60.0)]},
+            ),
+            patch(
+                f"{_SVC}.activity_streams_integration.get_power_sources",
+                return_value={5: "stryd", 7: "device"},
+            ),
+        ):
+            out = analysis_service.list_loads_summaries(2, [7, 5, 9], _db())
+        assert [s.activity_id for s in out] == [7, 5]  # unscored, untagged ids are dropped
+        assert out[0].power_recalibrated is False
+        assert out[1].power_recalibrated is True
+        assert out[1].loads[0].load == 60.0
+
+    def test_a_foreign_id_reads_as_absent(self):
+        """Ownership resolves in one batch: foreign ids never reach the reads."""
+        with (
+            patch(f"{_SVC}.activity_integration.owned_activity_ids", return_value=set()),
+            patch(f"{_SVC}.analysis_crud.list_loads_for_activities", return_value={}) as loads,
+            patch(f"{_SVC}.activity_streams_integration.get_power_sources", return_value={}) as sources,
+        ):
+            out = analysis_service.list_loads_summaries(2, [5], _db())
+        assert out == []
+        assert loads.call_args.args[1] == []
+        assert sources.call_args.args[0] == []
+
+
 class TestFitnessSeries:
     """Reading the stored rows as a fatigue/fitness series."""
 

@@ -1050,6 +1050,26 @@ def get_activity_by_id_from_user_id(activity_id: int, user_id: int, db: Session)
     return activity_serializers.to_read_schema(activity)
 
 
+def get_owned_activity_ids(activity_ids: Sequence[int], user_id: int, db: Session) -> set[int]:
+    """Return which of the given activities belong to the user.
+
+    Args:
+        activity_ids: Activity IDs to check.
+        user_id: Claimed owner.
+        db: Database session.
+
+    Returns:
+        The IDs of activities that exist and belong to the user.
+    """
+    if not activity_ids:
+        return set()
+    stmt = select(activity_models.Activity.id).where(
+        activity_models.Activity.id.in_(activity_ids),
+        activity_models.Activity.user_id == user_id,
+    )
+    return {int(activity_id) for activity_id in db.scalars(stmt).all()}
+
+
 def get_activity_by_strava_id_from_user_id(
     activity_strava_id: int, user_id: int, db: Session
 ) -> activity_schema.ActivityRead | None:

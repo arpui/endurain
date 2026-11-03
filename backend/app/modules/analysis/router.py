@@ -53,6 +53,24 @@ def update_analysis_settings(
 
 
 @router.get(
+    "/loads",
+    response_model=list[analysis_schema.ActivityLoadsSummaryRead],
+)
+def list_loads_summaries(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+    activity_ids: Annotated[list[int], Query(min_length=1, max_length=50)],
+) -> list[analysis_schema.ActivityLoadsSummaryRead]:
+    """Return the loads and power provenance of several of the caller's activities.
+
+    One call per list page: the activities view asks for the ids it is showing and
+    renders each row's own score without one request per activity.
+    """
+    return analysis_service.list_loads_summaries(token_user_id, activity_ids, db)
+
+
+@router.get(
     "/fitness",
     response_model=analysis_schema.FitnessSeriesRead,
 )

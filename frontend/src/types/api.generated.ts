@@ -4,61 +4,6 @@
  */
 
 export interface paths {
-    "/api/v1/about": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * About
-         * @description Returns metadata information about the Endurain API.
-         *
-         *     Returns:
-         *         API name, version, and license details.
-         */
-        get: operations["about_api_v1_about_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Own Activities
-         * @description List the authenticated user's activities, with the matching total.
-         */
-        get: operations["list_own_activities_api_v1_activities_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Edit Activities
-         * @description Apply a bulk edit across all of the authenticated user's activities.
-         *
-         *     A PATCH on the collection with the change in the body, rather than the
-         *     previous ``PUT /visibility/{visibility}``: the value being set is data, not
-         *     an identifier, and PUT implied a full replacement of a resource that does
-         *     not exist at that path. The body shape also leaves room for a second
-         *     bulk-editable field without another endpoint.
-         *
-         *     Rejected as invalid input when the body asks for no change at all.
-         */
-        patch: operations["edit_activities_api_v1_activities_patch"];
-        trace?: never;
-    };
     "/api/v1/activities/bulk-import": {
         parameters: {
             query?: never;
@@ -117,6 +62,206 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/activities/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refresh Activities
+         * @description Queue a sync of the last 24h from the linked providers (Strava/Garmin).
+         *
+         *     Returns ``202`` with a job handle; poll
+         *     ``GET /activities/ingestion-jobs/{job_id}`` for the outcome.
+         *
+         *     The sync runs as a job, so no provider call blocks a request thread or the
+         *     event loop.
+         */
+        post: operations["refresh_activities_api_v1_activities_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Activity With Uploaded File
+         * @description Upload an activity file (GPX, FIT, TCX, GZ) for import.
+         *
+         *     Returns ``202`` once the file is stored and queued: parsing is seconds of
+         *     CPU work, and doing it inline held a shared request thread for the duration.
+         *     Poll ``GET /activities/ingestion-jobs/{job_id}`` for the outcome.
+         *
+         *     Rejections that can be decided cheaply — unsupported extension, failed
+         *     signature check, oversized body — still come back synchronously as a 4xx, so
+         *     only files that plausibly import get a job.
+         *
+         *     Send an ``Idempotency-Key`` to make a retry safe: a client that never saw
+         *     the 202 has no job id to poll, so replaying the upload is its only recovery,
+         *     and without a key that replay would import the file a second time.
+         *
+         *     Accepts both JWT bearer token and API key
+         *     authentication (X-API-Key header or ?api_key=
+         *     query parameter). Requires the
+         *     ``activities:upload`` scope.
+         */
+        post: operations["create_activity_with_uploaded_file_api_v1_activities_upload_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/ingestion-jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Activity Ingestion Job
+         * @description Read the state of one of your ingestion requests.
+         *
+         *     Serves both uploads and provider refreshes: the caller's question is the
+         *     same either way, so there is one route rather than two near-identical ones.
+         *
+         *     Scoped to the caller: a job belonging to another user is reported as not
+         *     found rather than forbidden, so the endpoint does not confirm that an id
+         *     exists.
+         */
+        get: operations["read_activity_ingestion_job_api_v1_activities_ingestion_jobs__job_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/{activity_id}/thumbnail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Activity Thumbnail
+         * @description Serve an activity's map thumbnail when the signed token is valid.
+         *
+         *     Answers ``404`` when the token is invalid or forged, or no thumbnail exists.
+         */
+        get: operations["read_activity_thumbnail_api_v1_activities__activity_id__thumbnail_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/{activity_id}/media/{media_id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Activity Media File
+         * @description Serve an activity media blob when the signed token is valid.
+         *
+         *     Answers ``404`` when the token is invalid or forged, the record does not belong
+         *     to the activity, or no blob exists. A ``404`` rather than ``403`` avoids
+         *     confirming the resource to an unauthorized caller.
+         */
+        get: operations["read_activity_media_file_api_v1_activities__activity_id__media__media_id__file_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/photo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read User Photo
+         * @description Serve a user's profile photo when the signed token is valid.
+         *
+         *     Args:
+         *         user_id: The user whose photo to serve.
+         *         token: The signed access token (``?t=``) minted at serialization time.
+         *
+         *     Returns:
+         *         The image bytes.
+         *
+         *     Raises:
+         *         HTTPException: 404 when the token is invalid/forged or no photo exists
+         *             (a 404 — rather than 403 — avoids confirming the user id).
+         */
+        get: operations["read_user_photo_api_v1_users__user_id__photo_get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete User Photo
+         * @description Delete user profile photo.
+         *
+         *     Args:
+         *         user_id: ID of user whose photo to delete.
+         *         _validate_id: User ID validation dependency.
+         *         _check_scopes: Authorization check.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         None
+         */
+        delete: operations["delete_user_photo_api_v1_users__user_id__photo_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/summaries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Activity Summary
+         * @description Return the authenticated user's activity summary for one period.
+         */
+        get: operations["read_activity_summary_api_v1_activities_summaries_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/activities/exercise-titles/all": {
         parameters: {
             query?: never;
@@ -129,6 +274,58 @@ export interface paths {
          * @description Return all activity exercise titles.
          */
         get: operations["list_activity_exercise_titles_api_v1_activities_exercise_titles_all_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Own Activities
+         * @description List the authenticated user's activities, with the matching total.
+         */
+        get: operations["list_own_activities_api_v1_activities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Edit Activities
+         * @description Apply a bulk edit across all of the authenticated user's activities.
+         *
+         *     A PATCH on the collection with the change in the body, rather than the
+         *     previous ``PUT /visibility/{visibility}``: the value being set is data, not
+         *     an identifier, and PUT implied a full replacement of a resource that does
+         *     not exist at that path. The body shape also leaves room for a second
+         *     bulk-editable field without another endpoint.
+         *
+         *     Rejected as invalid input when the body asks for no change at all.
+         */
+        patch: operations["edit_activities_api_v1_activities_patch"];
+        trace?: never;
+    };
+    "/api/v1/activities/types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Activity Types
+         * @description Return the distinct activity types the user has recorded, keyed by type code.
+         */
+        get: operations["list_activity_types_api_v1_activities_types_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -177,7 +374,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/activities/ingestion-jobs/{job_id}": {
+    "/api/v1/activities/users/{user_id}/stats": {
         parameters: {
             query?: never;
             header?: never;
@@ -185,122 +382,12 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Read Activity Ingestion Job
-         * @description Read the state of one of your ingestion requests.
-         *
-         *     Serves both uploads and provider refreshes: the caller's question is the
-         *     same either way, so there is one route rather than two near-identical ones.
-         *
-         *     Scoped to the caller: a job belonging to another user is reported as not
-         *     found rather than forbidden, so the endpoint does not confirm that an id
-         *     exists.
+         * Read User Activity Stats
+         * @description Aggregate per-sport stats for a user's current ``week`` or ``month``.
          */
-        get: operations["read_activity_ingestion_job_api_v1_activities_ingestion_jobs__job_id__get"];
+        get: operations["read_user_activity_stats_api_v1_activities_users__user_id__stats_get"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Refresh Activities
-         * @description Queue a sync of the last 24h from the linked providers (Strava/Garmin).
-         *
-         *     Returns ``202`` with a job handle; poll
-         *     ``GET /activities/ingestion-jobs/{job_id}`` for the outcome.
-         *
-         *     The sync runs as a job, so no provider call blocks a request thread or the
-         *     event loop.
-         */
-        post: operations["refresh_activities_api_v1_activities_refresh_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities/summaries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Activity Summary
-         * @description Return the authenticated user's activity summary for one period.
-         */
-        get: operations["read_activity_summary_api_v1_activities_summaries_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities/types": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Activity Types
-         * @description Return the distinct activity types the user has recorded, keyed by type code.
-         */
-        get: operations["list_activity_types_api_v1_activities_types_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities/upload": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Create Activity With Uploaded File
-         * @description Upload an activity file (GPX, FIT, TCX, GZ) for import.
-         *
-         *     Returns ``202`` once the file is stored and queued: parsing is seconds of
-         *     CPU work, and doing it inline held a shared request thread for the duration.
-         *     Poll ``GET /activities/ingestion-jobs/{job_id}`` for the outcome.
-         *
-         *     Rejections that can be decided cheaply — unsupported extension, failed
-         *     signature check, oversized body — still come back synchronously as a 4xx, so
-         *     only files that plausibly import get a job.
-         *
-         *     Send an ``Idempotency-Key`` to make a retry safe: a client that never saw
-         *     the 202 has no job id to poll, so replaying the upload is its only recovery,
-         *     and without a key that replay would import the file a second time.
-         *
-         *     Accepts both JWT bearer token and API key
-         *     authentication (X-API-Key header or ?api_key=
-         *     query parameter). Requires the
-         *     ``activities:upload`` scope.
-         */
-        post: operations["create_activity_with_uploaded_file_api_v1_activities_upload_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -319,26 +406,6 @@ export interface paths {
          * @description List another user's visible activities, with the matching total.
          */
         get: operations["list_user_activities_api_v1_activities_users__user_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities/users/{user_id}/stats": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read User Activity Stats
-         * @description Aggregate per-sport stats for a user's current ``week`` or ``month``.
-         */
-        get: operations["read_user_activity_stats_api_v1_activities_users__user_id__stats_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -381,54 +448,6 @@ export interface paths {
         patch: operations["edit_activity_api_v1_activities__activity_id__patch"];
         trace?: never;
     };
-    "/api/v1/activities/{activity_id}/intervals": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Activity Intervals
-         * @description Return how this activity breaks down into efforts, for its owner.
-         *
-         *     Split on read from the activity's own samples against the athlete's own numbers
-         *     (their threshold and the session's median power), so the segmentation never
-         *     assumes a general population's idea of hard.
-         */
-        get: operations["get_activity_intervals_api_v1_activities__activity_id__intervals_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities/{activity_id}/lap-dynamics": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Activity Lap Dynamics
-         * @description Return per-lap dynamics: power, stride length, elevation split and aRSS.
-         *
-         *     Computed for the activity's owner from the laps the device recorded and the
-         *     athlete's own threshold, so the drift of form under fatigue reads against
-         *     their numbers.
-         */
-        get: operations["get_activity_lap_dynamics_api_v1_activities__activity_id__lap_dynamics_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/activities/{activity_id}/laps": {
         parameters: {
             query?: never;
@@ -441,30 +460,6 @@ export interface paths {
          * @description Return one page of the given activity's laps, with the matching total.
          */
         get: operations["list_activity_laps_api_v1_activities__activity_id__laps_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities/{activity_id}/loads": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Activity Loads
-         * @description Return every computed load of this activity, for its owner.
-         *
-         *     Read scope follows the parent activity because the resource belongs to it, while
-         *     the service narrows access to the owner: a load is the athlete's own training
-         *     measure, tied to the thresholds they train against.
-         */
-        get: operations["list_activity_loads_api_v1_activities__activity_id__loads_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -531,30 +526,6 @@ export interface paths {
          *     activity is not the caller's.
          */
         delete: operations["delete_activity_media_api_v1_activities__activity_id__media__media_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/activities/{activity_id}/media/{media_id}/file": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Activity Media File
-         * @description Serve an activity media blob when the signed token is valid.
-         *
-         *     Answers ``404`` when the token is invalid or forged, the record does not belong
-         *     to the activity, or no blob exists. A ``404`` rather than ``403`` avoids
-         *     confirming the resource to an unauthorized caller.
-         */
-        get: operations["read_activity_media_file_api_v1_activities__activity_id__media__media_id__file_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -649,28 +620,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/activities/{activity_id}/thumbnail": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Activity Thumbnail
-         * @description Serve an activity's map thumbnail when the signed token is valid.
-         *
-         *     Answers ``404`` when the token is invalid or forged, or no thumbnail exists.
-         */
-        get: operations["read_activity_thumbnail_api_v1_activities__activity_id__thumbnail_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/activities/{activity_id}/workout-steps": {
         parameters: {
             query?: never;
@@ -683,6 +632,30 @@ export interface paths {
          * @description Return one page of the activity's workout steps, with the matching total.
          */
         get: operations["list_activity_workout_steps_api_v1_activities__activity_id__workout_steps_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/{activity_id}/loads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Activity Loads
+         * @description Return every computed load of this activity, for its owner.
+         *
+         *     Read scope follows the parent activity because the resource belongs to it, while
+         *     the service narrows access to the owner: a load is the athlete's own training
+         *     measure, tied to the thresholds they train against.
+         */
+        get: operations["list_activity_loads_api_v1_activities__activity_id__loads_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -715,7 +688,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/analysis/best-times": {
+    "/api/v1/activities/{activity_id}/lap-dynamics": {
         parameters: {
             query?: never;
             header?: never;
@@ -723,14 +696,14 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Best Times
-         * @description Return the caller's best splits over the canonical race distances.
+         * Get Activity Lap Dynamics
+         * @description Return per-lap dynamics: power, stride length, elevation split and aRSS.
          *
-         *     The splits are found in the activities' own samples, and a split running
-         *     downhill more than the bound for its length is discarded, so the table shows
-         *     what the athlete actually ran rather than what gravity lent them.
+         *     Computed for the activity's owner from the laps the device recorded and the
+         *     athlete's own threshold, so the drift of form under fatigue reads against
+         *     their numbers.
          */
-        get: operations["get_best_times_api_v1_analysis_best_times_get"];
+        get: operations["get_activity_lap_dynamics_api_v1_activities__activity_id__lap_dynamics_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -739,7 +712,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/analysis/cp-trend": {
+    "/api/v1/activities/{activity_id}/intervals": {
         parameters: {
             query?: never;
             header?: never;
@@ -747,133 +720,16 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Cp Trend
-         * @description Return the caller's critical-power evolution for one sport.
+         * Get Activity Intervals
+         * @description Return how this activity breaks down into efforts, for its owner.
          *
-         *     One point per session, each fit from that session's own sustained efforts;
-         *     the stored threshold comes back as the reference line. ``window`` narrows
-         *     the history without dropping sessions outside it from other views.
+         *     Split on read from the activity's own samples against the athlete's own numbers
+         *     (their threshold and the session's median power), so the segmentation never
+         *     assumes a general population's idea of hard.
          */
-        get: operations["get_cp_trend_api_v1_analysis_cp_trend_get"];
+        get: operations["get_activity_intervals_api_v1_activities__activity_id__intervals_get"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/analysis/fitness": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Fitness Series
-         * @description Return the caller's daily load series with fatigue, fitness and balance.
-         *
-         *     Every parameter is optional: without them the athlete's stored settings decide
-         *     the formula, the time constants and the whole sports, and the window defaults
-         *     to the recent one. Naming them changes only this response, not the settings.
-         */
-        get: operations["get_fitness_series_api_v1_analysis_fitness_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/analysis/power-duration": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Power Duration
-         * @description Return the caller's duration-intensity curve for one sport.
-         *
-         *     The points are the cached best sustained averages; the fit is recomputed for
-         *     the request, so ``fit_from``/``fit_to`` preview a different window without
-         *     changing anything. The response also reports the threshold the sport's loads
-         *     actually use and the sessions that built the curve.
-         */
-        get: operations["get_power_duration_api_v1_analysis_power_duration_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/analysis/recompute": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Queue Load Recompute
-         * @description Queue re-measuring every activity with the current thresholds and formulas.
-         */
-        post: operations["queue_load_recompute_api_v1_analysis_recompute_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/analysis/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Analysis Settings
-         * @description Return the caller's analysis parameters, including derived thresholds.
-         */
-        get: operations["get_analysis_settings_api_v1_analysis_settings_get"];
-        /**
-         * Update Analysis Settings
-         * @description Update the caller's analysis parameters.
-         *
-         *     A stored load records the threshold it was computed with, so changing a
-         *     threshold does not reinterpret history: queue a recompute afterwards to measure
-         *     every activity against the new value.
-         */
-        put: operations["update_analysis_settings_api_v1_analysis_settings_put"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/analysis/thresholds/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Queue Threshold Refresh
-         * @description Queue re-deriving the caller's thresholds from their own records.
-         */
-        post: operations["queue_threshold_refresh_api_v1_analysis_thresholds_refresh_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -934,44 +790,6 @@ export interface paths {
          *         HTTPException: If authentication fails, user is inactive, or account is locked
          */
         post: operations["login_for_access_token_api_v1_auth_login_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Logout
-         * @description Log out a user by validating and deleting their session.
-         *
-         *     Args:
-         *         response: The HTTP response object to modify cookies.
-         *         request: The HTTP request object.
-         *         _validate_refresh_token: Dependency to validate the refresh token.
-         *         token_session_id: The session ID extracted from the refresh token.
-         *         refresh_token_value: The refresh token value from the request.
-         *         client_type: The type of client ("web" or "mobile").
-         *         token_user_id: The user ID extracted from the refresh token.
-         *         password_hasher: Utility for verifying the refresh token.
-         *         db: Database session for CRUD operations.
-         *
-         *     Returns:
-         *         dict: A message indicating successful logout.
-         *
-         *     Raises:
-         *         HTTPException: If refresh token is invalid (401 Unauthorized).
-         *         HTTPException: If client type is invalid (403 Forbidden).
-         */
-        post: operations["logout_api_v1_auth_logout_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1077,6 +895,119 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Logout
+         * @description Log out a user by validating and deleting their session.
+         *
+         *     Args:
+         *         response: The HTTP response object to modify cookies.
+         *         request: The HTTP request object.
+         *         _validate_refresh_token: Dependency to validate the refresh token.
+         *         token_session_id: The session ID extracted from the refresh token.
+         *         refresh_token_value: The refresh token value from the request.
+         *         client_type: The type of client ("web" or "mobile").
+         *         token_user_id: The user ID extracted from the refresh token.
+         *         password_hasher: Utility for verifying the refresh token.
+         *         db: Database session for CRUD operations.
+         *
+         *     Returns:
+         *         dict: A message indicating successful logout.
+         *
+         *     Raises:
+         *         HTTPException: If refresh token is invalid (401 Unauthorized).
+         *         HTTPException: If client type is invalid (403 Forbidden).
+         */
+        post: operations["logout_api_v1_auth_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/followers/users/{user_id}/followers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List User Followers
+         * @description List a user's followers, with the matching total.
+         *
+         *     Privacy-aware: only the user themselves or an accepted follower may list them.
+         */
+        get: operations["list_user_followers_api_v1_followers_users__user_id__followers_get"];
+        put?: never;
+        /**
+         * Follow User
+         * @description Add the authenticated user to ``user_id``'s followers.
+         *
+         *     Always created pending: a follow takes effect only once the target accepts
+         *     it, so the returned ``status`` is ``pending`` and the target is notified.
+         */
+        post: operations["follow_user_api_v1_followers_users__user_id__followers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/followers/users/{user_id}/following": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List User Following
+         * @description List who a user follows, with the matching total.
+         *
+         *     Privacy-aware: only the user themselves or an accepted follower may list them.
+         */
+        get: operations["list_user_following_api_v1_followers_users__user_id__following_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/followers/users/{user_id}/relationship": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read User Relationship
+         * @description Return the authenticated user's relationship with ``user_id``, both directions.
+         *
+         *     Reports the requester's outgoing follow of ``user_id`` and ``user_id``'s
+         *     incoming follow of the requester; only relationships the requester is part of
+         *     are ever exposed.
+         */
+        get: operations["read_user_relationship_api_v1_followers_users__user_id__relationship_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/followers/follow-requests": {
         parameters: {
             query?: never;
@@ -1137,35 +1068,6 @@ export interface paths {
         patch: operations["accept_follow_request_api_v1_followers_follow_requests__follower_id__patch"];
         trace?: never;
     };
-    "/api/v1/followers/users/{user_id}/followers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List User Followers
-         * @description List a user's followers, with the matching total.
-         *
-         *     Privacy-aware: only the user themselves or an accepted follower may list them.
-         */
-        get: operations["list_user_followers_api_v1_followers_users__user_id__followers_get"];
-        put?: never;
-        /**
-         * Follow User
-         * @description Add the authenticated user to ``user_id``'s followers.
-         *
-         *     Always created pending: a follow takes effect only once the target accepts
-         *     it, so the returned ``status`` is ``pending`` and the target is notified.
-         */
-        post: operations["follow_user_api_v1_followers_users__user_id__followers_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/followers/users/{user_id}/followers/{follower_id}": {
         parameters: {
             query?: never;
@@ -1190,46 +1092,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/followers/users/{user_id}/following": {
+    "/api/v1/garminconnect/link": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * List User Following
-         * @description List who a user follows, with the matching total.
-         *
-         *     Privacy-aware: only the user themselves or an accepted follower may list them.
-         */
-        get: operations["list_user_following_api_v1_followers_users__user_id__following_get"];
+        get?: never;
         put?: never;
-        post?: never;
+        /** Garminconnect Link */
+        post: operations["garminconnect_link_api_v1_garminconnect_link_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/followers/users/{user_id}/relationship": {
+    "/api/v1/garminconnect/mfa": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Read User Relationship
-         * @description Return the authenticated user's relationship with ``user_id``, both directions.
-         *
-         *     Reports the requester's outgoing follow of ``user_id`` and ``user_id``'s
-         *     incoming follow of the requester; only relationships the requester is part of
-         *     are ever exposed.
-         */
-        get: operations["read_user_relationship_api_v1_followers_users__user_id__relationship_get"];
+        get?: never;
         put?: never;
-        post?: never;
+        /** Garminconnect Mfa Code */
+        post: operations["garminconnect_mfa_code_api_v1_garminconnect_mfa_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1294,40 +1184,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/garminconnect/link": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Garminconnect Link */
-        post: operations["garminconnect_link_api_v1_garminconnect_link_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/garminconnect/mfa": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Garminconnect Mfa Code */
-        post: operations["garminconnect_mfa_code_api_v1_garminconnect_mfa_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/garminconnect/unlink": {
         parameters: {
             query?: never;
@@ -1340,6 +1196,35 @@ export interface paths {
         post?: never;
         /** Garminconnect Unlink */
         delete: operations["garminconnect_unlink_api_v1_garminconnect_unlink_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/gear_components/types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Gear Component Types
+         * @description Retrieve valid component type lists.
+         *
+         *     Args:
+         *         _check_scopes: Validates gears:read scope.
+         *
+         *     Returns:
+         *         Component types grouped by gear type.
+         *
+         *     Raises:
+         *         HTTPException: If unauthorized.
+         */
+        get: operations["read_gear_component_types_api_v1_gear_components_types_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1447,35 +1332,6 @@ export interface paths {
          *         HTTPException: If unauthorized.
          */
         get: operations["read_gear_components_gear_id_api_v1_gear_components_gear_id__gear_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/gear_components/types": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Gear Component Types
-         * @description Retrieve valid component type lists.
-         *
-         *     Args:
-         *         _check_scopes: Validates gears:read scope.
-         *
-         *     Returns:
-         *         Component types grouped by gear type.
-         *
-         *     Raises:
-         *         HTTPException: If unauthorized.
-         */
-        get: operations["read_gear_component_types_api_v1_gear_components_types_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1754,7 +1610,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/health": {
+    "/api/v1/health/stats/daily": {
         parameters: {
             query?: never;
             header?: never;
@@ -1762,25 +1618,424 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Health
-         * @description Liveness check that needs a database connection.
-         *
-         *     Unlike ``/about``, this fails when the connection pool is exhausted or the
-         *     database is unreachable, so orchestrators can detect a wedged instance.
+         * Read Health Daily Stats
+         * @description Retrieve health daily stats and last weight record.
          *
          *     Args:
-         *         db: Database session.
+         *         _check_scopes: Security dependency that validates the user has
+         *             'health:read' scope.
+         *         token_user_id: The ID of the authenticated user extracted from the
+         *             access token.
+         *         db: Database session for executing queries.
          *
          *     Returns:
-         *         ``{"status": "ok"}`` when the database answers.
+         *         HealthDashboardResponse: A consolidated response containing:
+         *             - sleep: Latest sleep record with key metrics
+         *             - weight: Latest weight and BMI data
+         *             - steps: Today's step count
+         *             - fasting: Active or most recent fasting session
+         *             - water: Today's water intake in milliliters
+         *             - poop: Today's bowel movement count
          *
          *     Raises:
-         *         HTTPException: 503 when no connection can be obtained or the query fails.
+         *         HTTPException: If the user lacks required 'health:read' scope.
          */
-        get: operations["health_api_v1_health_get"];
+        get: operations["read_health_daily_stats_api_v1_health_stats_daily_get"];
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health/sleep": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Health Sleep All Pagination
+         * @description Retrieve health sleep records for the authenticated user.
+         *
+         *     This endpoint fetches health sleep data with optional pagination and
+         *     filtering. Access is restricted to users with the 'health:read' scope.
+         *
+         *     Args:
+         *         _check_scopes: Security dependency that validates the user has
+         *             'health:read' scope.
+         *         _validate_pagination_values_on_query: Dependency that validates
+         *             pagination parameters.
+         *         token_user_id: The ID of the authenticated user extracted from the
+         *             access token.
+         *         db: Database session for executing queries.
+         *         page_number: Optional pagination page number to retrieve specific page
+         *             of results.
+         *         num_records: Optional number of records per page for pagination.
+         *         interval: Optional filter to retrieve records within a specific goal
+         *             interval.
+         *
+         *     Returns:
+         *         HealthSleepListResponse: A response object containing:
+         *             - total: Total count of records matching the filter criteria
+         *             - num_records: Number of records returned per page
+         *             - page_number: Current page number
+         *             - records: List of paginated HealthSleepRead objects
+         *     Raises:
+         *         HTTPException: If the user lacks required 'health:read' scope or if
+         *             pagination values are invalid.
+         */
+        get: operations["read_health_sleep_all_pagination_api_v1_health_sleep_get"];
+        /**
+         * Edit Health Sleep
+         * @description Edit health sleep data for a user.
+         *
+         *     This endpoint updates existing health sleep records in the database for the authenticated user.
+         *     Requires 'health:write' scope for authorization.
+         *
+         *     Args:
+         *         health_sleep (health_sleep_schema.HealthSleepUpdate): The health sleep data to be updated,
+         *             containing the new values for the health sleep record.
+         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write'
+         *             scope permission.
+         *         token_user_id (int): The user ID extracted from the JWT access token, used to identify
+         *             the user making the request.
+         *         db (Session): Database session dependency for performing database operations.
+         *
+         *     Returns:
+         *         health_sleep_schema.HealthSleepRead: The updated health sleep record with the new values
+         *             as stored in the database.
+         *
+         *     Raises:
+         *         HTTPException: May raise various HTTP exceptions if authorization fails, user is not
+         *             found, or database operations fail.
+         */
+        put: operations["edit_health_sleep_api_v1_health_sleep_put"];
+        /**
+         * Create Health Sleep
+         * @description Create or update health sleep data for a user.
+         *
+         *     This endpoint creates new health sleep data or updates existing data if an entry
+         *     for the specified date already exists. The operation is determined automatically
+         *     based on whether sleep data exists for the given date.
+         *
+         *     Args:
+         *         health_sleep (health_sleep_schema.HealthSleepCreate): The health sleep data to create
+         *             or update, including the date and sleep duration.
+         *         _check_scopes (Callable): Security dependency that verifies the user has
+         *             'health:write' scope.
+         *         token_user_id (int): The ID of the authenticated user extracted from the
+         *             access token.
+         *         db (Session): Database session dependency for database operations.
+         *
+         *     Returns:
+         *         health_sleep_schema.HealthSleepRead: The created or updated health sleep data.
+         *
+         *     Raises:
+         *         HTTPException: 400 error if the date field is not provided in the request.
+         */
+        post: operations["create_health_sleep_api_v1_health_sleep_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health/sleep/{health_sleep_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Health Sleep
+         * @description Delete a health sleep record for the authenticated user.
+         *
+         *     This endpoint removes a specific health sleep entry from the database for the user
+         *     identified by the access token. The user must have 'health:write' scope permission.
+         *
+         *     Args:
+         *         health_sleep_id (int): The unique identifier of the health sleep record to delete.
+         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write' scope.
+         *         token_user_id (int): The user ID extracted from the access token.
+         *         db (Session): Database session dependency for executing the delete operation.
+         *
+         *     Returns:
+         *         None: This function does not return a value.
+         *
+         *     Raises:
+         *         HTTPException: May be raised by dependencies if:
+         *             - The access token is invalid or expired
+         *             - The user lacks required 'health:write' scope
+         *             - The health sleep record doesn't exist or doesn't belong to the user
+         */
+        delete: operations["delete_health_sleep_api_v1_health_sleep__health_sleep_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health/weight": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Health Weight All Pagination
+         * @description Retrieve paginated health weight records for the authenticated user.
+         *
+         *     This endpoint fetches health weight data with optional pagination and
+         *     filtering. Access is restricted to users with the 'health:read' scope.
+         *
+         *     Args:
+         *         _check_scopes: Security dependency that validates the user has
+         *             'health:read' scope.
+         *         _validate_pagination_values_on_query: Dependency that validates
+         *             pagination parameters.
+         *         token_user_id: The ID of the authenticated user extracted from the
+         *             access token.
+         *         db: Database session for executing queries.
+         *         page_number: Optional pagination page number to retrieve specific page
+         *             of results.
+         *         num_records: Optional number of records per page for pagination.
+         *         interval: Optional filter to retrieve records within a specific goal
+         *             interval.
+         *
+         *     Returns:
+         *         HealthWeightListResponse: A response object containing:
+         *             - total: Total count of records matching the filter criteria
+         *             - num_records: Number of records returned per page
+         *             - page_number: Current page number
+         *             - records: List of paginated HealthWeightRead objects
+         *
+         *     Raises:
+         *         HTTPException: If the user lacks required 'health:read' scope or if
+         *             pagination values are invalid.
+         */
+        get: operations["read_health_weight_all_pagination_api_v1_health_weight_get"];
+        /**
+         * Edit Health Weight
+         * @description Edit a health weight entry for the authenticated user.
+         *
+         *     This endpoint allows users with 'health:write' scope to update an existing
+         *     health weight record in the database.
+         *
+         *     Args:
+         *         health_weight (health_weight_schema.HealthWeight): The health weight data
+         *             to be updated, containing the weight information and associated metadata.
+         *         _check_scopes (Callable): Security dependency that verifies the user has
+         *             'health:write' scope permission.
+         *         token_user_id (int): The ID of the authenticated user extracted from the
+         *             access token.
+         *         db (Session): Database session dependency for executing database operations.
+         *
+         *     Returns:
+         *         The updated health weight record from the database.
+         *
+         *     Raises:
+         *         HTTPException: If the user doesn't have permission to edit the weight entry
+         *             or if the entry doesn't exist.
+         */
+        put: operations["edit_health_weight_api_v1_health_weight_put"];
+        /**
+         * Create Health Weight
+         * @description Create or update a health weight record for the authenticated user.
+         *
+         *     This endpoint creates a new health weight record if one doesn't exist for the given date,
+         *     or updates an existing record if one is already present for that date.
+         *
+         *     Args:
+         *         health_weight (health_weight_schema.HealthWeightCreate): The health weight data to create or update.
+         *             Must include a date field.
+         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write' scope.
+         *         token_user_id (int): The ID of the authenticated user extracted from the access token.
+         *         db (Session): Database session dependency for performing database operations.
+         *
+         *     Returns:
+         *         health_weight_schema.HealthWeightRead: The created or updated health weight record.
+         *
+         *     Raises:
+         *         HTTPException: 400 error if the date field is not provided in the request.
+         */
+        post: operations["create_health_weight_api_v1_health_weight_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health/weight/{health_weight_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Health Weight
+         * @description Delete a health weight entry for the authenticated user.
+         *
+         *     This endpoint allows users to delete their own health weight records. It requires
+         *     the 'health:write' scope for authorization.
+         *
+         *     Args:
+         *         health_weight_id (int): The unique identifier of the health weight entry to delete.
+         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write' scope.
+         *         token_user_id (int): The user ID extracted from the access token, used to ensure
+         *             users can only delete their own weight entries.
+         *         db (Session): Database session dependency for performing database operations.
+         *
+         *     Returns:
+         *         None: This function does not return any value upon successful deletion.
+         *
+         *     Raises:
+         *         HTTPException: May raise various HTTP exceptions (e.g., 404 if entry not found,
+         *             403 if unauthorized) through the CRUD layer.
+         */
+        delete: operations["delete_health_weight_api_v1_health_weight__health_weight_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health/steps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Health Steps All Pagination
+         * @description Retrieve paginated health steps records for the authenticated user.
+         *
+         *     This endpoint fetches health steps data with optional pagination and
+         *     filtering. Access is restricted to users with the 'health:read' scope.
+         *
+         *     Args:
+         *         _check_scopes: Security dependency that validates the user has
+         *             'health:read' scope.
+         *         _validate_pagination_values_on_query: Dependency that validates
+         *             pagination parameters.
+         *         token_user_id: The ID of the authenticated user extracted from the
+         *             access token.
+         *         db: Database session for executing queries.
+         *         page_number: Optional pagination page number to retrieve specific page
+         *             of results.
+         *         num_records: Optional number of records per page for pagination.
+         *         interval: Optional filter to retrieve records within a specific goal
+         *             interval.
+         *
+         *     Returns:
+         *         HealthStepsListResponse: A response object containing:
+         *             - total: Total count of records matching the filter criteria
+         *             - num_records: Number of records returned per page
+         *             - page_number: Current page number
+         *             - records: List of paginated HealthStepsRead objects
+         *     Raises:
+         *         HTTPException: If the user lacks required 'health:read' scope or if
+         *             pagination values are invalid.
+         */
+        get: operations["read_health_steps_all_pagination_api_v1_health_steps_get"];
+        /**
+         * Edit Health Steps
+         * @description Edit health steps data for a user.
+         *
+         *     This endpoint updates existing health steps records in the database for the authenticated user.
+         *     Requires 'health:write' scope for authorization.
+         *
+         *     Args:
+         *         health_steps (health_steps_schema.HealthSteps): The health steps data to be updated,
+         *             containing the new values for the health steps record.
+         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write'
+         *             scope permission.
+         *         token_user_id (int): The user ID extracted from the JWT access token, used to identify
+         *             the user making the request.
+         *         db (Session): Database session dependency for performing database operations.
+         *
+         *     Returns:
+         *         health_steps_schema.HealthSteps: The updated health steps record with the new values
+         *             as stored in the database.
+         *
+         *     Raises:
+         *         HTTPException: May raise various HTTP exceptions if authorization fails, user is not
+         *             found, or database operations fail.
+         */
+        put: operations["edit_health_steps_api_v1_health_steps_put"];
+        /**
+         * Create Health Steps
+         * @description Create or update health steps data for a user.
+         *
+         *     This endpoint creates new health steps data or updates existing data if an entry
+         *     for the specified date already exists. The operation is determined automatically
+         *     based on whether steps data exists for the given date.
+         *
+         *     Args:
+         *         health_steps (health_steps_schema.HealthSteps): The health steps data to create
+         *             or update, including the date and step count.
+         *         _check_scopes (Callable): Security dependency that verifies the user has
+         *             'health:write' scope.
+         *         token_user_id (int): The ID of the authenticated user extracted from the
+         *             access token.
+         *         db (Session): Database session dependency for database operations.
+         *
+         *     Returns:
+         *         health_steps_schema.HealthSteps: The created or updated health steps data.
+         *
+         *     Raises:
+         *         HTTPException: 400 error if the date field is not provided in the request.
+         */
+        post: operations["create_health_steps_api_v1_health_steps_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health/steps/{health_steps_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Health Steps
+         * @description Delete a health steps record for the authenticated user.
+         *
+         *     This endpoint removes a specific health steps entry from the database for the user
+         *     identified by the access token. The user must have 'health:write' scope permission.
+         *
+         *     Args:
+         *         health_steps_id (int): The unique identifier of the health steps record to delete.
+         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write' scope.
+         *         token_user_id (int): The user ID extracted from the access token.
+         *         db (Session): Database session dependency for executing the delete operation.
+         *
+         *     Returns:
+         *         None: This function does not return a value.
+         *
+         *     Raises:
+         *         HTTPException: May be raised by dependencies if:
+         *             - The access token is invalid or expired
+         *             - The user lacks required 'health:write' scope
+         *             - The health steps record doesn't exist or doesn't belong to the user
+         */
+        delete: operations["delete_health_steps_api_v1_health_steps__health_steps_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2107,309 +2362,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/health/sleep": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Health Sleep All Pagination
-         * @description Retrieve health sleep records for the authenticated user.
-         *
-         *     This endpoint fetches health sleep data with optional pagination and
-         *     filtering. Access is restricted to users with the 'health:read' scope.
-         *
-         *     Args:
-         *         _check_scopes: Security dependency that validates the user has
-         *             'health:read' scope.
-         *         _validate_pagination_values_on_query: Dependency that validates
-         *             pagination parameters.
-         *         token_user_id: The ID of the authenticated user extracted from the
-         *             access token.
-         *         db: Database session for executing queries.
-         *         page_number: Optional pagination page number to retrieve specific page
-         *             of results.
-         *         num_records: Optional number of records per page for pagination.
-         *         interval: Optional filter to retrieve records within a specific goal
-         *             interval.
-         *
-         *     Returns:
-         *         HealthSleepListResponse: A response object containing:
-         *             - total: Total count of records matching the filter criteria
-         *             - num_records: Number of records returned per page
-         *             - page_number: Current page number
-         *             - records: List of paginated HealthSleepRead objects
-         *     Raises:
-         *         HTTPException: If the user lacks required 'health:read' scope or if
-         *             pagination values are invalid.
-         */
-        get: operations["read_health_sleep_all_pagination_api_v1_health_sleep_get"];
-        /**
-         * Edit Health Sleep
-         * @description Edit health sleep data for a user.
-         *
-         *     This endpoint updates existing health sleep records in the database for the authenticated user.
-         *     Requires 'health:write' scope for authorization.
-         *
-         *     Args:
-         *         health_sleep (health_sleep_schema.HealthSleepUpdate): The health sleep data to be updated,
-         *             containing the new values for the health sleep record.
-         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write'
-         *             scope permission.
-         *         token_user_id (int): The user ID extracted from the JWT access token, used to identify
-         *             the user making the request.
-         *         db (Session): Database session dependency for performing database operations.
-         *
-         *     Returns:
-         *         health_sleep_schema.HealthSleepRead: The updated health sleep record with the new values
-         *             as stored in the database.
-         *
-         *     Raises:
-         *         HTTPException: May raise various HTTP exceptions if authorization fails, user is not
-         *             found, or database operations fail.
-         */
-        put: operations["edit_health_sleep_api_v1_health_sleep_put"];
-        /**
-         * Create Health Sleep
-         * @description Create or update health sleep data for a user.
-         *
-         *     This endpoint creates new health sleep data or updates existing data if an entry
-         *     for the specified date already exists. The operation is determined automatically
-         *     based on whether sleep data exists for the given date.
-         *
-         *     Args:
-         *         health_sleep (health_sleep_schema.HealthSleepCreate): The health sleep data to create
-         *             or update, including the date and sleep duration.
-         *         _check_scopes (Callable): Security dependency that verifies the user has
-         *             'health:write' scope.
-         *         token_user_id (int): The ID of the authenticated user extracted from the
-         *             access token.
-         *         db (Session): Database session dependency for database operations.
-         *
-         *     Returns:
-         *         health_sleep_schema.HealthSleepRead: The created or updated health sleep data.
-         *
-         *     Raises:
-         *         HTTPException: 400 error if the date field is not provided in the request.
-         */
-        post: operations["create_health_sleep_api_v1_health_sleep_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/health/sleep/{health_sleep_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Health Sleep
-         * @description Delete a health sleep record for the authenticated user.
-         *
-         *     This endpoint removes a specific health sleep entry from the database for the user
-         *     identified by the access token. The user must have 'health:write' scope permission.
-         *
-         *     Args:
-         *         health_sleep_id (int): The unique identifier of the health sleep record to delete.
-         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write' scope.
-         *         token_user_id (int): The user ID extracted from the access token.
-         *         db (Session): Database session dependency for executing the delete operation.
-         *
-         *     Returns:
-         *         None: This function does not return a value.
-         *
-         *     Raises:
-         *         HTTPException: May be raised by dependencies if:
-         *             - The access token is invalid or expired
-         *             - The user lacks required 'health:write' scope
-         *             - The health sleep record doesn't exist or doesn't belong to the user
-         */
-        delete: operations["delete_health_sleep_api_v1_health_sleep__health_sleep_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/health/stats/daily": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Health Daily Stats
-         * @description Retrieve health daily stats and last weight record.
-         *
-         *     Args:
-         *         _check_scopes: Security dependency that validates the user has
-         *             'health:read' scope.
-         *         token_user_id: The ID of the authenticated user extracted from the
-         *             access token.
-         *         db: Database session for executing queries.
-         *
-         *     Returns:
-         *         HealthDashboardResponse: A consolidated response containing:
-         *             - sleep: Latest sleep record with key metrics
-         *             - weight: Latest weight and BMI data
-         *             - steps: Today's step count
-         *             - fasting: Active or most recent fasting session
-         *             - water: Today's water intake in milliliters
-         *             - poop: Today's bowel movement count
-         *
-         *     Raises:
-         *         HTTPException: If the user lacks required 'health:read' scope.
-         */
-        get: operations["read_health_daily_stats_api_v1_health_stats_daily_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/health/steps": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Health Steps All Pagination
-         * @description Retrieve paginated health steps records for the authenticated user.
-         *
-         *     This endpoint fetches health steps data with optional pagination and
-         *     filtering. Access is restricted to users with the 'health:read' scope.
-         *
-         *     Args:
-         *         _check_scopes: Security dependency that validates the user has
-         *             'health:read' scope.
-         *         _validate_pagination_values_on_query: Dependency that validates
-         *             pagination parameters.
-         *         token_user_id: The ID of the authenticated user extracted from the
-         *             access token.
-         *         db: Database session for executing queries.
-         *         page_number: Optional pagination page number to retrieve specific page
-         *             of results.
-         *         num_records: Optional number of records per page for pagination.
-         *         interval: Optional filter to retrieve records within a specific goal
-         *             interval.
-         *
-         *     Returns:
-         *         HealthStepsListResponse: A response object containing:
-         *             - total: Total count of records matching the filter criteria
-         *             - num_records: Number of records returned per page
-         *             - page_number: Current page number
-         *             - records: List of paginated HealthStepsRead objects
-         *     Raises:
-         *         HTTPException: If the user lacks required 'health:read' scope or if
-         *             pagination values are invalid.
-         */
-        get: operations["read_health_steps_all_pagination_api_v1_health_steps_get"];
-        /**
-         * Edit Health Steps
-         * @description Edit health steps data for a user.
-         *
-         *     This endpoint updates existing health steps records in the database for the authenticated user.
-         *     Requires 'health:write' scope for authorization.
-         *
-         *     Args:
-         *         health_steps (health_steps_schema.HealthSteps): The health steps data to be updated,
-         *             containing the new values for the health steps record.
-         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write'
-         *             scope permission.
-         *         token_user_id (int): The user ID extracted from the JWT access token, used to identify
-         *             the user making the request.
-         *         db (Session): Database session dependency for performing database operations.
-         *
-         *     Returns:
-         *         health_steps_schema.HealthSteps: The updated health steps record with the new values
-         *             as stored in the database.
-         *
-         *     Raises:
-         *         HTTPException: May raise various HTTP exceptions if authorization fails, user is not
-         *             found, or database operations fail.
-         */
-        put: operations["edit_health_steps_api_v1_health_steps_put"];
-        /**
-         * Create Health Steps
-         * @description Create or update health steps data for a user.
-         *
-         *     This endpoint creates new health steps data or updates existing data if an entry
-         *     for the specified date already exists. The operation is determined automatically
-         *     based on whether steps data exists for the given date.
-         *
-         *     Args:
-         *         health_steps (health_steps_schema.HealthSteps): The health steps data to create
-         *             or update, including the date and step count.
-         *         _check_scopes (Callable): Security dependency that verifies the user has
-         *             'health:write' scope.
-         *         token_user_id (int): The ID of the authenticated user extracted from the
-         *             access token.
-         *         db (Session): Database session dependency for database operations.
-         *
-         *     Returns:
-         *         health_steps_schema.HealthSteps: The created or updated health steps data.
-         *
-         *     Raises:
-         *         HTTPException: 400 error if the date field is not provided in the request.
-         */
-        post: operations["create_health_steps_api_v1_health_steps_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/health/steps/{health_steps_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Health Steps
-         * @description Delete a health steps record for the authenticated user.
-         *
-         *     This endpoint removes a specific health steps entry from the database for the user
-         *     identified by the access token. The user must have 'health:write' scope permission.
-         *
-         *     Args:
-         *         health_steps_id (int): The unique identifier of the health steps record to delete.
-         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write' scope.
-         *         token_user_id (int): The user ID extracted from the access token.
-         *         db (Session): Database session dependency for executing the delete operation.
-         *
-         *     Returns:
-         *         None: This function does not return a value.
-         *
-         *     Raises:
-         *         HTTPException: May be raised by dependencies if:
-         *             - The access token is invalid or expired
-         *             - The user lacks required 'health:write' scope
-         *             - The health steps record doesn't exist or doesn't belong to the user
-         */
-        delete: operations["delete_health_steps_api_v1_health_steps__health_steps_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/health/targets": {
         parameters: {
             query?: never;
@@ -2584,134 +2536,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/health/weight": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Health Weight All Pagination
-         * @description Retrieve paginated health weight records for the authenticated user.
-         *
-         *     This endpoint fetches health weight data with optional pagination and
-         *     filtering. Access is restricted to users with the 'health:read' scope.
-         *
-         *     Args:
-         *         _check_scopes: Security dependency that validates the user has
-         *             'health:read' scope.
-         *         _validate_pagination_values_on_query: Dependency that validates
-         *             pagination parameters.
-         *         token_user_id: The ID of the authenticated user extracted from the
-         *             access token.
-         *         db: Database session for executing queries.
-         *         page_number: Optional pagination page number to retrieve specific page
-         *             of results.
-         *         num_records: Optional number of records per page for pagination.
-         *         interval: Optional filter to retrieve records within a specific goal
-         *             interval.
-         *
-         *     Returns:
-         *         HealthWeightListResponse: A response object containing:
-         *             - total: Total count of records matching the filter criteria
-         *             - num_records: Number of records returned per page
-         *             - page_number: Current page number
-         *             - records: List of paginated HealthWeightRead objects
-         *
-         *     Raises:
-         *         HTTPException: If the user lacks required 'health:read' scope or if
-         *             pagination values are invalid.
-         */
-        get: operations["read_health_weight_all_pagination_api_v1_health_weight_get"];
-        /**
-         * Edit Health Weight
-         * @description Edit a health weight entry for the authenticated user.
-         *
-         *     This endpoint allows users with 'health:write' scope to update an existing
-         *     health weight record in the database.
-         *
-         *     Args:
-         *         health_weight (health_weight_schema.HealthWeight): The health weight data
-         *             to be updated, containing the weight information and associated metadata.
-         *         _check_scopes (Callable): Security dependency that verifies the user has
-         *             'health:write' scope permission.
-         *         token_user_id (int): The ID of the authenticated user extracted from the
-         *             access token.
-         *         db (Session): Database session dependency for executing database operations.
-         *
-         *     Returns:
-         *         The updated health weight record from the database.
-         *
-         *     Raises:
-         *         HTTPException: If the user doesn't have permission to edit the weight entry
-         *             or if the entry doesn't exist.
-         */
-        put: operations["edit_health_weight_api_v1_health_weight_put"];
-        /**
-         * Create Health Weight
-         * @description Create or update a health weight record for the authenticated user.
-         *
-         *     This endpoint creates a new health weight record if one doesn't exist for the given date,
-         *     or updates an existing record if one is already present for that date.
-         *
-         *     Args:
-         *         health_weight (health_weight_schema.HealthWeightCreate): The health weight data to create or update.
-         *             Must include a date field.
-         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write' scope.
-         *         token_user_id (int): The ID of the authenticated user extracted from the access token.
-         *         db (Session): Database session dependency for performing database operations.
-         *
-         *     Returns:
-         *         health_weight_schema.HealthWeightRead: The created or updated health weight record.
-         *
-         *     Raises:
-         *         HTTPException: 400 error if the date field is not provided in the request.
-         */
-        post: operations["create_health_weight_api_v1_health_weight_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/health/weight/{health_weight_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Health Weight
-         * @description Delete a health weight entry for the authenticated user.
-         *
-         *     This endpoint allows users to delete their own health weight records. It requires
-         *     the 'health:write' scope for authorization.
-         *
-         *     Args:
-         *         health_weight_id (int): The unique identifier of the health weight entry to delete.
-         *         _check_scopes (Callable): Security dependency that verifies the user has 'health:write' scope.
-         *         token_user_id (int): The user ID extracted from the access token, used to ensure
-         *             users can only delete their own weight entries.
-         *         db (Session): Database session dependency for performing database operations.
-         *
-         *     Returns:
-         *         None: This function does not return any value upon successful deletion.
-         *
-         *     Raises:
-         *         HTTPException: May raise various HTTP exceptions (e.g., 404 if entry not found,
-         *             403 if unauthorized) through the CRUD layer.
-         */
-        delete: operations["delete_health_weight_api_v1_health_weight__health_weight_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/idp": {
         parameters: {
             query?: never;
@@ -2832,35 +2656,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/notifications/mark_all_as_read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Mark All Notifications As Read
-         * @description Mark all of the user's notifications as read.
-         *
-         *     Args:
-         *         _check_scopes: Dependency that checks if the user has the required
-         *             scopes.
-         *         token_user_id: ID of the user from the access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         None.
-         */
-        put: operations["mark_all_notifications_as_read_api_v1_notifications_mark_all_as_read_put"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/notifications/number": {
         parameters: {
             query?: never;
@@ -2882,6 +2677,37 @@ export interface paths {
          *         Number of notifications for the user.
          */
         get: operations["read_notifications_number_api_v1_notifications_number_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/{notification_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Notifications By Id
+         * @description Retrieve a notification by ID for the user.
+         *
+         *     Args:
+         *         notification_id: Unique ID of the notification.
+         *         validate_notification_id: Dependency that validates the notification ID.
+         *         _check_scopes: Dependency that checks if the user has the required
+         *             scopes.
+         *         token_user_id: ID of the user from the access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         Notification object or None if not found.
+         */
+        get: operations["read_notifications_by_id_api_v1_notifications__notification_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2922,37 +2748,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/notifications/{notification_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Notifications By Id
-         * @description Retrieve a notification by ID for the user.
-         *
-         *     Args:
-         *         notification_id: Unique ID of the notification.
-         *         validate_notification_id: Dependency that validates the notification ID.
-         *         _check_scopes: Dependency that checks if the user has the required
-         *             scopes.
-         *         token_user_id: ID of the user from the access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         Notification object or None if not found.
-         */
-        get: operations["read_notifications_by_id_api_v1_notifications__notification_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/notifications/{notification_id}/mark_as_read": {
         parameters: {
             query?: never;
@@ -2978,6 +2773,66 @@ export interface paths {
          */
         put: operations["mark_notification_as_read_api_v1_notifications__notification_id__mark_as_read_put"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/mark_all_as_read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Mark All Notifications As Read
+         * @description Mark all of the user's notifications as read.
+         *
+         *     Args:
+         *         _check_scopes: Dependency that checks if the user has the required
+         *             scopes.
+         *         token_user_id: ID of the user from the access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         None.
+         */
+        put: operations["mark_all_notifications_as_read_api_v1_notifications_mark_all_as_read_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/password-reset/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request Password Reset
+         * @description Handle a password reset request.
+         *
+         *     Args:
+         *         request: The HTTP request object.
+         *         request_data: Pydantic model with the email address.
+         *         db: Dependency-injected database session.
+         *
+         *     Returns:
+         *         Generic success message to avoid user enumeration.
+         *
+         *     Raises:
+         *         HTTPException: 503 if email service is not configured.
+         */
+        post: operations["request_password_reset_api_v1_password_reset_request_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3018,31 +2873,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/password-reset/request": {
+    "/api/v1/profile/idp/{idp_id}/link": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
         /**
-         * Request Password Reset
-         * @description Handle a password reset request.
+         * Link Identity Provider
+         * @description Initiate linking an identity provider using a one-time link token.
+         *
+         *     This endpoint validates the one-time link token and initiates the OAuth flow
+         *     to link an external identity provider (IdP) to the user's account. The user
+         *     will be redirected to the IdP's authorization page.
+         *
+         *     Security:
+         *         - Uses one-time, short-lived (60s) link tokens instead of access tokens
+         *         - Validates token expiry and single-use constraint
+         *         - Optional IP address validation
          *
          *     Args:
-         *         request: The HTTP request object.
-         *         request_data: Pydantic model with the email address.
-         *         db: Dependency-injected database session.
+         *         idp_id (int): The ID of the identity provider to link.
+         *         link_token (str): One-time link token from query parameter.
+         *         request (Request): The FastAPI request object containing request context.
+         *         db (Session): The database session for performing CRUD operations.
          *
          *     Returns:
-         *         Generic success message to avoid user enumeration.
+         *         RedirectResponse: A redirect to the identity provider's authorization URL
+         *             with HTTP 307 status code.
          *
          *     Raises:
-         *         HTTPException: 503 if email service is not configured.
+         *         HTTPException:
+         *             - 401 UNAUTHORIZED: If the link token is invalid, expired, or already used.
+         *             - 404 NOT_FOUND: If the identity provider doesn't exist or is disabled.
+         *             - 409 CONFLICT: If the identity provider is already linked to the user's account.
+         *             - 500 INTERNAL_SERVER_ERROR: If an unexpected error occurs during the linking process.
          */
-        post: operations["request_password_reset_api_v1_password_reset_request_post"];
+        get: operations["link_identity_provider_api_v1_profile_idp__idp_id__link_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3097,7 +2967,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/profile/api_keys": {
+    "/api/v1/profile/sessions": {
         parameters: {
             query?: never;
             header?: never;
@@ -3105,384 +2975,38 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get User Api Keys
-         * @description Retrieve all API keys for the authenticated user.
+         * Read Sessions Me
+         * @description Retrieve all sessions for authenticated user.
          *
          *     Args:
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         List of API key objects. Raw keys and hashes
-         *         are never included.
-         */
-        get: operations["get_user_api_keys_api_v1_profile_api_keys_get"];
-        put?: never;
-        /**
-         * Create User Api Key
-         * @description Create a new API key for the authenticated user.
-         *
-         *     The raw key is returned once in this response and
-         *     cannot be retrieved again. Requested scopes must be
-         *     supported by API-key authentication.
-         *
-         *     Step-up verification is required (current password,
-         *     plus MFA code when MFA is enabled). API keys grant
-         *     persistent, long-lived access — a stolen access
-         *     token alone must not be sufficient to mint one.
-         *
-         *     Args:
-         *         data: Key creation data (name, scopes, expiry,
-         *             step-up credentials).
          *         token_user_id: User ID from access token.
          *         identity_service: Identity service dependency.
-         *         db: Database session dependency.
          *
          *     Returns:
-         *         Created API key including the raw key string.
-         *
-         *     Raises:
-         *         HTTPException: 401 if step-up verification fails.
-         *         HTTPException: 400 if scopes are not supported for API keys.
-         *         HTTPException: 404 if the user is not found.
+         *         List of session objects for the user.
          */
-        post: operations["create_user_api_key_api_v1_profile_api_keys_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/api_keys/{api_key_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
+        get: operations["read_sessions_me_api_v1_profile_sessions_get"];
         put?: never;
         post?: never;
         /**
-         * Delete User Api Key
-         * @description Permanently delete an API key.
+         * Delete Profile Other Sessions
+         * @description Revoke all of the authenticated user's other sessions.
          *
-         *     Hard-delete. The key is gone and cannot be used
-         *     or recovered after this operation.
+         *     Signs out every device except the caller's current session
+         *     (identified from the access token), so a user can end all
+         *     other sessions without logging themselves out. This is the
+         *     standalone form of the password change's
+         *     ``revoke_other_sessions`` option.
          *
          *     Args:
-         *         api_key_id: UUID of the API key to delete.
          *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
+         *         token_session_id: The caller's current session, preserved.
+         *         identity_service: Identity service dependency.
          *
          *     Returns:
          *         None.
-         *
-         *     Raises:
-         *         HTTPException: 404 if the key is not found or
-         *             does not belong to the authenticated user.
          */
-        delete: operations["delete_user_api_key_api_v1_profile_api_keys__api_key_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/api_keys/{api_key_id}/revoke": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Revoke User Api Key
-         * @description Revoke an API key (soft-disable).
-         *
-         *     The key record is retained for audit purposes but
-         *     will be rejected on any subsequent use.
-         *
-         *     Args:
-         *         api_key_id: UUID of the API key to revoke.
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         None.
-         *
-         *     Raises:
-         *         HTTPException: 404 if the key is not found or
-         *             does not belong to the authenticated user.
-         */
-        patch: operations["revoke_user_api_key_api_v1_profile_api_keys__api_key_id__revoke_patch"];
-        trace?: never;
-    };
-    "/api/v1/profile/default_gear": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read User Default Gear
-         * @description Retrieve default gear settings for authenticated user.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         User default gear settings.
-         */
-        get: operations["read_user_default_gear_api_v1_profile_default_gear_get"];
-        /**
-         * Edit User Default Gear
-         * @description Update default gear settings for authenticated user.
-         *
-         *     Args:
-         *         user_default_gear: Updated gear settings.
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         Updated user default gear settings.
-         */
-        put: operations["edit_user_default_gear_api_v1_profile_default_gear_put"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/export": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Export Profile Data
-         * @description Export all profile data as ZIP archive.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         db: Database session.
-         *
-         *     Returns:
-         *         Streaming response with ZIP archive.
-         *
-         *     Raises:
-         *         HTTPException: If user not found or export fails.
-         */
-        get: operations["export_profile_data_api_v1_profile_export_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/goals": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get User Goals
-         * @description Retrieve goals for the authenticated user with optional filters.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         *         interval: Optional filter by goal interval.
-         *         activity_type: Optional filter by activity type.
-         *         goal_type: Optional filter by goal type.
-         *
-         *     Returns:
-         *         List of user goal objects matching the filters.
-         */
-        get: operations["get_user_goals_api_v1_profile_goals_get"];
-        /**
-         * Update User Goal
-         * @description Update an existing goal for the authenticated user.
-         *
-         *     Args:
-         *         user_goal: Updated goal data.
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         The updated goal object.
-         */
-        put: operations["update_user_goal_api_v1_profile_goals_put"];
-        /**
-         * Create User Goal
-         * @description Create a new goal for the authenticated user.
-         *
-         *     Args:
-         *         user_goal: Goal data to create.
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         The created goal object.
-         */
-        post: operations["create_user_goal_api_v1_profile_goals_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/goals/results": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get User Goals Results
-         * @description Calculate and retrieve goal progress for authenticated user.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         List of goal progress objects, or None if no goals.
-         */
-        get: operations["get_user_goals_results_api_v1_profile_goals_results_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/goals/{goal_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete User Goal
-         * @description Delete a goal for the authenticated user.
-         *
-         *     Args:
-         *         goal_id: ID of the goal to delete.
-         *         token_user_id: User ID from access token.
-         *         db: Database session dependency.
-         */
-        delete: operations["delete_user_goal_api_v1_profile_goals__goal_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/idp": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get My Identity Providers
-         * @description Retrieve all identity provider links for the authenticated user.
-         *     This endpoint fetches all external identity provider (IdP) connections associated
-         *     with the current user's account. Each link includes connection metadata and enriched
-         *     details about the identity provider (name, slug, icon, and provider type).
-         *     Args:
-         *         token_user_id (int): The authenticated user's ID extracted from the JWT access token.
-         *             Injected automatically via dependency injection.
-         *         db (Session): Database session for executing queries.
-         *             Injected automatically via dependency injection.
-         *     Returns:
-         *         list[dict]: A list of dictionaries representing the user's IdP links. Each dictionary contains:
-         *             - id (int): Unique identifier for the user-IdP link
-         *             - user_id (int): ID of the user
-         *             - idp_id (int): ID of the identity provider
-         *             - idp_subject (str): User's unique identifier at the IdP
-         *             - linked_at (datetime): Timestamp when the link was created
-         *             - last_login (datetime): Timestamp of the last login via this IdP
-         *             - idp_access_token_expires_at (datetime): Expiration time of the IdP access token
-         *             - idp_refresh_token_updated_at (datetime): Last update time of the refresh token
-         *             - idp_name (str): Display name of the identity provider (if available)
-         *             - idp_slug (str): URL-safe identifier for the IdP (if available)
-         *             - idp_icon (str): Icon/logo URL for the IdP (if available)
-         *             - idp_provider_type (str): Type of provider (e.g., "oauth2", "oidc") (if available)
-         *     Raises:
-         *         HTTPException: May raise authentication/authorization errors via the dependency injection.
-         */
-        get: operations["get_my_identity_providers_api_v1_profile_idp_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/idp/{idp_id}/link": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Link Identity Provider
-         * @description Initiate linking an identity provider using a one-time link token.
-         *
-         *     This endpoint validates the one-time link token and initiates the OAuth flow
-         *     to link an external identity provider (IdP) to the user's account. The user
-         *     will be redirected to the IdP's authorization page.
-         *
-         *     Security:
-         *         - Uses one-time, short-lived (60s) link tokens instead of access tokens
-         *         - Validates token expiry and single-use constraint
-         *         - Optional IP address validation
-         *
-         *     Args:
-         *         idp_id (int): The ID of the identity provider to link.
-         *         link_token (str): One-time link token from query parameter.
-         *         request (Request): The FastAPI request object containing request context.
-         *         db (Session): The database session for performing CRUD operations.
-         *
-         *     Returns:
-         *         RedirectResponse: A redirect to the identity provider's authorization URL
-         *             with HTTP 307 status code.
-         *
-         *     Raises:
-         *         HTTPException:
-         *             - 401 UNAUTHORIZED: If the link token is invalid, expired, or already used.
-         *             - 404 NOT_FOUND: If the identity provider doesn't exist or is disabled.
-         *             - 409 CONFLICT: If the identity provider is already linked to the user's account.
-         *             - 500 INTERNAL_SERVER_ERROR: If an unexpected error occurs during the linking process.
-         */
-        get: operations["link_identity_provider_api_v1_profile_idp__idp_id__link_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
+        delete: operations["delete_profile_other_sessions_api_v1_profile_sessions_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3541,59 +3065,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/profile/idp/{idp_id}/unlink": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Delete My Identity Provider
-         * @description Delete (unlink) an identity provider from the authenticated user's account.
-         *
-         *     This endpoint allows users to remove the association between their
-         *     account and a specific identity provider. It requires step-up
-         *     verification (current password and MFA when enabled) and includes
-         *     safety checks to prevent account lockout by ensuring users maintain
-         *     at least one authentication method (either a password or another
-         *     IdP link).
-         *
-         *     Args:
-         *         idp_id (int): The ID of the identity provider to unlink.
-         *         step_up (StepUpVerification): Step-up verification payload.
-         *         request (Request): The FastAPI request object.
-         *         token_user_id (int): User ID extracted from the access token.
-         *         identity_service: Identity service dependency.
-         *
-         *     Returns:
-         *         None: Returns 204 No Content on successful deletion.
-         *
-         *     Raises:
-         *         HTTPException (401): If step-up verification fails.
-         *         HTTPException (404): If the identity provider doesn't exist or
-         *             is not linked to the user's account.
-         *         HTTPException (400): If attempting to unlink the last authentication method
-         *             without having a password set (prevents account lockout).
-         *         HTTPException (500): If the deletion operation fails at the database level.
-         *
-         *     Notes:
-         *         - Enforces step-up verification before unlinking.
-         *         - Prevents account lockout by ensuring users have at least one
-         *           authentication method (password or remaining IdP link).
-         *         - Logs the unlinking action for audit purposes.
-         *         - Uses token-based authentication to ensure users can only
-         *           unlink their own IdPs.
-         */
-        post: operations["delete_my_identity_provider_api_v1_profile_idp__idp_id__unlink_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/profile/image": {
         parameters: {
             query?: never;
@@ -3625,7 +3096,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/profile/import": {
+    "/api/v1/profile/privacy": {
         parameters: {
             query?: never;
             header?: never;
@@ -3633,267 +3104,20 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
         /**
-         * Import Profile Data
-         * @description Import profile data from ZIP with security validation.
+         * Edit Profile Privacy Settings
+         * @description Edit privacy settings for authenticated user.
          *
          *     Args:
-         *         file: ZIP file containing profile data.
+         *         user_privacy_settings: New privacy settings.
          *         token_user_id: User ID from access token.
          *         db: Database session.
-         *         websocket_manager: WebSocket manager for updates.
-         *
-         *     Returns:
-         *         Import results with counts of imported items.
-         *
-         *     Raises:
-         *         HTTPException: If validation or import fails.
-         */
-        post: operations["import_profile_data_api_v1_profile_import_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/mfa/backup-codes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Generate Mfa Backup Codes
-         * @description Generate new MFA backup codes for authenticated user.
-         *
-         *     Requires step-up verification (current password + MFA code,
-         *     when MFA is enabled). Issuing new backup codes invalidates
-         *     the previous set, so an attacker holding only an access
-         *     token must not be able to lock the legitimate user out of
-         *     their second factor.
-         *
-         *     Args:
-         *         response: FastAPI response object.
-         *         request: FastAPI request object for rate limiting.
-         *         step_up: Step-up verification payload.
-         *         token_user_id: User ID from access token.
-         *         identity_service: Identity service for code generation.
-         *
-         *     Returns:
-         *         Response with generated backup codes and timestamp.
-         *
-         *     Raises:
-         *         HTTPException: 401 if step-up verification fails, 404 if
-         *             user not found, 400 if MFA is not enabled.
-         */
-        post: operations["generate_mfa_backup_codes_api_v1_profile_mfa_backup_codes_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/mfa/backup-codes/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Backup Code Status
-         * @description Retrieve MFA backup code status for authenticated user.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         identity_service: Identity service dependency.
-         *
-         *     Returns:
-         *         Backup code status with counts and creation date.
-         */
-        get: operations["get_backup_code_status_api_v1_profile_mfa_backup_codes_status_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/mfa/disable": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Disable Mfa
-         * @description Disable MFA for authenticated user after step-up verification.
-         *
-         *     Disabling MFA materially weakens the account's security
-         *     posture, so a valid access token alone is not sufficient: the
-         *     caller must re-prove identity with both their current
-         *     password and a fresh MFA code. The MFA code may be either a
-         *     6-digit TOTP or an unused ``XXXX-XXXX`` backup code — the
-         *     same set of factors accepted at login. Step-up verification
-         *     is the single source of truth for the MFA check;
-         *     :func:`modules.auth.mfa.service.disable_user_mfa` only clears state.
-         *
-         *     Args:
-         *         request: MFA disable request with current password and
-         *             MFA code.
-         *         token_user_id: User ID from access token.
-         *         identity_service: Identity service dependency.
          *
          *     Returns:
          *         Success message.
-         *
-         *     Raises:
-         *         HTTPException: 401 if the current password is wrong or
-         *             the MFA code is invalid; 400 if MFA is not currently
-         *             enabled.
          */
-        put: operations["disable_mfa_api_v1_profile_mfa_disable_put"];
+        put: operations["edit_profile_privacy_settings_api_v1_profile_privacy_put"];
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/mfa/enable": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Enable Mfa
-         * @description Enable MFA for authenticated user after step-up verification.
-         *
-         *     A stolen access token alone must not be sufficient to enrol a
-         *     new TOTP secret on a victim's account (which would lock the
-         *     legitimate user out and hand the attacker the backup codes).
-         *     The caller therefore has to re-prove identity with their
-         *     current password before the binding is committed. The TOTP
-         *     code in the request body is the fresh enrolment code from the
-         *     user's authenticator app and is verified separately by
-         *     :func:`modules.auth.mfa.service.enable_user_mfa` against the secret
-         *     issued by ``POST /profile/mfa/setup``. SSO-only accounts may
-         *     omit ``current_password`` (see
-         *     :func:`modules.auth._internal.services.step_up_service.verify_step_up_credentials`).
-         *
-         *     Args:
-         *         request: MFA setup request with TOTP code and (when the
-         *             account has a local password) current password.
-         *         token_user_id: User ID from access token.
-         *         identity_service: Identity service instance for backup code
-         *             generation and step-up verification.
-         *         mfa_secret_store: Temporary secret storage.
-         *
-         *     Returns:
-         *         Success message and the freshly issued backup codes.
-         *
-         *     Raises:
-         *         HTTPException: 400 if no setup is in progress or the TOTP
-         *             code is invalid; 401 if step-up verification fails.
-         */
-        put: operations["enable_mfa_api_v1_profile_mfa_enable_put"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/mfa/setup": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Setup Mfa
-         * @description Initiate MFA setup for authenticated user.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         identity_service: Identity service dependency.
-         *         mfa_secret_store: Temporary secret storage.
-         *
-         *     Returns:
-         *         MFA setup response with secret and QR code.
-         */
-        post: operations["setup_mfa_api_v1_profile_mfa_setup_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/mfa/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Mfa Status
-         * @description Return MFA enabled status for authenticated user.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         identity_service: Identity service dependency.
-         *
-         *     Returns:
-         *         MFA status response with enabled flag.
-         */
-        get: operations["get_mfa_status_api_v1_profile_mfa_status_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/mfa/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify Mfa
-         * @description Verify MFA code for authenticated user.
-         *
-         *     Args:
-         *         request: MFA request with code to verify.
-         *         token_user_id: User ID from access token.
-         *         identity_service: Identity service instance for backup code verification.
-         *
-         *     Returns:
-         *         Success message.
-         *
-         *     Raises:
-         *         HTTPException: If MFA code is invalid.
-         */
-        post: operations["verify_mfa_api_v1_profile_mfa_verify_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3976,79 +3200,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/profile/privacy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Edit Profile Privacy Settings
-         * @description Edit privacy settings for authenticated user.
-         *
-         *     Args:
-         *         user_privacy_settings: New privacy settings.
-         *         token_user_id: User ID from access token.
-         *         db: Database session.
-         *
-         *     Returns:
-         *         Success message.
-         */
-        put: operations["edit_profile_privacy_settings_api_v1_profile_privacy_put"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/profile/sessions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Sessions Me
-         * @description Retrieve all sessions for authenticated user.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         identity_service: Identity service dependency.
-         *
-         *     Returns:
-         *         List of session objects for the user.
-         */
-        get: operations["read_sessions_me_api_v1_profile_sessions_get"];
-        put?: never;
-        post?: never;
-        /**
-         * Delete Profile Other Sessions
-         * @description Revoke all of the authenticated user's other sessions.
-         *
-         *     Signs out every device except the caller's current session
-         *     (identified from the access token), so a user can end all
-         *     other sessions without logging themselves out. This is the
-         *     standalone form of the password change's
-         *     ``revoke_other_sessions`` option.
-         *
-         *     Args:
-         *         token_user_id: User ID from access token.
-         *         token_session_id: The caller's current session, preserved.
-         *         identity_service: Identity service dependency.
-         *
-         *     Returns:
-         *         None.
-         */
-        delete: operations["delete_profile_other_sessions_api_v1_profile_sessions_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/profile/sessions/{session_id}": {
         parameters: {
             query?: never;
@@ -4077,7 +3228,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/public/activities/exercise-titles/all": {
+    "/api/v1/profile/export": {
         parameters: {
             query?: never;
             header?: never;
@@ -4085,211 +3236,20 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List Public Activity Exercise Titles
-         * @description Return all activity exercise titles via the public endpoint.
-         */
-        get: operations["list_public_activity_exercise_titles_api_v1_public_activities_exercise_titles_all_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/activities/{activity_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Public Activity
-         * @description Return a public activity by ID.
-         *
-         *     Answers 404 when the activity does not exist *or* is not public — the two are
-         *     deliberately indistinguishable so this unauthenticated endpoint cannot be
-         *     used to enumerate which activity ids exist.
-         */
-        get: operations["read_public_activity_api_v1_public_activities__activity_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/activities/{activity_id}/laps": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Public Activity Laps
-         * @description Return one page of public laps for an activity exposed via shareable link.
-         */
-        get: operations["list_public_activity_laps_api_v1_public_activities__activity_id__laps_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/activities/{activity_id}/sets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Public Activity Sets
-         * @description Return one page of a publicly shared activity's sets.
-         */
-        get: operations["list_public_activity_sets_api_v1_public_activities__activity_id__sets_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/activities/{activity_id}/streams": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Public Activity Streams
-         * @description Return one page of a publicly shared activity's streams, with the matching total.
-         */
-        get: operations["list_public_activity_streams_api_v1_public_activities__activity_id__streams_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/activities/{activity_id}/streams/{stream_type}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Public Activity Stream
-         * @description Get a public stream by type for an activity.
-         *
-         *     Not found when the activity has no such stream, is not public, or public links
-         *     are disabled. The cases are indistinguishable on purpose, since this endpoint
-         *     is unauthenticated.
-         */
-        get: operations["read_public_activity_stream_api_v1_public_activities__activity_id__streams__stream_type__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/activities/{activity_id}/workout-steps": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Public Activity Workout Steps
-         * @description Return one page of a publicly shared activity's workout steps.
-         */
-        get: operations["list_public_activity_workout_steps_api_v1_public_activities__activity_id__workout_steps_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/idp": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Enabled Identity Providers
-         * @description Retrieve a list of enabled identity providers from the database.
+         * Export Profile Data
+         * @description Export all profile data as ZIP archive.
          *
          *     Args:
-         *         db (Session): SQLAlchemy database session dependency.
+         *         token_user_id: User ID from access token.
+         *         db: Database session.
          *
          *     Returns:
-         *         List[IdentityProviderPublic]: A list of enabled identity providers, each represented as an IdentityProviderPublic schema.
-         */
-        get: operations["get_enabled_identity_providers_api_v1_public_idp_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/idp/callback/{idp_slug}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Handle Callback
-         * @description Handle OAuth callback from an identity provider.
-         *
-         *     This endpoint processes the OAuth authorization callback from external identity providers.
-         *     It supports two modes: login mode (default) and link mode (for linking IdP to existing account).
-         *     Args:
-         *         idp_slug (str): The slug identifier of the identity provider.
-         *         password_hasher (auth_password_hasher.PasswordHasher): Password hasher dependency for session management.
-         *         token_manager (auth_token_manager.TokenManager): Token manager dependency for creating session tokens.
-         *         db (Session): Database session dependency.
-         *         code (str): Authorization code received from the identity provider.
-         *         state (str): State parameter used for CSRF protection (database state ID).
-         *         request (Request): The incoming HTTP request.
-         *
-         *     Returns:
-         *         RedirectResponse: A redirect response to either:
-         *             - Settings page (link mode): /settings with success parameters
-         *             - Login page (login mode): /login with session_id for token exchange
-         *             - Error page: /login with error parameter if callback fails
+         *         Streaming response with ZIP archive.
          *
          *     Raises:
-         *         HTTPException: If the identity provider is not found, disabled, or if callback processing fails.
-         *
-         *     Notes:
-         *         - In link mode: Redirects to settings without creating a new session
-         *         - In login mode: Creates session, redirects with session_id (client must exchange for tokens)
-         *         - All clients must call /tokens exchange endpoint with PKCE verifier to get JWT tokens
-         *         - On error: Redirects to login page with error parameter
-         *         - All redirects use HTTP 307 (Temporary Redirect) status code
+         *         HTTPException: If user not found or export fails.
          */
-        get: operations["handle_callback_api_v1_public_idp_callback__idp_slug__get"];
+        get: operations["export_profile_data_api_v1_profile_export_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4298,45 +3258,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/public/idp/login/{idp_slug}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Initiate Login
-         * @description Initiates the login process for a given identity provider using OAuth.
-         *
-         *     PKCE (Proof Key for Code Exchange) is REQUIRED for all clients (OAuth 2.1 compliance).
-         *     Both code_challenge and code_challenge_method=S256 must be provided.
-         *
-         *     Rate Limit: 10 requests per minute per IP
-         *     Args:
-         *         idp_slug (str): The slug identifier for the identity provider.
-         *         request (Request): The incoming HTTP request object.
-         *         db (Session): Database session dependency.
-         *         redirect (str | None): Optional frontend path to redirect to after login.
-         *         code_challenge (str): PKCE code challenge (base64url-encoded SHA256, 43-128 chars). REQUIRED.
-         *         code_challenge_method (str): PKCE method (only S256 supported). REQUIRED.
-         *
-         *     Returns:
-         *         RedirectResponse: A redirect response to the identity provider's authorization URL.
-         *
-         *     Raises:
-         *         HTTPException: If the identity provider is not found, disabled, or PKCE validation fails.
-         */
-        get: operations["initiate_login_api_v1_public_idp_login__idp_slug__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/idp/session/{session_id}/tokens": {
+    "/api/v1/profile/import": {
         parameters: {
             query?: never;
             header?: never;
@@ -4346,48 +3268,29 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Exchange Tokens For Session
-         * @description Exchange a PKCE code verifier for JWT tokens.
-         *
-         *     After OAuth callback or password PKCE login creates a session, clients
-         *     call this endpoint to prove they possess the code_verifier (PKCE) and
-         *     receive the actual JWT tokens. This prevents token leakage through
-         *     browser redirects and ensures only the legitimate client can access the
-         *     tokens.
-         *
-         *     Security Features:
-         *     - PKCE verification (SHA256 hash of verifier must match challenge)
-         *     - One-time exchange (tokens_exchanged flag prevents replay)
-         *     - Rate limited (10 requests/minute)
-         *     - Session must be linked to OAuth state with PKCE data
-         *
-         *     Rate Limit: 10 requests per minute per IP
+         * Import Profile Data
+         * @description Import profile data from ZIP with security validation.
          *
          *     Args:
-         *         session_id (str): Session ID from OAuth callback redirect.
-         *         request (Request): FastAPI request object (for rate limiting).
-         *         response (Response): FastAPI response object.
-         *         token_exchange (TokenExchangeRequest): Request body with code_verifier.
-         *         token_manager (TokenManager): Token manager dependency.
-         *         db (Session): Database session dependency.
+         *         file: ZIP file containing profile data.
+         *         token_user_id: User ID from access token.
+         *         db: Database session.
+         *         websocket_manager: WebSocket manager for updates.
          *
          *     Returns:
-         *         TokenExchangeResponse: JWT tokens (access, refresh, csrf) and metadata.
+         *         Import results with counts of imported items.
          *
          *     Raises:
-         *         HTTPException:
-         *             - 404 NOT_FOUND: Session not found or not linked to OAuth state
-         *             - 400 BAD_REQUEST: Invalid code_verifier or tokens already exchanged
-         *             - 409 CONFLICT: Tokens already exchanged for this session
+         *         HTTPException: If validation or import fails.
          */
-        post: operations["exchange_tokens_for_session_api_v1_public_idp_session__session_id__tokens_post"];
+        post: operations["import_profile_data_api_v1_profile_import_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/public/server_settings": {
+    "/api/v1/profile/mfa/status": {
         parameters: {
             query?: never;
             header?: never;
@@ -4395,79 +3298,520 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Read Public Server Settings
-         * @description Get public server settings (unauthenticated).
-         *
-         *     Protection Mechanisms:
-         *     - Rate limiting: 60 requests per minute per IP (prevents DoS attacks)
-         *
-         *     Returns only the public subset of server configuration
-         *     (sensitive signup approval/verification settings excluded).
-         *     Pydantic model filtering automatically excludes sensitive fields.
-         *
-         *     Returns:
-         *         Public subset of server configuration.
-         */
-        get: operations["read_public_server_settings_api_v1_public_server_settings_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/server_settings/tile_maps_templates": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Tile Maps Templates
-         * @description Retrieve available tile map templates for server settings (unauthenticated).
-         *
-         *     Protection Mechanisms:
-         *     - Rate limiting: 60 requests per minute per IP (prevents DoS attacks)
-         *
-         *     This endpoint returns a list of all available tile map templates that can be
-         *     used for configuring map display options in server settings.
-         *
-         *     Returns:
-         *         List of tile map template configurations available for the server.
-         */
-        get: operations["list_tile_maps_templates_api_v1_public_server_settings_tile_maps_templates_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/public/users/id/{user_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Users Id
-         * @description Get public user info by ID.
+         * Get Mfa Status
+         * @description Return MFA enabled status for authenticated user.
          *
          *     Args:
-         *         user_id: The user ID to retrieve.
-         *         _validate_id: User ID validation dependency.
-         *         db: Database session dependency.
+         *         token_user_id: User ID from access token.
+         *         identity_service: Identity service dependency.
          *
          *     Returns:
-         *         User data if found and public sharing enabled.
+         *         MFA status response with enabled flag.
          */
-        get: operations["read_users_id_api_v1_public_users_id__user_id__get"];
+        get: operations["get_mfa_status_api_v1_profile_mfa_status_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/mfa/backup-codes/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Backup Code Status
+         * @description Retrieve MFA backup code status for authenticated user.
+         *
+         *     Args:
+         *         token_user_id: User ID from access token.
+         *         identity_service: Identity service dependency.
+         *
+         *     Returns:
+         *         Backup code status with counts and creation date.
+         */
+        get: operations["get_backup_code_status_api_v1_profile_mfa_backup_codes_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/mfa/setup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Setup Mfa
+         * @description Initiate MFA setup for authenticated user.
+         *
+         *     Args:
+         *         token_user_id: User ID from access token.
+         *         identity_service: Identity service dependency.
+         *         mfa_secret_store: Temporary secret storage.
+         *
+         *     Returns:
+         *         MFA setup response with secret and QR code.
+         */
+        post: operations["setup_mfa_api_v1_profile_mfa_setup_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/mfa/enable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Enable Mfa
+         * @description Enable MFA for authenticated user after step-up verification.
+         *
+         *     A stolen access token alone must not be sufficient to enrol a
+         *     new TOTP secret on a victim's account (which would lock the
+         *     legitimate user out and hand the attacker the backup codes).
+         *     The caller therefore has to re-prove identity with their
+         *     current password before the binding is committed. The TOTP
+         *     code in the request body is the fresh enrolment code from the
+         *     user's authenticator app and is verified separately by
+         *     :func:`modules.auth.mfa.service.enable_user_mfa` against the secret
+         *     issued by ``POST /profile/mfa/setup``. SSO-only accounts may
+         *     omit ``current_password`` (see
+         *     :func:`modules.auth._internal.services.step_up_service.verify_step_up_credentials`).
+         *
+         *     Args:
+         *         request: MFA setup request with TOTP code and (when the
+         *             account has a local password) current password.
+         *         token_user_id: User ID from access token.
+         *         identity_service: Identity service instance for backup code
+         *             generation and step-up verification.
+         *         mfa_secret_store: Temporary secret storage.
+         *
+         *     Returns:
+         *         Success message and the freshly issued backup codes.
+         *
+         *     Raises:
+         *         HTTPException: 400 if no setup is in progress or the TOTP
+         *             code is invalid; 401 if step-up verification fails.
+         */
+        put: operations["enable_mfa_api_v1_profile_mfa_enable_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/mfa/disable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Disable Mfa
+         * @description Disable MFA for authenticated user after step-up verification.
+         *
+         *     Disabling MFA materially weakens the account's security
+         *     posture, so a valid access token alone is not sufficient: the
+         *     caller must re-prove identity with both their current
+         *     password and a fresh MFA code. The MFA code may be either a
+         *     6-digit TOTP or an unused ``XXXX-XXXX`` backup code — the
+         *     same set of factors accepted at login. Step-up verification
+         *     is the single source of truth for the MFA check;
+         *     :func:`modules.auth.mfa.service.disable_user_mfa` only clears state.
+         *
+         *     Args:
+         *         request: MFA disable request with current password and
+         *             MFA code.
+         *         token_user_id: User ID from access token.
+         *         identity_service: Identity service dependency.
+         *
+         *     Returns:
+         *         Success message.
+         *
+         *     Raises:
+         *         HTTPException: 401 if the current password is wrong or
+         *             the MFA code is invalid; 400 if MFA is not currently
+         *             enabled.
+         */
+        put: operations["disable_mfa_api_v1_profile_mfa_disable_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/mfa/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Mfa
+         * @description Verify MFA code for authenticated user.
+         *
+         *     Args:
+         *         request: MFA request with code to verify.
+         *         token_user_id: User ID from access token.
+         *         identity_service: Identity service instance for backup code verification.
+         *
+         *     Returns:
+         *         Success message.
+         *
+         *     Raises:
+         *         HTTPException: If MFA code is invalid.
+         */
+        post: operations["verify_mfa_api_v1_profile_mfa_verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/mfa/backup-codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate Mfa Backup Codes
+         * @description Generate new MFA backup codes for authenticated user.
+         *
+         *     Requires step-up verification (current password + MFA code,
+         *     when MFA is enabled). Issuing new backup codes invalidates
+         *     the previous set, so an attacker holding only an access
+         *     token must not be able to lock the legitimate user out of
+         *     their second factor.
+         *
+         *     Args:
+         *         response: FastAPI response object.
+         *         request: FastAPI request object for rate limiting.
+         *         step_up: Step-up verification payload.
+         *         token_user_id: User ID from access token.
+         *         identity_service: Identity service for code generation.
+         *
+         *     Returns:
+         *         Response with generated backup codes and timestamp.
+         *
+         *     Raises:
+         *         HTTPException: 401 if step-up verification fails, 404 if
+         *             user not found, 400 if MFA is not enabled.
+         */
+        post: operations["generate_mfa_backup_codes_api_v1_profile_mfa_backup_codes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/idp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get My Identity Providers
+         * @description Retrieve all identity provider links for the authenticated user.
+         *     This endpoint fetches all external identity provider (IdP) connections associated
+         *     with the current user's account. Each link includes connection metadata and enriched
+         *     details about the identity provider (name, slug, icon, and provider type).
+         *     Args:
+         *         token_user_id (int): The authenticated user's ID extracted from the JWT access token.
+         *             Injected automatically via dependency injection.
+         *         db (Session): Database session for executing queries.
+         *             Injected automatically via dependency injection.
+         *     Returns:
+         *         list[dict]: A list of dictionaries representing the user's IdP links. Each dictionary contains:
+         *             - id (int): Unique identifier for the user-IdP link
+         *             - user_id (int): ID of the user
+         *             - idp_id (int): ID of the identity provider
+         *             - idp_subject (str): User's unique identifier at the IdP
+         *             - linked_at (datetime): Timestamp when the link was created
+         *             - last_login (datetime): Timestamp of the last login via this IdP
+         *             - idp_access_token_expires_at (datetime): Expiration time of the IdP access token
+         *             - idp_refresh_token_updated_at (datetime): Last update time of the refresh token
+         *             - idp_name (str): Display name of the identity provider (if available)
+         *             - idp_slug (str): URL-safe identifier for the IdP (if available)
+         *             - idp_icon (str): Icon/logo URL for the IdP (if available)
+         *             - idp_provider_type (str): Type of provider (e.g., "oauth2", "oidc") (if available)
+         *     Raises:
+         *         HTTPException: May raise authentication/authorization errors via the dependency injection.
+         */
+        get: operations["get_my_identity_providers_api_v1_profile_idp_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/idp/{idp_id}/unlink": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Delete My Identity Provider
+         * @description Delete (unlink) an identity provider from the authenticated user's account.
+         *
+         *     This endpoint allows users to remove the association between their
+         *     account and a specific identity provider. It requires step-up
+         *     verification (current password and MFA when enabled) and includes
+         *     safety checks to prevent account lockout by ensuring users maintain
+         *     at least one authentication method (either a password or another
+         *     IdP link).
+         *
+         *     Args:
+         *         idp_id (int): The ID of the identity provider to unlink.
+         *         step_up (StepUpVerification): Step-up verification payload.
+         *         request (Request): The FastAPI request object.
+         *         token_user_id (int): User ID extracted from the access token.
+         *         identity_service: Identity service dependency.
+         *
+         *     Returns:
+         *         None: Returns 204 No Content on successful deletion.
+         *
+         *     Raises:
+         *         HTTPException (401): If step-up verification fails.
+         *         HTTPException (404): If the identity provider doesn't exist or
+         *             is not linked to the user's account.
+         *         HTTPException (400): If attempting to unlink the last authentication method
+         *             without having a password set (prevents account lockout).
+         *         HTTPException (500): If the deletion operation fails at the database level.
+         *
+         *     Notes:
+         *         - Enforces step-up verification before unlinking.
+         *         - Prevents account lockout by ensuring users have at least one
+         *           authentication method (password or remaining IdP link).
+         *         - Logs the unlinking action for audit purposes.
+         *         - Uses token-based authentication to ensure users can only
+         *           unlink their own IdPs.
+         */
+        post: operations["delete_my_identity_provider_api_v1_profile_idp__idp_id__unlink_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Analysis Settings
+         * @description Return the caller's analysis parameters, including derived thresholds.
+         */
+        get: operations["get_analysis_settings_api_v1_analysis_settings_get"];
+        /**
+         * Update Analysis Settings
+         * @description Update the caller's analysis parameters.
+         *
+         *     A stored load records the threshold it was computed with, so changing a
+         *     threshold does not reinterpret history: queue a recompute afterwards to measure
+         *     every activity against the new value.
+         */
+        put: operations["update_analysis_settings_api_v1_analysis_settings_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/loads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Loads Summaries
+         * @description Return the loads and power provenance of several of the caller's activities.
+         *
+         *     One call per list page: the activities view asks for the ids it is showing and
+         *     renders each row's own score without one request per activity.
+         */
+        get: operations["list_loads_summaries_api_v1_analysis_loads_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/fitness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Fitness Series
+         * @description Return the caller's daily load series with fatigue, fitness and balance.
+         *
+         *     Every parameter is optional: without them the athlete's stored settings decide
+         *     the formula, the time constants and the whole sports, and the window defaults
+         *     to the recent one. Naming them changes only this response, not the settings.
+         */
+        get: operations["get_fitness_series_api_v1_analysis_fitness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/power-duration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Power Duration
+         * @description Return the caller's duration-intensity curve for one sport.
+         *
+         *     The points are the cached best sustained averages; the fit is recomputed for
+         *     the request, so ``fit_from``/``fit_to`` preview a different window without
+         *     changing anything. The response also reports the threshold the sport's loads
+         *     actually use and the sessions that built the curve.
+         */
+        get: operations["get_power_duration_api_v1_analysis_power_duration_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/cp-trend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cp Trend
+         * @description Return the caller's critical-power evolution for one sport.
+         *
+         *     One point per session, each fit from that session's own sustained efforts;
+         *     the stored threshold comes back as the reference line. ``window`` narrows
+         *     the history without dropping sessions outside it from other views.
+         */
+        get: operations["get_cp_trend_api_v1_analysis_cp_trend_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/best-times": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Best Times
+         * @description Return the caller's best splits over the canonical race distances.
+         *
+         *     The splits are found in the activities' own samples, and a split running
+         *     downhill more than the bound for its length is discarded, so the table shows
+         *     what the athlete actually ran rather than what gravity lent them.
+         */
+        get: operations["get_best_times_api_v1_analysis_best_times_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/thresholds/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Queue Threshold Refresh
+         * @description Queue re-deriving the caller's thresholds from their own records.
+         */
+        post: operations["queue_threshold_refresh_api_v1_analysis_thresholds_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/recompute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Queue Load Recompute
+         * @description Queue re-measuring every activity with the current thresholds and formulas.
+         */
+        post: operations["queue_load_recompute_api_v1_analysis_recompute_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4633,65 +3977,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/server_settings/email": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Email Status
-         * @description Get whether outgoing email is usable.
-         *
-         *     Requires admin authentication with server_settings:read scope.
-         *
-         *     Returns:
-         *         Whether email is configured and, when not, the reasons (setting names only).
-         */
-        get: operations["read_email_status_api_v1_server_settings_email_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/server_settings/email/test": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send Test Email
-         * @description Send a test email to the requesting admin.
-         *
-         *     Requires admin authentication with server_settings:write scope. The recipient
-         *     is always the caller's own email address.
-         *
-         *     Args:
-         *         request: The HTTP request object.
-         *         mail: The platform mail provider.
-         *
-         *     Returns:
-         *         A confirmation message naming the recipient address.
-         *
-         *     Raises:
-         *         ServiceUnavailableError: 503 if email is not configured.
-         *         UpstreamError: 502 if the mail server did not accept the message.
-         */
-        post: operations["send_test_email_api_v1_server_settings_email_test_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/server_settings/tile_maps_templates": {
         parameters: {
             query?: never;
@@ -4757,6 +4042,65 @@ export interface paths {
          *         HTTPException: If deletion fails.
          */
         delete: operations["delete_login_photo_api_v1_server_settings_upload_login_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/server_settings/email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Email Status
+         * @description Get whether outgoing email is usable.
+         *
+         *     Requires admin authentication with server_settings:read scope.
+         *
+         *     Returns:
+         *         Whether email is configured and, when not, the reasons (setting names only).
+         */
+        get: operations["read_email_status_api_v1_server_settings_email_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/server_settings/email/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send Test Email
+         * @description Send a test email to the requesting admin.
+         *
+         *     Requires admin authentication with server_settings:write scope. The recipient
+         *     is always the caller's own email address.
+         *
+         *     Args:
+         *         request: The HTTP request object.
+         *         mail: The platform mail provider.
+         *
+         *     Returns:
+         *         A confirmation message naming the recipient address.
+         *
+         *     Raises:
+         *         ServiceUnavailableError: 503 if email is not configured.
+         *         UpstreamError: 502 if the mail server did not accept the message.
+         */
+        post: operations["send_test_email_api_v1_server_settings_email_test_post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -4840,38 +4184,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/sign-up/confirm": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify Email
-         * @description Verify user email via sign-up token.
-         *
-         *     Args:
-         *         request: Incoming HTTP request.
-         *         confirm_data: Token confirmation payload.
-         *         websocket_manager: WebSocket notification manager.
-         *         db: Database session.
-         *
-         *     Returns:
-         *         Verification result with message and optional flags.
-         *
-         *     Raises:
-         *         HTTPException: 412 if email verification is not enabled.
-         */
-        post: operations["verify_email_api_v1_sign_up_confirm_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/sign-up/request": {
         parameters: {
             query?: never;
@@ -4904,6 +4216,55 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sign-up/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Email
+         * @description Verify user email via sign-up token.
+         *
+         *     Args:
+         *         request: Incoming HTTP request.
+         *         confirm_data: Token confirmation payload.
+         *         websocket_manager: WebSocket notification manager.
+         *         db: Database session.
+         *
+         *     Returns:
+         *         Verification result with message and optional flags.
+         *
+         *     Raises:
+         *         HTTPException: 412 if email verification is not enabled.
+         */
+        post: operations["verify_email_api_v1_sign_up_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/strava/link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Strava Link */
+        put: operations["strava_link_api_v1_strava_link_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/strava/activities": {
         parameters: {
             query?: never;
@@ -4921,23 +4282,6 @@ export interface paths {
          */
         get: operations["strava_retrieve_activities_days_api_v1_strava_activities_get"];
         put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/strava/client": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Strava Set User Client */
-        put: operations["strava_set_user_client_api_v1_strava_client_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -5002,7 +4346,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/strava/link": {
+    "/api/v1/strava/client": {
         parameters: {
             query?: never;
             header?: never;
@@ -5010,8 +4354,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Strava Link */
-        put: operations["strava_link_api_v1_strava_link_put"];
+        /** Strava Set User Client */
+        put: operations["strava_set_user_client_api_v1_strava_client_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -5048,6 +4392,277 @@ export interface paths {
         post?: never;
         /** Strava Unlink */
         delete: operations["strava_unlink_api_v1_strava_unlink_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/default_gear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read User Default Gear
+         * @description Retrieve default gear settings for authenticated user.
+         *
+         *     Args:
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         User default gear settings.
+         */
+        get: operations["read_user_default_gear_api_v1_profile_default_gear_get"];
+        /**
+         * Edit User Default Gear
+         * @description Update default gear settings for authenticated user.
+         *
+         *     Args:
+         *         user_default_gear: Updated gear settings.
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         Updated user default gear settings.
+         */
+        put: operations["edit_user_default_gear_api_v1_profile_default_gear_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/goals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Goals
+         * @description Retrieve goals for the authenticated user with optional filters.
+         *
+         *     Args:
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *         interval: Optional filter by goal interval.
+         *         activity_type: Optional filter by activity type.
+         *         goal_type: Optional filter by goal type.
+         *
+         *     Returns:
+         *         List of user goal objects matching the filters.
+         */
+        get: operations["get_user_goals_api_v1_profile_goals_get"];
+        /**
+         * Update User Goal
+         * @description Update an existing goal for the authenticated user.
+         *
+         *     Args:
+         *         user_goal: Updated goal data.
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         The updated goal object.
+         */
+        put: operations["update_user_goal_api_v1_profile_goals_put"];
+        /**
+         * Create User Goal
+         * @description Create a new goal for the authenticated user.
+         *
+         *     Args:
+         *         user_goal: Goal data to create.
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         The created goal object.
+         */
+        post: operations["create_user_goal_api_v1_profile_goals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/goals/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Goals Results
+         * @description Calculate and retrieve goal progress for authenticated user.
+         *
+         *     Args:
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         List of goal progress objects, or None if no goals.
+         */
+        get: operations["get_user_goals_results_api_v1_profile_goals_results_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/goals/{goal_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete User Goal
+         * @description Delete a goal for the authenticated user.
+         *
+         *     Args:
+         *         goal_id: ID of the goal to delete.
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         */
+        delete: operations["delete_user_goal_api_v1_profile_goals__goal_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/api_keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Api Keys
+         * @description Retrieve all API keys for the authenticated user.
+         *
+         *     Args:
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         List of API key objects. Raw keys and hashes
+         *         are never included.
+         */
+        get: operations["get_user_api_keys_api_v1_profile_api_keys_get"];
+        put?: never;
+        /**
+         * Create User Api Key
+         * @description Create a new API key for the authenticated user.
+         *
+         *     The raw key is returned once in this response and
+         *     cannot be retrieved again. Requested scopes must be
+         *     supported by API-key authentication.
+         *
+         *     Step-up verification is required (current password,
+         *     plus MFA code when MFA is enabled). API keys grant
+         *     persistent, long-lived access — a stolen access
+         *     token alone must not be sufficient to mint one.
+         *
+         *     Args:
+         *         data: Key creation data (name, scopes, expiry,
+         *             step-up credentials).
+         *         token_user_id: User ID from access token.
+         *         identity_service: Identity service dependency.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         Created API key including the raw key string.
+         *
+         *     Raises:
+         *         HTTPException: 401 if step-up verification fails.
+         *         HTTPException: 400 if scopes are not supported for API keys.
+         *         HTTPException: 404 if the user is not found.
+         */
+        post: operations["create_user_api_key_api_v1_profile_api_keys_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/api_keys/{api_key_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Revoke User Api Key
+         * @description Revoke an API key (soft-disable).
+         *
+         *     The key record is retained for audit purposes but
+         *     will be rejected on any subsequent use.
+         *
+         *     Args:
+         *         api_key_id: UUID of the API key to revoke.
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         None.
+         *
+         *     Raises:
+         *         HTTPException: 404 if the key is not found or
+         *             does not belong to the authenticated user.
+         */
+        patch: operations["revoke_user_api_key_api_v1_profile_api_keys__api_key_id__revoke_patch"];
+        trace?: never;
+    };
+    "/api/v1/profile/api_keys/{api_key_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete User Api Key
+         * @description Permanently delete an API key.
+         *
+         *     Hard-delete. The key is gone and cannot be used
+         *     or recovered after this operation.
+         *
+         *     Args:
+         *         api_key_id: UUID of the API key to delete.
+         *         token_user_id: User ID from access token.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         None.
+         *
+         *     Raises:
+         *         HTTPException: 404 if the key is not found or
+         *             does not belong to the authenticated user.
+         */
+        delete: operations["delete_user_api_key_api_v1_profile_api_keys__api_key_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -5095,6 +4710,62 @@ export interface paths {
          *         Created user data.
          */
         post: operations["create_user_api_v1_users_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/username/contains/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Users Contain Username
+         * @description Search users by partial username match.
+         *
+         *     Args:
+         *         username: Partial username to search for.
+         *         _check_scopes: Authorization check.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         List of users matching the search.
+         */
+        get: operations["read_users_contain_username_api_v1_users_username_contains__username__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/username/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Users Username
+         * @description Get user by exact username.
+         *
+         *     Args:
+         *         username: Exact username to search for.
+         *         _check_scopes: Authorization check.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         User if found, None otherwise.
+         */
+        get: operations["read_users_username_api_v1_users_username__username__get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5158,56 +4829,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/username/contains/{username}": {
+    "/api/v1/users/{user_id}/image": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
+        get?: never;
+        put?: never;
         /**
-         * Read Users Contain Username
-         * @description Search users by partial username match.
+         * Upload User Image
+         * @description Upload user profile image.
          *
          *     Args:
-         *         username: Partial username to search for.
+         *         user_id: ID of user to upload image for.
+         *         _validate_id: User ID validation dependency.
+         *         file: Uploaded image file.
          *         _check_scopes: Authorization check.
          *         db: Database session dependency.
          *
          *     Returns:
-         *         List of users matching the search.
+         *         Path to uploaded image.
          */
-        get: operations["read_users_contain_username_api_v1_users_username_contains__username__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/username/{username}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read Users Username
-         * @description Get user by exact username.
-         *
-         *     Args:
-         *         username: Exact username to search for.
-         *         _check_scopes: Authorization check.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         User if found, None otherwise.
-         */
-        get: operations["read_users_username_api_v1_users_username__username__get"];
-        put?: never;
-        post?: never;
+        post: operations["upload_user_image_api_v1_users__user_id__image_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5286,6 +4931,36 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users/{user_id}/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Edit User Password
+         * @description Update user password.
+         *
+         *     Args:
+         *         user_id: ID of user to update password for.
+         *         _validate_id: User ID validation dependency.
+         *         user_attributes: New password data.
+         *         _check_scope: Authorization check.
+         *         identity_service: Identity service dependency.
+         *
+         *     Returns:
+         *         Success message.
+         */
+        put: operations["edit_user_password_api_v1_users__user_id__password_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/{user_id}/identity-providers": {
         parameters: {
             query?: never;
@@ -5345,110 +5020,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/{user_id}/image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Upload User Image
-         * @description Upload user profile image.
-         *
-         *     Args:
-         *         user_id: ID of user to upload image for.
-         *         _validate_id: User ID validation dependency.
-         *         file: Uploaded image file.
-         *         _check_scopes: Authorization check.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         Path to uploaded image.
-         */
-        post: operations["upload_user_image_api_v1_users__user_id__image_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/{user_id}/password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Edit User Password
-         * @description Update user password.
-         *
-         *     Args:
-         *         user_id: ID of user to update password for.
-         *         _validate_id: User ID validation dependency.
-         *         user_attributes: New password data.
-         *         _check_scope: Authorization check.
-         *         identity_service: Identity service dependency.
-         *
-         *     Returns:
-         *         Success message.
-         */
-        put: operations["edit_user_password_api_v1_users__user_id__password_put"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/{user_id}/photo": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Read User Photo
-         * @description Serve a user's profile photo when the signed token is valid.
-         *
-         *     Args:
-         *         user_id: The user whose photo to serve.
-         *         token: The signed access token (``?t=``) minted at serialization time.
-         *
-         *     Returns:
-         *         The image bytes.
-         *
-         *     Raises:
-         *         HTTPException: 404 when the token is invalid/forged or no photo exists
-         *             (a 404 — rather than 403 — avoids confirming the user id).
-         */
-        get: operations["read_user_photo_api_v1_users__user_id__photo_get"];
-        put?: never;
-        post?: never;
-        /**
-         * Delete User Photo
-         * @description Delete user profile photo.
-         *
-         *     Args:
-         *         user_id: ID of user whose photo to delete.
-         *         _validate_id: User ID validation dependency.
-         *         _check_scopes: Authorization check.
-         *         db: Database session dependency.
-         *
-         *     Returns:
-         *         None
-         */
-        delete: operations["delete_user_photo_api_v1_users__user_id__photo_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/ws/ticket": {
         parameters: {
             query?: never;
@@ -5475,6 +5046,458 @@ export interface paths {
          *         JSON object with a single "ticket" key.
          */
         post: operations["issue_ws_ticket_api_v1_ws_ticket_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/activities/{activity_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Public Activity
+         * @description Return a public activity by ID.
+         *
+         *     Answers 404 when the activity does not exist *or* is not public — the two are
+         *     deliberately indistinguishable so this unauthenticated endpoint cannot be
+         *     used to enumerate which activity ids exist.
+         */
+        get: operations["read_public_activity_api_v1_public_activities__activity_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/activities/exercise-titles/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Public Activity Exercise Titles
+         * @description Return all activity exercise titles via the public endpoint.
+         */
+        get: operations["list_public_activity_exercise_titles_api_v1_public_activities_exercise_titles_all_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/activities/{activity_id}/laps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Public Activity Laps
+         * @description Return one page of public laps for an activity exposed via shareable link.
+         */
+        get: operations["list_public_activity_laps_api_v1_public_activities__activity_id__laps_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/activities/{activity_id}/sets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Public Activity Sets
+         * @description Return one page of a publicly shared activity's sets.
+         */
+        get: operations["list_public_activity_sets_api_v1_public_activities__activity_id__sets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/activities/{activity_id}/streams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Public Activity Streams
+         * @description Return one page of a publicly shared activity's streams, with the matching total.
+         */
+        get: operations["list_public_activity_streams_api_v1_public_activities__activity_id__streams_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/activities/{activity_id}/streams/{stream_type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Public Activity Stream
+         * @description Get a public stream by type for an activity.
+         *
+         *     Not found when the activity has no such stream, is not public, or public links
+         *     are disabled. The cases are indistinguishable on purpose, since this endpoint
+         *     is unauthenticated.
+         */
+        get: operations["read_public_activity_stream_api_v1_public_activities__activity_id__streams__stream_type__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/activities/{activity_id}/workout-steps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Public Activity Workout Steps
+         * @description Return one page of a publicly shared activity's workout steps.
+         */
+        get: operations["list_public_activity_workout_steps_api_v1_public_activities__activity_id__workout_steps_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/idp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Enabled Identity Providers
+         * @description Retrieve a list of enabled identity providers from the database.
+         *
+         *     Args:
+         *         db (Session): SQLAlchemy database session dependency.
+         *
+         *     Returns:
+         *         List[IdentityProviderPublic]: A list of enabled identity providers, each represented as an IdentityProviderPublic schema.
+         */
+        get: operations["get_enabled_identity_providers_api_v1_public_idp_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/idp/login/{idp_slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Initiate Login
+         * @description Initiates the login process for a given identity provider using OAuth.
+         *
+         *     PKCE (Proof Key for Code Exchange) is REQUIRED for all clients (OAuth 2.1 compliance).
+         *     Both code_challenge and code_challenge_method=S256 must be provided.
+         *
+         *     Rate Limit: 10 requests per minute per IP
+         *     Args:
+         *         idp_slug (str): The slug identifier for the identity provider.
+         *         request (Request): The incoming HTTP request object.
+         *         db (Session): Database session dependency.
+         *         redirect (str | None): Optional frontend path to redirect to after login.
+         *         code_challenge (str): PKCE code challenge (base64url-encoded SHA256, 43-128 chars). REQUIRED.
+         *         code_challenge_method (str): PKCE method (only S256 supported). REQUIRED.
+         *
+         *     Returns:
+         *         RedirectResponse: A redirect response to the identity provider's authorization URL.
+         *
+         *     Raises:
+         *         HTTPException: If the identity provider is not found, disabled, or PKCE validation fails.
+         */
+        get: operations["initiate_login_api_v1_public_idp_login__idp_slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/idp/callback/{idp_slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Handle Callback
+         * @description Handle OAuth callback from an identity provider.
+         *
+         *     This endpoint processes the OAuth authorization callback from external identity providers.
+         *     It supports two modes: login mode (default) and link mode (for linking IdP to existing account).
+         *     Args:
+         *         idp_slug (str): The slug identifier of the identity provider.
+         *         password_hasher (auth_password_hasher.PasswordHasher): Password hasher dependency for session management.
+         *         token_manager (auth_token_manager.TokenManager): Token manager dependency for creating session tokens.
+         *         db (Session): Database session dependency.
+         *         code (str): Authorization code received from the identity provider.
+         *         state (str): State parameter used for CSRF protection (database state ID).
+         *         request (Request): The incoming HTTP request.
+         *
+         *     Returns:
+         *         RedirectResponse: A redirect response to either:
+         *             - Settings page (link mode): /settings with success parameters
+         *             - Login page (login mode): /login with session_id for token exchange
+         *             - Error page: /login with error parameter if callback fails
+         *
+         *     Raises:
+         *         HTTPException: If the identity provider is not found, disabled, or if callback processing fails.
+         *
+         *     Notes:
+         *         - In link mode: Redirects to settings without creating a new session
+         *         - In login mode: Creates session, redirects with session_id (client must exchange for tokens)
+         *         - All clients must call /tokens exchange endpoint with PKCE verifier to get JWT tokens
+         *         - On error: Redirects to login page with error parameter
+         *         - All redirects use HTTP 307 (Temporary Redirect) status code
+         */
+        get: operations["handle_callback_api_v1_public_idp_callback__idp_slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/idp/session/{session_id}/tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Exchange Tokens For Session
+         * @description Exchange a PKCE code verifier for JWT tokens.
+         *
+         *     After OAuth callback or password PKCE login creates a session, clients
+         *     call this endpoint to prove they possess the code_verifier (PKCE) and
+         *     receive the actual JWT tokens. This prevents token leakage through
+         *     browser redirects and ensures only the legitimate client can access the
+         *     tokens.
+         *
+         *     Security Features:
+         *     - PKCE verification (SHA256 hash of verifier must match challenge)
+         *     - One-time exchange (tokens_exchanged flag prevents replay)
+         *     - Rate limited (10 requests/minute)
+         *     - Session must be linked to OAuth state with PKCE data
+         *
+         *     Rate Limit: 10 requests per minute per IP
+         *
+         *     Args:
+         *         session_id (str): Session ID from OAuth callback redirect.
+         *         request (Request): FastAPI request object (for rate limiting).
+         *         response (Response): FastAPI response object.
+         *         token_exchange (TokenExchangeRequest): Request body with code_verifier.
+         *         token_manager (TokenManager): Token manager dependency.
+         *         db (Session): Database session dependency.
+         *
+         *     Returns:
+         *         TokenExchangeResponse: JWT tokens (access, refresh, csrf) and metadata.
+         *
+         *     Raises:
+         *         HTTPException:
+         *             - 404 NOT_FOUND: Session not found or not linked to OAuth state
+         *             - 400 BAD_REQUEST: Invalid code_verifier or tokens already exchanged
+         *             - 409 CONFLICT: Tokens already exchanged for this session
+         */
+        post: operations["exchange_tokens_for_session_api_v1_public_idp_session__session_id__tokens_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/server_settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Public Server Settings
+         * @description Get public server settings (unauthenticated).
+         *
+         *     Protection Mechanisms:
+         *     - Rate limiting: 60 requests per minute per IP (prevents DoS attacks)
+         *
+         *     Returns only the public subset of server configuration
+         *     (sensitive signup approval/verification settings excluded).
+         *     Pydantic model filtering automatically excludes sensitive fields.
+         *
+         *     Returns:
+         *         Public subset of server configuration.
+         */
+        get: operations["read_public_server_settings_api_v1_public_server_settings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/server_settings/tile_maps_templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Tile Maps Templates
+         * @description Retrieve available tile map templates for server settings (unauthenticated).
+         *
+         *     Protection Mechanisms:
+         *     - Rate limiting: 60 requests per minute per IP (prevents DoS attacks)
+         *
+         *     This endpoint returns a list of all available tile map templates that can be
+         *     used for configuring map display options in server settings.
+         *
+         *     Returns:
+         *         List of tile map template configurations available for the server.
+         */
+        get: operations["list_tile_maps_templates_api_v1_public_server_settings_tile_maps_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/users/id/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Users Id
+         * @description Get public user info by ID.
+         *
+         *     Args:
+         *         user_id: The user ID to retrieve.
+         *         _validate_id: User ID validation dependency.
+         *         db: Database session dependency.
+         *
+         *     Returns:
+         *         User data if found and public sharing enabled.
+         */
+        get: operations["read_users_id_api_v1_public_users_id__user_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/about": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * About
+         * @description Returns metadata information about the Endurain API.
+         *
+         *     Returns:
+         *         API name, version, and license details.
+         */
+        get: operations["about_api_v1_about_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Health
+         * @description Liveness check that needs a database connection.
+         *
+         *     Unlike ``/about``, this fails when the connection pool is exhausted or the
+         *     database is unreachable, so orchestrators can detect a wedged instance.
+         *
+         *     Args:
+         *         db: Database session.
+         *
+         *     Returns:
+         *         ``{"status": "ok"}`` when the database answers.
+         *
+         *     Raises:
+         *         HTTPException: 503 when no connection can be obtained or the query fails.
+         */
+        get: operations["health_api_v1_health_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5524,11 +5547,11 @@ export interface components {
          *         license: License metadata.
          */
         AboutResponse: {
-            license: components["schemas"]["LicenseInfo"];
             /** Name */
             name: string;
             /** Version */
             version: string;
+            license: components["schemas"]["LicenseInfo"];
         };
         /**
          * ActivitiesBulkEdit
@@ -5578,44 +5601,44 @@ export interface components {
          *         hide_gear: Hide gear from others.
          */
         ActivityEdit: {
-            /** Activity Type */
-            activity_type?: number | null;
             /** Description */
             description?: string | null;
+            /** Private Notes */
+            private_notes?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Activity Type */
+            activity_type?: number | null;
+            /** Visibility */
+            visibility?: number | null;
+            /** Is Hidden */
+            is_hidden?: boolean | null;
             /** Gear Id */
             gear_id?: number | null;
-            /** Hide Cadence */
-            hide_cadence?: boolean | null;
-            /** Hide Elevation */
-            hide_elevation?: boolean | null;
-            /** Hide Gear */
-            hide_gear?: boolean | null;
-            /** Hide Hr */
-            hide_hr?: boolean | null;
-            /** Hide Laps */
-            hide_laps?: boolean | null;
+            /** Hide Start Time */
+            hide_start_time?: boolean | null;
             /** Hide Location */
             hide_location?: boolean | null;
             /** Hide Map */
             hide_map?: boolean | null;
-            /** Hide Pace */
-            hide_pace?: boolean | null;
+            /** Hide Hr */
+            hide_hr?: boolean | null;
             /** Hide Power */
             hide_power?: boolean | null;
+            /** Hide Cadence */
+            hide_cadence?: boolean | null;
+            /** Hide Elevation */
+            hide_elevation?: boolean | null;
             /** Hide Speed */
             hide_speed?: boolean | null;
-            /** Hide Start Time */
-            hide_start_time?: boolean | null;
+            /** Hide Pace */
+            hide_pace?: boolean | null;
+            /** Hide Laps */
+            hide_laps?: boolean | null;
             /** Hide Workout Sets Steps */
             hide_workout_sets_steps?: boolean | null;
-            /** Is Hidden */
-            is_hidden?: boolean | null;
-            /** Name */
-            name?: string | null;
-            /** Private Notes */
-            private_notes?: string | null;
-            /** Visibility */
-            visibility?: number | null;
+            /** Hide Gear */
+            hide_gear?: boolean | null;
         };
         /**
          * ActivityExerciseTitlesRead
@@ -5629,10 +5652,10 @@ export interface components {
             exercise_category: number;
             /** Exercise Name */
             exercise_name: number;
-            /** Id */
-            id: number;
             /** Wkt Step Name */
             wkt_step_name: string;
+            /** Id */
+            id: number;
         };
         /**
          * ActivityIngestionJobRead
@@ -5663,40 +5686,40 @@ export interface components {
          *         completed_at: When the job reached a terminal state.
          */
         ActivityIngestionJobRead: {
+            /** Id */
+            id: string;
+            kind: components["schemas"]["IngestionJobKind"];
+            /** Filename */
+            filename?: string | null;
+            /** Import Source */
+            import_source?: string | null;
+            /** Files Total */
+            files_total?: number | null;
+            /** Files Done */
+            files_done?: number | null;
+            /** Files Failed */
+            files_failed?: number | null;
+            /** Provider */
+            provider?: string | null;
+            status: components["schemas"]["IngestionJobStatus"];
+            error_code?: components["schemas"]["IngestionJobErrorCode"] | null;
             /**
              * Activity Ids
              * @default []
              */
             activity_ids: number[];
-            /** Completed At */
-            completed_at?: string | null;
             /**
              * Created At
              * Format: date-time
              */
             created_at: string;
-            error_code?: components["schemas"]["IngestionJobErrorCode"] | null;
-            /** Filename */
-            filename?: string | null;
-            /** Files Done */
-            files_done?: number | null;
-            /** Files Failed */
-            files_failed?: number | null;
-            /** Files Total */
-            files_total?: number | null;
-            /** Id */
-            id: string;
-            /** Import Source */
-            import_source?: string | null;
-            kind: components["schemas"]["IngestionJobKind"];
-            /** Provider */
-            provider?: string | null;
-            status: components["schemas"]["IngestionJobStatus"];
             /**
              * Updated At
              * Format: date-time
              */
             updated_at: string;
+            /** Completed At */
+            completed_at?: string | null;
         };
         /**
          * ActivityIntervalsRead
@@ -5717,8 +5740,14 @@ export interface components {
          *             and possibly overlapping them, so never summed with them.
          */
         ActivityIntervalsRead: {
+            shape: components["schemas"]["SessionShape"];
+            /** Threshold W */
+            threshold_w: number | null;
             /** Base Power W */
             base_power_w: number;
+            /** Segments */
+            segments: components["schemas"]["IntervalSegmentRead"][];
+            rules?: components["schemas"]["IntervalRulesRead"] | null;
             /**
              * Climbs
              * @default []
@@ -5729,12 +5758,6 @@ export interface components {
              * @default []
              */
             rss_by_source: components["schemas"]["RssSourceTotalsRead"][];
-            rules?: components["schemas"]["IntervalRulesRead"] | null;
-            /** Segments */
-            segments: components["schemas"]["IntervalSegmentRead"][];
-            shape: components["schemas"]["SessionShape"];
-            /** Threshold W */
-            threshold_w: number | null;
         };
         /**
          * ActivityLapsRead
@@ -5751,85 +5774,85 @@ export interface components {
          *         start_time: Lap start as a timezone-aware UTC instant.
          */
         ActivityLapsRead: {
-            /** Activity Id */
-            activity_id: number;
-            /** Avg Cadence */
-            avg_cadence?: number | null;
-            /** Avg Fractional Cadence */
-            avg_fractional_cadence?: number | null;
-            /** Avg Heart Rate */
-            avg_heart_rate?: number | null;
-            /** Avg Power */
-            avg_power?: number | null;
-            /** Avg Stance Time */
-            avg_stance_time?: number | null;
-            /** Avg Step Length */
-            avg_step_length?: number | null;
-            /** Avg Vertical Oscillation */
-            avg_vertical_oscillation?: number | null;
-            /** Avg Vertical Ratio */
-            avg_vertical_ratio?: number | null;
+            /**
+             * Start Time
+             * Format: date-time
+             */
+            start_time: string;
+            /** Start Position Lat */
+            start_position_lat?: number | null;
+            /** Start Position Long */
+            start_position_long?: number | null;
             /** End Position Lat */
             end_position_lat?: number | null;
             /** End Position Long */
             end_position_long?: number | null;
+            /** Total Elapsed Time */
+            total_elapsed_time?: number | null;
+            /** Total Timer Time */
+            total_timer_time?: number | null;
+            /** Total Distance */
+            total_distance?: number | null;
+            /** Total Cycles */
+            total_cycles?: number | null;
+            /** Total Calories */
+            total_calories?: number | null;
+            /** Avg Heart Rate */
+            avg_heart_rate?: number | null;
+            /** Max Heart Rate */
+            max_heart_rate?: number | null;
+            /** Avg Cadence */
+            avg_cadence?: number | null;
+            /** Max Cadence */
+            max_cadence?: number | null;
+            /** Avg Power */
+            avg_power?: number | null;
+            /** Max Power */
+            max_power?: number | null;
+            /** Total Ascent */
+            total_ascent?: number | null;
+            /** Total Descent */
+            total_descent?: number | null;
+            /** Intensity */
+            intensity?: string | null;
+            /** Lap Trigger */
+            lap_trigger?: string | null;
+            /** Sport */
+            sport?: string | null;
+            /** Sub Sport */
+            sub_sport?: string | null;
+            /** Normalized Power */
+            normalized_power?: number | null;
+            /** Total Work */
+            total_work?: number | null;
+            /** Avg Vertical Oscillation */
+            avg_vertical_oscillation?: number | null;
+            /** Avg Stance Time */
+            avg_stance_time?: number | null;
+            /** Avg Fractional Cadence */
+            avg_fractional_cadence?: number | null;
+            /** Max Fractional Cadence */
+            max_fractional_cadence?: number | null;
             /** Enhanced Avg Pace */
             enhanced_avg_pace?: number | null;
             /** Enhanced Avg Speed */
             enhanced_avg_speed?: number | null;
-            /** Enhanced Max Altitude */
-            enhanced_max_altitude?: number | null;
             /** Enhanced Max Pace */
             enhanced_max_pace?: number | null;
             /** Enhanced Max Speed */
             enhanced_max_speed?: number | null;
             /** Enhanced Min Altitude */
             enhanced_min_altitude?: number | null;
+            /** Enhanced Max Altitude */
+            enhanced_max_altitude?: number | null;
+            /** Avg Vertical Ratio */
+            avg_vertical_ratio?: number | null;
+            /** Avg Step Length */
+            avg_step_length?: number | null;
             /** Id */
             id: number;
-            /** Intensity */
-            intensity?: string | null;
-            /** Lap Trigger */
-            lap_trigger?: string | null;
-            /** Max Cadence */
-            max_cadence?: number | null;
-            /** Max Fractional Cadence */
-            max_fractional_cadence?: number | null;
-            /** Max Heart Rate */
-            max_heart_rate?: number | null;
-            /** Max Power */
-            max_power?: number | null;
-            /** Normalized Power */
-            normalized_power?: number | null;
-            /** Sport */
-            sport?: string | null;
-            /** Start Position Lat */
-            start_position_lat?: number | null;
-            /** Start Position Long */
-            start_position_long?: number | null;
-            /**
-             * Start Time
-             * Format: date-time
-             */
-            start_time: string;
-            /** Sub Sport */
-            sub_sport?: string | null;
-            /** Total Ascent */
-            total_ascent?: number | null;
-            /** Total Calories */
-            total_calories?: number | null;
-            /** Total Cycles */
-            total_cycles?: number | null;
-            /** Total Descent */
-            total_descent?: number | null;
-            /** Total Distance */
-            total_distance?: number | null;
-            /** Total Elapsed Time */
-            total_elapsed_time?: number | null;
-            /** Total Timer Time */
-            total_timer_time?: number | null;
-            /** Total Work */
-            total_work?: number | null;
+            /** Activity Id */
+            activity_id: number;
         };
         /**
          * ActivityLoadRead
@@ -5843,15 +5866,33 @@ export interface components {
          *         duration_s: Active time the load was computed over.
          */
         ActivityLoadRead: {
-            /** Duration S */
-            duration_s: number;
-            /** Intensity Factor */
-            intensity_factor: number | null;
+            method: components["schemas"]["LoadMethod"];
             /** Load */
             load: number;
-            method: components["schemas"]["LoadMethod"];
+            /** Intensity Factor */
+            intensity_factor: number | null;
             /** Threshold Used */
             threshold_used: number | null;
+            /** Duration S */
+            duration_s: number;
+        };
+        /**
+         * ActivityLoadsSummaryRead
+         * @description One activity's loads plus its power provenance, for list rendering.
+         *
+         *     Attributes:
+         *         activity_id: The activity measured.
+         *         power_recalibrated: Whether its power stream is Stryd-era, so the shown
+         *             watts are recalibrated to the athlete's current scale.
+         *         loads: Every formula's load, in formula order; empty when unscored.
+         */
+        ActivityLoadsSummaryRead: {
+            /** Activity Id */
+            activity_id: number;
+            /** Power Recalibrated */
+            power_recalibrated: boolean;
+            /** Loads */
+            loads: components["schemas"]["ActivityLoadRead"][];
         };
         /**
          * ActivityMediaRead
@@ -5863,10 +5904,10 @@ export interface components {
          *     with it; see :class:`~modules.activities.activity_media.contracts.ActivityMediaRecord`.
          */
         ActivityMediaRead: {
-            /** Activity Id */
-            activity_id: number;
             /** Id */
             id: number;
+            /** Activity Id */
+            activity_id: number;
             /** Media Type */
             media_type: number;
             /** Url */
@@ -5889,66 +5930,78 @@ export interface components {
          *             the service layer for a viewer allowed to see the map.
          */
         ActivityRead: {
+            /** User Id */
+            user_id?: number | null;
+            /** Description */
+            description?: string | null;
+            /** Private Notes */
+            private_notes?: string | null;
+            /** Distance */
+            distance: number;
+            /** Name */
+            name: string;
             /** Activity Type */
             activity_type: number;
-            /** Average Cad */
-            average_cad?: number | null;
-            /** Average Hr */
-            average_hr?: number | null;
-            /** Average Power */
-            average_power?: number | null;
-            /** Average Speed */
-            average_speed?: number | null;
-            /** Calories */
-            calories?: number | null;
+            /** Start Time */
+            start_time?: string | null;
+            /** End Time */
+            end_time?: string | null;
+            /** Timezone */
+            timezone?: string | null;
+            /** Total Elapsed Time */
+            total_elapsed_time?: number | null;
+            /** Total Timer Time */
+            total_timer_time?: number | null;
             /** City */
             city?: string | null;
+            /** Town */
+            town?: string | null;
             /** Country */
             country?: string | null;
             /** Created At */
             created_at?: string | null;
-            /** Description */
-            description?: string | null;
-            /** Distance */
-            distance: number;
             /** Elevation Gain */
             elevation_gain?: number | null;
             /** Elevation Loss */
             elevation_loss?: number | null;
-            /** End Time */
-            end_time?: string | null;
+            /** Pace */
+            pace?: number | null;
+            /** Average Speed */
+            average_speed?: number | null;
+            /** Max Speed */
+            max_speed?: number | null;
+            /** Average Power */
+            average_power?: number | null;
+            /** Max Power */
+            max_power?: number | null;
+            /** Normalized Power */
+            normalized_power?: number | null;
+            /** Average Hr */
+            average_hr?: number | null;
+            /** Max Hr */
+            max_hr?: number | null;
+            /** Average Cad */
+            average_cad?: number | null;
+            /** Max Cad */
+            max_cad?: number | null;
+            /** Workout Feeling */
+            workout_feeling?: number | null;
+            /** Workout Rpe */
+            workout_rpe?: number | null;
+            /** Calories */
+            calories?: number | null;
+            /** Visibility */
+            visibility?: number | null;
+            /** Gear Id */
+            gear_id?: number | null;
+            /** Strava Gear Id */
+            strava_gear_id?: string | null;
+            /** Strava Activity Id */
+            strava_activity_id?: number | null;
             /** Garminconnect Activity Id */
             garminconnect_activity_id?: number | null;
             /** Garminconnect Gear Id */
             garminconnect_gear_id?: string | null;
-            /** Gear Id */
-            gear_id?: number | null;
-            /** Hide Cadence */
-            hide_cadence?: boolean | null;
-            /** Hide Elevation */
-            hide_elevation?: boolean | null;
-            /** Hide Gear */
-            hide_gear?: boolean | null;
-            /** Hide Hr */
-            hide_hr?: boolean | null;
-            /** Hide Laps */
-            hide_laps?: boolean | null;
-            /** Hide Location */
-            hide_location?: boolean | null;
-            /** Hide Map */
-            hide_map?: boolean | null;
-            /** Hide Pace */
-            hide_pace?: boolean | null;
-            /** Hide Power */
-            hide_power?: boolean | null;
-            /** Hide Speed */
-            hide_speed?: boolean | null;
-            /** Hide Start Time */
-            hide_start_time?: boolean | null;
-            /** Hide Workout Sets Steps */
-            hide_workout_sets_steps?: boolean | null;
-            /** Id */
-            id: number;
             /** Import Info */
             import_info?: {
                 [key: string]: unknown;
@@ -5958,54 +6011,42 @@ export interface components {
              * @default false
              */
             is_hidden: boolean;
-            /** Map Thumbnail Url */
-            map_thumbnail_url?: string | null;
-            /** Max Cad */
-            max_cad?: number | null;
-            /** Max Hr */
-            max_hr?: number | null;
-            /** Max Power */
-            max_power?: number | null;
-            /** Max Speed */
-            max_speed?: number | null;
-            /** Name */
-            name: string;
-            /** Normalized Power */
-            normalized_power?: number | null;
-            /** Pace */
-            pace?: number | null;
-            /** Private Notes */
-            private_notes?: string | null;
-            /** Start Time */
-            start_time?: string | null;
-            /** Strava Activity Id */
-            strava_activity_id?: number | null;
-            /** Strava Gear Id */
-            strava_gear_id?: string | null;
-            /** Timezone */
-            timezone?: string | null;
-            /** Total Cycles */
-            total_cycles?: number | null;
-            /** Total Elapsed Time */
-            total_elapsed_time?: number | null;
-            /** Total Timer Time */
-            total_timer_time?: number | null;
-            /** Town */
-            town?: string | null;
+            /** Hide Start Time */
+            hide_start_time?: boolean | null;
+            /** Hide Location */
+            hide_location?: boolean | null;
+            /** Hide Map */
+            hide_map?: boolean | null;
+            /** Hide Hr */
+            hide_hr?: boolean | null;
+            /** Hide Power */
+            hide_power?: boolean | null;
+            /** Hide Cadence */
+            hide_cadence?: boolean | null;
+            /** Hide Elevation */
+            hide_elevation?: boolean | null;
+            /** Hide Speed */
+            hide_speed?: boolean | null;
+            /** Hide Pace */
+            hide_pace?: boolean | null;
+            /** Hide Laps */
+            hide_laps?: boolean | null;
+            /** Hide Workout Sets Steps */
+            hide_workout_sets_steps?: boolean | null;
+            /** Hide Gear */
+            hide_gear?: boolean | null;
             /** Tracker Manufacturer */
             tracker_manufacturer?: string | null;
             /** Tracker Model */
             tracker_model?: string | null;
-            /** User Id */
-            user_id?: number | null;
+            /** Total Cycles */
+            total_cycles?: number | null;
+            /** Id */
+            id: number;
+            /** Map Thumbnail Url */
+            map_thumbnail_url?: string | null;
             /** Version */
             version?: number | null;
-            /** Visibility */
-            visibility?: number | null;
-            /** Workout Feeling */
-            workout_feeling?: number | null;
-            /** Workout Rpe */
-            workout_rpe?: number | null;
         };
         /**
          * ActivitySegmentRead
@@ -6020,13 +6061,13 @@ export interface components {
          *         best_activity_id: Activity holding that best effort, or ``None``.
          */
         ActivitySegmentRead: {
-            /** Best Activity Id */
-            best_activity_id: number | null;
-            /** Best Elapsed Seconds */
-            best_elapsed_seconds: number | null;
+            segment: components["schemas"]["SegmentRead"];
             /** Efforts */
             efforts: components["schemas"]["SegmentEffortRead"][];
-            segment: components["schemas"]["SegmentRead"];
+            /** Best Elapsed Seconds */
+            best_elapsed_seconds: number | null;
+            /** Best Activity Id */
+            best_activity_id: number | null;
         };
         /**
          * ActivitySetsRead
@@ -6043,18 +6084,12 @@ export interface components {
          *         start_time: Set start as a timezone-aware UTC instant.
          */
         ActivitySetsRead: {
-            /** Activity Id */
-            activity_id: number;
-            /** Category */
-            category?: number | null;
-            /** Category Subtype */
-            category_subtype?: number | null;
             /** Duration */
             duration: number;
-            /** Id */
-            id: number;
             /** Repetitions */
             repetitions?: number | null;
+            /** Weight */
+            weight?: number | null;
             /** Set Type */
             set_type: string;
             /**
@@ -6062,8 +6097,14 @@ export interface components {
              * Format: date-time
              */
             start_time: string;
-            /** Weight */
-            weight?: number | null;
+            /** Category */
+            category?: number | null;
+            /** Category Subtype */
+            category_subtype?: number | null;
+            /** Id */
+            id: number;
+            /** Activity Id */
+            activity_id: number;
         };
         /**
          * ActivitySortField
@@ -6094,11 +6135,6 @@ export interface components {
          */
         ActivitySportStats: {
             /**
-             * Calories
-             * @default 0
-             */
-            calories: number;
-            /**
              * Distance
              * @default 0
              */
@@ -6108,6 +6144,11 @@ export interface components {
              * @default 0
              */
             time: number;
+            /**
+             * Calories
+             * @default 0
+             */
+            calories: number;
         };
         /**
          * ActivityStatsRead
@@ -6131,21 +6172,21 @@ export interface components {
          *         inline_skating: Stats for inline skating activities.
          */
         ActivityStatsRead: {
-            bike?: components["schemas"]["ActivitySportStats"];
-            hike?: components["schemas"]["ActivitySportStats"];
-            inline_skating?: components["schemas"]["ActivitySportStats"];
-            kayaking?: components["schemas"]["ActivitySportStats"];
-            rowing?: components["schemas"]["ActivitySportStats"];
             run?: components["schemas"]["ActivitySportStats"];
-            sailing?: components["schemas"]["ActivitySportStats"];
-            snow_ski?: components["schemas"]["ActivitySportStats"];
-            snowboard?: components["schemas"]["ActivitySportStats"];
-            snowshoeing?: components["schemas"]["ActivitySportStats"];
-            stand_up_paddleboarding?: components["schemas"]["ActivitySportStats"];
-            surfing?: components["schemas"]["ActivitySportStats"];
+            bike?: components["schemas"]["ActivitySportStats"];
             swim?: components["schemas"]["ActivitySportStats"];
             walk?: components["schemas"]["ActivitySportStats"];
+            hike?: components["schemas"]["ActivitySportStats"];
+            rowing?: components["schemas"]["ActivitySportStats"];
+            snow_ski?: components["schemas"]["ActivitySportStats"];
+            snowboard?: components["schemas"]["ActivitySportStats"];
             windsurf?: components["schemas"]["ActivitySportStats"];
+            stand_up_paddleboarding?: components["schemas"]["ActivitySportStats"];
+            surfing?: components["schemas"]["ActivitySportStats"];
+            kayaking?: components["schemas"]["ActivitySportStats"];
+            sailing?: components["schemas"]["ActivitySportStats"];
+            snowshoeing?: components["schemas"]["ActivitySportStats"];
+            inline_skating?: components["schemas"]["ActivitySportStats"];
         };
         /**
          * ActivityStreamsRead
@@ -6160,18 +6201,18 @@ export interface components {
         ActivityStreamsRead: {
             /** Activity Id */
             activity_id: number;
-            /** Id */
-            id: number;
-            /** Power Source */
-            power_source?: string | null;
-            /** Strava Activity Stream Id */
-            strava_activity_stream_id?: number | null;
             /** Stream Type */
             stream_type: number;
             /** Stream Waypoints */
             stream_waypoints: {
                 [key: string]: unknown;
             }[];
+            /** Power Source */
+            power_source?: string | null;
+            /** Strava Activity Stream Id */
+            strava_activity_stream_id?: number | null;
+            /** Id */
+            id: number;
             /** Zone Percentages */
             zone_percentages?: {
                 [key: string]: unknown;
@@ -6211,34 +6252,34 @@ export interface components {
          *         activity_id: FK to activities table.
          */
         ActivityWorkoutStepsRead: {
-            /** Activity Id */
-            activity_id: number;
+            /** Message Index */
+            message_index: number;
             /** Duration Type */
             duration_type: string;
             /** Duration Value */
             duration_value?: number | null;
+            /** Target Type */
+            target_type?: string | null;
+            /** Target Value */
+            target_value?: number | null;
+            /** Intensity */
+            intensity?: string | null;
+            /** Notes */
+            notes?: string | null;
             /** Exercise Category */
             exercise_category?: number | null;
             /** Exercise Name */
             exercise_name?: number | null;
             /** Exercise Weight */
             exercise_weight?: number | null;
-            /** Id */
-            id: number;
-            /** Intensity */
-            intensity?: string | null;
-            /** Message Index */
-            message_index: number;
-            /** Notes */
-            notes?: string | null;
-            /** Secondary Target Value */
-            secondary_target_value?: string | null;
-            /** Target Type */
-            target_type?: string | null;
-            /** Target Value */
-            target_value?: number | null;
             /** Weight Display Unit */
             weight_display_unit?: string | null;
+            /** Secondary Target Value */
+            secondary_target_value?: string | null;
+            /** Id */
+            id: number;
+            /** Activity Id */
+            activity_id: number;
         };
         /**
          * AnalysisSettingsRead
@@ -6267,29 +6308,29 @@ export interface components {
             acute_days: number;
             /** Chronic Days */
             chronic_days: number;
+            primary_method: components["schemas"]["LoadMethod"];
             /** Fit From S */
             fit_from_s?: number | null;
             /** Fit To S */
             fit_to_s?: number | null;
-            hr_threshold?: components["schemas"]["HeartRateThresholdRead"] | null;
-            /** Method Params */
-            method_params?: {
-                [key: string]: number;
-            };
-            /** Pace Calibrations */
-            pace_calibrations?: {
-                [key: string]: components["schemas"]["PaceCalibrationRead"];
-            };
+            /** Resting Hr */
+            resting_hr?: number | null;
             /** Power Thresholds */
             power_thresholds?: {
                 [key: string]: components["schemas"]["PowerThresholdRead"];
             };
-            primary_method: components["schemas"]["LoadMethod"];
-            /** Resting Hr */
-            resting_hr?: number | null;
             /** Speed Thresholds */
             speed_thresholds?: {
                 [key: string]: components["schemas"]["SpeedThresholdRead"];
+            };
+            hr_threshold?: components["schemas"]["HeartRateThresholdRead"] | null;
+            /** Pace Calibrations */
+            pace_calibrations?: {
+                [key: string]: components["schemas"]["PaceCalibrationRead"];
+            };
+            /** Method Params */
+            method_params?: {
+                [key: string]: number;
             };
         };
         /**
@@ -6323,26 +6364,26 @@ export interface components {
             acute_days?: number | null;
             /** Chronic Days */
             chronic_days?: number | null;
+            primary_method?: components["schemas"]["LoadMethod"] | null;
             /** Fit From S */
             fit_from_s?: number | null;
             /** Fit To S */
             fit_to_s?: number | null;
+            /** Resting Hr */
+            resting_hr?: number | null;
             /** Hr Threshold Bpm */
             hr_threshold_bpm?: number | null;
-            /** Method Params */
-            method_params?: {
-                [key: string]: number;
-            } | null;
             /** Power Threshold W */
             power_threshold_w?: {
                 [key: string]: number | null;
             } | null;
-            primary_method?: components["schemas"]["LoadMethod"] | null;
-            /** Resting Hr */
-            resting_hr?: number | null;
             /** Speed Threshold Ms */
             speed_threshold_ms?: {
                 [key: string]: number | null;
+            } | null;
+            /** Method Params */
+            method_params?: {
+                [key: string]: number;
             } | null;
         };
         /**
@@ -6368,16 +6409,16 @@ export interface components {
          *         start_time: Start of that activity, so the record can link to its day.
          */
         BestTimeRead: {
-            /** Activity Id */
-            activity_id: number;
-            /** Avg Power W */
-            avg_power_w: number | null;
             /** Distance M */
             distance_m: number;
-            /** Start Time */
-            start_time: string | null;
             /** Time S */
             time_s: number;
+            /** Avg Power W */
+            avg_power_w: number | null;
+            /** Activity Id */
+            activity_id: number;
+            /** Start Time */
+            start_time: string | null;
         };
         /**
          * BestTimesRead
@@ -6390,12 +6431,12 @@ export interface components {
          *             valid split (too long, or only ever run downhill) simply does not appear.
          */
         BestTimesRead: {
+            /** Sport */
+            sport: string;
             /** Months */
             months: number | null;
             /** Records */
             records: components["schemas"]["BestTimeRead"][];
-            /** Sport */
-            sport: string;
         };
         /** Body_create_activity_media_api_v1_activities__activity_id__media_post */
         Body_create_activity_media_api_v1_activities__activity_id__media_post: {
@@ -6429,15 +6470,10 @@ export interface components {
         };
         /** Body_login_for_access_token_api_v1_auth_login_post */
         Body_login_for_access_token_api_v1_auth_login_post: {
-            /** Client Id */
-            client_id?: string | null;
-            /**
-             * Client Secret
-             * Format: password
-             */
-            client_secret?: string | null;
             /** Grant Type */
             grant_type?: string | null;
+            /** Username */
+            username: string;
             /**
              * Password
              * Format: password
@@ -6448,8 +6484,13 @@ export interface components {
              * @default
              */
             scope: string;
-            /** Username */
-            username: string;
+            /** Client Id */
+            client_id?: string | null;
+            /**
+             * Client Secret
+             * Format: password
+             */
+            client_secret?: string | null;
         };
         /** Body_upload_login_photo_api_v1_server_settings_upload_login_post */
         Body_upload_login_photo_api_v1_server_settings_upload_login_post: {
@@ -6514,19 +6555,19 @@ export interface components {
         CpTrendPointRead: {
             /** Activity Id */
             activity_id: number;
-            /** Cp W */
-            cp_w: number;
-            /** Cv Pct */
-            cv_pct: number;
             /**
              * Date
              * Format: date
              */
             date: string;
-            /** Power Source */
-            power_source: string | null;
+            /** Cp W */
+            cp_w: number;
             /** W Prime J */
             w_prime_j: number;
+            /** Cv Pct */
+            cv_pct: number;
+            /** Power Source */
+            power_source: string | null;
         };
         /**
          * CpTrendRead
@@ -6540,13 +6581,13 @@ export interface components {
          *         points: Per-session CP fits, oldest first.
          */
         CpTrendRead: {
-            /** Points */
-            points: components["schemas"]["CpTrendPointRead"][];
             /** Sport */
             sport: string;
-            threshold: components["schemas"]["PowerThresholdRead"] | null;
             /** Window Days */
             window_days: number | null;
+            threshold: components["schemas"]["PowerThresholdRead"] | null;
+            /** Points */
+            points: components["schemas"]["CpTrendPointRead"][];
         };
         /**
          * Currency
@@ -6563,10 +6604,10 @@ export interface components {
         CursorPage_ActivityRead_: {
             /** Items */
             items: components["schemas"]["ActivityRead"][];
-            /** Next Cursor */
-            next_cursor?: string | null;
             /** Num Records */
             num_records: number;
+            /** Next Cursor */
+            next_cursor?: string | null;
         };
         /**
          * DaySummary
@@ -6576,23 +6617,6 @@ export interface components {
          *         day_of_week: Day of week (0=Mon, 6=Sun).
          */
         DaySummary: {
-            /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Day Of Week
-             * @description Day of week (0=Monday, 6=Sunday)
-             */
-            day_of_week: number;
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
             /**
              * Total Distance
              * @description Total distance in meters
@@ -6611,6 +6635,23 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
+            /**
+             * Day Of Week
+             * @description Day of week (0=Monday, 6=Sunday)
+             */
+            day_of_week: number;
         };
         /**
          * DurationPeakRead
@@ -6622,12 +6663,12 @@ export interface components {
          *         activity_id: Activity holding that best average, when recorded.
          */
         DurationPeakRead: {
-            /** Activity Id */
-            activity_id: number | null;
             /** Duration S */
             duration_s: number;
             /** Value */
             value: number;
+            /** Activity Id */
+            activity_id: number | null;
         };
         /**
          * EffortDirectionFilter
@@ -6699,12 +6740,6 @@ export interface components {
          *         balance: Form minus fatigue (fitness - fatigue), positive means fresh.
          */
         FitnessPointRead: {
-            /** Acute */
-            acute: number;
-            /** Balance */
-            balance: number;
-            /** Chronic */
-            chronic: number;
             /**
              * Date
              * Format: date
@@ -6712,6 +6747,12 @@ export interface components {
             date: string;
             /** Load */
             load: number;
+            /** Acute */
+            acute: number;
+            /** Chronic */
+            chronic: number;
+            /** Balance */
+            balance: number;
         };
         /**
          * FitnessSeriesRead
@@ -6725,15 +6766,15 @@ export interface components {
          *         points: One point per consecutive day of the requested range.
          */
         FitnessSeriesRead: {
+            method: components["schemas"]["LoadMethod"];
             /** Acute Days */
             acute_days: number;
             /** Chronic Days */
             chronic_days: number;
-            method: components["schemas"]["LoadMethod"];
-            /** Points */
-            points: components["schemas"]["FitnessPointRead"][];
             /** Sport */
             sport: string | null;
+            /** Points */
+            points: components["schemas"]["FitnessPointRead"][];
         };
         /**
          * FollowRelationshipRead
@@ -6745,10 +6786,10 @@ export interface components {
          *         status: Whether the request is pending or accepted.
          */
         FollowRelationshipRead: {
-            /** Followee Id */
-            followee_id: number;
             /** Follower Id */
             follower_id: number;
+            /** Followee Id */
+            followee_id: number;
             status: components["schemas"]["FollowStatus"];
         };
         /**
@@ -6781,15 +6822,15 @@ export interface components {
         FollowStatus: "pending" | "accepted";
         /** GarminLogin */
         GarminLogin: {
+            /** Username */
+            username: string;
+            /** Password */
+            password: string;
             /**
              * Is Cn
              * @default false
              */
             is_cn: boolean;
-            /** Password */
-            password: string;
-            /** Username */
-            username: string;
         };
         /**
          * GearComponentCreate
@@ -6797,25 +6838,20 @@ export interface components {
          */
         GearComponentCreate: {
             /**
-             * Active
-             * @description Whether the component is active
+             * Gear Id
+             * @description Foreign key to gear
              */
-            active?: boolean | null;
+            gear_id: number;
+            /**
+             * Type
+             * @description Type of gear component
+             */
+            type: string;
             /**
              * Brand
              * @description Gear component brand
              */
             brand: string;
-            /**
-             * Expected Kms
-             * @description Expected kilometers
-             */
-            expected_kms?: number | null;
-            /**
-             * Gear Id
-             * @description Foreign key to gear
-             */
-            gear_id: number;
             /**
              * Model
              * @description Gear component model
@@ -6827,20 +6863,25 @@ export interface components {
              */
             purchase_date?: string | null;
             /**
-             * Purchase Value
-             * @description Purchase value
-             */
-            purchase_value?: number | null;
-            /**
              * Retired Date
              * @description Retired date
              */
             retired_date?: string | null;
             /**
-             * Type
-             * @description Type of gear component
+             * Active
+             * @description Whether the component is active
              */
-            type: string;
+            active?: boolean | null;
+            /**
+             * Expected Kms
+             * @description Expected kilometers
+             */
+            expected_kms?: number | null;
+            /**
+             * Purchase Value
+             * @description Purchase value
+             */
+            purchase_value?: number | null;
         };
         /**
          * GearComponentRead
@@ -6854,15 +6895,60 @@ export interface components {
          */
         GearComponentRead: {
             /**
-             * Active
-             * @description Whether the component is active
+             * Gear Id
+             * @description Foreign key to gear
              */
-            active?: boolean | null;
+            gear_id: number;
+            /**
+             * Type
+             * @description Type of gear component
+             */
+            type: string;
             /**
              * Brand
              * @description Gear component brand
              */
             brand: string;
+            /**
+             * Model
+             * @description Gear component model
+             */
+            model: string;
+            /**
+             * Purchase Date
+             * @description Purchase date
+             */
+            purchase_date?: string | null;
+            /**
+             * Retired Date
+             * @description Retired date
+             */
+            retired_date?: string | null;
+            /**
+             * Active
+             * @description Whether the component is active
+             */
+            active?: boolean | null;
+            /**
+             * Expected Kms
+             * @description Expected kilometers
+             */
+            expected_kms?: number | null;
+            /**
+             * Purchase Value
+             * @description Purchase value
+             */
+            purchase_value?: number | null;
+            /**
+             * Id
+             * @description Unique identifier
+             */
+            id: number;
+            /**
+             * User Id
+             * @description Foreign key to user
+             */
+            user_id: number;
             /**
              * Current Distance
              * @description Accumulated activity distance in meters
@@ -6875,51 +6961,6 @@ export interface components {
              * @default 0
              */
             current_time: number;
-            /**
-             * Expected Kms
-             * @description Expected kilometers
-             */
-            expected_kms?: number | null;
-            /**
-             * Gear Id
-             * @description Foreign key to gear
-             */
-            gear_id: number;
-            /**
-             * Id
-             * @description Unique identifier
-             */
-            id: number;
-            /**
-             * Model
-             * @description Gear component model
-             */
-            model: string;
-            /**
-             * Purchase Date
-             * @description Purchase date
-             */
-            purchase_date?: string | null;
-            /**
-             * Purchase Value
-             * @description Purchase value
-             */
-            purchase_value?: number | null;
-            /**
-             * Retired Date
-             * @description Retired date
-             */
-            retired_date?: string | null;
-            /**
-             * Type
-             * @description Type of gear component
-             */
-            type: string;
-            /**
-             * User Id
-             * @description Foreign key to user
-             */
-            user_id: number;
         };
         /**
          * GearComponentTypesRead
@@ -6938,15 +6979,15 @@ export interface components {
              */
             bike: string[];
             /**
-             * Racquet
-             * @description Valid racquet component types
-             */
-            racquet: string[];
-            /**
              * Shoes
              * @description Valid shoes component types
              */
             shoes: string[];
+            /**
+             * Racquet
+             * @description Valid racquet component types
+             */
+            racquet: string[];
             /**
              * Windsurf
              * @description Valid windsurf component types
@@ -6962,30 +7003,20 @@ export interface components {
          */
         GearComponentUpdate: {
             /**
-             * Active
-             * @description Whether the component is active
-             */
-            active?: boolean | null;
-            /**
-             * Brand
-             * @description Gear component brand
-             */
-            brand: string;
-            /**
-             * Expected Kms
-             * @description Expected kilometers
-             */
-            expected_kms?: number | null;
-            /**
              * Gear Id
              * @description Foreign key to gear
              */
             gear_id: number;
             /**
-             * Id
-             * @description Unique identifier
+             * Type
+             * @description Type of gear component
              */
-            id: number;
+            type: string;
+            /**
+             * Brand
+             * @description Gear component brand
+             */
+            brand: string;
             /**
              * Model
              * @description Gear component model
@@ -6997,20 +7028,30 @@ export interface components {
              */
             purchase_date?: string | null;
             /**
-             * Purchase Value
-             * @description Purchase value
-             */
-            purchase_value?: number | null;
-            /**
              * Retired Date
              * @description Retired date
              */
             retired_date?: string | null;
             /**
-             * Type
-             * @description Type of gear component
+             * Active
+             * @description Whether the component is active
              */
-            type: string;
+            active?: boolean | null;
+            /**
+             * Expected Kms
+             * @description Expected kilometers
+             */
+            expected_kms?: number | null;
+            /**
+             * Purchase Value
+             * @description Purchase value
+             */
+            purchase_value?: number | null;
+            /**
+             * Id
+             * @description Unique identifier
+             */
+            id: number;
         };
         /**
          * GearCreate
@@ -7021,32 +7062,10 @@ export interface components {
          */
         GearCreate: {
             /**
-             * Active
-             * @description Whether the gear is active
-             */
-            active?: boolean | null;
-            /**
              * Brand
              * @description Gear brand name
              */
             brand?: string | null;
-            /**
-             * Created At
-             * @description Gear creation timestamp
-             */
-            created_at?: string | null;
-            /**
-             * Garminconnect Gear Id
-             * @description Garmin Connect gear ID
-             */
-            garminconnect_gear_id?: string | null;
-            /** @description Gear type identifier */
-            gear_type: components["schemas"]["GearType"];
-            /**
-             * Initial Kms
-             * @description Initial kilometers
-             */
-            initial_kms?: number | null;
             /**
              * Model
              * @description Gear model name
@@ -7057,6 +7076,23 @@ export interface components {
              * @description Gear display nickname
              */
             nickname: string;
+            /** @description Gear type identifier */
+            gear_type: components["schemas"]["GearType"];
+            /**
+             * Created At
+             * @description Gear creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * Active
+             * @description Whether the gear is active
+             */
+            active?: boolean | null;
+            /**
+             * Initial Kms
+             * @description Initial kilometers
+             */
+            initial_kms?: number | null;
             /**
              * Purchase Value
              * @description Purchase value
@@ -7067,6 +7103,11 @@ export interface components {
              * @description Strava gear ID
              */
             strava_gear_id?: string | null;
+            /**
+             * Garminconnect Gear Id
+             * @description Garmin Connect gear ID
+             */
+            garminconnect_gear_id?: string | null;
             /**
              * User Id
              * @description Foreign key to user
@@ -7084,37 +7125,10 @@ export interface components {
          */
         GearDetailRead: {
             /**
-             * Active
-             * @description Whether the gear is active
-             */
-            active?: boolean | null;
-            /**
              * Brand
              * @description Gear brand name
              */
             brand?: string | null;
-            /**
-             * Created At
-             * @description Gear creation timestamp
-             */
-            created_at?: string | null;
-            /**
-             * Garminconnect Gear Id
-             * @description Garmin Connect gear ID
-             */
-            garminconnect_gear_id?: string | null;
-            /** @description Gear type identifier */
-            gear_type: components["schemas"]["GearType"];
-            /**
-             * Id
-             * @description Unique identifier
-             */
-            id: number;
-            /**
-             * Initial Kms
-             * @description Initial kilometers
-             */
-            initial_kms?: number | null;
             /**
              * Model
              * @description Gear model name
@@ -7125,6 +7139,23 @@ export interface components {
              * @description Gear display nickname
              */
             nickname: string;
+            /** @description Gear type identifier */
+            gear_type: components["schemas"]["GearType"];
+            /**
+             * Created At
+             * @description Gear creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * Active
+             * @description Whether the gear is active
+             */
+            active?: boolean | null;
+            /**
+             * Initial Kms
+             * @description Initial kilometers
+             */
+            initial_kms?: number | null;
             /**
              * Purchase Value
              * @description Purchase value
@@ -7136,11 +7167,20 @@ export interface components {
              */
             strava_gear_id?: string | null;
             /**
-             * Total Components Cost
-             * @description Sum of component purchase values
-             * @default 0
+             * Garminconnect Gear Id
+             * @description Garmin Connect gear ID
              */
-            total_components_cost: number;
+            garminconnect_gear_id?: string | null;
+            /**
+             * Id
+             * @description Unique identifier
+             */
+            id: number;
+            /**
+             * User Id
+             * @description Foreign key to user
+             */
+            user_id: number;
             /**
              * Total Distance
              * @description Total activity distance in meters
@@ -7154,10 +7194,11 @@ export interface components {
              */
             total_time: number;
             /**
-             * User Id
-             * @description Foreign key to user
+             * Total Components Cost
+             * @description Sum of component purchase values
+             * @default 0
              */
-            user_id: number;
+            total_components_cost: number;
         };
         /**
          * GearRead
@@ -7169,37 +7210,10 @@ export interface components {
          */
         GearRead: {
             /**
-             * Active
-             * @description Whether the gear is active
-             */
-            active?: boolean | null;
-            /**
              * Brand
              * @description Gear brand name
              */
             brand?: string | null;
-            /**
-             * Created At
-             * @description Gear creation timestamp
-             */
-            created_at?: string | null;
-            /**
-             * Garminconnect Gear Id
-             * @description Garmin Connect gear ID
-             */
-            garminconnect_gear_id?: string | null;
-            /** @description Gear type identifier */
-            gear_type: components["schemas"]["GearType"];
-            /**
-             * Id
-             * @description Unique identifier
-             */
-            id: number;
-            /**
-             * Initial Kms
-             * @description Initial kilometers
-             */
-            initial_kms?: number | null;
             /**
              * Model
              * @description Gear model name
@@ -7210,6 +7224,23 @@ export interface components {
              * @description Gear display nickname
              */
             nickname: string;
+            /** @description Gear type identifier */
+            gear_type: components["schemas"]["GearType"];
+            /**
+             * Created At
+             * @description Gear creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * Active
+             * @description Whether the gear is active
+             */
+            active?: boolean | null;
+            /**
+             * Initial Kms
+             * @description Initial kilometers
+             */
+            initial_kms?: number | null;
             /**
              * Purchase Value
              * @description Purchase value
@@ -7220,6 +7251,16 @@ export interface components {
              * @description Strava gear ID
              */
             strava_gear_id?: string | null;
+            /**
+             * Garminconnect Gear Id
+             * @description Garmin Connect gear ID
+             */
+            garminconnect_gear_id?: string | null;
+            /**
+             * Id
+             * @description Unique identifier
+             */
+            id: number;
             /**
              * User Id
              * @description Foreign key to user
@@ -7251,37 +7292,10 @@ export interface components {
          */
         GearUpdate: {
             /**
-             * Active
-             * @description Whether the gear is active
-             */
-            active?: boolean | null;
-            /**
              * Brand
              * @description Gear brand name
              */
             brand?: string | null;
-            /**
-             * Created At
-             * @description Gear creation timestamp
-             */
-            created_at?: string | null;
-            /**
-             * Garminconnect Gear Id
-             * @description Garmin Connect gear ID
-             */
-            garminconnect_gear_id?: string | null;
-            /** @description Gear type identifier */
-            gear_type: components["schemas"]["GearType"];
-            /**
-             * Id
-             * @description Unique identifier
-             */
-            id: number;
-            /**
-             * Initial Kms
-             * @description Initial kilometers
-             */
-            initial_kms?: number | null;
             /**
              * Model
              * @description Gear model name
@@ -7292,6 +7306,23 @@ export interface components {
              * @description Gear display nickname
              */
             nickname: string;
+            /** @description Gear type identifier */
+            gear_type: components["schemas"]["GearType"];
+            /**
+             * Created At
+             * @description Gear creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * Active
+             * @description Whether the gear is active
+             */
+            active?: boolean | null;
+            /**
+             * Initial Kms
+             * @description Initial kilometers
+             */
+            initial_kms?: number | null;
             /**
              * Purchase Value
              * @description Purchase value
@@ -7302,6 +7333,16 @@ export interface components {
              * @description Strava gear ID
              */
             strava_gear_id?: string | null;
+            /**
+             * Garminconnect Gear Id
+             * @description Garmin Connect gear ID
+             */
+            garminconnect_gear_id?: string | null;
+            /**
+             * Id
+             * @description Unique identifier
+             */
+            id: number;
         };
         /**
          * GearsListResponse
@@ -7314,6 +7355,11 @@ export interface components {
          *         records: List of gear records.
          */
         GearsListResponse: {
+            /**
+             * Total
+             * @description Total number of gear records
+             */
+            total: number;
             /**
              * Num Records
              * @description Number of records returned
@@ -7329,11 +7375,6 @@ export interface components {
              * @description List of gear records
              */
             records: components["schemas"]["GearRead"][];
-            /**
-             * Total
-             * @description Total number of gear records
-             */
-            total: number;
         };
         /**
          * Gender
@@ -7384,18 +7425,18 @@ export interface components {
          *         poop: Today's bowel movement summary.
          */
         HealthDashboardResponse: {
-            /** @description Active or latest fasting session */
-            fasting?: components["schemas"]["HealthFastingDashboard"] | null;
-            /** @description Today's bowel movement summary */
-            poop?: components["schemas"]["HealthPoopDashboard"] | null;
             /** @description Latest sleep metrics */
             sleep?: components["schemas"]["HealthSleepDashboard"] | null;
-            /** @description Latest steps data */
-            steps?: components["schemas"]["HealthStepsDashboard"] | null;
-            /** @description Today's water intake */
-            water?: components["schemas"]["HealthWaterDashboard"] | null;
             /** @description Latest weight metrics */
             weight?: components["schemas"]["HealthWeightDashboard"] | null;
+            /** @description Latest steps data */
+            steps?: components["schemas"]["HealthStepsDashboard"] | null;
+            /** @description Active or latest fasting session */
+            fasting?: components["schemas"]["HealthFastingDashboard"] | null;
+            /** @description Today's water intake */
+            water?: components["schemas"]["HealthWaterDashboard"] | null;
+            /** @description Today's bowel movement summary */
+            poop?: components["schemas"]["HealthPoopDashboard"] | null;
         };
         /**
          * HealthFastingComplete
@@ -7414,15 +7455,15 @@ export interface components {
              */
             fast_end_time: string;
             /**
-             * Notes
-             * @description Optional notes about the fasting session
-             */
-            notes?: string | null;
-            /**
              * @description Final status of the fasting session
              * @default completed
              */
             status: components["schemas"]["FastingStatus"];
+            /**
+             * Notes
+             * @description Optional notes about the fasting session
+             */
+            notes?: string | null;
         };
         /**
          * HealthFastingCreate
@@ -7432,22 +7473,29 @@ export interface components {
          */
         HealthFastingCreate: {
             /**
-             * Actual Duration Seconds
-             * @description Actual fasting duration in seconds
+             * Fast Start Time
+             * @description Start time of fast
              */
-            actual_duration_seconds?: number | null;
+            fast_start_time?: string | null;
             /**
              * Fast End Time
              * @description End time of fast (null if ongoing)
              */
             fast_end_time?: string | null;
             /**
-             * Fast Start Time
-             * @description Start time of fast
+             * Target Duration Seconds
+             * @description Target fasting duration in seconds (max 72h)
              */
-            fast_start_time?: string | null;
+            target_duration_seconds?: number | null;
+            /**
+             * Actual Duration Seconds
+             * @description Actual fasting duration in seconds
+             */
+            actual_duration_seconds?: number | null;
             /** @description Type of fasting protocol */
             fasting_type?: components["schemas"]["FastingType"] | null;
+            /** @description Current status of the fasting session */
+            status?: components["schemas"]["FastingStatus"] | null;
             /**
              * Notes
              * @description Optional notes about the fasting session
@@ -7455,13 +7503,6 @@ export interface components {
             notes?: string | null;
             /** @description Data source for the record */
             source?: components["schemas"]["modules__health__health_fasting__schema__Source"] | null;
-            /** @description Current status of the fasting session */
-            status?: components["schemas"]["FastingStatus"] | null;
-            /**
-             * Target Duration Seconds
-             * @description Target fasting duration in seconds (max 72h)
-             */
-            target_duration_seconds?: number | null;
         };
         /**
          * HealthFastingDashboard
@@ -7476,15 +7517,10 @@ export interface components {
          */
         HealthFastingDashboard: {
             /**
-             * Actual Duration Seconds
-             * @description Actual fasting duration in seconds
+             * Id
+             * @description Unique identifier for the fasting record
              */
-            actual_duration_seconds?: number | null;
-            /**
-             * Fast End Time
-             * @description End time of fast (null if ongoing)
-             */
-            fast_end_time?: string | null;
+            id: number;
             /**
              * Fast Start Time
              * Format: date-time
@@ -7492,15 +7528,20 @@ export interface components {
              */
             fast_start_time: string;
             /**
-             * Id
-             * @description Unique identifier for the fasting record
+             * Fast End Time
+             * @description End time of fast (null if ongoing)
              */
-            id: number;
+            fast_end_time?: string | null;
             /**
              * Status
              * @description Current status of the fasting session
              */
             status: string;
+            /**
+             * Actual Duration Seconds
+             * @description Actual fasting duration in seconds
+             */
+            actual_duration_seconds?: number | null;
         };
         /**
          * HealthFastingListResponse
@@ -7516,6 +7557,11 @@ export interface components {
          */
         HealthFastingListResponse: {
             /**
+             * Total
+             * @description Total number of health records for the user
+             */
+            total: number;
+            /**
              * Num Records
              * @description Number of records in this response
              */
@@ -7530,11 +7576,6 @@ export interface components {
              * @description List of fasting records
              */
             records: components["schemas"]["HealthFastingRead"][];
-            /**
-             * Total
-             * @description Total number of health records for the user
-             */
-            total: number;
         };
         /**
          * HealthFastingRead
@@ -7546,27 +7587,29 @@ export interface components {
          */
         HealthFastingRead: {
             /**
-             * Actual Duration Seconds
-             * @description Actual fasting duration in seconds
+             * Fast Start Time
+             * @description Start time of fast
              */
-            actual_duration_seconds?: number | null;
+            fast_start_time?: string | null;
             /**
              * Fast End Time
              * @description End time of fast (null if ongoing)
              */
             fast_end_time?: string | null;
             /**
-             * Fast Start Time
-             * @description Start time of fast
+             * Target Duration Seconds
+             * @description Target fasting duration in seconds (max 72h)
              */
-            fast_start_time?: string | null;
+            target_duration_seconds?: number | null;
+            /**
+             * Actual Duration Seconds
+             * @description Actual fasting duration in seconds
+             */
+            actual_duration_seconds?: number | null;
             /** @description Type of fasting protocol */
             fasting_type?: components["schemas"]["FastingType"] | null;
-            /**
-             * Id
-             * @description Unique identifier for the fasting record
-             */
-            id: number;
+            /** @description Current status of the fasting session */
+            status?: components["schemas"]["FastingStatus"] | null;
             /**
              * Notes
              * @description Optional notes about the fasting session
@@ -7574,13 +7617,11 @@ export interface components {
             notes?: string | null;
             /** @description Data source for the record */
             source?: components["schemas"]["modules__health__health_fasting__schema__Source"] | null;
-            /** @description Current status of the fasting session */
-            status?: components["schemas"]["FastingStatus"] | null;
             /**
-             * Target Duration Seconds
-             * @description Target fasting duration in seconds (max 72h)
+             * Id
+             * @description Unique identifier for the fasting record
              */
-            target_duration_seconds?: number | null;
+            id: number;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -7601,15 +7642,10 @@ export interface components {
          */
         HealthFastingStatsResponse: {
             /**
-             * Avg Duration Seconds
-             * @description Average fasting duration in seconds
+             * Total Fasts
+             * @description Total number of completed fasts
              */
-            avg_duration_seconds?: number | null;
-            /**
-             * Completion Rate
-             * @description Percentage of fasts completed vs started
-             */
-            completion_rate: number;
+            total_fasts: number;
             /**
              * Current Streak
              * @description Current consecutive days of fasting
@@ -7621,15 +7657,20 @@ export interface components {
              */
             longest_streak: number;
             /**
+             * Avg Duration Seconds
+             * @description Average fasting duration in seconds
+             */
+            avg_duration_seconds?: number | null;
+            /**
              * Total Fasting Seconds
              * @description Total time spent fasting in seconds
              */
             total_fasting_seconds: number;
             /**
-             * Total Fasts
-             * @description Total number of completed fasts
+             * Completion Rate
+             * @description Percentage of fasts completed vs started
              */
-            total_fasts: number;
+            completion_rate: number;
         };
         /**
          * HealthFastingUpdate
@@ -7639,27 +7680,29 @@ export interface components {
          */
         HealthFastingUpdate: {
             /**
-             * Actual Duration Seconds
-             * @description Actual fasting duration in seconds
+             * Fast Start Time
+             * @description Start time of fast
              */
-            actual_duration_seconds?: number | null;
+            fast_start_time?: string | null;
             /**
              * Fast End Time
              * @description End time of fast (null if ongoing)
              */
             fast_end_time?: string | null;
             /**
-             * Fast Start Time
-             * @description Start time of fast
+             * Target Duration Seconds
+             * @description Target fasting duration in seconds (max 72h)
              */
-            fast_start_time?: string | null;
+            target_duration_seconds?: number | null;
+            /**
+             * Actual Duration Seconds
+             * @description Actual fasting duration in seconds
+             */
+            actual_duration_seconds?: number | null;
             /** @description Type of fasting protocol */
             fasting_type?: components["schemas"]["FastingType"] | null;
-            /**
-             * Id
-             * @description Unique identifier for the fasting record
-             */
-            id: number;
+            /** @description Current status of the fasting session */
+            status?: components["schemas"]["FastingStatus"] | null;
             /**
              * Notes
              * @description Optional notes about the fasting session
@@ -7667,13 +7710,11 @@ export interface components {
             notes?: string | null;
             /** @description Data source for the record */
             source?: components["schemas"]["modules__health__health_fasting__schema__Source"] | null;
-            /** @description Current status of the fasting session */
-            status?: components["schemas"]["FastingStatus"] | null;
             /**
-             * Target Duration Seconds
-             * @description Target fasting duration in seconds (max 72h)
+             * Id
+             * @description Unique identifier for the fasting record
              */
-            target_duration_seconds?: number | null;
+            id: number;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -7687,15 +7728,15 @@ export interface components {
          *     Requires date_time and sets defaults for source.
          */
         HealthPoopCreate: {
-            /** @description Bristol Stool Scale type (1-7) */
-            bristol_type?: components["schemas"]["BristolType"] | null;
-            /** @description Stool color description */
-            color?: components["schemas"]["Color"] | null;
             /**
              * Date Time
              * @description Date and time of the bowel movement
              */
             date_time?: string | null;
+            /** @description Bristol Stool Scale type (1-7) */
+            bristol_type?: components["schemas"]["BristolType"] | null;
+            /** @description Stool color description */
+            color?: components["schemas"]["Color"] | null;
             /**
              * Notes
              * @description Optional notes about the bowel movement
@@ -7728,6 +7769,11 @@ export interface components {
          */
         HealthPoopListResponse: {
             /**
+             * Total
+             * @description Total number of health records for the user
+             */
+            total: number;
+            /**
              * Num Records
              * @description Number of records in this response
              */
@@ -7742,11 +7788,6 @@ export interface components {
              * @description List of health poop records
              */
             records: components["schemas"]["HealthPoopRead"][];
-            /**
-             * Total
-             * @description Total number of health records for the user
-             */
-            total: number;
         };
         /**
          * HealthPoopRead
@@ -7757,20 +7798,15 @@ export interface components {
          *         user_id: Foreign key reference to the user.
          */
         HealthPoopRead: {
-            /** @description Bristol Stool Scale type (1-7) */
-            bristol_type?: components["schemas"]["BristolType"] | null;
-            /** @description Stool color description */
-            color?: components["schemas"]["Color"] | null;
             /**
              * Date Time
              * @description Date and time of the bowel movement
              */
             date_time?: string | null;
-            /**
-             * Id
-             * @description Unique identifier for the poop record
-             */
-            id: number;
+            /** @description Bristol Stool Scale type (1-7) */
+            bristol_type?: components["schemas"]["BristolType"] | null;
+            /** @description Stool color description */
+            color?: components["schemas"]["Color"] | null;
             /**
              * Notes
              * @description Optional notes about the bowel movement
@@ -7778,6 +7814,11 @@ export interface components {
             notes?: string | null;
             /** @description Source of the data */
             source?: components["schemas"]["modules__health__health_poop__schema__Source"] | null;
+            /**
+             * Id
+             * @description Unique identifier for the poop record
+             */
+            id: number;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -7792,20 +7833,15 @@ export interface components {
          *     operations while allowing modifications to poop data.
          */
         HealthPoopUpdate: {
-            /** @description Bristol Stool Scale type (1-7) */
-            bristol_type?: components["schemas"]["BristolType"] | null;
-            /** @description Stool color description */
-            color?: components["schemas"]["Color"] | null;
             /**
              * Date Time
              * @description Date and time of the bowel movement
              */
             date_time?: string | null;
-            /**
-             * Id
-             * @description Unique identifier for the poop record
-             */
-            id: number;
+            /** @description Bristol Stool Scale type (1-7) */
+            bristol_type?: components["schemas"]["BristolType"] | null;
+            /** @description Stool color description */
+            color?: components["schemas"]["Color"] | null;
             /**
              * Notes
              * @description Optional notes about the bowel movement
@@ -7813,6 +7849,11 @@ export interface components {
             notes?: string | null;
             /** @description Source of the data */
             source?: components["schemas"]["modules__health__health_poop__schema__Source"] | null;
+            /**
+             * Id
+             * @description Unique identifier for the poop record
+             */
+            id: number;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -7828,30 +7869,110 @@ export interface components {
          */
         HealthSleepCreate: {
             /**
+             * Date
+             * @description Calendar date of the sleep session
+             */
+            date?: string | null;
+            /**
+             * Sleep Start Time Gmt
+             * @description Start time of sleep in GMT
+             */
+            sleep_start_time_gmt?: string | null;
+            /**
+             * Sleep End Time Gmt
+             * @description End time of sleep in GMT
+             */
+            sleep_end_time_gmt?: string | null;
+            /**
+             * Sleep Start Time Local
+             * @description Start time of sleep in local time
+             */
+            sleep_start_time_local?: string | null;
+            /**
+             * Sleep End Time Local
+             * @description End time of sleep in local time
+             */
+            sleep_end_time_local?: string | null;
+            /**
+             * Total Sleep Seconds
+             * @description Total duration of sleep in seconds
+             */
+            total_sleep_seconds?: number | null;
+            /**
+             * Nap Time Seconds
+             * @description Duration of naps in seconds
+             */
+            nap_time_seconds?: number | null;
+            /**
+             * Unmeasurable Sleep Seconds
+             * @description Unmeasurable sleep duration in seconds
+             */
+            unmeasurable_sleep_seconds?: number | null;
+            /**
+             * Deep Sleep Seconds
+             * @description Duration of deep sleep in seconds
+             */
+            deep_sleep_seconds?: number | null;
+            /**
+             * Light Sleep Seconds
+             * @description Duration of light sleep in seconds
+             */
+            light_sleep_seconds?: number | null;
+            /**
+             * Rem Sleep Seconds
+             * @description Duration of REM sleep in seconds
+             */
+            rem_sleep_seconds?: number | null;
+            /**
+             * Awake Sleep Seconds
+             * @description Duration of awake time in seconds
+             */
+            awake_sleep_seconds?: number | null;
+            /**
              * Avg Heart Rate
              * @description Average heart rate during sleep
              */
             avg_heart_rate?: number | null;
+            /**
+             * Min Heart Rate
+             * @description Minimum heart rate during sleep
+             */
+            min_heart_rate?: number | null;
+            /**
+             * Max Heart Rate
+             * @description Maximum heart rate during sleep
+             */
+            max_heart_rate?: number | null;
+            /**
+             * Avg Spo2
+             * @description Average SpO2 oxygen saturation percentage
+             */
+            avg_spo2?: number | null;
+            /**
+             * Lowest Spo2
+             * @description Lowest SpO2 reading during sleep
+             */
+            lowest_spo2?: number | null;
+            /**
+             * Highest Spo2
+             * @description Highest SpO2 reading during sleep
+             */
+            highest_spo2?: number | null;
             /**
              * Avg Respiration
              * @description Average respiration rate
              */
             avg_respiration?: number | null;
             /**
-             * Avg Skin Temp Deviation
-             * @description Average skin temperature deviation
+             * Lowest Respiration
+             * @description Lowest respiration rate
              */
-            avg_skin_temp_deviation?: number | null;
+            lowest_respiration?: number | null;
             /**
-             * Avg Sleep Stress
-             * @description Average sleep stress
+             * Highest Respiration
+             * @description Highest respiration rate
              */
-            avg_sleep_stress?: number | null;
-            /**
-             * Avg Spo2
-             * @description Average SpO2 oxygen saturation percentage
-             */
-            avg_spo2?: number | null;
+            highest_respiration?: number | null;
             /**
              * Avg Stress Level
              * @description Average stress level
@@ -7862,139 +7983,59 @@ export interface components {
              * @description Number of times awake during sleep
              */
             awake_count?: number | null;
-            /** @description Awake count score */
-            awake_count_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Awake Sleep Seconds
-             * @description Duration of awake time in seconds
-             */
-            awake_sleep_seconds?: number | null;
-            /**
-             * Date
-             * @description Calendar date of the sleep session
-             */
-            date?: string | null;
-            /** @description Deep sleep percentage score */
-            deep_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Deep Sleep Seconds
-             * @description Duration of deep sleep in seconds
-             */
-            deep_sleep_seconds?: number | null;
-            /**
-             * Garminconnect Sleep Id
-             * @description Garmin Connect sleep record ID
-             */
-            garminconnect_sleep_id?: string | null;
-            /**
-             * Highest Respiration
-             * @description Highest respiration rate
-             */
-            highest_respiration?: number | null;
-            /**
-             * Highest Spo2
-             * @description Highest SpO2 reading during sleep
-             */
-            highest_spo2?: number | null;
-            /** @description Heart rate variability status */
-            hrv_status?: components["schemas"]["HRVStatus"] | null;
-            /** @description Light sleep percentage score */
-            light_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Light Sleep Seconds
-             * @description Duration of light sleep in seconds
-             */
-            light_sleep_seconds?: number | null;
-            /**
-             * Lowest Respiration
-             * @description Lowest respiration rate
-             */
-            lowest_respiration?: number | null;
-            /**
-             * Lowest Spo2
-             * @description Lowest SpO2 reading during sleep
-             */
-            lowest_spo2?: number | null;
-            /**
-             * Max Heart Rate
-             * @description Maximum heart rate during sleep
-             */
-            max_heart_rate?: number | null;
-            /**
-             * Min Heart Rate
-             * @description Minimum heart rate during sleep
-             */
-            min_heart_rate?: number | null;
-            /**
-             * Nap Time Seconds
-             * @description Duration of naps in seconds
-             */
-            nap_time_seconds?: number | null;
-            /** @description REM percentage score */
-            rem_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Rem Sleep Seconds
-             * @description Duration of REM sleep in seconds
-             */
-            rem_sleep_seconds?: number | null;
-            /**
-             * Resting Heart Rate
-             * @description Resting heart rate
-             */
-            resting_heart_rate?: number | null;
             /**
              * Restless Moments Count
              * @description Number of restless moments during sleep
              */
             restless_moments_count?: number | null;
             /**
-             * Sleep End Time Gmt
-             * @description End time of sleep in GMT
-             */
-            sleep_end_time_gmt?: string | null;
-            /**
-             * Sleep End Time Local
-             * @description End time of sleep in local time
-             */
-            sleep_end_time_local?: string | null;
-            /** @description Sleep duration score */
-            sleep_score_duration?: components["schemas"]["SleepScore"] | null;
-            /**
              * Sleep Score Overall
              * @description Overall sleep score (0-100)
              */
             sleep_score_overall?: number | null;
+            /** @description Sleep duration score */
+            sleep_score_duration?: components["schemas"]["SleepScore"] | null;
             /** @description Sleep quality score */
             sleep_score_quality?: components["schemas"]["SleepScore"] | null;
+            /**
+             * Garminconnect Sleep Id
+             * @description Garmin Connect sleep record ID
+             */
+            garminconnect_sleep_id?: string | null;
             /**
              * Sleep Stages
              * @description List of sleep stages
              */
             sleep_stages?: components["schemas"]["HealthSleepStage"][] | null;
-            /**
-             * Sleep Start Time Gmt
-             * @description Start time of sleep in GMT
-             */
-            sleep_start_time_gmt?: string | null;
-            /**
-             * Sleep Start Time Local
-             * @description Start time of sleep in local time
-             */
-            sleep_start_time_local?: string | null;
-            /** @description Sleep stress score */
-            sleep_stress_score?: components["schemas"]["SleepScore"] | null;
             /** @description Source of the sleep data */
             source?: components["schemas"]["modules__health__health_sleep__schema__Source"] | null;
+            /** @description Heart rate variability status */
+            hrv_status?: components["schemas"]["HRVStatus"] | null;
             /**
-             * Total Sleep Seconds
-             * @description Total duration of sleep in seconds
+             * Resting Heart Rate
+             * @description Resting heart rate
              */
-            total_sleep_seconds?: number | null;
+            resting_heart_rate?: number | null;
             /**
-             * Unmeasurable Sleep Seconds
-             * @description Unmeasurable sleep duration in seconds
+             * Avg Skin Temp Deviation
+             * @description Average skin temperature deviation
              */
-            unmeasurable_sleep_seconds?: number | null;
+            avg_skin_temp_deviation?: number | null;
+            /** @description Awake count score */
+            awake_count_score?: components["schemas"]["SleepScore"] | null;
+            /** @description REM percentage score */
+            rem_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /** @description Deep sleep percentage score */
+            deep_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /** @description Light sleep percentage score */
+            light_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /**
+             * Avg Sleep Stress
+             * @description Average sleep stress
+             */
+            avg_sleep_stress?: number | null;
+            /** @description Sleep stress score */
+            sleep_stress_score?: components["schemas"]["SleepScore"] | null;
         };
         /**
          * HealthSleepDashboard
@@ -8008,25 +8049,25 @@ export interface components {
          */
         HealthSleepDashboard: {
             /**
-             * Avg Skin Temp Deviation
-             * @description Average skin temperature deviation
+             * Total Sleep Seconds
+             * @description Total sleep duration in seconds
              */
-            avg_skin_temp_deviation?: number | null;
-            /**
-             * Hrv Status
-             * @description Heart rate variability status
-             */
-            hrv_status?: string | null;
+            total_sleep_seconds?: number | null;
             /**
              * Resting Heart Rate
              * @description Resting heart rate in bpm
              */
             resting_heart_rate?: number | null;
             /**
-             * Total Sleep Seconds
-             * @description Total sleep duration in seconds
+             * Hrv Status
+             * @description Heart rate variability status
              */
-            total_sleep_seconds?: number | null;
+            hrv_status?: string | null;
+            /**
+             * Avg Skin Temp Deviation
+             * @description Average skin temperature deviation
+             */
+            avg_skin_temp_deviation?: number | null;
         };
         /**
          * HealthSleepListResponse
@@ -8042,6 +8083,11 @@ export interface components {
          */
         HealthSleepListResponse: {
             /**
+             * Total
+             * @description Total number of health records for the user
+             */
+            total: number;
+            /**
              * Num Records
              * @description Number of records in this response
              */
@@ -8056,11 +8102,6 @@ export interface components {
              * @description List of health sleep records
              */
             records: components["schemas"]["HealthSleepRead"][];
-            /**
-             * Total
-             * @description Total number of health records for the user
-             */
-            total: number;
         };
         /**
          * HealthSleepRead
@@ -8075,30 +8116,110 @@ export interface components {
          */
         HealthSleepRead: {
             /**
+             * Date
+             * @description Calendar date of the sleep session
+             */
+            date?: string | null;
+            /**
+             * Sleep Start Time Gmt
+             * @description Start time of sleep in GMT
+             */
+            sleep_start_time_gmt?: string | null;
+            /**
+             * Sleep End Time Gmt
+             * @description End time of sleep in GMT
+             */
+            sleep_end_time_gmt?: string | null;
+            /**
+             * Sleep Start Time Local
+             * @description Start time of sleep in local time
+             */
+            sleep_start_time_local?: string | null;
+            /**
+             * Sleep End Time Local
+             * @description End time of sleep in local time
+             */
+            sleep_end_time_local?: string | null;
+            /**
+             * Total Sleep Seconds
+             * @description Total duration of sleep in seconds
+             */
+            total_sleep_seconds?: number | null;
+            /**
+             * Nap Time Seconds
+             * @description Duration of naps in seconds
+             */
+            nap_time_seconds?: number | null;
+            /**
+             * Unmeasurable Sleep Seconds
+             * @description Unmeasurable sleep duration in seconds
+             */
+            unmeasurable_sleep_seconds?: number | null;
+            /**
+             * Deep Sleep Seconds
+             * @description Duration of deep sleep in seconds
+             */
+            deep_sleep_seconds?: number | null;
+            /**
+             * Light Sleep Seconds
+             * @description Duration of light sleep in seconds
+             */
+            light_sleep_seconds?: number | null;
+            /**
+             * Rem Sleep Seconds
+             * @description Duration of REM sleep in seconds
+             */
+            rem_sleep_seconds?: number | null;
+            /**
+             * Awake Sleep Seconds
+             * @description Duration of awake time in seconds
+             */
+            awake_sleep_seconds?: number | null;
+            /**
              * Avg Heart Rate
              * @description Average heart rate during sleep
              */
             avg_heart_rate?: number | null;
+            /**
+             * Min Heart Rate
+             * @description Minimum heart rate during sleep
+             */
+            min_heart_rate?: number | null;
+            /**
+             * Max Heart Rate
+             * @description Maximum heart rate during sleep
+             */
+            max_heart_rate?: number | null;
+            /**
+             * Avg Spo2
+             * @description Average SpO2 oxygen saturation percentage
+             */
+            avg_spo2?: number | null;
+            /**
+             * Lowest Spo2
+             * @description Lowest SpO2 reading during sleep
+             */
+            lowest_spo2?: number | null;
+            /**
+             * Highest Spo2
+             * @description Highest SpO2 reading during sleep
+             */
+            highest_spo2?: number | null;
             /**
              * Avg Respiration
              * @description Average respiration rate
              */
             avg_respiration?: number | null;
             /**
-             * Avg Skin Temp Deviation
-             * @description Average skin temperature deviation
+             * Lowest Respiration
+             * @description Lowest respiration rate
              */
-            avg_skin_temp_deviation?: number | null;
+            lowest_respiration?: number | null;
             /**
-             * Avg Sleep Stress
-             * @description Average sleep stress
+             * Highest Respiration
+             * @description Highest respiration rate
              */
-            avg_sleep_stress?: number | null;
-            /**
-             * Avg Spo2
-             * @description Average SpO2 oxygen saturation percentage
-             */
-            avg_spo2?: number | null;
+            highest_respiration?: number | null;
             /**
              * Avg Stress Level
              * @description Average stress level
@@ -8109,144 +8230,64 @@ export interface components {
              * @description Number of times awake during sleep
              */
             awake_count?: number | null;
-            /** @description Awake count score */
-            awake_count_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Awake Sleep Seconds
-             * @description Duration of awake time in seconds
-             */
-            awake_sleep_seconds?: number | null;
-            /**
-             * Date
-             * @description Calendar date of the sleep session
-             */
-            date?: string | null;
-            /** @description Deep sleep percentage score */
-            deep_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Deep Sleep Seconds
-             * @description Duration of deep sleep in seconds
-             */
-            deep_sleep_seconds?: number | null;
-            /**
-             * Garminconnect Sleep Id
-             * @description Garmin Connect sleep record ID
-             */
-            garminconnect_sleep_id?: string | null;
-            /**
-             * Highest Respiration
-             * @description Highest respiration rate
-             */
-            highest_respiration?: number | null;
-            /**
-             * Highest Spo2
-             * @description Highest SpO2 reading during sleep
-             */
-            highest_spo2?: number | null;
-            /** @description Heart rate variability status */
-            hrv_status?: components["schemas"]["HRVStatus"] | null;
-            /**
-             * Id
-             * @description Unique identifier for the sleep record to update
-             */
-            id: number;
-            /** @description Light sleep percentage score */
-            light_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Light Sleep Seconds
-             * @description Duration of light sleep in seconds
-             */
-            light_sleep_seconds?: number | null;
-            /**
-             * Lowest Respiration
-             * @description Lowest respiration rate
-             */
-            lowest_respiration?: number | null;
-            /**
-             * Lowest Spo2
-             * @description Lowest SpO2 reading during sleep
-             */
-            lowest_spo2?: number | null;
-            /**
-             * Max Heart Rate
-             * @description Maximum heart rate during sleep
-             */
-            max_heart_rate?: number | null;
-            /**
-             * Min Heart Rate
-             * @description Minimum heart rate during sleep
-             */
-            min_heart_rate?: number | null;
-            /**
-             * Nap Time Seconds
-             * @description Duration of naps in seconds
-             */
-            nap_time_seconds?: number | null;
-            /** @description REM percentage score */
-            rem_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Rem Sleep Seconds
-             * @description Duration of REM sleep in seconds
-             */
-            rem_sleep_seconds?: number | null;
-            /**
-             * Resting Heart Rate
-             * @description Resting heart rate
-             */
-            resting_heart_rate?: number | null;
             /**
              * Restless Moments Count
              * @description Number of restless moments during sleep
              */
             restless_moments_count?: number | null;
             /**
-             * Sleep End Time Gmt
-             * @description End time of sleep in GMT
-             */
-            sleep_end_time_gmt?: string | null;
-            /**
-             * Sleep End Time Local
-             * @description End time of sleep in local time
-             */
-            sleep_end_time_local?: string | null;
-            /** @description Sleep duration score */
-            sleep_score_duration?: components["schemas"]["SleepScore"] | null;
-            /**
              * Sleep Score Overall
              * @description Overall sleep score (0-100)
              */
             sleep_score_overall?: number | null;
+            /** @description Sleep duration score */
+            sleep_score_duration?: components["schemas"]["SleepScore"] | null;
             /** @description Sleep quality score */
             sleep_score_quality?: components["schemas"]["SleepScore"] | null;
+            /**
+             * Garminconnect Sleep Id
+             * @description Garmin Connect sleep record ID
+             */
+            garminconnect_sleep_id?: string | null;
             /**
              * Sleep Stages
              * @description List of sleep stages
              */
             sleep_stages?: components["schemas"]["HealthSleepStage"][] | null;
-            /**
-             * Sleep Start Time Gmt
-             * @description Start time of sleep in GMT
-             */
-            sleep_start_time_gmt?: string | null;
-            /**
-             * Sleep Start Time Local
-             * @description Start time of sleep in local time
-             */
-            sleep_start_time_local?: string | null;
-            /** @description Sleep stress score */
-            sleep_stress_score?: components["schemas"]["SleepScore"] | null;
             /** @description Source of the sleep data */
             source?: components["schemas"]["modules__health__health_sleep__schema__Source"] | null;
+            /** @description Heart rate variability status */
+            hrv_status?: components["schemas"]["HRVStatus"] | null;
             /**
-             * Total Sleep Seconds
-             * @description Total duration of sleep in seconds
+             * Resting Heart Rate
+             * @description Resting heart rate
              */
-            total_sleep_seconds?: number | null;
+            resting_heart_rate?: number | null;
             /**
-             * Unmeasurable Sleep Seconds
-             * @description Unmeasurable sleep duration in seconds
+             * Avg Skin Temp Deviation
+             * @description Average skin temperature deviation
              */
-            unmeasurable_sleep_seconds?: number | null;
+            avg_skin_temp_deviation?: number | null;
+            /** @description Awake count score */
+            awake_count_score?: components["schemas"]["SleepScore"] | null;
+            /** @description REM percentage score */
+            rem_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /** @description Deep sleep percentage score */
+            deep_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /** @description Light sleep percentage score */
+            light_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /**
+             * Avg Sleep Stress
+             * @description Average sleep stress
+             */
+            avg_sleep_stress?: number | null;
+            /** @description Sleep stress score */
+            sleep_stress_score?: components["schemas"]["SleepScore"] | null;
+            /**
+             * Id
+             * @description Unique identifier for the sleep record to update
+             */
+            id: number;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -8267,16 +8308,6 @@ export interface components {
          *         duration_seconds: The length of the sleep stage in seconds. Must be non-negative.
          */
         HealthSleepStage: {
-            /**
-             * Duration Seconds
-             * @description Duration of the stage in seconds
-             */
-            duration_seconds?: number | null;
-            /**
-             * End Time Gmt
-             * @description End time of the stage in GMT
-             */
-            end_time_gmt?: string | null;
             /** @description Type of sleep stage */
             stage_type?: components["schemas"]["SleepStageType"] | null;
             /**
@@ -8284,6 +8315,16 @@ export interface components {
              * @description Start time of the stage in GMT
              */
             start_time_gmt?: string | null;
+            /**
+             * End Time Gmt
+             * @description End time of the stage in GMT
+             */
+            end_time_gmt?: string | null;
+            /**
+             * Duration Seconds
+             * @description Duration of the stage in seconds
+             */
+            duration_seconds?: number | null;
         };
         /**
          * HealthSleepUpdate
@@ -8297,30 +8338,110 @@ export interface components {
          */
         HealthSleepUpdate: {
             /**
+             * Date
+             * @description Calendar date of the sleep session
+             */
+            date?: string | null;
+            /**
+             * Sleep Start Time Gmt
+             * @description Start time of sleep in GMT
+             */
+            sleep_start_time_gmt?: string | null;
+            /**
+             * Sleep End Time Gmt
+             * @description End time of sleep in GMT
+             */
+            sleep_end_time_gmt?: string | null;
+            /**
+             * Sleep Start Time Local
+             * @description Start time of sleep in local time
+             */
+            sleep_start_time_local?: string | null;
+            /**
+             * Sleep End Time Local
+             * @description End time of sleep in local time
+             */
+            sleep_end_time_local?: string | null;
+            /**
+             * Total Sleep Seconds
+             * @description Total duration of sleep in seconds
+             */
+            total_sleep_seconds?: number | null;
+            /**
+             * Nap Time Seconds
+             * @description Duration of naps in seconds
+             */
+            nap_time_seconds?: number | null;
+            /**
+             * Unmeasurable Sleep Seconds
+             * @description Unmeasurable sleep duration in seconds
+             */
+            unmeasurable_sleep_seconds?: number | null;
+            /**
+             * Deep Sleep Seconds
+             * @description Duration of deep sleep in seconds
+             */
+            deep_sleep_seconds?: number | null;
+            /**
+             * Light Sleep Seconds
+             * @description Duration of light sleep in seconds
+             */
+            light_sleep_seconds?: number | null;
+            /**
+             * Rem Sleep Seconds
+             * @description Duration of REM sleep in seconds
+             */
+            rem_sleep_seconds?: number | null;
+            /**
+             * Awake Sleep Seconds
+             * @description Duration of awake time in seconds
+             */
+            awake_sleep_seconds?: number | null;
+            /**
              * Avg Heart Rate
              * @description Average heart rate during sleep
              */
             avg_heart_rate?: number | null;
+            /**
+             * Min Heart Rate
+             * @description Minimum heart rate during sleep
+             */
+            min_heart_rate?: number | null;
+            /**
+             * Max Heart Rate
+             * @description Maximum heart rate during sleep
+             */
+            max_heart_rate?: number | null;
+            /**
+             * Avg Spo2
+             * @description Average SpO2 oxygen saturation percentage
+             */
+            avg_spo2?: number | null;
+            /**
+             * Lowest Spo2
+             * @description Lowest SpO2 reading during sleep
+             */
+            lowest_spo2?: number | null;
+            /**
+             * Highest Spo2
+             * @description Highest SpO2 reading during sleep
+             */
+            highest_spo2?: number | null;
             /**
              * Avg Respiration
              * @description Average respiration rate
              */
             avg_respiration?: number | null;
             /**
-             * Avg Skin Temp Deviation
-             * @description Average skin temperature deviation
+             * Lowest Respiration
+             * @description Lowest respiration rate
              */
-            avg_skin_temp_deviation?: number | null;
+            lowest_respiration?: number | null;
             /**
-             * Avg Sleep Stress
-             * @description Average sleep stress
+             * Highest Respiration
+             * @description Highest respiration rate
              */
-            avg_sleep_stress?: number | null;
-            /**
-             * Avg Spo2
-             * @description Average SpO2 oxygen saturation percentage
-             */
-            avg_spo2?: number | null;
+            highest_respiration?: number | null;
             /**
              * Avg Stress Level
              * @description Average stress level
@@ -8331,144 +8452,64 @@ export interface components {
              * @description Number of times awake during sleep
              */
             awake_count?: number | null;
-            /** @description Awake count score */
-            awake_count_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Awake Sleep Seconds
-             * @description Duration of awake time in seconds
-             */
-            awake_sleep_seconds?: number | null;
-            /**
-             * Date
-             * @description Calendar date of the sleep session
-             */
-            date?: string | null;
-            /** @description Deep sleep percentage score */
-            deep_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Deep Sleep Seconds
-             * @description Duration of deep sleep in seconds
-             */
-            deep_sleep_seconds?: number | null;
-            /**
-             * Garminconnect Sleep Id
-             * @description Garmin Connect sleep record ID
-             */
-            garminconnect_sleep_id?: string | null;
-            /**
-             * Highest Respiration
-             * @description Highest respiration rate
-             */
-            highest_respiration?: number | null;
-            /**
-             * Highest Spo2
-             * @description Highest SpO2 reading during sleep
-             */
-            highest_spo2?: number | null;
-            /** @description Heart rate variability status */
-            hrv_status?: components["schemas"]["HRVStatus"] | null;
-            /**
-             * Id
-             * @description Unique identifier for the sleep record to update
-             */
-            id: number;
-            /** @description Light sleep percentage score */
-            light_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Light Sleep Seconds
-             * @description Duration of light sleep in seconds
-             */
-            light_sleep_seconds?: number | null;
-            /**
-             * Lowest Respiration
-             * @description Lowest respiration rate
-             */
-            lowest_respiration?: number | null;
-            /**
-             * Lowest Spo2
-             * @description Lowest SpO2 reading during sleep
-             */
-            lowest_spo2?: number | null;
-            /**
-             * Max Heart Rate
-             * @description Maximum heart rate during sleep
-             */
-            max_heart_rate?: number | null;
-            /**
-             * Min Heart Rate
-             * @description Minimum heart rate during sleep
-             */
-            min_heart_rate?: number | null;
-            /**
-             * Nap Time Seconds
-             * @description Duration of naps in seconds
-             */
-            nap_time_seconds?: number | null;
-            /** @description REM percentage score */
-            rem_percentage_score?: components["schemas"]["SleepScore"] | null;
-            /**
-             * Rem Sleep Seconds
-             * @description Duration of REM sleep in seconds
-             */
-            rem_sleep_seconds?: number | null;
-            /**
-             * Resting Heart Rate
-             * @description Resting heart rate
-             */
-            resting_heart_rate?: number | null;
             /**
              * Restless Moments Count
              * @description Number of restless moments during sleep
              */
             restless_moments_count?: number | null;
             /**
-             * Sleep End Time Gmt
-             * @description End time of sleep in GMT
-             */
-            sleep_end_time_gmt?: string | null;
-            /**
-             * Sleep End Time Local
-             * @description End time of sleep in local time
-             */
-            sleep_end_time_local?: string | null;
-            /** @description Sleep duration score */
-            sleep_score_duration?: components["schemas"]["SleepScore"] | null;
-            /**
              * Sleep Score Overall
              * @description Overall sleep score (0-100)
              */
             sleep_score_overall?: number | null;
+            /** @description Sleep duration score */
+            sleep_score_duration?: components["schemas"]["SleepScore"] | null;
             /** @description Sleep quality score */
             sleep_score_quality?: components["schemas"]["SleepScore"] | null;
+            /**
+             * Garminconnect Sleep Id
+             * @description Garmin Connect sleep record ID
+             */
+            garminconnect_sleep_id?: string | null;
             /**
              * Sleep Stages
              * @description List of sleep stages
              */
             sleep_stages?: components["schemas"]["HealthSleepStage"][] | null;
-            /**
-             * Sleep Start Time Gmt
-             * @description Start time of sleep in GMT
-             */
-            sleep_start_time_gmt?: string | null;
-            /**
-             * Sleep Start Time Local
-             * @description Start time of sleep in local time
-             */
-            sleep_start_time_local?: string | null;
-            /** @description Sleep stress score */
-            sleep_stress_score?: components["schemas"]["SleepScore"] | null;
             /** @description Source of the sleep data */
             source?: components["schemas"]["modules__health__health_sleep__schema__Source"] | null;
+            /** @description Heart rate variability status */
+            hrv_status?: components["schemas"]["HRVStatus"] | null;
             /**
-             * Total Sleep Seconds
-             * @description Total duration of sleep in seconds
+             * Resting Heart Rate
+             * @description Resting heart rate
              */
-            total_sleep_seconds?: number | null;
+            resting_heart_rate?: number | null;
             /**
-             * Unmeasurable Sleep Seconds
-             * @description Unmeasurable sleep duration in seconds
+             * Avg Skin Temp Deviation
+             * @description Average skin temperature deviation
              */
-            unmeasurable_sleep_seconds?: number | null;
+            avg_skin_temp_deviation?: number | null;
+            /** @description Awake count score */
+            awake_count_score?: components["schemas"]["SleepScore"] | null;
+            /** @description REM percentage score */
+            rem_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /** @description Deep sleep percentage score */
+            deep_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /** @description Light sleep percentage score */
+            light_percentage_score?: components["schemas"]["SleepScore"] | null;
+            /**
+             * Avg Sleep Stress
+             * @description Average sleep stress
+             */
+            avg_sleep_stress?: number | null;
+            /** @description Sleep stress score */
+            sleep_stress_score?: components["schemas"]["SleepScore"] | null;
+            /**
+             * Id
+             * @description Unique identifier for the sleep record to update
+             */
+            id: number;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -8488,13 +8529,13 @@ export interface components {
              * @description Calendar date of the steps
              */
             date?: string | null;
-            /** @description Source of the steps data */
-            source?: components["schemas"]["modules__health__health_steps__schema__Source"] | null;
             /**
              * Steps
              * @description Number of steps taken
              */
             steps?: number | null;
+            /** @description Source of the steps data */
+            source?: components["schemas"]["modules__health__health_steps__schema__Source"] | null;
         };
         /**
          * HealthStepsDashboard
@@ -8524,6 +8565,11 @@ export interface components {
          */
         HealthStepsListResponse: {
             /**
+             * Total
+             * @description Total number of health records for the user
+             */
+            total: number;
+            /**
              * Num Records
              * @description Number of records in this response
              */
@@ -8538,11 +8584,6 @@ export interface components {
              * @description List of health steps records
              */
             records: components["schemas"]["HealthStepsRead"][];
-            /**
-             * Total
-             * @description Total number of health records for the user
-             */
-            total: number;
         };
         /**
          * HealthStepsRead
@@ -8562,17 +8603,17 @@ export interface components {
              */
             date?: string | null;
             /**
-             * Id
-             * @description Unique identifier for the steps record to update
-             */
-            id: number;
-            /** @description Source of the steps data */
-            source?: components["schemas"]["modules__health__health_steps__schema__Source"] | null;
-            /**
              * Steps
              * @description Number of steps taken
              */
             steps?: number | null;
+            /** @description Source of the steps data */
+            source?: components["schemas"]["modules__health__health_steps__schema__Source"] | null;
+            /**
+             * Id
+             * @description Unique identifier for the steps record to update
+             */
+            id: number;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -8594,17 +8635,17 @@ export interface components {
              */
             date?: string | null;
             /**
-             * Id
-             * @description Unique identifier for the steps record to update
-             */
-            id: number;
-            /** @description Source of the steps data */
-            source?: components["schemas"]["modules__health__health_steps__schema__Source"] | null;
-            /**
              * Steps
              * @description Number of steps taken
              */
             steps?: number | null;
+            /** @description Source of the steps data */
+            source?: components["schemas"]["modules__health__health_steps__schema__Source"] | null;
+            /**
+             * Id
+             * @description Unique identifier for the steps record to update
+             */
+            id: number;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -8621,45 +8662,45 @@ export interface components {
          */
         HealthTargetsRead: {
             /**
-             * Fasting
-             * @description Target fasting duration in seconds (max 72h)
+             * Weight
+             * @description Target weight in kg
              */
-            fasting?: number | null;
-            /**
-             * Id
-             * @description Unique identifier for the health target
-             */
-            id: number;
-            /**
-             * Poop Count
-             * @description Target daily bowel movement count
-             */
-            poop_count?: number | null;
-            /**
-             * Sleep
-             * @description Target sleep duration in seconds
-             */
-            sleep?: number | null;
+            weight?: number | null;
             /**
              * Steps
              * @description Target daily steps count
              */
             steps?: number | null;
             /**
-             * User Id
-             * @description Foreign key reference to the user
+             * Sleep
+             * @description Target sleep duration in seconds
              */
-            user_id: number;
+            sleep?: number | null;
+            /**
+             * Fasting
+             * @description Target fasting duration in seconds (max 72h)
+             */
+            fasting?: number | null;
             /**
              * Water Ml
              * @description Target daily water intake in milliliters
              */
             water_ml?: number | null;
             /**
-             * Weight
-             * @description Target weight in kg
+             * Poop Count
+             * @description Target daily bowel movement count
              */
-            weight?: number | null;
+            poop_count?: number | null;
+            /**
+             * Id
+             * @description Unique identifier for the health target
+             */
+            id: number;
+            /**
+             * User Id
+             * @description Foreign key reference to the user
+             */
+            user_id: number;
         };
         /**
          * HealthTargetsUpdate
@@ -8670,45 +8711,45 @@ export interface components {
          */
         HealthTargetsUpdate: {
             /**
-             * Fasting
-             * @description Target fasting duration in seconds (max 72h)
+             * Weight
+             * @description Target weight in kg
              */
-            fasting?: number | null;
-            /**
-             * Id
-             * @description Unique identifier for the health target
-             */
-            id: number;
-            /**
-             * Poop Count
-             * @description Target daily bowel movement count
-             */
-            poop_count?: number | null;
-            /**
-             * Sleep
-             * @description Target sleep duration in seconds
-             */
-            sleep?: number | null;
+            weight?: number | null;
             /**
              * Steps
              * @description Target daily steps count
              */
             steps?: number | null;
             /**
-             * User Id
-             * @description Foreign key reference to the user
+             * Sleep
+             * @description Target sleep duration in seconds
              */
-            user_id: number;
+            sleep?: number | null;
+            /**
+             * Fasting
+             * @description Target fasting duration in seconds (max 72h)
+             */
+            fasting?: number | null;
             /**
              * Water Ml
              * @description Target daily water intake in milliliters
              */
             water_ml?: number | null;
             /**
-             * Weight
-             * @description Target weight in kg
+             * Poop Count
+             * @description Target daily bowel movement count
              */
-            weight?: number | null;
+            poop_count?: number | null;
+            /**
+             * Id
+             * @description Unique identifier for the health target
+             */
+            id: number;
+            /**
+             * User Id
+             * @description Foreign key reference to the user
+             */
+            user_id: number;
         };
         /**
          * HealthWaterCreate
@@ -8718,15 +8759,15 @@ export interface components {
          */
         HealthWaterCreate: {
             /**
-             * Amount Ml
-             * @description Water consumed in milliliters
-             */
-            amount_ml?: number | null;
-            /**
              * Date
              * @description Calendar date of the water intake
              */
             date?: string | null;
+            /**
+             * Amount Ml
+             * @description Water consumed in milliliters
+             */
+            amount_ml?: number | null;
             /** @description Source of the water intake data */
             source?: components["schemas"]["modules__health__health_water__schema__Source"] | null;
         };
@@ -8754,6 +8795,11 @@ export interface components {
          */
         HealthWaterListResponse: {
             /**
+             * Total
+             * @description Total number of health records for the user
+             */
+            total: number;
+            /**
              * Num Records
              * @description Number of records in this response
              */
@@ -8768,11 +8814,6 @@ export interface components {
              * @description List of health water intake records
              */
             records: components["schemas"]["HealthWaterRead"][];
-            /**
-             * Total
-             * @description Total number of health records for the user
-             */
-            total: number;
         };
         /**
          * HealthWaterRead
@@ -8784,22 +8825,22 @@ export interface components {
          */
         HealthWaterRead: {
             /**
-             * Amount Ml
-             * @description Water consumed in milliliters
-             */
-            amount_ml?: number | null;
-            /**
              * Date
              * @description Calendar date of the water intake
              */
             date?: string | null;
             /**
+             * Amount Ml
+             * @description Water consumed in milliliters
+             */
+            amount_ml?: number | null;
+            /** @description Source of the water intake data */
+            source?: components["schemas"]["modules__health__health_water__schema__Source"] | null;
+            /**
              * Id
              * @description Unique identifier for the water intake record
              */
             id: number;
-            /** @description Source of the water intake data */
-            source?: components["schemas"]["modules__health__health_water__schema__Source"] | null;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -8815,22 +8856,22 @@ export interface components {
          */
         HealthWaterUpdate: {
             /**
-             * Amount Ml
-             * @description Water consumed in milliliters
-             */
-            amount_ml?: number | null;
-            /**
              * Date
              * @description Calendar date of the water intake
              */
             date?: string | null;
             /**
+             * Amount Ml
+             * @description Water consumed in milliliters
+             */
+            amount_ml?: number | null;
+            /** @description Source of the water intake data */
+            source?: components["schemas"]["modules__health__health_water__schema__Source"] | null;
+            /**
              * Id
              * @description Unique identifier for the water intake record
              */
             id: number;
-            /** @description Source of the water intake data */
-            source?: components["schemas"]["modules__health__health_water__schema__Source"] | null;
             /**
              * User Id
              * @description Foreign key reference to the user
@@ -8846,6 +8887,16 @@ export interface components {
          */
         HealthWeightCreate: {
             /**
+             * Date
+             * @description Health weight date (date)
+             */
+            date?: string | null;
+            /**
+             * Weight
+             * @description Weight in kilograms
+             */
+            weight?: number | null;
+            /**
              * Bmi
              * @description Body Mass Index
              */
@@ -8866,16 +8917,6 @@ export interface components {
              */
             bone_mass?: number | null;
             /**
-             * Date
-             * @description Health weight date (date)
-             */
-            date?: string | null;
-            /**
-             * Metabolic Age
-             * @description Metabolic age
-             */
-            metabolic_age?: number | null;
-            /**
              * Muscle Mass
              * @description Muscle mass in kilograms
              */
@@ -8885,18 +8926,18 @@ export interface components {
              * @description Physique rating
              */
             physique_rating?: number | null;
-            /** @description Source of the weight data */
-            source?: components["schemas"]["modules__health__health_weight__schema__Source"] | null;
             /**
              * Visceral Fat
              * @description Visceral fat
              */
             visceral_fat?: number | null;
             /**
-             * Weight
-             * @description Weight in kilograms
+             * Metabolic Age
+             * @description Metabolic age
              */
-            weight?: number | null;
+            metabolic_age?: number | null;
+            /** @description Source of the weight data */
+            source?: components["schemas"]["modules__health__health_weight__schema__Source"] | null;
         };
         /**
          * HealthWeightDashboard
@@ -8908,15 +8949,15 @@ export interface components {
          */
         HealthWeightDashboard: {
             /**
-             * Bmi
-             * @description Body Mass Index
-             */
-            bmi?: number | null;
-            /**
              * Weight
              * @description Weight in kilograms
              */
             weight?: number | null;
+            /**
+             * Bmi
+             * @description Body Mass Index
+             */
+            bmi?: number | null;
         };
         /**
          * HealthWeightListResponse
@@ -8932,6 +8973,11 @@ export interface components {
          */
         HealthWeightListResponse: {
             /**
+             * Total
+             * @description Total number of health records for the user
+             */
+            total: number;
+            /**
              * Num Records
              * @description Number of records in this response
              */
@@ -8946,11 +8992,6 @@ export interface components {
              * @description List of health weight records
              */
             records: components["schemas"]["HealthWeightRead"][];
-            /**
-             * Total
-             * @description Total number of health records for the user
-             */
-            total: number;
         };
         /**
          * HealthWeightRead
@@ -8965,6 +9006,16 @@ export interface components {
          */
         HealthWeightRead: {
             /**
+             * Date
+             * @description Health weight date (date)
+             */
+            date?: string | null;
+            /**
+             * Weight
+             * @description Weight in kilograms
+             */
+            weight?: number | null;
+            /**
              * Bmi
              * @description Body Mass Index
              */
@@ -8985,21 +9036,6 @@ export interface components {
              */
             bone_mass?: number | null;
             /**
-             * Date
-             * @description Health weight date (date)
-             */
-            date?: string | null;
-            /**
-             * Id
-             * @description Unique identifier for the weight record to update
-             */
-            id: number;
-            /**
-             * Metabolic Age
-             * @description Metabolic age
-             */
-            metabolic_age?: number | null;
-            /**
              * Muscle Mass
              * @description Muscle mass in kilograms
              */
@@ -9009,23 +9045,28 @@ export interface components {
              * @description Physique rating
              */
             physique_rating?: number | null;
-            /** @description Source of the weight data */
-            source?: components["schemas"]["modules__health__health_weight__schema__Source"] | null;
-            /**
-             * User Id
-             * @description Foreign key reference to the user
-             */
-            user_id: number;
             /**
              * Visceral Fat
              * @description Visceral fat
              */
             visceral_fat?: number | null;
             /**
-             * Weight
-             * @description Weight in kilograms
+             * Metabolic Age
+             * @description Metabolic age
              */
-            weight?: number | null;
+            metabolic_age?: number | null;
+            /** @description Source of the weight data */
+            source?: components["schemas"]["modules__health__health_weight__schema__Source"] | null;
+            /**
+             * Id
+             * @description Unique identifier for the weight record to update
+             */
+            id: number;
+            /**
+             * User Id
+             * @description Foreign key reference to the user
+             */
+            user_id: number;
         };
         /**
          * HealthWeightUpdate
@@ -9037,6 +9078,16 @@ export interface components {
          */
         HealthWeightUpdate: {
             /**
+             * Date
+             * @description Health weight date (date)
+             */
+            date?: string | null;
+            /**
+             * Weight
+             * @description Weight in kilograms
+             */
+            weight?: number | null;
+            /**
              * Bmi
              * @description Body Mass Index
              */
@@ -9057,21 +9108,6 @@ export interface components {
              */
             bone_mass?: number | null;
             /**
-             * Date
-             * @description Health weight date (date)
-             */
-            date?: string | null;
-            /**
-             * Id
-             * @description Unique identifier for the weight record to update
-             */
-            id: number;
-            /**
-             * Metabolic Age
-             * @description Metabolic age
-             */
-            metabolic_age?: number | null;
-            /**
              * Muscle Mass
              * @description Muscle mass in kilograms
              */
@@ -9081,32 +9117,37 @@ export interface components {
              * @description Physique rating
              */
             physique_rating?: number | null;
-            /** @description Source of the weight data */
-            source?: components["schemas"]["modules__health__health_weight__schema__Source"] | null;
-            /**
-             * User Id
-             * @description Foreign key reference to the user
-             */
-            user_id: number;
             /**
              * Visceral Fat
              * @description Visceral fat
              */
             visceral_fat?: number | null;
             /**
-             * Weight
-             * @description Weight in kilograms
+             * Metabolic Age
+             * @description Metabolic age
              */
-            weight?: number | null;
+            metabolic_age?: number | null;
+            /** @description Source of the weight data */
+            source?: components["schemas"]["modules__health__health_weight__schema__Source"] | null;
+            /**
+             * Id
+             * @description Unique identifier for the weight record to update
+             */
+            id: number;
+            /**
+             * User Id
+             * @description Foreign key reference to the user
+             */
+            user_id: number;
         };
         /**
          * HeartRateThresholdRead
          * @description Serialized threshold heart rate, with its provenance.
          */
         HeartRateThresholdRead: {
-            source: components["schemas"]["ThresholdSource"];
             /** Value Bpm */
             value_bpm: number;
+            source: components["schemas"]["ThresholdSource"];
         };
         /**
          * IdentityProvider
@@ -9132,51 +9173,15 @@ export interface components {
          */
         IdentityProvider: {
             /**
-             * Authorization Endpoint
-             * @description OAuth2/OIDC authorization endpoint
-             */
-            authorization_endpoint?: string | null;
-            /**
-             * Auto Create Users
-             * @description Auto-create users on first login
-             * @default true
-             */
-            auto_create_users: boolean;
-            /** Client Id */
-            client_id?: string | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Enabled
-             * @description Whether this provider is enabled
-             * @default false
-             */
-            enabled: boolean;
-            /**
-             * Icon
-             * @description Icon name or URL
-             */
-            icon?: string | null;
-            /** Id */
-            id: number;
-            /**
-             * Issuer Url
-             * @description OIDC issuer/discovery URL
-             */
-            issuer_url?: string | null;
-            /**
-             * Jwks Uri
-             * @description OIDC JWKS URI
-             */
-            jwks_uri?: string | null;
-            /**
              * Name
              * @description Display name of the IdP
              */
             name: string;
+            /**
+             * Slug
+             * @description URL-safe identifier
+             */
+            slug: string;
             /**
              * Provider Type
              * @description Provider type: oidc, oauth2, or saml
@@ -9184,16 +9189,53 @@ export interface components {
              */
             provider_type: string;
             /**
+             * Enabled
+             * @description Whether this provider is enabled
+             * @default false
+             */
+            enabled: boolean;
+            /**
+             * Issuer Url
+             * @description OIDC issuer/discovery URL
+             */
+            issuer_url?: string | null;
+            /**
+             * Authorization Endpoint
+             * @description OAuth2/OIDC authorization endpoint
+             */
+            authorization_endpoint?: string | null;
+            /**
+             * Token Endpoint
+             * @description OAuth2/OIDC token endpoint
+             */
+            token_endpoint?: string | null;
+            /**
+             * Userinfo Endpoint
+             * @description OIDC userinfo endpoint
+             */
+            userinfo_endpoint?: string | null;
+            /**
+             * Jwks Uri
+             * @description OIDC JWKS URI
+             */
+            jwks_uri?: string | null;
+            /**
              * Scopes
              * @description OAuth2/OIDC scopes
              * @default openid profile email
              */
             scopes: string;
             /**
-             * Slug
-             * @description URL-safe identifier
+             * Icon
+             * @description Icon name or URL
              */
-            slug: string;
+            icon?: string | null;
+            /**
+             * Auto Create Users
+             * @description Auto-create users on first login
+             * @default true
+             */
+            auto_create_users: boolean;
             /**
              * Sync User Info
              * @description Sync user info on each login
@@ -9201,27 +9243,26 @@ export interface components {
              */
             sync_user_info: boolean;
             /**
-             * Token Endpoint
-             * @description OAuth2/OIDC token endpoint
-             */
-            token_endpoint?: string | null;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /**
              * User Mapping
              * @description Claims mapping configuration
              */
             user_mapping?: {
                 [key: string]: unknown;
             } | null;
+            /** Client Id */
+            client_id?: string | null;
+            /** Id */
+            id: number;
             /**
-             * Userinfo Endpoint
-             * @description OIDC userinfo endpoint
+             * Created At
+             * Format: date-time
              */
-            userinfo_endpoint?: string | null;
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
         };
         /**
          * IdentityProviderCreate
@@ -9235,49 +9276,15 @@ export interface components {
          */
         IdentityProviderCreate: {
             /**
-             * Authorization Endpoint
-             * @description OAuth2/OIDC authorization endpoint
-             */
-            authorization_endpoint?: string | null;
-            /**
-             * Auto Create Users
-             * @description Auto-create users on first login
-             * @default true
-             */
-            auto_create_users: boolean;
-            /** Client Id */
-            client_id?: string | null;
-            /**
-             * Client Secret
-             * @description OAuth2/OIDC client secret
-             */
-            client_secret: string;
-            /**
-             * Enabled
-             * @description Whether this provider is enabled
-             * @default false
-             */
-            enabled: boolean;
-            /**
-             * Icon
-             * @description Icon name or URL
-             */
-            icon?: string | null;
-            /**
-             * Issuer Url
-             * @description OIDC issuer/discovery URL
-             */
-            issuer_url?: string | null;
-            /**
-             * Jwks Uri
-             * @description OIDC JWKS URI
-             */
-            jwks_uri?: string | null;
-            /**
              * Name
              * @description Display name of the IdP
              */
             name: string;
+            /**
+             * Slug
+             * @description URL-safe identifier
+             */
+            slug: string;
             /**
              * Provider Type
              * @description Provider type: oidc, oauth2, or saml
@@ -9285,16 +9292,53 @@ export interface components {
              */
             provider_type: string;
             /**
+             * Enabled
+             * @description Whether this provider is enabled
+             * @default false
+             */
+            enabled: boolean;
+            /**
+             * Issuer Url
+             * @description OIDC issuer/discovery URL
+             */
+            issuer_url?: string | null;
+            /**
+             * Authorization Endpoint
+             * @description OAuth2/OIDC authorization endpoint
+             */
+            authorization_endpoint?: string | null;
+            /**
+             * Token Endpoint
+             * @description OAuth2/OIDC token endpoint
+             */
+            token_endpoint?: string | null;
+            /**
+             * Userinfo Endpoint
+             * @description OIDC userinfo endpoint
+             */
+            userinfo_endpoint?: string | null;
+            /**
+             * Jwks Uri
+             * @description OIDC JWKS URI
+             */
+            jwks_uri?: string | null;
+            /**
              * Scopes
              * @description OAuth2/OIDC scopes
              * @default openid profile email
              */
             scopes: string;
             /**
-             * Slug
-             * @description URL-safe identifier
+             * Icon
+             * @description Icon name or URL
              */
-            slug: string;
+            icon?: string | null;
+            /**
+             * Auto Create Users
+             * @description Auto-create users on first login
+             * @default true
+             */
+            auto_create_users: boolean;
             /**
              * Sync User Info
              * @description Sync user info on each login
@@ -9302,22 +9346,19 @@ export interface components {
              */
             sync_user_info: boolean;
             /**
-             * Token Endpoint
-             * @description OAuth2/OIDC token endpoint
-             */
-            token_endpoint?: string | null;
-            /**
              * User Mapping
              * @description Claims mapping configuration
              */
             user_mapping?: {
                 [key: string]: unknown;
             } | null;
+            /** Client Id */
+            client_id?: string | null;
             /**
-             * Userinfo Endpoint
-             * @description OIDC userinfo endpoint
+             * Client Secret
+             * @description OAuth2/OIDC client secret
              */
-            userinfo_endpoint?: string | null;
+            client_secret: string;
         };
         /**
          * IdentityProviderPublic
@@ -9333,14 +9374,14 @@ export interface components {
          *         model_config (dict): Pydantic model configuration to allow population from ORM attributes.
          */
         IdentityProviderPublic: {
-            /** Icon */
-            icon?: string | null;
             /** Id */
             id: number;
             /** Name */
             name: string;
             /** Slug */
             slug: string;
+            /** Icon */
+            icon?: string | null;
         };
         /**
          * IdentityProviderTemplate
@@ -9359,34 +9400,34 @@ export interface components {
          */
         IdentityProviderTemplate: {
             /**
-             * Configuration Notes
-             * @description Setup instructions for this IdP
+             * Template Id
+             * @description Template identifier (e.g., 'keycloak', 'authentik')
              */
-            configuration_notes?: string | null;
+            template_id: string;
+            /** Name */
+            name: string;
+            /** Provider Type */
+            provider_type: string;
+            /** Issuer Url */
+            issuer_url?: string | null;
+            /** Scopes */
+            scopes: string;
+            /** Icon */
+            icon?: string | null;
+            /** User Mapping */
+            user_mapping?: {
+                [key: string]: unknown;
+            } | null;
             /**
              * Description
              * @description Description of this template
              */
             description: string;
-            /** Icon */
-            icon?: string | null;
-            /** Issuer Url */
-            issuer_url?: string | null;
-            /** Name */
-            name: string;
-            /** Provider Type */
-            provider_type: string;
-            /** Scopes */
-            scopes: string;
             /**
-             * Template Id
-             * @description Template identifier (e.g., 'keycloak', 'authentik')
+             * Configuration Notes
+             * @description Setup instructions for this IdP
              */
-            template_id: string;
-            /** User Mapping */
-            user_mapping?: {
-                [key: string]: unknown;
-            } | null;
+            configuration_notes?: string | null;
         };
         /**
          * IdentityProviderUpdate
@@ -9400,46 +9441,15 @@ export interface components {
          */
         IdentityProviderUpdate: {
             /**
-             * Authorization Endpoint
-             * @description OAuth2/OIDC authorization endpoint
-             */
-            authorization_endpoint?: string | null;
-            /**
-             * Auto Create Users
-             * @description Auto-create users on first login
-             * @default true
-             */
-            auto_create_users: boolean;
-            /** Client Id */
-            client_id?: string | null;
-            /** Client Secret */
-            client_secret?: string | null;
-            /**
-             * Enabled
-             * @description Whether this provider is enabled
-             * @default false
-             */
-            enabled: boolean;
-            /**
-             * Icon
-             * @description Icon name or URL
-             */
-            icon?: string | null;
-            /**
-             * Issuer Url
-             * @description OIDC issuer/discovery URL
-             */
-            issuer_url?: string | null;
-            /**
-             * Jwks Uri
-             * @description OIDC JWKS URI
-             */
-            jwks_uri?: string | null;
-            /**
              * Name
              * @description Display name of the IdP
              */
             name: string;
+            /**
+             * Slug
+             * @description URL-safe identifier
+             */
+            slug: string;
             /**
              * Provider Type
              * @description Provider type: oidc, oauth2, or saml
@@ -9447,16 +9457,53 @@ export interface components {
              */
             provider_type: string;
             /**
+             * Enabled
+             * @description Whether this provider is enabled
+             * @default false
+             */
+            enabled: boolean;
+            /**
+             * Issuer Url
+             * @description OIDC issuer/discovery URL
+             */
+            issuer_url?: string | null;
+            /**
+             * Authorization Endpoint
+             * @description OAuth2/OIDC authorization endpoint
+             */
+            authorization_endpoint?: string | null;
+            /**
+             * Token Endpoint
+             * @description OAuth2/OIDC token endpoint
+             */
+            token_endpoint?: string | null;
+            /**
+             * Userinfo Endpoint
+             * @description OIDC userinfo endpoint
+             */
+            userinfo_endpoint?: string | null;
+            /**
+             * Jwks Uri
+             * @description OIDC JWKS URI
+             */
+            jwks_uri?: string | null;
+            /**
              * Scopes
              * @description OAuth2/OIDC scopes
              * @default openid profile email
              */
             scopes: string;
             /**
-             * Slug
-             * @description URL-safe identifier
+             * Icon
+             * @description Icon name or URL
              */
-            slug: string;
+            icon?: string | null;
+            /**
+             * Auto Create Users
+             * @description Auto-create users on first login
+             * @default true
+             */
+            auto_create_users: boolean;
             /**
              * Sync User Info
              * @description Sync user info on each login
@@ -9464,22 +9511,16 @@ export interface components {
              */
             sync_user_info: boolean;
             /**
-             * Token Endpoint
-             * @description OAuth2/OIDC token endpoint
-             */
-            token_endpoint?: string | null;
-            /**
              * User Mapping
              * @description Claims mapping configuration
              */
             user_mapping?: {
                 [key: string]: unknown;
             } | null;
-            /**
-             * Userinfo Endpoint
-             * @description OIDC userinfo endpoint
-             */
-            userinfo_endpoint?: string | null;
+            /** Client Id */
+            client_id?: string | null;
+            /** Client Secret */
+            client_secret?: string | null;
         };
         /**
          * IdpLinkTokenRequest
@@ -9518,16 +9559,16 @@ export interface components {
          */
         IdpLinkTokenResponse: {
             /**
+             * Token
+             * @description One-time link token
+             */
+            token: string;
+            /**
              * Expires At
              * Format: date-time
              * @description Token expiration timestamp
              */
             expires_at: string;
-            /**
-             * Token
-             * @description One-time link token
-             */
-            token: string;
         };
         /**
          * IngestionJobErrorCode
@@ -9584,26 +9625,26 @@ export interface components {
          *         climb_if: Above this intensity even a graded effort is a rep, not a climb.
          */
         IntervalRulesRead: {
+            /** Open W */
+            open_w: number;
+            /** Close W */
+            close_w: number;
+            /** Min Segment S */
+            min_segment_s: number;
+            /** Short Segment S */
+            short_segment_s: number;
+            /** Short Base */
+            short_base: number;
+            /** Strong Base */
+            strong_base: number;
+            /** Recovery W */
+            recovery_w: number;
+            /** Effort If */
+            effort_if: number;
             /** Climb Grade Pct */
             climb_grade_pct: number;
             /** Climb If */
             climb_if: number;
-            /** Close W */
-            close_w: number;
-            /** Effort If */
-            effort_if: number;
-            /** Min Segment S */
-            min_segment_s: number;
-            /** Open W */
-            open_w: number;
-            /** Recovery W */
-            recovery_w: number;
-            /** Short Base */
-            short_base: number;
-            /** Short Segment S */
-            short_segment_s: number;
-            /** Strong Base */
-            strong_base: number;
         };
         /**
          * IntervalSegmentRead
@@ -9627,33 +9668,33 @@ export interface components {
          *             ``None`` when there is no score.
          */
         IntervalSegmentRead: {
-            /** Avg Grade Pct */
-            avg_grade_pct: number | null;
-            /** Avg Power W */
-            avg_power_w: number;
-            /** Avg Speed Ms */
-            avg_speed_ms: number | null;
-            /** Contrast */
-            contrast: number;
-            /** Distance M */
-            distance_m: number;
+            kind: components["schemas"]["SegmentKind"];
+            /** Start S */
+            start_s: number;
             /** Duration S */
             duration_s: number;
+            /** Distance M */
+            distance_m: number;
+            /** Avg Power W */
+            avg_power_w: number;
+            /** Intensity Factor */
+            intensity_factor: number;
+            /** Contrast */
+            contrast: number;
+            /** Avg Grade Pct */
+            avg_grade_pct: number | null;
+            /** Avg Speed Ms */
+            avg_speed_ms: number | null;
+            /** Pace Adjusted Ms */
+            pace_adjusted_ms?: number | null;
             /** Elevation Gain M */
             elevation_gain_m?: number | null;
             /** Elevation Loss M */
             elevation_loss_m?: number | null;
-            /** Intensity Factor */
-            intensity_factor: number;
-            kind: components["schemas"]["SegmentKind"];
-            /** Pace Adjusted Ms */
-            pace_adjusted_ms?: number | null;
             /** Rss */
             rss?: number | null;
             /** Rss Per Min */
             rss_per_min?: number | null;
-            /** Start S */
-            start_s: number;
         };
         /**
          * Language
@@ -9720,28 +9761,28 @@ export interface components {
          *             scores), ``None`` when no critical speed exists for the sport.
          */
         LapDynamicsRead: {
+            /** Lap Id */
+            lap_id: number;
             /** Avg Power W */
             avg_power_w: number | null;
+            /** Stride Length M */
+            stride_length_m: number | null;
             /** Elevation Gain M */
             elevation_gain_m?: number | null;
             /** Elevation Loss M */
             elevation_loss_m?: number | null;
-            /** Lap Id */
-            lap_id: number;
-            /** Rap Ms */
-            rap_ms?: number | null;
             /** Rss */
             rss?: number | null;
-            /** Rss Per Min */
-            rss_per_min?: number | null;
             /** Rss Source */
             rss_source?: string | null;
+            /** Rss Per Min */
+            rss_per_min?: number | null;
+            /** Rap Ms */
+            rap_ms?: number | null;
             /** Source Scores */
             source_scores?: {
                 [key: string]: number;
             } | null;
-            /** Stride Length M */
-            stride_length_m: number | null;
         };
         /**
          * LicenseInfo
@@ -9753,10 +9794,10 @@ export interface components {
          *         url: Public license URL.
          */
         LicenseInfo: {
-            /** Identifier */
-            identifier: string;
             /** Name */
             name: string;
+            /** Identifier */
+            identifier: string;
             /** Url */
             url: string;
         };
@@ -9769,23 +9810,6 @@ export interface components {
          *         type_breakdown: Optional breakdown by type.
          */
         LifetimeSummaryRead: {
-            /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Breakdown
-             * @description List of yearly summaries
-             */
-            breakdown: components["schemas"]["YearlyPeriodSummary"][];
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
             /**
              * Total Distance
              * @description Total distance in meters
@@ -9804,6 +9828,23 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
+            /**
+             * Breakdown
+             * @description List of yearly summaries
+             */
+            breakdown: components["schemas"]["YearlyPeriodSummary"][];
             /**
              * Type Breakdown
              * @description Optional breakdown by activity type
@@ -9872,8 +9913,6 @@ export interface components {
          *         created_at: Timestamp when the current set of codes was generated.
          */
         MFABackupCodeStatus: {
-            /** Created At */
-            created_at?: string | null;
             /** Has Codes */
             has_codes: boolean;
             /** Total */
@@ -9882,6 +9921,8 @@ export interface components {
             unused: number;
             /** Used */
             used: number;
+            /** Created At */
+            created_at?: string | null;
         };
         /**
          * MFABackupCodesResponse
@@ -9928,15 +9969,15 @@ export interface components {
          */
         MFADisableRequest: {
             /**
-             * Current Password
-             * @description Current password (step-up verification). Required when the account has a local password.
-             */
-            current_password?: string | null;
-            /**
              * Mfa Code
              * @description MFA code (6-digit TOTP or XXXX-XXXX)
              */
             mfa_code: string;
+            /**
+             * Current Password
+             * @description Current password (step-up verification). Required when the account has a local password.
+             */
+            current_password?: string | null;
         };
         /**
          * MFALoginRequest
@@ -9947,10 +9988,10 @@ export interface components {
          *         mfa_code: Either a 6-digit TOTP code or a backup code.
          */
         MFALoginRequest: {
-            /** Mfa Code */
-            mfa_code: string;
             /** Username */
             username: string;
+            /** Mfa Code */
+            mfa_code: string;
         };
         /**
          * MFARequiredResponse
@@ -9963,17 +10004,17 @@ export interface components {
          */
         MFARequiredResponse: {
             /**
-             * Message
-             * @default MFA verification required
-             */
-            message: string;
-            /**
              * Mfa Required
              * @default true
              */
             mfa_required: boolean;
             /** Username */
             username: string;
+            /**
+             * Message
+             * @default MFA verification required
+             */
+            message: string;
         };
         /**
          * MFASetupRequest
@@ -10004,15 +10045,15 @@ export interface components {
          */
         MFASetupRequest: {
             /**
-             * Current Password
-             * @description Current password (step-up verification). Required when the account has a local password.
-             */
-            current_password?: string | null;
-            /**
              * Mfa Code
              * @description 6-digit TOTP code
              */
             mfa_code: string;
+            /**
+             * Current Password
+             * @description Current password (step-up verification). Required when the account has a local password.
+             */
+            current_password?: string | null;
         };
         /**
          * MFASetupResponse
@@ -10025,21 +10066,21 @@ export interface components {
          */
         MFASetupResponse: {
             /**
-             * App Name
-             * @description Application name for MFA
-             * @default Endurain
+             * Secret
+             * @description TOTP secret key
              */
-            app_name: string;
+            secret: string;
             /**
              * Qr Code
              * @description Base64-encoded QR code image
              */
             qr_code: string;
             /**
-             * Secret
-             * @description TOTP secret key
+             * App Name
+             * @description Application name for MFA
+             * @default Endurain
              */
-            secret: string;
+            app_name: string;
         };
         /**
          * MFAStatusResponse
@@ -10084,18 +10125,18 @@ export interface components {
          *         message: Instructions for the client on next steps.
          */
         MobileSessionResponse: {
-            /**
-             * Message
-             * @default Complete authentication by exchanging tokens at /public/idp/session/{session_id}/tokens
-             */
-            message: string;
+            /** Session Id */
+            session_id: string;
             /**
              * Mfa Required
              * @default false
              */
             mfa_required: boolean;
-            /** Session Id */
-            session_id: string;
+            /**
+             * Message
+             * @default Complete authentication by exchanging tokens at /public/idp/session/{session_id}/tokens
+             */
+            message: string;
         };
         /**
          * MonthSummary
@@ -10105,23 +10146,6 @@ export interface components {
          *         month_number: Month (1=Jan, 12=Dec).
          */
         MonthSummary: {
-            /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Month Number
-             * @description Month (1=January, 12=December)
-             */
-            month_number: number;
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
             /**
              * Total Distance
              * @description Total distance in meters
@@ -10140,6 +10164,23 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
+            /**
+             * Month Number
+             * @description Month (1=January, 12=December)
+             */
+            month_number: number;
         };
         /**
          * MonthlySummaryRead
@@ -10151,23 +10192,6 @@ export interface components {
          */
         MonthlySummaryRead: {
             /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Breakdown
-             * @description List of weekly summaries
-             */
-            breakdown: components["schemas"]["WeekSummary"][];
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
-            /**
              * Total Distance
              * @description Total distance in meters
              * @default 0
@@ -10185,6 +10209,23 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
+            /**
+             * Breakdown
+             * @description List of weekly summaries
+             */
+            breakdown: components["schemas"]["WeekSummary"][];
             /**
              * Type Breakdown
              * @description Optional breakdown by activity type
@@ -10203,15 +10244,10 @@ export interface components {
          */
         NotificationRead: {
             /**
-             * Created At
-             * @description Timestamp of creation
+             * Type
+             * @description Type of the notification
              */
-            created_at?: string | null;
-            /**
-             * Id
-             * @description Unique notification ID
-             */
-            id: number;
+            type?: number | null;
             /**
              * Options
              * @description Additional notification metadata
@@ -10220,21 +10256,26 @@ export interface components {
                 [key: string]: unknown;
             } | null;
             /**
+             * Id
+             * @description Unique notification ID
+             */
+            id: number;
+            /**
+             * User Id
+             * @description FK to user
+             */
+            user_id: number;
+            /**
              * Read
              * @description Whether notification is read
              * @default false
              */
             read: boolean;
             /**
-             * Type
-             * @description Type of the notification
+             * Created At
+             * @description Timestamp of creation
              */
-            type?: number | null;
-            /**
-             * User Id
-             * @description FK to user
-             */
-            user_id: number;
+            created_at?: string | null;
         };
         /**
          * PaceCalibrationRead
@@ -10261,135 +10302,135 @@ export interface components {
          *         source: Whether the map was derived from records or stated by the athlete.
          */
         PaceCalibrationRead: {
+            /** Slope W Per Ms */
+            slope_w_per_ms: number;
+            /** Intercept W */
+            intercept_w: number;
             /**
              * Grade W Per Ms Pct
              * @default 0
              */
             grade_w_per_ms_pct: number;
-            /** Intercept W */
-            intercept_w: number;
             /** R2 */
             r2?: number | null;
-            /** Slope W Per Ms */
-            slope_w_per_ms: number;
             source: components["schemas"]["ThresholdSource"];
         };
         /** Page[ActivityLapsRead] */
         Page_ActivityLapsRead_: {
             /** Items */
             items: components["schemas"]["ActivityLapsRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /** Page[ActivityMediaRead] */
         Page_ActivityMediaRead_: {
             /** Items */
             items: components["schemas"]["ActivityMediaRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /** Page[ActivityRead] */
         Page_ActivityRead_: {
             /** Items */
             items: components["schemas"]["ActivityRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /** Page[ActivitySetsRead] */
         Page_ActivitySetsRead_: {
             /** Items */
             items: components["schemas"]["ActivitySetsRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /** Page[ActivityStreamsRead] */
         Page_ActivityStreamsRead_: {
             /** Items */
             items: components["schemas"]["ActivityStreamsRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /** Page[ActivityWorkoutStepsRead] */
         Page_ActivityWorkoutStepsRead_: {
             /** Items */
             items: components["schemas"]["ActivityWorkoutStepsRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /** Page[FollowRelationshipRead] */
         Page_FollowRelationshipRead_: {
             /** Items */
             items: components["schemas"]["FollowRelationshipRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /** Page[SegmentEffortRead] */
         Page_SegmentEffortRead_: {
             /** Items */
             items: components["schemas"]["SegmentEffortRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /** Page[SegmentListItemRead] */
         Page_SegmentListItemRead_: {
             /** Items */
             items: components["schemas"]["SegmentListItemRead"][];
-            /** Next */
-            next?: number | null;
-            /** Num Records */
-            num_records: number;
-            /** Page */
-            page: number;
             /** Total */
             total: number;
+            /** Page */
+            page: number;
+            /** Num Records */
+            num_records: number;
+            /** Next */
+            next?: number | null;
         };
         /**
          * PasswordResetConfirm
@@ -10401,15 +10442,15 @@ export interface components {
          */
         PasswordResetConfirm: {
             /**
-             * New Password
-             * @description The new password to set
-             */
-            new_password: string;
-            /**
              * Token
              * @description The reset token received by the user
              */
             token: string;
+            /**
+             * New Password
+             * @description The new password to set
+             */
+            new_password: string;
         };
         /**
          * PasswordResetRequest
@@ -10464,14 +10505,14 @@ export interface components {
         PowerDurationFitRead: {
             /** Critical Power W */
             critical_power_w: number;
+            /** W Prime J */
+            w_prime_j: number;
             /** Cv Pct */
             cv_pct: number;
             /** Fit From S */
             fit_from_s: number;
             /** Fit To S */
             fit_to_s: number;
-            /** W Prime J */
-            w_prime_j: number;
         };
         /**
          * PowerDurationOverlayRead
@@ -10484,11 +10525,11 @@ export interface components {
          *             its own CP is what shows how the threshold has moved.
          */
         PowerDurationOverlayRead: {
-            fit: components["schemas"]["PowerDurationFitRead"] | null;
             /** Months */
             months: number;
             /** Points */
             points: components["schemas"]["DurationPeakRead"][];
+            fit: components["schemas"]["PowerDurationFitRead"] | null;
         };
         /**
          * PowerDurationRead
@@ -10507,19 +10548,19 @@ export interface components {
          *             can watch where their form is going, not only where it peaked.
          */
         PowerDurationRead: {
+            /** Sport */
+            sport: string;
+            /** Points */
+            points: components["schemas"]["DurationPeakRead"][];
             fit: components["schemas"]["PowerDurationFitRead"] | null;
+            threshold: components["schemas"]["PowerThresholdRead"] | null;
+            /** Sessions */
+            sessions: components["schemas"]["PowerDurationSessionRead"][];
             /**
              * Overlays
              * @default []
              */
             overlays: components["schemas"]["PowerDurationOverlayRead"][];
-            /** Points */
-            points: components["schemas"]["DurationPeakRead"][];
-            /** Sessions */
-            sessions: components["schemas"]["PowerDurationSessionRead"][];
-            /** Sport */
-            sport: string;
-            threshold: components["schemas"]["PowerThresholdRead"] | null;
         };
         /**
          * PowerDurationSessionRead
@@ -10550,67 +10591,13 @@ export interface components {
          *         cv_pct: Fit error as a percentage of the mean, derived values only.
          */
         PowerThresholdRead: {
-            /** Cv Pct */
-            cv_pct: number | null;
-            source: components["schemas"]["ThresholdSource"];
             /** Value W */
             value_w: number;
             /** W Prime J */
             w_prime_j: number | null;
-        };
-        /**
-         * ProblemDetail
-         * @description An RFC 9457 problem document, as returned for every API error.
-         *
-         *     Declared as a model so it appears in the generated OpenAPI schema and the
-         *     frontend's typed client, rather than being an undocumented dict shape.
-         *
-         *     Attributes:
-         *         type: Stable URN identifying the error kind; the member a client should
-         *             branch on. ``about:blank`` when the status code says everything.
-         *         title: Short, human-readable summary of the error kind. Does not vary
-         *             between occurrences of the same ``type``.
-         *         status: The HTTP status code, repeated in the body so a document that has
-         *             been logged or forwarded is still self-describing.
-         *         detail: Human-readable explanation specific to this occurrence. Safe to
-         *             show a user; never carries internal diagnostics.
-         *         instance: The request path the error occurred on.
-         *         request_id: The ``X-Request-ID`` for this request, when one was assigned.
-         *             Quoting it in a bug report resolves to the exact server log line.
-         *         errors: Field-level validation failures, present only for a request
-         *             validation error.
-         */
-        ProblemDetail: {
-            /** Detail */
-            detail: string;
-            /**
-             * Errors
-             * @default null
-             */
-            errors: {
-                [key: string]: unknown;
-            }[] | null;
-            /**
-             * Instance
-             * @default null
-             */
-            instance: string | null;
-            /**
-             * Request Id
-             * @default null
-             */
-            request_id: string | null;
-            /** Status */
-            status: number;
-            /** Title */
-            title: string;
-            /**
-             * Type
-             * @default about:blank
-             */
-            type: string;
-        } & {
-            [key: string]: unknown;
+            source: components["schemas"]["ThresholdSource"];
+            /** Cv Pct */
+            cv_pct: number | null;
         };
         /**
          * ProfileUpdate
@@ -10646,27 +10633,27 @@ export interface components {
          *         repoint their avatar at another user's blob.
          */
         ProfileUpdate: {
-            /** Birthdate */
-            birthdate?: string | null;
-            /** City */
-            city?: string | null;
-            currency?: components["schemas"]["Currency"] | null;
+            /** Name */
+            name?: string | null;
+            /** Username */
+            username?: string | null;
             /** Email */
             email?: string | null;
-            first_day_of_week?: components["schemas"]["WeekDay"] | null;
+            /** City */
+            city?: string | null;
+            /** Birthdate */
+            birthdate?: string | null;
+            preferred_language?: components["schemas"]["Language"] | null;
             gender?: components["schemas"]["Gender"] | null;
+            units?: components["schemas"]["Units"] | null;
             /** Height */
             height?: number | null;
             /** Max Heart Rate */
             max_heart_rate?: number | null;
-            /** Name */
-            name?: string | null;
-            preferred_language?: components["schemas"]["Language"] | null;
+            first_day_of_week?: components["schemas"]["WeekDay"] | null;
+            currency?: components["schemas"]["Currency"] | null;
             /** Timezone */
             timezone?: string | null;
-            units?: components["schemas"]["Units"] | null;
-            /** Username */
-            username?: string | null;
         };
         /**
          * RecomputeQueued
@@ -10688,8 +10675,8 @@ export interface components {
          *         incoming: The other user's follow of the authenticated user, if any.
          */
         RelationshipRead: {
-            incoming?: components["schemas"]["FollowRelationshipRead"] | null;
             outgoing?: components["schemas"]["FollowRelationshipRead"] | null;
+            incoming?: components["schemas"]["FollowRelationshipRead"] | null;
         };
         /**
          * RssSourceTotalsRead
@@ -10705,18 +10692,18 @@ export interface components {
          *         low: The share taken slow and below the low band edge, off climbs.
          */
         RssSourceTotalsRead: {
-            /** High */
-            high?: number | null;
-            /** Low */
-            low?: number | null;
-            /** Mid */
-            mid?: number | null;
             /** Source */
             source: string;
             /** Total */
             total?: number | null;
             /** Up */
             up?: number | null;
+            /** High */
+            high?: number | null;
+            /** Mid */
+            mid?: number | null;
+            /** Low */
+            low?: number | null;
         };
         /**
          * SegmentDetailRead
@@ -10732,43 +10719,43 @@ export interface components {
          *             ``geometry``, when the source provided it.
          */
         SegmentDetailRead: {
-            /** Altitudes */
-            altitudes: number[] | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /** Created By */
-            created_by: number | null;
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            source: components["schemas"]["SegmentSource"];
+            /** Source Id */
+            source_id: string | null;
             /** Distance M */
             distance_m: number;
             /** Elevation Gain M */
             elevation_gain_m: number | null;
             /** Elevation Loss M */
             elevation_loss_m?: number | null;
-            /** Geometry */
-            geometry: number[][];
-            /** Id */
-            id: number;
-            /** Max Lat */
-            max_lat: number;
-            /** Max Lng */
-            max_lng: number;
-            /** Min Lat */
-            min_lat: number;
-            /** Min Lng */
-            min_lng: number;
-            /** Name */
-            name: string;
-            source: components["schemas"]["SegmentSource"];
-            /** Source Id */
-            source_id: string | null;
+            /** Created By */
+            created_by: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
             /**
              * Updated At
              * Format: date-time
              */
             updated_at: string;
+            /** Min Lat */
+            min_lat: number;
+            /** Min Lng */
+            min_lng: number;
+            /** Max Lat */
+            max_lat: number;
+            /** Max Lng */
+            max_lng: number;
+            /** Geometry */
+            geometry: number[][];
+            /** Altitudes */
+            altitudes: number[] | null;
         };
         /**
          * SegmentDirection
@@ -10818,49 +10805,49 @@ export interface components {
          *             athlete has no critical speed for the sport.
          */
         SegmentEffortRead: {
+            /** Segment Id */
+            segment_id: number;
             /** Activity Id */
             activity_id: number;
-            /** Activity Type */
-            activity_type?: number | null;
-            /** Avg Hr Bpm */
-            avg_hr_bpm?: number | null;
-            /** Avg Power W */
-            avg_power_w?: number | null;
+            direction: components["schemas"]["SegmentDirection"];
+            /** Pass Number */
+            pass_number: number;
+            /** Elapsed Seconds */
+            elapsed_seconds: number;
             /** Avg Speed Mps */
             avg_speed_mps: number | null;
             /** Coverage */
             coverage: number | null;
-            direction: components["schemas"]["SegmentDirection"];
-            /** Elapsed Seconds */
-            elapsed_seconds: number;
-            /** Pass Number */
-            pass_number: number;
-            /** Rap Ms */
-            rap_ms?: number | null;
-            /** Rss Per Min */
-            rss_per_min?: number | null;
-            /** Rss Source */
-            rss_source?: string | null;
-            /** Segment Id */
-            segment_id: number;
-            /** Source Scores */
-            source_scores?: {
-                [key: string]: number;
-            } | null;
-            /** Stream Index End */
-            stream_index_end: number;
-            /** Stream Index Start */
-            stream_index_start: number;
-            /**
-             * Time End
-             * Format: date-time
-             */
-            time_end: string;
             /**
              * Time Start
              * Format: date-time
              */
             time_start: string;
+            /**
+             * Time End
+             * Format: date-time
+             */
+            time_end: string;
+            /** Stream Index Start */
+            stream_index_start: number;
+            /** Stream Index End */
+            stream_index_end: number;
+            /** Activity Type */
+            activity_type?: number | null;
+            /** Avg Power W */
+            avg_power_w?: number | null;
+            /** Avg Hr Bpm */
+            avg_hr_bpm?: number | null;
+            /** Rss Per Min */
+            rss_per_min?: number | null;
+            /** Rss Source */
+            rss_source?: string | null;
+            /** Source Scores */
+            source_scores?: {
+                [key: string]: number;
+            } | null;
+            /** Rap Ms */
+            rap_ms?: number | null;
         };
         /**
          * SegmentImport
@@ -10877,16 +10864,16 @@ export interface components {
          *         source: Definition origin; ``strava`` for imported segments.
          */
         SegmentImport: {
+            /** Segment Id */
+            segment_id: number;
+            /** Name */
+            name: string;
+            /** Latlng */
+            latlng: number[][];
             /** Altitude */
             altitude?: number[] | null;
             /** Distance */
             distance?: number[] | null;
-            /** Latlng */
-            latlng: number[][];
-            /** Name */
-            name: string;
-            /** Segment Id */
-            segment_id: number;
             /** @default strava */
             source: components["schemas"]["SegmentSource"];
         };
@@ -10915,24 +10902,6 @@ export interface components {
          *         effort_count: The reader's counted (forward) efforts on this segment.
          */
         SegmentListItemRead: {
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /** Created By */
-            created_by: number | null;
-            /** Distance M */
-            distance_m: number;
-            /**
-             * Effort Count
-             * @default 0
-             */
-            effort_count: number;
-            /** Elevation Gain M */
-            elevation_gain_m: number | null;
-            /** Elevation Loss M */
-            elevation_loss_m?: number | null;
             /** Id */
             id: number;
             /** Name */
@@ -10940,11 +10909,29 @@ export interface components {
             source: components["schemas"]["SegmentSource"];
             /** Source Id */
             source_id: string | null;
+            /** Distance M */
+            distance_m: number;
+            /** Elevation Gain M */
+            elevation_gain_m: number | null;
+            /** Elevation Loss M */
+            elevation_loss_m?: number | null;
+            /** Created By */
+            created_by: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
             /**
              * Updated At
              * Format: date-time
              */
             updated_at: string;
+            /**
+             * Effort Count
+             * @default 0
+             */
+            effort_count: number;
         };
         /**
          * SegmentMatchDebugItem
@@ -10962,23 +10949,23 @@ export interface components {
          *         best_coverage: Largest coverage fraction any attempt reached.
          */
         SegmentMatchDebugItem: {
-            /** Accepted Pass Count */
-            accepted_pass_count: number;
-            /** Best Coverage */
-            best_coverage: number;
-            /** Best Span Frac */
-            best_span_frac: number;
-            /** Candidate Count */
-            candidate_count: number;
-            /** Distance M */
-            distance_m: number;
-            /** Name */
-            name: string;
-            outcome: components["schemas"]["MatchOutcome"];
-            /** Rejected Pass Count */
-            rejected_pass_count: number;
             /** Segment Id */
             segment_id: number;
+            /** Name */
+            name: string;
+            /** Distance M */
+            distance_m: number;
+            outcome: components["schemas"]["MatchOutcome"];
+            /** Candidate Count */
+            candidate_count: number;
+            /** Accepted Pass Count */
+            accepted_pass_count: number;
+            /** Rejected Pass Count */
+            rejected_pass_count: number;
+            /** Best Span Frac */
+            best_span_frac: number;
+            /** Best Coverage */
+            best_coverage: number;
         };
         /**
          * SegmentRead
@@ -10998,19 +10985,6 @@ export interface components {
          *         updated_at: Last-update timestamp.
          */
         SegmentRead: {
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /** Created By */
-            created_by: number | null;
-            /** Distance M */
-            distance_m: number;
-            /** Elevation Gain M */
-            elevation_gain_m: number | null;
-            /** Elevation Loss M */
-            elevation_loss_m?: number | null;
             /** Id */
             id: number;
             /** Name */
@@ -11018,6 +10992,19 @@ export interface components {
             source: components["schemas"]["SegmentSource"];
             /** Source Id */
             source_id: string | null;
+            /** Distance M */
+            distance_m: number;
+            /** Elevation Gain M */
+            elevation_gain_m: number | null;
+            /** Elevation Loss M */
+            elevation_loss_m?: number | null;
+            /** Created By */
+            created_by: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
             /**
              * Updated At
              * Format: date-time
@@ -11047,51 +11034,11 @@ export interface components {
          *             sign-ups (true - yes, false - no).
          */
         ServerSettingsEdit: {
-            /** @description Currency (euro, dollar, pound) */
-            currency: components["schemas"]["Currency"];
             /**
-             * Id
-             * @description Unique identifier for server settings (always 1)
+             * @description Units (metric, imperial)
+             * @default metric
              */
-            id: number;
-            /**
-             * Local Login Enabled
-             * @description Allow local username/password login (true - yes, false - no)
-             */
-            local_login_enabled: boolean;
-            /**
-             * Login Photo Set
-             * @description Is login photo set (true - yes, false - no)
-             */
-            login_photo_set: boolean;
-            /**
-             * Map Background Color
-             * @description Background color for the map (hex format)
-             */
-            map_background_color: string;
-            /**
-             * Num Records Per Page
-             * @description Number of records per page in lists
-             * @default 25
-             */
-            num_records_per_page: number;
-            /**
-             * Password Length Admin Users
-             * @description Minimum password length for admin users
-             * @default 12
-             */
-            password_length_admin_users: number;
-            /**
-             * Password Length Regular Users
-             * @description Minimum password length for regular users
-             * @default 8
-             */
-            password_length_regular_users: number;
-            /**
-             * @description Password type policy (strict, length_only)
-             * @default strict
-             */
-            password_type: components["schemas"]["PasswordType"];
+            units: components["schemas"]["Units"];
             /**
              * Public Shareable Links
              * @description Allow public shareable links (true - yes, false - no)
@@ -11103,10 +11050,86 @@ export interface components {
              */
             public_shareable_links_user_info: boolean;
             /**
+             * Login Photo Set
+             * @description Is login photo set (true - yes, false - no)
+             */
+            login_photo_set: boolean;
+            /** @description Currency (euro, dollar, pound) */
+            currency: components["schemas"]["Currency"];
+            /**
+             * Num Records Per Page
+             * @description Number of records per page in lists
+             * @default 25
+             */
+            num_records_per_page: number;
+            /**
              * Signup Enabled
              * @description Allow user sign-up registration (true - yes, false - no)
              */
             signup_enabled: boolean;
+            /**
+             * Sso Enabled
+             * @description Enable SSO/IdP login (true - yes, false - no)
+             */
+            sso_enabled: boolean;
+            /**
+             * Local Login Enabled
+             * @description Allow local username/password login (true - yes, false - no)
+             */
+            local_login_enabled: boolean;
+            /**
+             * Sso Auto Redirect
+             * @description Auto-redirect to SSO if only one IdP (true - yes, false - no)
+             */
+            sso_auto_redirect: boolean;
+            /**
+             * Tileserver Url
+             * @description URL template for the map tileserver
+             */
+            tileserver_url: string;
+            /**
+             * Tileserver Attribution
+             * @description Attribution string for the map tileserver
+             */
+            tileserver_attribution: string;
+            /**
+             * Map Background Color
+             * @description Background color for the map (hex format)
+             */
+            map_background_color: string;
+            /**
+             * Tileserver Regenerate Thumbnails On Change
+             * @description Delete and regenerate all activity thumbnails when tile server settings change
+             * @default false
+             */
+            tileserver_regenerate_thumbnails_on_change: boolean;
+            /**
+             * @description Password type policy (strict, length_only)
+             * @default strict
+             */
+            password_type: components["schemas"]["PasswordType"];
+            /**
+             * Password Length Regular Users
+             * @description Minimum password length for regular users
+             * @default 8
+             */
+            password_length_regular_users: number;
+            /**
+             * Password Length Admin Users
+             * @description Minimum password length for admin users
+             * @default 12
+             */
+            password_length_admin_users: number;
+            /**
+             * Id
+             * @description Unique identifier for server settings (always 1)
+             */
+            id: number;
+            /**
+             * Tileserver Api Key
+             * @description API key encrypted for the tile server
+             */
+            tileserver_api_key?: string | null;
             /**
              * Signup Require Admin Approval
              * @description Require admin approval for new sign-ups (true - yes, false - no)
@@ -11117,42 +11140,6 @@ export interface components {
              * @description Require email verification for new sign-ups (true - yes, false - no)
              */
             signup_require_email_verification: boolean;
-            /**
-             * Sso Auto Redirect
-             * @description Auto-redirect to SSO if only one IdP (true - yes, false - no)
-             */
-            sso_auto_redirect: boolean;
-            /**
-             * Sso Enabled
-             * @description Enable SSO/IdP login (true - yes, false - no)
-             */
-            sso_enabled: boolean;
-            /**
-             * Tileserver Api Key
-             * @description API key encrypted for the tile server
-             */
-            tileserver_api_key?: string | null;
-            /**
-             * Tileserver Attribution
-             * @description Attribution string for the map tileserver
-             */
-            tileserver_attribution: string;
-            /**
-             * Tileserver Regenerate Thumbnails On Change
-             * @description Delete and regenerate all activity thumbnails when tile server settings change
-             * @default false
-             */
-            tileserver_regenerate_thumbnails_on_change: boolean;
-            /**
-             * Tileserver Url
-             * @description URL template for the map tileserver
-             */
-            tileserver_url: string;
-            /**
-             * @description Units (metric, imperial)
-             * @default metric
-             */
-            units: components["schemas"]["Units"];
         };
         /**
          * ServerSettingsRead
@@ -11163,51 +11150,11 @@ export interface components {
          *     complete server configuration.
          */
         ServerSettingsRead: {
-            /** @description Currency (euro, dollar, pound) */
-            currency: components["schemas"]["Currency"];
             /**
-             * Id
-             * @description Unique identifier for server settings (always 1)
+             * @description Units (metric, imperial)
+             * @default metric
              */
-            id: number;
-            /**
-             * Local Login Enabled
-             * @description Allow local username/password login (true - yes, false - no)
-             */
-            local_login_enabled: boolean;
-            /**
-             * Login Photo Set
-             * @description Is login photo set (true - yes, false - no)
-             */
-            login_photo_set: boolean;
-            /**
-             * Map Background Color
-             * @description Background color for the map (hex format)
-             */
-            map_background_color: string;
-            /**
-             * Num Records Per Page
-             * @description Number of records per page in lists
-             * @default 25
-             */
-            num_records_per_page: number;
-            /**
-             * Password Length Admin Users
-             * @description Minimum password length for admin users
-             * @default 12
-             */
-            password_length_admin_users: number;
-            /**
-             * Password Length Regular Users
-             * @description Minimum password length for regular users
-             * @default 8
-             */
-            password_length_regular_users: number;
-            /**
-             * @description Password type policy (strict, length_only)
-             * @default strict
-             */
-            password_type: components["schemas"]["PasswordType"];
+            units: components["schemas"]["Units"];
             /**
              * Public Shareable Links
              * @description Allow public shareable links (true - yes, false - no)
@@ -11219,10 +11166,86 @@ export interface components {
              */
             public_shareable_links_user_info: boolean;
             /**
+             * Login Photo Set
+             * @description Is login photo set (true - yes, false - no)
+             */
+            login_photo_set: boolean;
+            /** @description Currency (euro, dollar, pound) */
+            currency: components["schemas"]["Currency"];
+            /**
+             * Num Records Per Page
+             * @description Number of records per page in lists
+             * @default 25
+             */
+            num_records_per_page: number;
+            /**
              * Signup Enabled
              * @description Allow user sign-up registration (true - yes, false - no)
              */
             signup_enabled: boolean;
+            /**
+             * Sso Enabled
+             * @description Enable SSO/IdP login (true - yes, false - no)
+             */
+            sso_enabled: boolean;
+            /**
+             * Local Login Enabled
+             * @description Allow local username/password login (true - yes, false - no)
+             */
+            local_login_enabled: boolean;
+            /**
+             * Sso Auto Redirect
+             * @description Auto-redirect to SSO if only one IdP (true - yes, false - no)
+             */
+            sso_auto_redirect: boolean;
+            /**
+             * Tileserver Url
+             * @description URL template for the map tileserver
+             */
+            tileserver_url: string;
+            /**
+             * Tileserver Attribution
+             * @description Attribution string for the map tileserver
+             */
+            tileserver_attribution: string;
+            /**
+             * Map Background Color
+             * @description Background color for the map (hex format)
+             */
+            map_background_color: string;
+            /**
+             * Tileserver Regenerate Thumbnails On Change
+             * @description Delete and regenerate all activity thumbnails when tile server settings change
+             * @default false
+             */
+            tileserver_regenerate_thumbnails_on_change: boolean;
+            /**
+             * @description Password type policy (strict, length_only)
+             * @default strict
+             */
+            password_type: components["schemas"]["PasswordType"];
+            /**
+             * Password Length Regular Users
+             * @description Minimum password length for regular users
+             * @default 8
+             */
+            password_length_regular_users: number;
+            /**
+             * Password Length Admin Users
+             * @description Minimum password length for admin users
+             * @default 12
+             */
+            password_length_admin_users: number;
+            /**
+             * Id
+             * @description Unique identifier for server settings (always 1)
+             */
+            id: number;
+            /**
+             * Tileserver Api Key
+             * @description API key encrypted for the tile server
+             */
+            tileserver_api_key?: string | null;
             /**
              * Signup Require Admin Approval
              * @description Require admin approval for new sign-ups (true - yes, false - no)
@@ -11233,42 +11256,6 @@ export interface components {
              * @description Require email verification for new sign-ups (true - yes, false - no)
              */
             signup_require_email_verification: boolean;
-            /**
-             * Sso Auto Redirect
-             * @description Auto-redirect to SSO if only one IdP (true - yes, false - no)
-             */
-            sso_auto_redirect: boolean;
-            /**
-             * Sso Enabled
-             * @description Enable SSO/IdP login (true - yes, false - no)
-             */
-            sso_enabled: boolean;
-            /**
-             * Tileserver Api Key
-             * @description API key encrypted for the tile server
-             */
-            tileserver_api_key?: string | null;
-            /**
-             * Tileserver Attribution
-             * @description Attribution string for the map tileserver
-             */
-            tileserver_attribution: string;
-            /**
-             * Tileserver Regenerate Thumbnails On Change
-             * @description Delete and regenerate all activity thumbnails when tile server settings change
-             * @default false
-             */
-            tileserver_regenerate_thumbnails_on_change: boolean;
-            /**
-             * Tileserver Url
-             * @description URL template for the map tileserver
-             */
-            tileserver_url: string;
-            /**
-             * @description Units (metric, imperial)
-             * @default metric
-             */
-            units: components["schemas"]["Units"];
         };
         /**
          * ServerSettingsReadPublic
@@ -11288,50 +11275,10 @@ export interface components {
          */
         ServerSettingsReadPublic: {
             /**
-             * Allowed Redirect Schemes
-             * @description Return the configured custom redirect schemes, sorted.
+             * @description Units (metric, imperial)
+             * @default metric
              */
-            readonly allowed_redirect_schemes: string[];
-            /** @description Currency (euro, dollar, pound) */
-            currency: components["schemas"]["Currency"];
-            /**
-             * Local Login Enabled
-             * @description Allow local username/password login (true - yes, false - no)
-             */
-            local_login_enabled: boolean;
-            /**
-             * Login Photo Set
-             * @description Is login photo set (true - yes, false - no)
-             */
-            login_photo_set: boolean;
-            /**
-             * Map Background Color
-             * @description Background color for the map (hex format)
-             */
-            map_background_color: string;
-            /**
-             * Num Records Per Page
-             * @description Number of records per page in lists
-             * @default 25
-             */
-            num_records_per_page: number;
-            /**
-             * Password Length Admin Users
-             * @description Minimum password length for admin users
-             * @default 12
-             */
-            password_length_admin_users: number;
-            /**
-             * Password Length Regular Users
-             * @description Minimum password length for regular users
-             * @default 8
-             */
-            password_length_regular_users: number;
-            /**
-             * @description Password type policy (strict, length_only)
-             * @default strict
-             */
-            password_type: components["schemas"]["PasswordType"];
+            units: components["schemas"]["Units"];
             /**
              * Public Shareable Links
              * @description Allow public shareable links (true - yes, false - no)
@@ -11343,25 +11290,53 @@ export interface components {
              */
             public_shareable_links_user_info: boolean;
             /**
+             * Login Photo Set
+             * @description Is login photo set (true - yes, false - no)
+             */
+            login_photo_set: boolean;
+            /** @description Currency (euro, dollar, pound) */
+            currency: components["schemas"]["Currency"];
+            /**
+             * Num Records Per Page
+             * @description Number of records per page in lists
+             * @default 25
+             */
+            num_records_per_page: number;
+            /**
              * Signup Enabled
              * @description Allow user sign-up registration (true - yes, false - no)
              */
             signup_enabled: boolean;
-            /**
-             * Sso Auto Redirect
-             * @description Auto-redirect to SSO if only one IdP (true - yes, false - no)
-             */
-            sso_auto_redirect: boolean;
             /**
              * Sso Enabled
              * @description Enable SSO/IdP login (true - yes, false - no)
              */
             sso_enabled: boolean;
             /**
+             * Local Login Enabled
+             * @description Allow local username/password login (true - yes, false - no)
+             */
+            local_login_enabled: boolean;
+            /**
+             * Sso Auto Redirect
+             * @description Auto-redirect to SSO if only one IdP (true - yes, false - no)
+             */
+            sso_auto_redirect: boolean;
+            /**
+             * Tileserver Url
+             * @description URL template for the map tileserver
+             */
+            tileserver_url: string;
+            /**
              * Tileserver Attribution
              * @description Attribution string for the map tileserver
              */
             tileserver_attribution: string;
+            /**
+             * Map Background Color
+             * @description Background color for the map (hex format)
+             */
+            map_background_color: string;
             /**
              * Tileserver Regenerate Thumbnails On Change
              * @description Delete and regenerate all activity thumbnails when tile server settings change
@@ -11369,15 +11344,27 @@ export interface components {
              */
             tileserver_regenerate_thumbnails_on_change: boolean;
             /**
-             * Tileserver Url
-             * @description URL template for the map tileserver
+             * @description Password type policy (strict, length_only)
+             * @default strict
              */
-            tileserver_url: string;
+            password_type: components["schemas"]["PasswordType"];
             /**
-             * @description Units (metric, imperial)
-             * @default metric
+             * Password Length Regular Users
+             * @description Minimum password length for regular users
+             * @default 8
              */
-            units: components["schemas"]["Units"];
+            password_length_regular_users: number;
+            /**
+             * Password Length Admin Users
+             * @description Minimum password length for admin users
+             * @default 12
+             */
+            password_length_admin_users: number;
+            /**
+             * Allowed Redirect Schemes
+             * @description Return the configured custom redirect schemes, sorted.
+             */
+            readonly allowed_redirect_schemes: string[];
         };
         /**
          * SessionShape
@@ -11417,20 +11404,20 @@ export interface components {
          */
         SignUpResponse: {
             /**
-             * Admin Approval Required
-             * @description Whether admin approval is required
+             * Message
+             * @description Human-readable result message
              */
-            admin_approval_required?: boolean | null;
+            message: string;
             /**
              * Email Verification Required
              * @description Whether email verification is required
              */
             email_verification_required?: boolean | null;
             /**
-             * Message
-             * @description Human-readable result message
+             * Admin Approval Required
+             * @description Whether admin approval is required
              */
-            message: string;
+            admin_approval_required?: boolean | null;
         };
         /**
          * SleepScore
@@ -11470,13 +11457,13 @@ export interface components {
          *         cv_pct: Fit error as a percentage of the mean, only for derived values.
          */
         SpeedThresholdRead: {
-            /** Cv Pct */
-            cv_pct?: number | null;
-            source: components["schemas"]["ThresholdSource"];
             /** Value Ms */
             value_ms: number;
             /** W Prime M */
             w_prime_m?: number | null;
+            source: components["schemas"]["ThresholdSource"];
+            /** Cv Pct */
+            cv_pct?: number | null;
         };
         /**
          * StepUpVerification
@@ -11542,40 +11529,40 @@ export interface components {
          *             side-by-side benchmark.
          */
         TerrainClimbRead: {
-            /** Avg Grade Pct */
-            avg_grade_pct: number;
-            /** Avg Power W */
-            avg_power_w: number | null;
-            /** Contrast */
-            contrast: number | null;
+            /** Start M */
+            start_m: number;
+            /** End M */
+            end_m: number;
+            /** Length M */
+            length_m: number;
+            /** Start S */
+            start_s: number;
             /** Duration S */
             duration_s: number;
             /** Elevation Gain M */
             elevation_gain_m: number;
             /** Elevation Loss M */
             elevation_loss_m: number;
-            /** End M */
-            end_m: number;
+            /** Avg Grade Pct */
+            avg_grade_pct: number;
+            /** Avg Power W */
+            avg_power_w: number | null;
             /** Intensity Factor */
             intensity_factor: number | null;
-            /** Length M */
-            length_m: number;
-            /** Rap Ms */
-            rap_ms?: number | null;
+            /** Contrast */
+            contrast: number | null;
             /** Rss */
             rss: number | null;
-            /** Rss Per Min */
-            rss_per_min: number | null;
             /** Rss Source */
             rss_source?: string | null;
+            /** Rss Per Min */
+            rss_per_min: number | null;
+            /** Rap Ms */
+            rap_ms?: number | null;
             /** Source Scores */
             source_scores?: {
                 [key: string]: number;
             } | null;
-            /** Start M */
-            start_m: number;
-            /** Start S */
-            start_s: number;
         };
         /**
          * ThresholdSource
@@ -11604,6 +11591,21 @@ export interface components {
          */
         TileMapsTemplate: {
             /**
+             * Template Id
+             * @description Template identifier (e.g., 'openstreetmap', 'stadia_outdoors')
+             */
+            template_id: string;
+            /**
+             * Name
+             * @description Human-readable name of the tile map template
+             */
+            name: string;
+            /**
+             * Url Template
+             * @description URL template for fetching map tiles
+             */
+            url_template: string;
+            /**
              * Attribution
              * @description HTML string for map attribution
              */
@@ -11614,30 +11616,15 @@ export interface components {
              */
             map_background_color: string;
             /**
-             * Name
-             * @description Human-readable name of the tile map template
-             */
-            name: string;
-            /**
-             * Requires Api Key Backend
-             * @description Indicates if an API key is required on the backend to use the tile map
-             */
-            requires_api_key_backend: boolean;
-            /**
              * Requires Api Key Frontend
              * @description Indicates if an API key is required on the frontend to use the tile map
              */
             requires_api_key_frontend: boolean;
             /**
-             * Template Id
-             * @description Template identifier (e.g., 'openstreetmap', 'stadia_outdoors')
+             * Requires Api Key Backend
+             * @description Indicates if an API key is required on the backend to use the tile map
              */
-            template_id: string;
-            /**
-             * Url Template
-             * @description URL template for fetching map tiles
-             */
-            url_template: string;
+            requires_api_key_backend: boolean;
         };
         /**
          * TokenExchangeRequest
@@ -11678,10 +11665,20 @@ export interface components {
          */
         TokenExchangeResponse: {
             /**
+             * Session Id
+             * @description Session identifier
+             */
+            session_id: string;
+            /**
              * Access Token
              * @description JWT access token
              */
             access_token: string;
+            /**
+             * Refresh Token
+             * @description JWT refresh token (mobile only)
+             */
+            refresh_token?: string | null;
             /**
              * Csrf Token
              * @description CSRF protection token (web only)
@@ -11694,21 +11691,11 @@ export interface components {
              */
             expires_in: number;
             /**
-             * Refresh Token
-             * @description JWT refresh token (mobile only)
-             */
-            refresh_token?: string | null;
-            /**
              * Refresh Token Expires In
              * @description Refresh token lifetime in seconds
              * @default 604800
              */
             refresh_token_expires_in: number;
-            /**
-             * Session Id
-             * @description Session identifier
-             */
-            session_id: string;
             /**
              * Token Type
              * @description Token type
@@ -11729,22 +11716,22 @@ export interface components {
          *         refresh_token_expires_in: Seconds until the refresh token expires.
          */
         TokenResponseMobile: {
-            /** Access Token */
-            access_token: string;
-            /** Expires In */
-            expires_in: number;
-            /** Refresh Token */
-            refresh_token: string;
-            /** Refresh Token Expires In */
-            refresh_token_expires_in: number;
             /** Session Id */
             session_id: string;
+            /** Access Token */
+            access_token: string;
+            /** Refresh Token */
+            refresh_token: string;
             /**
              * Token Type
              * @default bearer
              * @constant
              */
             token_type: "bearer";
+            /** Expires In */
+            expires_in: number;
+            /** Refresh Token Expires In */
+            refresh_token_expires_in: number;
         };
         /**
          * TokenResponseWeb
@@ -11759,22 +11746,22 @@ export interface components {
          *         refresh_token_expires_in: Seconds until the refresh token expires.
          */
         TokenResponseWeb: {
+            /** Session Id */
+            session_id: string;
             /** Access Token */
             access_token: string;
             /** Csrf Token */
             csrf_token: string;
-            /** Expires In */
-            expires_in: number;
-            /** Refresh Token Expires In */
-            refresh_token_expires_in: number;
-            /** Session Id */
-            session_id: string;
             /**
              * Token Type
              * @default bearer
              * @constant
              */
             token_type: "bearer";
+            /** Expires In */
+            expires_in: number;
+            /** Refresh Token Expires In */
+            refresh_token_expires_in: number;
         };
         /**
          * TypeBreakdownItem
@@ -11785,28 +11772,6 @@ export interface components {
          *         activity_type: Human-readable type name.
          */
         TypeBreakdownItem: {
-            /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Activity Type
-             * @description Human-readable activity type name
-             */
-            activity_type: string;
-            /**
-             * Activity Type Id
-             * @description Numeric activity type ID
-             */
-            activity_type_id: number;
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
             /**
              * Total Distance
              * @description Total distance in meters
@@ -11825,6 +11790,28 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
+            /**
+             * Activity Type Id
+             * @description Numeric activity type ID
+             */
+            activity_type_id: number;
+            /**
+             * Activity Type
+             * @description Human-readable activity type name
+             */
+            activity_type: string;
         };
         /**
          * Units
@@ -11894,21 +11881,6 @@ export interface components {
          */
         UsersApiKeyCreate: {
             /**
-             * Current Password
-             * @description Current password (step-up verification). Required when the account has a local password.
-             */
-            current_password?: string | null;
-            /**
-             * Expires At
-             * @description Optional expiration datetime. None means the key never expires.
-             */
-            expires_at?: string | null;
-            /**
-             * Mfa Code
-             * @description TOTP or backup code, required when MFA is enabled
-             */
-            mfa_code?: string | null;
-            /**
              * Name
              * @description User-friendly label for the key
              */
@@ -11918,6 +11890,21 @@ export interface components {
              * @description List of scope strings to grant
              */
             scopes: string[];
+            /**
+             * Expires At
+             * @description Optional expiration datetime. None means the key never expires.
+             */
+            expires_at?: string | null;
+            /**
+             * Current Password
+             * @description Current password (step-up verification). Required when the account has a local password.
+             */
+            current_password?: string | null;
+            /**
+             * Mfa Code
+             * @description TOTP or backup code, required when MFA is enabled
+             */
+            mfa_code?: string | null;
         };
         /**
          * UsersApiKeyCreated
@@ -11933,21 +11920,46 @@ export interface components {
          */
         UsersApiKeyCreated: {
             /**
-             * Created At
-             * Format: date-time
-             * @description Key creation timestamp
+             * Id
+             * @description Unique key identifier (UUID)
              */
-            created_at: string;
+            id: string;
+            /**
+             * User Id
+             * @description Owner's user ID
+             */
+            user_id: number;
+            /**
+             * Name
+             * @description User-friendly label
+             */
+            name: string;
+            /**
+             * Key Prefix
+             * @description First 8 chars of the random part
+             */
+            key_prefix: string;
+            /**
+             * Scopes
+             * @description JSON-encoded list of granted scopes
+             */
+            scopes: string;
             /**
              * Expires At
              * @description Optional expiration timestamp
              */
             expires_at?: string | null;
             /**
-             * Id
-             * @description Unique key identifier (UUID)
+             * Last Used At
+             * @description Last successful use timestamp
              */
-            id: string;
+            last_used_at?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Key creation timestamp
+             */
+            created_at: string;
             /**
              * Is Active
              * @description Whether the key is currently active
@@ -11958,31 +11970,6 @@ export interface components {
              * @description Full raw API key. Shown once at creation only — store it securely.
              */
             key: string;
-            /**
-             * Key Prefix
-             * @description First 8 chars of the random part
-             */
-            key_prefix: string;
-            /**
-             * Last Used At
-             * @description Last successful use timestamp
-             */
-            last_used_at?: string | null;
-            /**
-             * Name
-             * @description User-friendly label
-             */
-            name: string;
-            /**
-             * Scopes
-             * @description JSON-encoded list of granted scopes
-             */
-            scopes: string;
-            /**
-             * User Id
-             * @description Owner's user ID
-             */
-            user_id: number;
         };
         /**
          * UsersApiKeyRead
@@ -12004,51 +11991,51 @@ export interface components {
          */
         UsersApiKeyRead: {
             /**
-             * Created At
-             * Format: date-time
-             * @description Key creation timestamp
-             */
-            created_at: string;
-            /**
-             * Expires At
-             * @description Optional expiration timestamp
-             */
-            expires_at?: string | null;
-            /**
              * Id
              * @description Unique key identifier (UUID)
              */
             id: string;
             /**
-             * Is Active
-             * @description Whether the key is currently active
+             * User Id
+             * @description Owner's user ID
              */
-            is_active: boolean;
-            /**
-             * Key Prefix
-             * @description First 8 chars of the random part
-             */
-            key_prefix: string;
-            /**
-             * Last Used At
-             * @description Last successful use timestamp
-             */
-            last_used_at?: string | null;
+            user_id: number;
             /**
              * Name
              * @description User-friendly label
              */
             name: string;
             /**
+             * Key Prefix
+             * @description First 8 chars of the random part
+             */
+            key_prefix: string;
+            /**
              * Scopes
              * @description JSON-encoded list of granted scopes
              */
             scopes: string;
             /**
-             * User Id
-             * @description Owner's user ID
+             * Expires At
+             * @description Optional expiration timestamp
              */
-            user_id: number;
+            expires_at?: string | null;
+            /**
+             * Last Used At
+             * @description Last successful use timestamp
+             */
+            last_used_at?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Key creation timestamp
+             */
+            created_at: string;
+            /**
+             * Is Active
+             * @description Whether the key is currently active
+             */
+            is_active: boolean;
         };
         /**
          * UsersCreate
@@ -12058,28 +12045,16 @@ export interface components {
          *         password: User's password (min 8 chars).
          */
         UsersCreate: {
-            /** @description User access level */
-            access_type: components["schemas"]["UserAccessType"];
             /**
-             * Active
-             * @description Whether the user is active
+             * Name
+             * @description User's full name
              */
-            active: boolean;
+            name: string;
             /**
-             * Birthdate
-             * @description User's birthdate
+             * Username
+             * @description Unique username (alphanumeric, dots, hyphen, underscore)
              */
-            birthdate?: string | null;
-            /**
-             * City
-             * @description User's city
-             */
-            city?: string | null;
-            /**
-             * @description User currency (euro, dollar, pound)
-             * @default euro
-             */
-            currency: components["schemas"]["Currency"];
+            username: string;
             /**
              * Email
              * Format: email
@@ -12087,21 +12062,30 @@ export interface components {
              */
             email: string;
             /**
-             * Email Verified
-             * @description Whether email is verified
-             * @default false
+             * City
+             * @description User's city
              */
-            email_verified: boolean;
+            city?: string | null;
             /**
-             * @description First day of the week
-             * @default monday
+             * Birthdate
+             * @description User's birthdate
              */
-            first_day_of_week: components["schemas"]["WeekDay"];
+            birthdate?: string | null;
+            /**
+             * @description Preferred language
+             * @default en
+             */
+            preferred_language: components["schemas"]["Language"];
             /**
              * @description User's gender
              * @default unspecified
              */
             gender: components["schemas"]["Gender"];
+            /**
+             * @description User units (metric, imperial)
+             * @default metric
+             */
+            units: components["schemas"]["Units"];
             /**
              * Height
              * @description Height in centimeters
@@ -12113,21 +12097,44 @@ export interface components {
              */
             max_heart_rate?: number | null;
             /**
+             * @description First day of the week
+             * @default monday
+             */
+            first_day_of_week: components["schemas"]["WeekDay"];
+            /**
+             * @description User currency (euro, dollar, pound)
+             * @default euro
+             */
+            currency: components["schemas"]["Currency"];
+            /**
+             * Timezone
+             * @description IANA timezone the athlete lives in. Used as the fallback for activities imported without a GPS track, which would otherwise inherit the server's timezone. Null means not set.
+             */
+            timezone?: string | null;
+            /** @description User access level */
+            access_type: components["schemas"]["UserAccessType"];
+            /**
+             * Photo Path
+             * @description Servable URL of the user's photo (read-only)
+             */
+            photo_path?: string | null;
+            /**
+             * Active
+             * @description Whether the user is active
+             */
+            active: boolean;
+            /**
              * Mfa Enabled
              * @description Whether MFA is enabled
              * @default false
              */
             mfa_enabled: boolean;
             /**
-             * Name
-             * @description User's full name
+             * Email Verified
+             * @description Whether email is verified
+             * @default false
              */
-            name: string;
-            /**
-             * Password
-             * @description User's password
-             */
-            password: string;
+            email_verified: boolean;
             /**
              * Pending Admin Approval
              * @description Whether pending admin approval
@@ -12135,30 +12142,10 @@ export interface components {
              */
             pending_admin_approval: boolean;
             /**
-             * Photo Path
-             * @description Servable URL of the user's photo (read-only)
+             * Password
+             * @description User's password
              */
-            photo_path?: string | null;
-            /**
-             * @description Preferred language
-             * @default en
-             */
-            preferred_language: components["schemas"]["Language"];
-            /**
-             * Timezone
-             * @description IANA timezone the athlete lives in. Used as the fallback for activities imported without a GPS track, which would otherwise inherit the server's timezone. Null means not set.
-             */
-            timezone?: string | null;
-            /**
-             * @description User units (metric, imperial)
-             * @default metric
-             */
-            units: components["schemas"]["Units"];
-            /**
-             * Username
-             * @description Unique username (alphanumeric, dots, hyphen, underscore)
-             */
-            username: string;
+            password: string;
         };
         /**
          * UsersDefaultGearRead
@@ -12172,90 +12159,90 @@ export interface components {
          */
         UsersDefaultGearRead: {
             /**
-             * Alpine Ski Gear Id
-             * @description Default gear for alpine ski activities
-             */
-            alpine_ski_gear_id?: number | null;
-            /**
-             * Gravel Ride Gear Id
-             * @description Default gear for gravel ride activities
-             */
-            gravel_ride_gear_id?: number | null;
-            /**
-             * Hike Gear Id
-             * @description Default gear for hike activities
-             */
-            hike_gear_id?: number | null;
-            /**
-             * Id
-             * @description Unique identifier
-             */
-            id: number;
-            /**
-             * Mtb Ride Gear Id
-             * @description Default gear for MTB ride activities
-             */
-            mtb_ride_gear_id?: number | null;
-            /**
-             * Nordic Ski Gear Id
-             * @description Default gear for nordic ski activities
-             */
-            nordic_ski_gear_id?: number | null;
-            /**
-             * Ows Gear Id
-             * @description Default gear for OWS activities
-             */
-            ows_gear_id?: number | null;
-            /**
-             * Ride Gear Id
-             * @description Default gear for ride activities
-             */
-            ride_gear_id?: number | null;
-            /**
              * Run Gear Id
              * @description Default gear for run activities
              */
             run_gear_id?: number | null;
-            /**
-             * Snowboard Gear Id
-             * @description Default gear for snowboard activities
-             */
-            snowboard_gear_id?: number | null;
-            /**
-             * Tennis Gear Id
-             * @description Default gear for tennis activities
-             */
-            tennis_gear_id?: number | null;
             /**
              * Trail Run Gear Id
              * @description Default gear for trail run activities
              */
             trail_run_gear_id?: number | null;
             /**
-             * User Id
-             * @description User ID
+             * Virtual Run Gear Id
+             * @description Default gear for virtual run activities
              */
-            user_id: number;
+            virtual_run_gear_id?: number | null;
+            /**
+             * Ride Gear Id
+             * @description Default gear for ride activities
+             */
+            ride_gear_id?: number | null;
+            /**
+             * Gravel Ride Gear Id
+             * @description Default gear for gravel ride activities
+             */
+            gravel_ride_gear_id?: number | null;
+            /**
+             * Mtb Ride Gear Id
+             * @description Default gear for MTB ride activities
+             */
+            mtb_ride_gear_id?: number | null;
             /**
              * Virtual Ride Gear Id
              * @description Default gear for virtual ride activities
              */
             virtual_ride_gear_id?: number | null;
             /**
-             * Virtual Run Gear Id
-             * @description Default gear for virtual run activities
+             * Ows Gear Id
+             * @description Default gear for OWS activities
              */
-            virtual_run_gear_id?: number | null;
+            ows_gear_id?: number | null;
             /**
              * Walk Gear Id
              * @description Default gear for walk activities
              */
             walk_gear_id?: number | null;
             /**
+             * Hike Gear Id
+             * @description Default gear for hike activities
+             */
+            hike_gear_id?: number | null;
+            /**
+             * Tennis Gear Id
+             * @description Default gear for tennis activities
+             */
+            tennis_gear_id?: number | null;
+            /**
+             * Alpine Ski Gear Id
+             * @description Default gear for alpine ski activities
+             */
+            alpine_ski_gear_id?: number | null;
+            /**
+             * Nordic Ski Gear Id
+             * @description Default gear for nordic ski activities
+             */
+            nordic_ski_gear_id?: number | null;
+            /**
+             * Snowboard Gear Id
+             * @description Default gear for snowboard activities
+             */
+            snowboard_gear_id?: number | null;
+            /**
              * Windsurf Gear Id
              * @description Default gear for windsurf activities
              */
             windsurf_gear_id?: number | null;
+            /**
+             * Id
+             * @description Unique identifier
+             */
+            id: number;
+            /**
+             * User Id
+             * @description User ID
+             */
+            user_id: number;
         };
         /**
          * UsersDefaultGearUpdate
@@ -12266,90 +12253,90 @@ export interface components {
          */
         UsersDefaultGearUpdate: {
             /**
-             * Alpine Ski Gear Id
-             * @description Default gear for alpine ski activities
-             */
-            alpine_ski_gear_id?: number | null;
-            /**
-             * Gravel Ride Gear Id
-             * @description Default gear for gravel ride activities
-             */
-            gravel_ride_gear_id?: number | null;
-            /**
-             * Hike Gear Id
-             * @description Default gear for hike activities
-             */
-            hike_gear_id?: number | null;
-            /**
-             * Id
-             * @description Unique identifier
-             */
-            id: number;
-            /**
-             * Mtb Ride Gear Id
-             * @description Default gear for MTB ride activities
-             */
-            mtb_ride_gear_id?: number | null;
-            /**
-             * Nordic Ski Gear Id
-             * @description Default gear for nordic ski activities
-             */
-            nordic_ski_gear_id?: number | null;
-            /**
-             * Ows Gear Id
-             * @description Default gear for OWS activities
-             */
-            ows_gear_id?: number | null;
-            /**
-             * Ride Gear Id
-             * @description Default gear for ride activities
-             */
-            ride_gear_id?: number | null;
-            /**
              * Run Gear Id
              * @description Default gear for run activities
              */
             run_gear_id?: number | null;
-            /**
-             * Snowboard Gear Id
-             * @description Default gear for snowboard activities
-             */
-            snowboard_gear_id?: number | null;
-            /**
-             * Tennis Gear Id
-             * @description Default gear for tennis activities
-             */
-            tennis_gear_id?: number | null;
             /**
              * Trail Run Gear Id
              * @description Default gear for trail run activities
              */
             trail_run_gear_id?: number | null;
             /**
-             * User Id
-             * @description User ID
+             * Virtual Run Gear Id
+             * @description Default gear for virtual run activities
              */
-            user_id: number;
+            virtual_run_gear_id?: number | null;
+            /**
+             * Ride Gear Id
+             * @description Default gear for ride activities
+             */
+            ride_gear_id?: number | null;
+            /**
+             * Gravel Ride Gear Id
+             * @description Default gear for gravel ride activities
+             */
+            gravel_ride_gear_id?: number | null;
+            /**
+             * Mtb Ride Gear Id
+             * @description Default gear for MTB ride activities
+             */
+            mtb_ride_gear_id?: number | null;
             /**
              * Virtual Ride Gear Id
              * @description Default gear for virtual ride activities
              */
             virtual_ride_gear_id?: number | null;
             /**
-             * Virtual Run Gear Id
-             * @description Default gear for virtual run activities
+             * Ows Gear Id
+             * @description Default gear for OWS activities
              */
-            virtual_run_gear_id?: number | null;
+            ows_gear_id?: number | null;
             /**
              * Walk Gear Id
              * @description Default gear for walk activities
              */
             walk_gear_id?: number | null;
             /**
+             * Hike Gear Id
+             * @description Default gear for hike activities
+             */
+            hike_gear_id?: number | null;
+            /**
+             * Tennis Gear Id
+             * @description Default gear for tennis activities
+             */
+            tennis_gear_id?: number | null;
+            /**
+             * Alpine Ski Gear Id
+             * @description Default gear for alpine ski activities
+             */
+            alpine_ski_gear_id?: number | null;
+            /**
+             * Nordic Ski Gear Id
+             * @description Default gear for nordic ski activities
+             */
+            nordic_ski_gear_id?: number | null;
+            /**
+             * Snowboard Gear Id
+             * @description Default gear for snowboard activities
+             */
+            snowboard_gear_id?: number | null;
+            /**
              * Windsurf Gear Id
              * @description Default gear for windsurf activities
              */
             windsurf_gear_id?: number | null;
+            /**
+             * Id
+             * @description Unique identifier
+             */
+            id: number;
+            /**
+             * User Id
+             * @description User ID
+             */
+            user_id: number;
         };
         /**
          * UsersEditPassword
@@ -12374,15 +12361,15 @@ export interface components {
              */
             current_password: string;
             /**
-             * Mfa Code
-             * @description TOTP or backup code, required when MFA is enabled
-             */
-            mfa_code?: string | null;
-            /**
              * Password
              * @description New password
              */
             password: string;
+            /**
+             * Mfa Code
+             * @description TOTP or backup code, required when MFA is enabled
+             */
+            mfa_code?: string | null;
             /**
              * Revoke Other Sessions
              * @description When true, revoke all of the user's other sessions (keeping the current one) after the password change. Use this to evict an attacker when changing a password because of a suspected compromise.
@@ -12397,37 +12384,37 @@ export interface components {
          *     Inherits all validation from UsersGoalBase.
          */
         UsersGoalCreate: {
+            /** @description Goal time interval */
+            interval: components["schemas"]["modules__users__users_goals__schema__Interval"];
             /** @description Type of activity for the goal */
             activity_type: components["schemas"]["ActivityType"];
-            /**
-             * Goal Activities Number
-             * @description Target number of activities
-             */
-            goal_activities_number?: number | null;
+            /** @description Type of goal metric being tracked */
+            goal_type: components["schemas"]["GoalType"];
             /**
              * Goal Calories
              * @description Target calories in kcal
              */
             goal_calories?: number | null;
             /**
+             * Goal Activities Number
+             * @description Target number of activities
+             */
+            goal_activities_number?: number | null;
+            /**
              * Goal Distance
              * @description Target distance in meters
              */
             goal_distance?: number | null;
             /**
-             * Goal Duration
-             * @description Target duration in seconds
-             */
-            goal_duration?: number | null;
-            /**
              * Goal Elevation
              * @description Target elevation gain in meters
              */
             goal_elevation?: number | null;
-            /** @description Type of goal metric being tracked */
-            goal_type: components["schemas"]["GoalType"];
-            /** @description Goal time interval */
-            interval: components["schemas"]["modules__users__users_goals__schema__Interval"];
+            /**
+             * Goal Duration
+             * @description Target duration in seconds
+             */
+            goal_duration?: number | null;
         };
         /**
          * UsersGoalProgress
@@ -12453,81 +12440,81 @@ export interface components {
          *         goal_duration: Target duration.
          */
         UsersGoalProgress: {
-            /** @description Activity type for this goal */
-            activity_type: components["schemas"]["ActivityType"];
-            /**
-             * End Date
-             * @description Period end date
-             */
-            end_date: string;
-            /**
-             * Goal Activities Number
-             * @description Target activities count
-             */
-            goal_activities_number?: number | null;
-            /**
-             * Goal Calories
-             * @description Target calories
-             */
-            goal_calories?: number | null;
-            /**
-             * Goal Distance
-             * @description Target distance
-             */
-            goal_distance?: number | null;
-            /**
-             * Goal Duration
-             * @description Target duration
-             */
-            goal_duration?: number | null;
-            /**
-             * Goal Elevation
-             * @description Target elevation
-             */
-            goal_elevation?: number | null;
             /**
              * Goal Id
              * @description Goal identifier
              */
             goal_id: number;
-            goal_type: components["schemas"]["GoalType"];
             /** @description Goal time interval */
             interval: components["schemas"]["Interval-Output"];
-            /**
-             * Percentage Completed
-             * @description Completion percentage
-             */
-            percentage_completed?: number | null;
+            /** @description Activity type for this goal */
+            activity_type: components["schemas"]["ActivityType"];
+            goal_type: components["schemas"]["GoalType"];
             /**
              * Start Date
              * @description Period start date
              */
             start_date: string;
             /**
-             * Total Activities Number
-             * @description Total activities completed
+             * End Date
+             * @description Period end date
              */
-            total_activities_number?: number | null;
+            end_date: string;
+            /**
+             * Percentage Completed
+             * @description Completion percentage
+             */
+            percentage_completed?: number | null;
             /**
              * Total Calories
              * @description Total calories achieved
              */
             total_calories?: number | null;
             /**
+             * Total Activities Number
+             * @description Total activities completed
+             */
+            total_activities_number?: number | null;
+            /**
              * Total Distance
              * @description Total distance achieved
              */
             total_distance?: number | null;
+            /**
+             * Total Elevation
+             * @description Total elevation gained
+             */
+            total_elevation?: number | null;
             /**
              * Total Duration
              * @description Total duration achieved
              */
             total_duration?: number | null;
             /**
-             * Total Elevation
-             * @description Total elevation gained
+             * Goal Calories
+             * @description Target calories
              */
-            total_elevation?: number | null;
+            goal_calories?: number | null;
+            /**
+             * Goal Activities Number
+             * @description Target activities count
+             */
+            goal_activities_number?: number | null;
+            /**
+             * Goal Distance
+             * @description Target distance
+             */
+            goal_distance?: number | null;
+            /**
+             * Goal Elevation
+             * @description Target elevation
+             */
+            goal_elevation?: number | null;
+            /**
+             * Goal Duration
+             * @description Target duration
+             */
+            goal_duration?: number | null;
         };
         /**
          * UsersGoalRead
@@ -12538,42 +12525,42 @@ export interface components {
          *         user_id: User who owns this goal.
          */
         UsersGoalRead: {
+            /** @description Goal time interval */
+            interval: components["schemas"]["Interval-Output"];
             /** @description Type of activity for the goal */
             activity_type: components["schemas"]["ActivityType"];
-            /**
-             * Goal Activities Number
-             * @description Target number of activities
-             */
-            goal_activities_number?: number | null;
+            /** @description Type of goal metric being tracked */
+            goal_type: components["schemas"]["GoalType"];
             /**
              * Goal Calories
              * @description Target calories in kcal
              */
             goal_calories?: number | null;
             /**
+             * Goal Activities Number
+             * @description Target number of activities
+             */
+            goal_activities_number?: number | null;
+            /**
              * Goal Distance
              * @description Target distance in meters
              */
             goal_distance?: number | null;
+            /**
+             * Goal Elevation
+             * @description Target elevation gain in meters
+             */
+            goal_elevation?: number | null;
             /**
              * Goal Duration
              * @description Target duration in seconds
              */
             goal_duration?: number | null;
             /**
-             * Goal Elevation
-             * @description Target elevation gain in meters
-             */
-            goal_elevation?: number | null;
-            /** @description Type of goal metric being tracked */
-            goal_type: components["schemas"]["GoalType"];
-            /**
              * Id
              * @description Unique identifier for the goal
              */
             id: number;
-            /** @description Goal time interval */
-            interval: components["schemas"]["Interval-Output"];
             /**
              * User Id
              * @description User who owns this goal
@@ -12587,42 +12574,42 @@ export interface components {
          *     Supports partial updates. Omitted fields remain unchanged.
          */
         UsersGoalUpdate: {
+            /** @description Goal time interval */
+            interval: components["schemas"]["modules__users__users_goals__schema__Interval"];
             /** @description Type of activity for the goal */
             activity_type: components["schemas"]["ActivityType"];
-            /**
-             * Goal Activities Number
-             * @description Target number of activities
-             */
-            goal_activities_number?: number | null;
+            /** @description Type of goal metric being tracked */
+            goal_type: components["schemas"]["GoalType"];
             /**
              * Goal Calories
              * @description Target calories in kcal
              */
             goal_calories?: number | null;
             /**
+             * Goal Activities Number
+             * @description Target number of activities
+             */
+            goal_activities_number?: number | null;
+            /**
              * Goal Distance
              * @description Target distance in meters
              */
             goal_distance?: number | null;
+            /**
+             * Goal Elevation
+             * @description Target elevation gain in meters
+             */
+            goal_elevation?: number | null;
             /**
              * Goal Duration
              * @description Target duration in seconds
              */
             goal_duration?: number | null;
             /**
-             * Goal Elevation
-             * @description Target elevation gain in meters
-             */
-            goal_elevation?: number | null;
-            /** @description Type of goal metric being tracked */
-            goal_type: components["schemas"]["GoalType"];
-            /**
              * Id
              * @description Unique identifier for the goal
              */
             id: number;
-            /** @description Goal time interval */
-            interval: components["schemas"]["modules__users__users_goals__schema__Interval"];
             /**
              * User Id
              * @description User who owns this goal
@@ -12644,55 +12631,25 @@ export interface components {
          */
         UsersIdentityProviderResponse: {
             /**
-             * Id
-             * @description Link ID
+             * User Id
+             * @description User ID
              */
-            id: number;
-            /**
-             * Idp Access Token Expires At
-             * @description Access token expiry
-             */
-            idp_access_token_expires_at?: string | null;
-            /**
-             * Idp Icon
-             * @description Identity provider icon
-             */
-            idp_icon?: string | null;
+            user_id: number;
             /**
              * Idp Id
              * @description Identity Provider ID
              */
             idp_id: number;
             /**
-             * Idp Name
-             * @description Identity provider name
-             */
-            idp_name?: string | null;
-            /**
-             * Idp Provider Type
-             * @description Provider type
-             */
-            idp_provider_type?: string | null;
-            /**
-             * Idp Refresh Token Updated At
-             * @description Last refresh token update
-             */
-            idp_refresh_token_updated_at?: string | null;
-            /**
-             * Idp Slug
-             * @description Identity provider slug
-             */
-            idp_slug?: string | null;
-            /**
              * Idp Subject
              * @description Subject/ID from the identity provider
              */
             idp_subject: string;
             /**
-             * Last Login
-             * @description Last login using this IdP
+             * Id
+             * @description Link ID
              */
-            last_login?: string | null;
+            id: number;
             /**
              * Linked At
              * Format: date-time
@@ -12700,10 +12657,40 @@ export interface components {
              */
             linked_at: string;
             /**
-             * User Id
-             * @description User ID
+             * Last Login
+             * @description Last login using this IdP
              */
-            user_id: number;
+            last_login?: string | null;
+            /**
+             * Idp Access Token Expires At
+             * @description Access token expiry
+             */
+            idp_access_token_expires_at?: string | null;
+            /**
+             * Idp Refresh Token Updated At
+             * @description Last refresh token update
+             */
+            idp_refresh_token_updated_at?: string | null;
+            /**
+             * Idp Name
+             * @description Identity provider name
+             */
+            idp_name?: string | null;
+            /**
+             * Idp Slug
+             * @description Identity provider slug
+             */
+            idp_slug?: string | null;
+            /**
+             * Idp Icon
+             * @description Identity provider icon
+             */
+            idp_icon?: string | null;
+            /**
+             * Idp Provider Type
+             * @description Provider type
+             */
+            idp_provider_type?: string | null;
         };
         /**
          * UsersListResponse
@@ -12716,6 +12703,11 @@ export interface components {
          *         records: List of user records.
          */
         UsersListResponse: {
+            /**
+             * Total
+             * @description Total number of user records
+             */
+            total: number;
             /**
              * Num Records
              * @description Number of records in this response
@@ -12731,11 +12723,6 @@ export interface components {
              * @description List of user records
              */
             records: components["schemas"]["UsersRead"][];
-            /**
-             * Total
-             * @description Total number of user records
-             */
-            total: number;
         };
         /**
          * UsersMe
@@ -12764,33 +12751,16 @@ export interface components {
          *             password (False for SSO-only accounts).
          */
         UsersMe: {
-            /** @description User access level */
-            access_type: components["schemas"]["UserAccessType"];
             /**
-             * Active
-             * @description Whether the user is active
+             * Name
+             * @description User's full name
              */
-            active: boolean;
+            name: string;
             /**
-             * Birthdate
-             * @description User's birthdate
+             * Username
+             * @description Unique username (alphanumeric, dots, hyphen, underscore)
              */
-            birthdate?: string | null;
-            /**
-             * City
-             * @description User's city
-             */
-            city?: string | null;
-            /**
-             * @description User currency (euro, dollar, pound)
-             * @default euro
-             */
-            currency: components["schemas"]["Currency"];
-            /**
-             * Default Activity Visibility
-             * @description Default activity visibility
-             */
-            default_activity_visibility?: string | null;
+            username: string;
             /**
              * Email
              * Format: email
@@ -12798,11 +12768,90 @@ export interface components {
              */
             email: string;
             /**
+             * City
+             * @description User's city
+             */
+            city?: string | null;
+            /**
+             * Birthdate
+             * @description User's birthdate
+             */
+            birthdate?: string | null;
+            /**
+             * @description Preferred language
+             * @default en
+             */
+            preferred_language: components["schemas"]["Language"];
+            /**
+             * @description User's gender
+             * @default unspecified
+             */
+            gender: components["schemas"]["Gender"];
+            /**
+             * @description User units (metric, imperial)
+             * @default metric
+             */
+            units: components["schemas"]["Units"];
+            /**
+             * Height
+             * @description Height in centimeters
+             */
+            height?: number | null;
+            /**
+             * Max Heart Rate
+             * @description Maximum heart rate in bpm
+             */
+            max_heart_rate?: number | null;
+            /**
+             * @description First day of the week
+             * @default monday
+             */
+            first_day_of_week: components["schemas"]["WeekDay"];
+            /**
+             * @description User currency (euro, dollar, pound)
+             * @default euro
+             */
+            currency: components["schemas"]["Currency"];
+            /**
+             * Timezone
+             * @description IANA timezone the athlete lives in. Used as the fallback for activities imported without a GPS track, which would otherwise inherit the server's timezone. Null means not set.
+             */
+            timezone?: string | null;
+            /** @description User access level */
+            access_type: components["schemas"]["UserAccessType"];
+            /**
+             * Photo Path
+             * @description Servable URL of the user's photo (read-only)
+             */
+            photo_path?: string | null;
+            /**
+             * Active
+             * @description Whether the user is active
+             */
+            active: boolean;
+            /**
+             * Mfa Enabled
+             * @description Whether MFA is enabled
+             * @default false
+             */
+            mfa_enabled: boolean;
+            /**
              * Email Verified
              * @description Whether email is verified
              * @default false
              */
             email_verified: boolean;
+            /**
+             * Pending Admin Approval
+             * @description Whether pending admin approval
+             * @default false
+             */
+            pending_admin_approval: boolean;
+            /**
+             * Id
+             * @description User ID
+             */
+            id: number;
             /**
              * External Auth Count
              * @description Number of external auth providers linked
@@ -12810,50 +12859,25 @@ export interface components {
              */
             external_auth_count: number;
             /**
-             * @description First day of the week
-             * @default monday
+             * Is Strava Linked
+             * @description Whether Strava is linked
              */
-            first_day_of_week: components["schemas"]["WeekDay"];
+            is_strava_linked?: number | null;
             /**
-             * @description User's gender
-             * @default unspecified
+             * Is Garminconnect Linked
+             * @description Whether Garmin Connect is linked
              */
-            gender: components["schemas"]["Gender"];
+            is_garminconnect_linked?: number | null;
             /**
-             * Has Local Password
-             * @description Whether the account has a local password set. False indicates an SSO-only account, in which case step-up flows must skip the password factor. The raw password hash is never exposed; only this derived boolean is returned.
+             * Default Activity Visibility
+             * @description Default activity visibility
              */
-            has_local_password?: boolean | null;
+            default_activity_visibility?: string | null;
             /**
-             * Height
-             * @description Height in centimeters
+             * Hide Activity Start Time
+             * @description Hide activity start time
              */
-            height?: number | null;
-            /**
-             * Hide Activity Cadence
-             * @description Hide activity cadence
-             */
-            hide_activity_cadence?: boolean | null;
-            /**
-             * Hide Activity Elevation
-             * @description Hide activity elevation
-             */
-            hide_activity_elevation?: boolean | null;
-            /**
-             * Hide Activity Gear
-             * @description Hide activity gear
-             */
-            hide_activity_gear?: boolean | null;
-            /**
-             * Hide Activity Hr
-             * @description Hide activity heart rate
-             */
-            hide_activity_hr?: boolean | null;
-            /**
-             * Hide Activity Laps
-             * @description Hide activity laps
-             */
-            hide_activity_laps?: boolean | null;
+            hide_activity_start_time?: boolean | null;
             /**
              * Hide Activity Location
              * @description Hide activity location
@@ -12865,92 +12889,55 @@ export interface components {
              */
             hide_activity_map?: boolean | null;
             /**
-             * Hide Activity Pace
-             * @description Hide activity pace
+             * Hide Activity Hr
+             * @description Hide activity heart rate
              */
-            hide_activity_pace?: boolean | null;
+            hide_activity_hr?: boolean | null;
             /**
              * Hide Activity Power
              * @description Hide activity power
              */
             hide_activity_power?: boolean | null;
             /**
+             * Hide Activity Cadence
+             * @description Hide activity cadence
+             */
+            hide_activity_cadence?: boolean | null;
+            /**
+             * Hide Activity Elevation
+             * @description Hide activity elevation
+             */
+            hide_activity_elevation?: boolean | null;
+            /**
              * Hide Activity Speed
              * @description Hide activity speed
              */
             hide_activity_speed?: boolean | null;
             /**
-             * Hide Activity Start Time
-             * @description Hide activity start time
+             * Hide Activity Pace
+             * @description Hide activity pace
              */
-            hide_activity_start_time?: boolean | null;
+            hide_activity_pace?: boolean | null;
+            /**
+             * Hide Activity Laps
+             * @description Hide activity laps
+             */
+            hide_activity_laps?: boolean | null;
             /**
              * Hide Activity Workout Sets Steps
              * @description Hide activity workout sets and steps
              */
             hide_activity_workout_sets_steps?: boolean | null;
             /**
-             * Id
-             * @description User ID
+             * Hide Activity Gear
+             * @description Hide activity gear
              */
-            id: number;
+            hide_activity_gear?: boolean | null;
             /**
-             * Is Garminconnect Linked
-             * @description Whether Garmin Connect is linked
+             * Has Local Password
+             * @description Whether the account has a local password set. False indicates an SSO-only account, in which case step-up flows must skip the password factor. The raw password hash is never exposed; only this derived boolean is returned.
              */
-            is_garminconnect_linked?: number | null;
-            /**
-             * Is Strava Linked
-             * @description Whether Strava is linked
-             */
-            is_strava_linked?: number | null;
-            /**
-             * Max Heart Rate
-             * @description Maximum heart rate in bpm
-             */
-            max_heart_rate?: number | null;
-            /**
-             * Mfa Enabled
-             * @description Whether MFA is enabled
-             * @default false
-             */
-            mfa_enabled: boolean;
-            /**
-             * Name
-             * @description User's full name
-             */
-            name: string;
-            /**
-             * Pending Admin Approval
-             * @description Whether pending admin approval
-             * @default false
-             */
-            pending_admin_approval: boolean;
-            /**
-             * Photo Path
-             * @description Servable URL of the user's photo (read-only)
-             */
-            photo_path?: string | null;
-            /**
-             * @description Preferred language
-             * @default en
-             */
-            preferred_language: components["schemas"]["Language"];
-            /**
-             * Timezone
-             * @description IANA timezone the athlete lives in. Used as the fallback for activities imported without a GPS track, which would otherwise inherit the server's timezone. Null means not set.
-             */
-            timezone?: string | null;
-            /**
-             * @description User units (metric, imperial)
-             * @default metric
-             */
-            units: components["schemas"]["Units"];
-            /**
-             * Username
-             * @description Unique username (alphanumeric, dots, hyphen, underscore)
-             */
-            username: string;
+            has_local_password?: boolean | null;
         };
         /**
          * UsersPrivacySettingsUpdate
@@ -12966,35 +12953,11 @@ export interface components {
              */
             default_activity_visibility: components["schemas"]["ActivityVisibility"] | null;
             /**
-             * Hide Activity Cadence
-             * @description Hide activity cadence
+             * Hide Activity Start Time
+             * @description Hide activity start time
              * @default false
              */
-            hide_activity_cadence: boolean | null;
-            /**
-             * Hide Activity Elevation
-             * @description Hide activity elevation
-             * @default false
-             */
-            hide_activity_elevation: boolean | null;
-            /**
-             * Hide Activity Gear
-             * @description Hide activity gear
-             * @default false
-             */
-            hide_activity_gear: boolean | null;
-            /**
-             * Hide Activity Hr
-             * @description Hide activity heart rate
-             * @default false
-             */
-            hide_activity_hr: boolean | null;
-            /**
-             * Hide Activity Laps
-             * @description Hide activity laps
-             * @default false
-             */
-            hide_activity_laps: boolean | null;
+            hide_activity_start_time: boolean | null;
             /**
              * Hide Activity Location
              * @description Hide activity location
@@ -13008,11 +12971,11 @@ export interface components {
              */
             hide_activity_map: boolean | null;
             /**
-             * Hide Activity Pace
-             * @description Hide activity pace
+             * Hide Activity Hr
+             * @description Hide activity heart rate
              * @default false
              */
-            hide_activity_pace: boolean | null;
+            hide_activity_hr: boolean | null;
             /**
              * Hide Activity Power
              * @description Hide activity power
@@ -13020,23 +12983,47 @@ export interface components {
              */
             hide_activity_power: boolean | null;
             /**
+             * Hide Activity Cadence
+             * @description Hide activity cadence
+             * @default false
+             */
+            hide_activity_cadence: boolean | null;
+            /**
+             * Hide Activity Elevation
+             * @description Hide activity elevation
+             * @default false
+             */
+            hide_activity_elevation: boolean | null;
+            /**
              * Hide Activity Speed
              * @description Hide activity speed
              * @default false
              */
             hide_activity_speed: boolean | null;
             /**
-             * Hide Activity Start Time
-             * @description Hide activity start time
+             * Hide Activity Pace
+             * @description Hide activity pace
              * @default false
              */
-            hide_activity_start_time: boolean | null;
+            hide_activity_pace: boolean | null;
+            /**
+             * Hide Activity Laps
+             * @description Hide activity laps
+             * @default false
+             */
+            hide_activity_laps: boolean | null;
             /**
              * Hide Activity Workout Sets Steps
              * @description Hide activity workout sets and steps
              * @default false
              */
             hide_activity_workout_sets_steps: boolean | null;
+            /**
+             * Hide Activity Gear
+             * @description Hide activity gear
+             * @default false
+             */
+            hide_activity_gear: boolean | null;
         };
         /**
          * UsersRead
@@ -13047,28 +13034,16 @@ export interface components {
          *         external_auth_count: Number of external auth providers.
          */
         UsersRead: {
-            /** @description User access level */
-            access_type: components["schemas"]["UserAccessType"];
             /**
-             * Active
-             * @description Whether the user is active
+             * Name
+             * @description User's full name
              */
-            active: boolean;
+            name: string;
             /**
-             * Birthdate
-             * @description User's birthdate
+             * Username
+             * @description Unique username (alphanumeric, dots, hyphen, underscore)
              */
-            birthdate?: string | null;
-            /**
-             * City
-             * @description User's city
-             */
-            city?: string | null;
-            /**
-             * @description User currency (euro, dollar, pound)
-             * @default euro
-             */
-            currency: components["schemas"]["Currency"];
+            username: string;
             /**
              * Email
              * Format: email
@@ -13076,42 +13051,67 @@ export interface components {
              */
             email: string;
             /**
-             * Email Verified
-             * @description Whether email is verified
-             * @default false
+             * City
+             * @description User's city
              */
-            email_verified: boolean;
+            city?: string | null;
             /**
-             * External Auth Count
-             * @description Number of external auth providers linked
-             * @default 0
+             * Birthdate
+             * @description User's birthdate
              */
-            external_auth_count: number;
+            birthdate?: string | null;
             /**
-             * @description First day of the week
-             * @default monday
+             * @description Preferred language
+             * @default en
              */
-            first_day_of_week: components["schemas"]["WeekDay"];
+            preferred_language: components["schemas"]["Language"];
             /**
              * @description User's gender
              * @default unspecified
              */
             gender: components["schemas"]["Gender"];
             /**
+             * @description User units (metric, imperial)
+             * @default metric
+             */
+            units: components["schemas"]["Units"];
+            /**
              * Height
              * @description Height in centimeters
              */
             height?: number | null;
             /**
-             * Id
-             * @description User ID
-             */
-            id: number;
-            /**
              * Max Heart Rate
              * @description Maximum heart rate in bpm
              */
             max_heart_rate?: number | null;
+            /**
+             * @description First day of the week
+             * @default monday
+             */
+            first_day_of_week: components["schemas"]["WeekDay"];
+            /**
+             * @description User currency (euro, dollar, pound)
+             * @default euro
+             */
+            currency: components["schemas"]["Currency"];
+            /**
+             * Timezone
+             * @description IANA timezone the athlete lives in. Used as the fallback for activities imported without a GPS track, which would otherwise inherit the server's timezone. Null means not set.
+             */
+            timezone?: string | null;
+            /** @description User access level */
+            access_type: components["schemas"]["UserAccessType"];
+            /**
+             * Photo Path
+             * @description Servable URL of the user's photo (read-only)
+             */
+            photo_path?: string | null;
+            /**
+             * Active
+             * @description Whether the user is active
+             */
+            active: boolean;
             /**
              * Mfa Enabled
              * @description Whether MFA is enabled
@@ -13119,10 +13119,11 @@ export interface components {
              */
             mfa_enabled: boolean;
             /**
-             * Name
-             * @description User's full name
+             * Email Verified
+             * @description Whether email is verified
+             * @default false
              */
-            name: string;
+            email_verified: boolean;
             /**
              * Pending Admin Approval
              * @description Whether pending admin approval
@@ -13130,30 +13131,16 @@ export interface components {
              */
             pending_admin_approval: boolean;
             /**
-             * Photo Path
-             * @description Servable URL of the user's photo (read-only)
+             * Id
+             * @description User ID
              */
-            photo_path?: string | null;
+            id: number;
             /**
-             * @description Preferred language
-             * @default en
+             * External Auth Count
+             * @description Number of external auth providers linked
+             * @default 0
              */
-            preferred_language: components["schemas"]["Language"];
-            /**
-             * Timezone
-             * @description IANA timezone the athlete lives in. Used as the fallback for activities imported without a GPS track, which would otherwise inherit the server's timezone. Null means not set.
-             */
-            timezone?: string | null;
-            /**
-             * @description User units (metric, imperial)
-             * @default metric
-             */
-            units: components["schemas"]["Units"];
-            /**
-             * Username
-             * @description Unique username (alphanumeric, dots, hyphen, underscore)
-             */
-            username: string;
+            external_auth_count: number;
         };
         /**
          * UsersSessionsRead
@@ -13163,6 +13150,31 @@ export interface components {
          *     like refresh_token and csrf_token_hash.
          */
         UsersSessionsRead: {
+            /**
+             * Id
+             * @description Unique session identifier
+             */
+            id: string;
+            /**
+             * Ip Address
+             * @description Client IP address
+             */
+            ip_address: string;
+            /**
+             * Device Type
+             * @description Device type
+             */
+            device_type: string;
+            /**
+             * Operating System
+             * @description Operating system
+             */
+            operating_system: string;
+            /**
+             * Operating System Version
+             * @description OS version
+             */
+            operating_system_version: string;
             /**
              * Browser
              * @description Browser name
@@ -13180,42 +13192,17 @@ export interface components {
              */
             created_at: string;
             /**
-             * Device Type
-             * @description Device type
-             */
-            device_type: string;
-            /**
-             * Expires At
-             * Format: date-time
-             * @description Session expiration timestamp
-             */
-            expires_at: string;
-            /**
-             * Id
-             * @description Unique session identifier
-             */
-            id: string;
-            /**
-             * Ip Address
-             * @description Client IP address
-             */
-            ip_address: string;
-            /**
              * Last Activity At
              * Format: date-time
              * @description Last activity timestamp
              */
             last_activity_at: string;
             /**
-             * Operating System
-             * @description Operating system
+             * Expires At
+             * Format: date-time
+             * @description Session expiration timestamp
              */
-            operating_system: string;
-            /**
-             * Operating System Version
-             * @description OS version
-             */
-            operating_system_version: string;
+            expires_at: string;
             /**
              * User Id
              * @description User ID that owns this session
@@ -13231,20 +13218,15 @@ export interface components {
          */
         UsersSignup: {
             /**
-             * Birthdate
-             * @description User's birthdate
+             * Name
+             * @description User's full name
              */
-            birthdate?: string | null;
+            name: string;
             /**
-             * City
-             * @description User's city
+             * Username
+             * @description Unique username (alphanumeric, dots, hyphen, underscore)
              */
-            city?: string | null;
-            /**
-             * @description User currency (euro, dollar, pound)
-             * @default euro
-             */
-            currency: components["schemas"]["Currency"];
+            username: string;
             /**
              * Email
              * Format: email
@@ -13252,15 +13234,30 @@ export interface components {
              */
             email: string;
             /**
-             * @description First day of the week
-             * @default monday
+             * City
+             * @description User's city
              */
-            first_day_of_week: components["schemas"]["WeekDay"];
+            city?: string | null;
+            /**
+             * Birthdate
+             * @description User's birthdate
+             */
+            birthdate?: string | null;
+            /**
+             * @description Preferred language
+             * @default en
+             */
+            preferred_language: components["schemas"]["Language"];
             /**
              * @description User's gender
              * @default unspecified
              */
             gender: components["schemas"]["Gender"];
+            /**
+             * @description User units (metric, imperial)
+             * @default metric
+             */
+            units: components["schemas"]["Units"];
             /**
              * Height
              * @description Height in centimeters
@@ -13272,35 +13269,25 @@ export interface components {
              */
             max_heart_rate?: number | null;
             /**
-             * Name
-             * @description User's full name
+             * @description First day of the week
+             * @default monday
              */
-            name: string;
+            first_day_of_week: components["schemas"]["WeekDay"];
             /**
-             * Password
-             * @description User's password
+             * @description User currency (euro, dollar, pound)
+             * @default euro
              */
-            password: string;
-            /**
-             * @description Preferred language
-             * @default en
-             */
-            preferred_language: components["schemas"]["Language"];
+            currency: components["schemas"]["Currency"];
             /**
              * Timezone
              * @description IANA timezone the athlete lives in. Used as the fallback for activities imported without a GPS track, which would otherwise inherit the server's timezone. Null means not set.
              */
             timezone?: string | null;
             /**
-             * @description User units (metric, imperial)
-             * @default metric
+             * Password
+             * @description User's password
              */
-            units: components["schemas"]["Units"];
-            /**
-             * Username
-             * @description Unique username (alphanumeric, dots, hyphen, underscore)
-             */
-            username: string;
+            password: string;
         };
         /**
          * VisibilityUpdateRead
@@ -13340,18 +13327,6 @@ export interface components {
          */
         WeekSummary: {
             /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
-            /**
              * Total Distance
              * @description Total distance in meters
              * @default 0
@@ -13369,6 +13344,18 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
             /**
              * Week Number
              * @description Calendar week number within the month
@@ -13385,23 +13372,6 @@ export interface components {
          */
         WeeklySummaryRead: {
             /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Breakdown
-             * @description List of daily summaries
-             */
-            breakdown: components["schemas"]["DaySummary"][];
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
-            /**
              * Total Distance
              * @description Total distance in meters
              * @default 0
@@ -13419,6 +13389,23 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
+            /**
+             * Breakdown
+             * @description List of daily summaries
+             */
+            breakdown: components["schemas"]["DaySummary"][];
             /**
              * Type Breakdown
              * @description Optional breakdown by activity type
@@ -13444,16 +13431,16 @@ export interface components {
         WprimeBalanceRead: {
             /** Cp W */
             cp_w: number | null;
-            /** Points */
-            points: components["schemas"]["WprimePointRead"][];
-            /** Tau S */
-            tau_s: number | null;
-            /** Time Above Cp S */
-            time_above_cp_s: number;
             /** W Prime J */
             w_prime_j: number | null;
+            /** Tau S */
+            tau_s: number | null;
             /** Work Above Cp J */
             work_above_cp_j: number;
+            /** Time Above Cp S */
+            time_above_cp_s: number;
+            /** Points */
+            points: components["schemas"]["WprimePointRead"][];
         };
         /**
          * WprimePointRead
@@ -13464,10 +13451,10 @@ export interface components {
          *         remaining_j: W' remaining at that moment, in joules.
          */
         WprimePointRead: {
-            /** Remaining J */
-            remaining_j: number;
             /** T S */
             t_s: number;
+            /** Remaining J */
+            remaining_j: number;
         };
         /**
          * YearlyPeriodSummary
@@ -13477,18 +13464,6 @@ export interface components {
          *         year_number: Calendar year.
          */
         YearlyPeriodSummary: {
-            /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
             /**
              * Total Distance
              * @description Total distance in meters
@@ -13507,6 +13482,18 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
             /**
              * Year Number
              * @description Calendar year
@@ -13523,23 +13510,6 @@ export interface components {
          */
         YearlySummaryRead: {
             /**
-             * Activity Count
-             * @description Number of activities
-             * @default 0
-             */
-            activity_count: number;
-            /**
-             * Breakdown
-             * @description List of monthly summaries
-             */
-            breakdown: components["schemas"]["MonthSummary"][];
-            /**
-             * Total Calories
-             * @description Total calories burned
-             * @default 0
-             */
-            total_calories: number;
-            /**
              * Total Distance
              * @description Total distance in meters
              * @default 0
@@ -13557,6 +13527,23 @@ export interface components {
              * @default 0
              */
             total_elevation_gain: number;
+            /**
+             * Activity Count
+             * @description Number of activities
+             * @default 0
+             */
+            activity_count: number;
+            /**
+             * Total Calories
+             * @description Total calories burned
+             * @default 0
+             */
+            total_calories: number;
+            /**
+             * Breakdown
+             * @description List of monthly summaries
+             */
+            breakdown: components["schemas"]["MonthSummary"][];
             /**
              * Type Breakdown
              * @description Optional breakdown by activity type
@@ -13664,6 +13651,60 @@ export interface components {
          * @enum {string}
          */
         modules__users__users_goals__schema__Interval: "daily" | "weekly" | "monthly" | "yearly";
+        /**
+         * ProblemDetail
+         * @description An RFC 9457 problem document, as returned for every API error.
+         *
+         *     Declared as a model so it appears in the generated OpenAPI schema and the
+         *     frontend's typed client, rather than being an undocumented dict shape.
+         *
+         *     Attributes:
+         *         type: Stable URN identifying the error kind; the member a client should
+         *             branch on. ``about:blank`` when the status code says everything.
+         *         title: Short, human-readable summary of the error kind. Does not vary
+         *             between occurrences of the same ``type``.
+         *         status: The HTTP status code, repeated in the body so a document that has
+         *             been logged or forwarded is still self-describing.
+         *         detail: Human-readable explanation specific to this occurrence. Safe to
+         *             show a user; never carries internal diagnostics.
+         *         instance: The request path the error occurred on.
+         *         request_id: The ``X-Request-ID`` for this request, when one was assigned.
+         *             Quoting it in a bug report resolves to the exact server log line.
+         *         errors: Field-level validation failures, present only for a request
+         *             validation error.
+         */
+        ProblemDetail: {
+            /**
+             * Type
+             * @default about:blank
+             */
+            type: string;
+            /** Title */
+            title: string;
+            /** Status */
+            status: number;
+            /** Detail */
+            detail: string;
+            /**
+             * Instance
+             * @default null
+             */
+            instance: string | null;
+            /**
+             * Request Id
+             * @default null
+             */
+            request_id: string | null;
+            /**
+             * Errors
+             * @default null
+             */
+            errors: {
+                [key: string]: unknown;
+            }[] | null;
+        } & {
+            [key: string]: unknown;
+        };
     };
     responses: never;
     parameters: never;
@@ -13673,7 +13714,428 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    about_api_v1_about_get: {
+    create_bulk_import_from_archive_api_v1_activities_bulk_import_post: {
+        parameters: {
+            query?: {
+                /** @description The archive layout: `generic` for plain activity files, or a provider export such as `strava`. */
+                source?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_create_bulk_import_from_archive_api_v1_activities_bulk_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    create_bulk_import_from_folder_api_v1_activities_bulk_import_folder_post: {
+        parameters: {
+            query?: {
+                /** @description The folder layout: `generic` for plain activity files, or a provider export such as `strava`. */
+                source?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    refresh_activities_api_v1_activities_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    create_activity_with_uploaded_file_api_v1_activities_upload_post: {
+        parameters: {
+            query?: {
+                api_key?: string | null;
+            };
+            header?: {
+                /** @description Optional client-generated key. Replaying a request with the same key returns the original job instead of importing the file again. */
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_create_activity_with_uploaded_file_api_v1_activities_upload_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_activity_ingestion_job_api_v1_activities_ingestion_jobs__job_id__get: {
+        parameters: {
+            query?: {
+                api_key?: string | null;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_activity_thumbnail_api_v1_activities__activity_id__thumbnail_get: {
+        parameters: {
+            query: {
+                /** @description Signed thumbnail access token */
+                t: string;
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    "image/webp": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_activity_media_file_api_v1_activities__activity_id__media__media_id__file_get: {
+        parameters: {
+            query: {
+                /** @description Signed media access token */
+                t: string;
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+                media_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    "image/*": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_user_photo_api_v1_users__user_id__photo_get: {
+        parameters: {
+            query: {
+                /** @description Signed photo access token */
+                t: string;
+            };
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    "image/*": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_user_photo_api_v1_users__user_id__photo_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_activity_summary_api_v1_activities_summaries_get: {
+        parameters: {
+            query?: {
+                period?: string;
+                /** @description The caller's local calendar date, used to decide which week or month is current. Defaults to today in the caller's configured timezone. */
+                date?: string | null;
+                /** @description Target year for the yearly summary. Defaults to the anchor date's year. */
+                year?: number | null;
+                /** @description Filter the summary by activity type name. */
+                type?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WeeklySummaryRead"] | components["schemas"]["MonthlySummaryRead"] | components["schemas"]["YearlySummaryRead"] | components["schemas"]["LifetimeSummaryRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_activity_exercise_titles_api_v1_activities_exercise_titles_all_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -13688,7 +14150,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AboutResponse"];
+                    "application/json": components["schemas"]["ActivityExerciseTitlesRead"][];
                 };
             };
             /** @description Unexpected error */
@@ -13791,93 +14253,7 @@ export interface operations {
             };
         };
     };
-    create_bulk_import_from_archive_api_v1_activities_bulk_import_post: {
-        parameters: {
-            query?: {
-                /** @description The archive layout: `generic` for plain activity files, or a provider export such as `strava`. */
-                source?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["Body_create_bulk_import_from_archive_api_v1_activities_bulk_import_post"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    create_bulk_import_from_folder_api_v1_activities_bulk_import_folder_post: {
-        parameters: {
-            query?: {
-                /** @description The folder layout: `generic` for plain activity files, or a provider export such as `strava`. */
-                source?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    list_activity_exercise_titles_api_v1_activities_exercise_titles_all_get: {
+    list_activity_types_api_v1_activities_types_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -13892,7 +14268,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ActivityExerciseTitlesRead"][];
+                    "application/json": {
+                        [key: string]: string;
+                    };
                 };
             };
             /** @description Unexpected error */
@@ -13990,90 +14368,17 @@ export interface operations {
             };
         };
     };
-    read_activity_ingestion_job_api_v1_activities_ingestion_jobs__job_id__get: {
-        parameters: {
-            query?: {
-                api_key?: string | null;
-            };
-            header?: never;
-            path: {
-                job_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    refresh_activities_api_v1_activities_refresh_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_activity_summary_api_v1_activities_summaries_get: {
+    read_user_activity_stats_api_v1_activities_users__user_id__stats_get: {
         parameters: {
             query?: {
                 period?: string;
                 /** @description The caller's local calendar date, used to decide which week or month is current. Defaults to today in the caller's configured timezone. */
                 date?: string | null;
-                /** @description Target year for the yearly summary. Defaults to the anchor date's year. */
-                year?: number | null;
-                /** @description Filter the summary by activity type name. */
-                type?: string | null;
             };
             header?: never;
-            path?: never;
+            path: {
+                user_id: number;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -14084,85 +14389,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WeeklySummaryRead"] | components["schemas"]["MonthlySummaryRead"] | components["schemas"]["YearlySummaryRead"] | components["schemas"]["LifetimeSummaryRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    list_activity_types_api_v1_activities_types_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    create_activity_with_uploaded_file_api_v1_activities_upload_post: {
-        parameters: {
-            query?: {
-                api_key?: string | null;
-            };
-            header?: {
-                /** @description Optional client-generated key. Replaying a request with the same key returns the original job instead of importing the file again. */
-                "Idempotency-Key"?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["Body_create_activity_with_uploaded_file_api_v1_activities_upload_post"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
+                    "application/json": components["schemas"]["ActivityStatsRead"];
                 };
             };
             /** @description Validation Error */
@@ -14212,50 +14439,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_ActivityRead_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_user_activity_stats_api_v1_activities_users__user_id__stats_get: {
-        parameters: {
-            query?: {
-                period?: string;
-                /** @description The caller's local calendar date, used to decide which week or month is current. Defaults to today in the caller's configured timezone. */
-                date?: string | null;
-            };
-            header?: never;
-            path: {
-                user_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityStatsRead"];
                 };
             };
             /** @description Validation Error */
@@ -14402,86 +14585,6 @@ export interface operations {
             };
         };
     };
-    get_activity_intervals_api_v1_activities__activity_id__intervals_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                activity_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityIntervalsRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_activity_lap_dynamics_api_v1_activities__activity_id__lap_dynamics_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                activity_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LapDynamicsRead"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     list_activity_laps_api_v1_activities__activity_id__laps_get: {
         parameters: {
             query?: {
@@ -14503,46 +14606,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_ActivityLapsRead_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    list_activity_loads_api_v1_activities__activity_id__loads_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                activity_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityLoadRead"][];
                 };
             };
             /** @description Validation Error */
@@ -14670,51 +14733,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_activity_media_file_api_v1_activities__activity_id__media__media_id__file_get: {
-        parameters: {
-            query: {
-                /** @description Signed media access token */
-                t: string;
-            };
-            header?: never;
-            path: {
-                activity_id: number;
-                media_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                    "image/*": unknown;
-                };
             };
             /** @description Validation Error */
             422: {
@@ -14905,11 +14923,11 @@ export interface operations {
             };
         };
     };
-    read_activity_thumbnail_api_v1_activities__activity_id__thumbnail_get: {
+    list_activity_workout_steps_api_v1_activities__activity_id__workout_steps_get: {
         parameters: {
-            query: {
-                /** @description Signed thumbnail access token */
-                t: string;
+            query?: {
+                page_number?: number | null;
+                num_records?: number | null;
             };
             header?: never;
             path: {
@@ -14925,8 +14943,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
-                    "image/webp": unknown;
+                    "application/json": components["schemas"]["Page_ActivityWorkoutStepsRead_"];
                 };
             };
             /** @description Validation Error */
@@ -14949,12 +14966,9 @@ export interface operations {
             };
         };
     };
-    list_activity_workout_steps_api_v1_activities__activity_id__workout_steps_get: {
+    list_activity_loads_api_v1_activities__activity_id__loads_get: {
         parameters: {
-            query?: {
-                page_number?: number | null;
-                num_records?: number | null;
-            };
+            query?: never;
             header?: never;
             path: {
                 activity_id: number;
@@ -14969,7 +14983,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Page_ActivityWorkoutStepsRead_"];
+                    "application/json": components["schemas"]["ActivityLoadRead"][];
                 };
             };
             /** @description Validation Error */
@@ -15032,181 +15046,13 @@ export interface operations {
             };
         };
     };
-    get_best_times_api_v1_analysis_best_times_get: {
-        parameters: {
-            query?: {
-                sport?: string;
-                months?: number | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BestTimesRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_cp_trend_api_v1_analysis_cp_trend_get: {
-        parameters: {
-            query: {
-                sport: string;
-                /** @description Days of history; omit for all */
-                window?: number | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CpTrendRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_fitness_series_api_v1_analysis_fitness_get: {
-        parameters: {
-            query?: {
-                method?: components["schemas"]["LoadMethod"] | null;
-                acute_days?: number | null;
-                chronic_days?: number | null;
-                sport?: string | null;
-                from?: string | null;
-                to?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FitnessSeriesRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_power_duration_api_v1_analysis_power_duration_get: {
-        parameters: {
-            query: {
-                sport: string;
-                fit_from?: number | null;
-                fit_to?: number | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PowerDurationRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    queue_load_recompute_api_v1_analysis_recompute_post: {
+    get_activity_lap_dynamics_api_v1_activities__activity_id__lap_dynamics_get: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                activity_id: number;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -15217,69 +15063,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecomputeQueued"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_analysis_settings_api_v1_analysis_settings_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnalysisSettingsRead"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    update_analysis_settings_api_v1_analysis_settings_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AnalysisSettingsUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnalysisSettingsRead"];
+                    "application/json": components["schemas"]["LapDynamicsRead"][];
                 };
             };
             /** @description Validation Error */
@@ -15302,11 +15086,13 @@ export interface operations {
             };
         };
     };
-    queue_threshold_refresh_api_v1_analysis_thresholds_refresh_post: {
+    get_activity_intervals_api_v1_activities__activity_id__intervals_get: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                activity_id: number;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -15317,7 +15103,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecomputeQueued"];
+                    "application/json": components["schemas"]["ActivityIntervalsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Unexpected error */
@@ -15363,35 +15158,6 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    logout_api_v1_auth_logout_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LogoutResponse"];
                 };
             };
             /** @description Unexpected error */
@@ -15466,6 +15232,203 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TokenResponseWeb"] | components["schemas"]["TokenResponseMobile"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    logout_api_v1_auth_logout_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogoutResponse"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_user_followers_api_v1_followers_users__user_id__followers_get: {
+        parameters: {
+            query?: {
+                accepted_only?: boolean;
+                page_number?: number | null;
+                num_records?: number | null;
+            };
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_FollowRelationshipRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    follow_user_api_v1_followers_users__user_id__followers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FollowRelationshipRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_user_following_api_v1_followers_users__user_id__following_get: {
+        parameters: {
+            query?: {
+                accepted_only?: boolean;
+                page_number?: number | null;
+                num_records?: number | null;
+            };
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_FollowRelationshipRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_user_relationship_api_v1_followers_users__user_id__relationship_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelationshipRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Unexpected error */
@@ -15602,90 +15565,6 @@ export interface operations {
             };
         };
     };
-    list_user_followers_api_v1_followers_users__user_id__followers_get: {
-        parameters: {
-            query?: {
-                accepted_only?: boolean;
-                page_number?: number | null;
-                num_records?: number | null;
-            };
-            header?: never;
-            path: {
-                user_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_FollowRelationshipRead_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    follow_user_api_v1_followers_users__user_id__followers_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FollowRelationshipRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     delete_follow_relationship_api_v1_followers_users__user_id__followers__follower_id__delete: {
         parameters: {
             query?: never;
@@ -15725,20 +15604,18 @@ export interface operations {
             };
         };
     };
-    list_user_following_api_v1_followers_users__user_id__following_get: {
+    garminconnect_link_api_v1_garminconnect_link_post: {
         parameters: {
-            query?: {
-                accepted_only?: boolean;
-                page_number?: number | null;
-                num_records?: number | null;
-            };
+            query?: never;
             header?: never;
-            path: {
-                user_id: number;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GarminLogin"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -15746,7 +15623,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Page_FollowRelationshipRead_"];
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -15769,16 +15646,18 @@ export interface operations {
             };
         };
     };
-    read_user_relationship_api_v1_followers_users__user_id__relationship_get: {
+    garminconnect_mfa_code_api_v1_garminconnect_mfa_post: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                user_id: number;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["modules__garmin__schema__MFARequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -15786,7 +15665,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RelationshipRead"];
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -15920,90 +15799,6 @@ export interface operations {
             };
         };
     };
-    garminconnect_link_api_v1_garminconnect_link_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GarminLogin"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    garminconnect_mfa_code_api_v1_garminconnect_mfa_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["modules__garmin__schema__MFARequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     garminconnect_unlink_api_v1_garminconnect_unlink_delete: {
         parameters: {
             query?: never;
@@ -16020,6 +15815,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_gear_component_types_api_v1_gear_components_types_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GearComponentTypesRead"];
                 };
             };
             /** @description Unexpected error */
@@ -16175,35 +15999,6 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_gear_component_types_api_v1_gear_components_types_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GearComponentTypesRead"];
                 };
             };
             /** @description Unexpected error */
@@ -16582,7 +16377,7 @@ export interface operations {
             };
         };
     };
-    health_api_v1_health_get: {
+    read_health_daily_stats_api_v1_health_stats_daily_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -16597,9 +16392,508 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
+                    "application/json": components["schemas"]["HealthDashboardResponse"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_health_sleep_all_pagination_api_v1_health_sleep_get: {
+        parameters: {
+            query?: {
+                /** @description Pagination page number */
+                page_number?: number | null;
+                /** @description Number of records per page */
+                num_records?: number | null;
+                /** @description Filter by goal interval */
+                interval?: components["schemas"]["modules__health__constants__Interval"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthSleepListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    edit_health_sleep_api_v1_health_sleep_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HealthSleepUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthSleepRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    create_health_sleep_api_v1_health_sleep_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HealthSleepCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthSleepRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_health_sleep_api_v1_health_sleep__health_sleep_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                health_sleep_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_health_weight_all_pagination_api_v1_health_weight_get: {
+        parameters: {
+            query?: {
+                /** @description Pagination page number */
+                page_number?: number | null;
+                /** @description Number of records per page */
+                num_records?: number | null;
+                /** @description Filter by goal interval */
+                interval?: components["schemas"]["modules__health__constants__Interval"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthWeightListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    edit_health_weight_api_v1_health_weight_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HealthWeightUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthWeightRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    create_health_weight_api_v1_health_weight_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HealthWeightCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthWeightRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_health_weight_api_v1_health_weight__health_weight_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                health_weight_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_health_steps_all_pagination_api_v1_health_steps_get: {
+        parameters: {
+            query?: {
+                /** @description Pagination page number */
+                page_number?: number | null;
+                /** @description Number of records per page */
+                num_records?: number | null;
+                /** @description Filter by goal interval */
+                interval?: components["schemas"]["modules__health__constants__Interval"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthStepsListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    edit_health_steps_api_v1_health_steps_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HealthStepsUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthStepsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    create_health_steps_api_v1_health_steps_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HealthStepsCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthStepsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_health_steps_api_v1_health_steps__health_steps_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                health_steps_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Unexpected error */
@@ -17129,369 +17423,6 @@ export interface operations {
             };
         };
     };
-    read_health_sleep_all_pagination_api_v1_health_sleep_get: {
-        parameters: {
-            query?: {
-                /** @description Pagination page number */
-                page_number?: number | null;
-                /** @description Number of records per page */
-                num_records?: number | null;
-                /** @description Filter by goal interval */
-                interval?: components["schemas"]["modules__health__constants__Interval"] | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthSleepListResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    edit_health_sleep_api_v1_health_sleep_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["HealthSleepUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthSleepRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    create_health_sleep_api_v1_health_sleep_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["HealthSleepCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthSleepRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    delete_health_sleep_api_v1_health_sleep__health_sleep_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                health_sleep_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_health_daily_stats_api_v1_health_stats_daily_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthDashboardResponse"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_health_steps_all_pagination_api_v1_health_steps_get: {
-        parameters: {
-            query?: {
-                /** @description Pagination page number */
-                page_number?: number | null;
-                /** @description Number of records per page */
-                num_records?: number | null;
-                /** @description Filter by goal interval */
-                interval?: components["schemas"]["modules__health__constants__Interval"] | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthStepsListResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    edit_health_steps_api_v1_health_steps_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["HealthStepsUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthStepsRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    create_health_steps_api_v1_health_steps_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["HealthStepsCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthStepsRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    delete_health_steps_api_v1_health_steps__health_steps_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                health_steps_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     read_health_targets_all_api_v1_health_targets_get: {
         parameters: {
             query?: never;
@@ -17730,173 +17661,6 @@ export interface operations {
             };
         };
     };
-    read_health_weight_all_pagination_api_v1_health_weight_get: {
-        parameters: {
-            query?: {
-                /** @description Pagination page number */
-                page_number?: number | null;
-                /** @description Number of records per page */
-                num_records?: number | null;
-                /** @description Filter by goal interval */
-                interval?: components["schemas"]["modules__health__constants__Interval"] | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthWeightListResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    edit_health_weight_api_v1_health_weight_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["HealthWeightUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthWeightRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    create_health_weight_api_v1_health_weight_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["HealthWeightCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthWeightRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    delete_health_weight_api_v1_health_weight__health_weight_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                health_weight_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     list_identity_providers_api_v1_idp_get: {
         parameters: {
             query?: never;
@@ -18079,33 +17843,6 @@ export interface operations {
             };
         };
     };
-    mark_all_notifications_as_read_api_v1_notifications_mark_all_as_read_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     read_notifications_number_api_v1_notifications_number_get: {
         parameters: {
             query?: never;
@@ -18122,6 +17859,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": number;
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_notifications_by_id_api_v1_notifications__notification_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                notification_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationRead"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Unexpected error */
@@ -18176,7 +17953,7 @@ export interface operations {
             };
         };
     };
-    read_notifications_by_id_api_v1_notifications__notification_id__get: {
+    mark_notification_as_read_api_v1_notifications__notification_id__mark_as_read_put: {
         parameters: {
             query?: never;
             header?: never;
@@ -18188,13 +17965,11 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Successful Response */
-            200: {
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["NotificationRead"] | null;
-                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -18216,13 +17991,11 @@ export interface operations {
             };
         };
     };
-    mark_notification_as_read_api_v1_notifications__notification_id__mark_as_read_put: {
+    mark_all_notifications_as_read_api_v1_notifications_mark_all_as_read_put: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                notification_id: number;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -18233,6 +18006,39 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    request_password_reset_api_v1_password_reset_request_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PasswordResetRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PasswordResetResponse"];
+                };
             };
             /** @description Validation Error */
             422: {
@@ -18296,27 +18102,27 @@ export interface operations {
             };
         };
     };
-    request_password_reset_api_v1_password_reset_request_post: {
+    link_identity_provider_api_v1_profile_idp__idp_id__link_get: {
         parameters: {
-            query?: never;
+            query: {
+                link_token: string;
+                /** @description Frontend return path after linking (relative path or a configured custom scheme) */
+                redirect?: string | null;
+            };
             header?: never;
-            path?: never;
+            path: {
+                idp_id: number;
+            };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PasswordResetRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
-            200: {
+            307: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["PasswordResetResponse"];
-                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -18411,7 +18217,7 @@ export interface operations {
             };
         };
     };
-    get_user_api_keys_api_v1_profile_api_keys_get: {
+    read_sessions_me_api_v1_profile_sessions_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -18426,7 +18232,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UsersApiKeyRead"][];
+                    "application/json": components["schemas"]["UsersSessionsRead"][];
                 };
             };
             /** @description Unexpected error */
@@ -18440,55 +18246,11 @@ export interface operations {
             };
         };
     };
-    create_user_api_key_api_v1_profile_api_keys_post: {
+    delete_profile_other_sessions_api_v1_profile_sessions_delete: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UsersApiKeyCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersApiKeyCreated"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    delete_user_api_key_api_v1_profile_api_keys__api_key_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                api_key_id: string;
-            };
             cookie?: never;
         };
         requestBody?: never;
@@ -18499,418 +18261,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    revoke_user_api_key_api_v1_profile_api_keys__api_key_id__revoke_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                api_key_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_user_default_gear_api_v1_profile_default_gear_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersDefaultGearRead"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    edit_user_default_gear_api_v1_profile_default_gear_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UsersDefaultGearUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersDefaultGearRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    export_profile_data_api_v1_profile_export_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_user_goals_api_v1_profile_goals_get: {
-        parameters: {
-            query?: {
-                /** @description Filter by goal interval */
-                interval?: components["schemas"]["modules__users__users_goals__schema__Interval"] | null;
-                /** @description Filter by activity type */
-                activity_type?: components["schemas"]["ActivityType"] | null;
-                /** @description Filter by goal type */
-                goal_type?: components["schemas"]["GoalType"] | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersGoalRead"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    update_user_goal_api_v1_profile_goals_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UsersGoalUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersGoalRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    create_user_goal_api_v1_profile_goals_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UsersGoalCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersGoalRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_user_goals_results_api_v1_profile_goals_results_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersGoalProgress"][] | null;
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    delete_user_goal_api_v1_profile_goals__goal_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                goal_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_my_identity_providers_api_v1_profile_idp_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersIdentityProviderResponse"][];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    link_identity_provider_api_v1_profile_idp__idp_id__link_get: {
-        parameters: {
-            query: {
-                link_token: string;
-                /** @description Frontend return path after linking (relative path or a configured custom scheme) */
-                redirect?: string | null;
-            };
-            header?: never;
-            path: {
-                idp_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            307: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
             };
             /** @description Unexpected error */
             default: {
@@ -18946,48 +18296,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["IdpLinkTokenResponse"];
                 };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    delete_my_identity_provider_api_v1_profile_idp__idp_id__unlink_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                idp_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StepUpVerification"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -19051,7 +18359,7 @@ export interface operations {
             };
         };
     };
-    import_profile_data_api_v1_profile_import_post: {
+    edit_profile_privacy_settings_api_v1_profile_privacy_put: {
         parameters: {
             query?: never;
             header?: never;
@@ -19060,268 +18368,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["Body_import_profile_data_api_v1_profile_import_post"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    generate_mfa_backup_codes_api_v1_profile_mfa_backup_codes_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StepUpVerification"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MFABackupCodesResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_backup_code_status_api_v1_profile_mfa_backup_codes_status_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MFABackupCodeStatus"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    disable_mfa_api_v1_profile_mfa_disable_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MFADisableRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    enable_mfa_api_v1_profile_mfa_enable_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MFASetupRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    setup_mfa_api_v1_profile_mfa_setup_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MFASetupResponse"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_mfa_status_api_v1_profile_mfa_status_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MFAStatusResponse"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    verify_mfa_api_v1_profile_mfa_verify_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["modules__auth__mfa__schema__MFARequest"];
+                "application/json": components["schemas"]["UsersPrivacySettingsUpdate"];
             };
         };
         responses: {
@@ -19427,106 +18474,6 @@ export interface operations {
             };
         };
     };
-    edit_profile_privacy_settings_api_v1_profile_privacy_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UsersPrivacySettingsUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_sessions_me_api_v1_profile_sessions_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersSessionsRead"][];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    delete_profile_other_sessions_api_v1_profile_sessions_delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     delete_profile_session_api_v1_profile_sessions__session_id__delete: {
         parameters: {
             query?: never;
@@ -19565,7 +18512,78 @@ export interface operations {
             };
         };
     };
-    list_public_activity_exercise_titles_api_v1_public_activities_exercise_titles_all_get: {
+    export_profile_data_api_v1_profile_export_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    import_profile_data_api_v1_profile_import_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_import_profile_data_api_v1_profile_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_mfa_status_api_v1_profile_mfa_status_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -19580,7 +18598,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ActivityExerciseTitlesRead"][];
+                    "application/json": components["schemas"]["MFAStatusResponse"];
                 };
             };
             /** @description Unexpected error */
@@ -19594,260 +18612,7 @@ export interface operations {
             };
         };
     };
-    read_public_activity_api_v1_public_activities__activity_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                activity_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    list_public_activity_laps_api_v1_public_activities__activity_id__laps_get: {
-        parameters: {
-            query?: {
-                page_number?: number | null;
-                num_records?: number | null;
-            };
-            header?: never;
-            path: {
-                activity_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_ActivityLapsRead_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    list_public_activity_sets_api_v1_public_activities__activity_id__sets_get: {
-        parameters: {
-            query?: {
-                page_number?: number | null;
-                num_records?: number | null;
-            };
-            header?: never;
-            path: {
-                activity_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_ActivitySetsRead_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    list_public_activity_streams_api_v1_public_activities__activity_id__streams_get: {
-        parameters: {
-            query?: {
-                page_number?: number | null;
-                num_records?: number | null;
-            };
-            header?: never;
-            path: {
-                activity_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_ActivityStreamsRead_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_public_activity_stream_api_v1_public_activities__activity_id__streams__stream_type__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                activity_id: number;
-                stream_type: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ActivityStreamsRead"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    list_public_activity_workout_steps_api_v1_public_activities__activity_id__workout_steps_get: {
-        parameters: {
-            query?: {
-                page_number?: number | null;
-                num_records?: number | null;
-            };
-            header?: never;
-            path: {
-                activity_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_ActivityWorkoutStepsRead_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    get_enabled_identity_providers_api_v1_public_idp_get: {
+    get_backup_code_status_api_v1_profile_mfa_backup_codes_status_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -19862,7 +18627,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["IdentityProviderPublic"][];
+                    "application/json": components["schemas"]["MFABackupCodeStatus"];
                 };
             };
             /** @description Unexpected error */
@@ -19876,29 +18641,57 @@ export interface operations {
             };
         };
     };
-    handle_callback_api_v1_public_idp_callback__idp_slug__get: {
+    setup_mfa_api_v1_profile_mfa_setup_post: {
         parameters: {
-            query: {
-                /** @description Authorization code from IdP */
-                code: string;
-                /** @description State parameter for CSRF protection */
-                state: string;
-            };
+            query?: never;
             header?: never;
-            path: {
-                idp_slug: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
             /** @description Successful Response */
-            307: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["MFASetupResponse"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    enable_mfa_api_v1_profile_mfa_enable_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MFASetupRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -19921,31 +18714,28 @@ export interface operations {
             };
         };
     };
-    initiate_login_api_v1_public_idp_login__idp_slug__get: {
+    disable_mfa_api_v1_profile_mfa_disable_put: {
         parameters: {
-            query: {
-                /** @description PKCE code challenge (base64url-encoded SHA256, 43-128 chars). REQUIRED for OAuth 2.1 compliance. */
-                code_challenge: string;
-                /** @description PKCE method (must be S256). REQUIRED for OAuth 2.1 compliance. */
-                code_challenge_method: string;
-                /** @description Frontend redirect path after successful login */
-                redirect?: string | null;
-            };
+            query?: never;
             header?: never;
-            path: {
-                idp_slug: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MFADisableRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
-            307: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -19968,18 +18758,202 @@ export interface operations {
             };
         };
     };
-    exchange_tokens_for_session_api_v1_public_idp_session__session_id__tokens_post: {
+    verify_mfa_api_v1_profile_mfa_verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["modules__auth__mfa__schema__MFARequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    generate_mfa_backup_codes_api_v1_profile_mfa_backup_codes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StepUpVerification"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MFABackupCodesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_my_identity_providers_api_v1_profile_idp_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersIdentityProviderResponse"][];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_my_identity_provider_api_v1_profile_idp__idp_id__unlink_post: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                session_id: string;
+                idp_id: number;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TokenExchangeRequest"];
+                "application/json": components["schemas"]["StepUpVerification"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_analysis_settings_api_v1_analysis_settings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisSettingsRead"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    update_analysis_settings_api_v1_analysis_settings_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnalysisSettingsUpdate"];
             };
         };
         responses: {
@@ -19989,7 +18963,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TokenExchangeResponse"];
+                    "application/json": components["schemas"]["AnalysisSettingsRead"];
                 };
             };
             /** @description Validation Error */
@@ -20012,9 +18986,11 @@ export interface operations {
             };
         };
     };
-    read_public_server_settings_api_v1_public_server_settings_get: {
+    list_loads_summaries_api_v1_analysis_loads_get: {
         parameters: {
-            query?: never;
+            query: {
+                activity_ids: number[];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -20027,67 +19003,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ServerSettingsReadPublic"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    list_tile_maps_templates_api_v1_public_server_settings_tile_maps_templates_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TileMapsTemplate"][];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_users_id_api_v1_public_users_id__user_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersRead"] | null;
+                    "application/json": components["schemas"]["ActivityLoadsSummaryRead"][];
                 };
             };
             /** @description Validation Error */
@@ -20097,6 +19013,234 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_fitness_series_api_v1_analysis_fitness_get: {
+        parameters: {
+            query?: {
+                method?: components["schemas"]["LoadMethod"] | null;
+                acute_days?: number | null;
+                chronic_days?: number | null;
+                sport?: string | null;
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FitnessSeriesRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_power_duration_api_v1_analysis_power_duration_get: {
+        parameters: {
+            query: {
+                sport: string;
+                fit_from?: number | null;
+                fit_to?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PowerDurationRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_cp_trend_api_v1_analysis_cp_trend_get: {
+        parameters: {
+            query: {
+                sport: string;
+                /** @description Days of history; omit for all */
+                window?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CpTrendRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_best_times_api_v1_analysis_best_times_get: {
+        parameters: {
+            query?: {
+                sport?: string;
+                months?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BestTimesRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    queue_threshold_refresh_api_v1_analysis_thresholds_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecomputeQueued"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    queue_load_recompute_api_v1_analysis_recompute_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecomputeQueued"];
                 };
             };
             /** @description Unexpected error */
@@ -20456,66 +19600,6 @@ export interface operations {
             };
         };
     };
-    read_email_status_api_v1_server_settings_email_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EmailStatus"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    send_test_email_api_v1_server_settings_email_test_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     list_tile_maps_templates_api_v1_server_settings_tile_maps_templates_get: {
         parameters: {
             query?: never;
@@ -20604,6 +19688,66 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_email_status_api_v1_server_settings_email_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmailStatus"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    send_test_email_api_v1_server_settings_email_test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
             };
             /** @description Unexpected error */
             default: {
@@ -20736,48 +19880,6 @@ export interface operations {
             };
         };
     };
-    verify_email_api_v1_sign_up_confirm_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SignUpConfirm"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SignUpResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     signup_api_v1_sign_up_request_post: {
         parameters: {
             query?: never;
@@ -20820,25 +19922,26 @@ export interface operations {
             };
         };
     };
-    strava_retrieve_activities_days_api_v1_strava_activities_get: {
+    verify_email_api_v1_sign_up_confirm_post: {
         parameters: {
-            query: {
-                start_date: string;
-                end_date: string;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignUpConfirm"];
+            };
+        };
         responses: {
             /** @description Successful Response */
-            202: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
+                    "application/json": components["schemas"]["SignUpResponse"];
                 };
             };
             /** @description Validation Error */
@@ -20861,18 +19964,17 @@ export interface operations {
             };
         };
     };
-    strava_set_user_client_api_v1_strava_client_put: {
+    strava_link_api_v1_strava_link_put: {
         parameters: {
-            query?: never;
+            query: {
+                state: string;
+                code: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StravaClient"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -20881,6 +19983,47 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    strava_retrieve_activities_days_api_v1_strava_activities_get: {
+        parameters: {
+            query: {
+                start_date: string;
+                end_date: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityIngestionJobRead"];
                 };
             };
             /** @description Validation Error */
@@ -21016,17 +20159,18 @@ export interface operations {
             };
         };
     };
-    strava_link_api_v1_strava_link_put: {
+    strava_set_user_client_api_v1_strava_client_put: {
         parameters: {
-            query: {
-                state: string;
-                code: string;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StravaClient"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -21113,6 +20257,420 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_user_default_gear_api_v1_profile_default_gear_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersDefaultGearRead"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    edit_user_default_gear_api_v1_profile_default_gear_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UsersDefaultGearUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersDefaultGearRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_user_goals_api_v1_profile_goals_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by goal interval */
+                interval?: components["schemas"]["modules__users__users_goals__schema__Interval"] | null;
+                /** @description Filter by activity type */
+                activity_type?: components["schemas"]["ActivityType"] | null;
+                /** @description Filter by goal type */
+                goal_type?: components["schemas"]["GoalType"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersGoalRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    update_user_goal_api_v1_profile_goals_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UsersGoalUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersGoalRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    create_user_goal_api_v1_profile_goals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UsersGoalCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersGoalRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_user_goals_results_api_v1_profile_goals_results_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersGoalProgress"][] | null;
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_user_goal_api_v1_profile_goals__goal_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                goal_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_user_api_keys_api_v1_profile_api_keys_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersApiKeyRead"][];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    create_user_api_key_api_v1_profile_api_keys_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UsersApiKeyCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersApiKeyCreated"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    revoke_user_api_key_api_v1_profile_api_keys__api_key_id__revoke_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                api_key_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_user_api_key_api_v1_profile_api_keys__api_key_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                api_key_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Unexpected error */
@@ -21221,6 +20779,86 @@ export interface operations {
             };
         };
     };
+    read_users_contain_username_api_v1_users_username_contains__username__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersRead"][] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_users_username_api_v1_users_username__username__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersRead"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
     read_users_email_api_v1_users_email__email__get: {
         parameters: {
             query?: never;
@@ -21301,64 +20939,28 @@ export interface operations {
             };
         };
     };
-    read_users_contain_username_api_v1_users_username_contains__username__get: {
+    upload_user_image_api_v1_users__user_id__image_post: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                username: string;
+                user_id: number;
             };
             cookie?: never;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UsersRead"][] | null;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_user_image_api_v1_users__user_id__image_post"];
             };
         };
-    };
-    read_users_username_api_v1_users_username__username__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                username: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
         responses: {
             /** @description Successful Response */
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UsersRead"] | null;
+                    "application/json": string;
                 };
             };
             /** @description Validation Error */
@@ -21505,6 +21107,52 @@ export interface operations {
             };
         };
     };
+    edit_user_password_api_v1_users__user_id__password_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UsersAdminEditPassword"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
     get_user_identity_providers_api_v1_users__user_id__identity_providers_get: {
         parameters: {
             query?: never;
@@ -21584,178 +21232,6 @@ export interface operations {
             };
         };
     };
-    upload_user_image_api_v1_users__user_id__image_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["Body_upload_user_image_api_v1_users__user_id__image_post"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    edit_user_password_api_v1_users__user_id__password_put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UsersAdminEditPassword"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    read_user_photo_api_v1_users__user_id__photo_get: {
-        parameters: {
-            query: {
-                /** @description Signed photo access token */
-                t: string;
-            };
-            header?: never;
-            path: {
-                user_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                    "image/*": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    delete_user_photo_api_v1_users__user_id__photo_delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Unexpected error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     issue_ws_ticket_api_v1_ws_ticket_post: {
         parameters: {
             query?: never;
@@ -21767,6 +21243,611 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_public_activity_api_v1_public_activities__activity_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_public_activity_exercise_titles_api_v1_public_activities_exercise_titles_all_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityExerciseTitlesRead"][];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_public_activity_laps_api_v1_public_activities__activity_id__laps_get: {
+        parameters: {
+            query?: {
+                page_number?: number | null;
+                num_records?: number | null;
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ActivityLapsRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_public_activity_sets_api_v1_public_activities__activity_id__sets_get: {
+        parameters: {
+            query?: {
+                page_number?: number | null;
+                num_records?: number | null;
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ActivitySetsRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_public_activity_streams_api_v1_public_activities__activity_id__streams_get: {
+        parameters: {
+            query?: {
+                page_number?: number | null;
+                num_records?: number | null;
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ActivityStreamsRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_public_activity_stream_api_v1_public_activities__activity_id__streams__stream_type__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+                stream_type: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityStreamsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_public_activity_workout_steps_api_v1_public_activities__activity_id__workout_steps_get: {
+        parameters: {
+            query?: {
+                page_number?: number | null;
+                num_records?: number | null;
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ActivityWorkoutStepsRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_enabled_identity_providers_api_v1_public_idp_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IdentityProviderPublic"][];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    initiate_login_api_v1_public_idp_login__idp_slug__get: {
+        parameters: {
+            query: {
+                /** @description PKCE code challenge (base64url-encoded SHA256, 43-128 chars). REQUIRED for OAuth 2.1 compliance. */
+                code_challenge: string;
+                /** @description PKCE method (must be S256). REQUIRED for OAuth 2.1 compliance. */
+                code_challenge_method: string;
+                /** @description Frontend redirect path after successful login */
+                redirect?: string | null;
+            };
+            header?: never;
+            path: {
+                idp_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            307: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    handle_callback_api_v1_public_idp_callback__idp_slug__get: {
+        parameters: {
+            query: {
+                /** @description Authorization code from IdP */
+                code: string;
+                /** @description State parameter for CSRF protection */
+                state: string;
+            };
+            header?: never;
+            path: {
+                idp_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            307: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    exchange_tokens_for_session_api_v1_public_idp_session__session_id__tokens_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TokenExchangeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenExchangeResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_public_server_settings_api_v1_public_server_settings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServerSettingsReadPublic"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_tile_maps_templates_api_v1_public_server_settings_tile_maps_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TileMapsTemplate"][];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    read_users_id_api_v1_public_users_id__user_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersRead"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    about_api_v1_about_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AboutResponse"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    health_api_v1_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

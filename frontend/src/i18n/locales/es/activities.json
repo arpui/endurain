@@ -42,7 +42,9 @@
       "paceSpeed": "Ritmo / Velocidad",
       "elevation": "Desnivel",
       "calories": "Calorías",
-      "avgHr": "FC media"
+      "avgHr": "FC media",
+      "power": "Potencia",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Todavía no hay actividades",

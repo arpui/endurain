@@ -42,7 +42,9 @@
       "paceSpeed": "Tempo / Snelheid",
       "elevation": "Hoogte",
       "calories": "Calorieën",
-      "avgHr": "Gem. hartslag"
+      "avgHr": "Gem. hartslag",
+      "power": "Vermogen",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Nog geen activiteiten",

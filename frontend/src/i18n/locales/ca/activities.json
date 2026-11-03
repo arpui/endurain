@@ -42,7 +42,9 @@
       "paceSpeed": "Ritme / Velocitat",
       "elevation": "Elevació",
       "calories": "Calories",
-      "avgHr": "FC mitjana"
+      "avgHr": "FC mitjana",
+      "power": "Potència",
+      "rss": "aRSS"
     },
     "empty": {
       "title": "Encara no hi ha activitats",
