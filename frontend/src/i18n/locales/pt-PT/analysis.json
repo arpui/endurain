@@ -213,7 +213,8 @@
     "note": "Um ponto por sessão, ajustado apenas pelos seus esforços sustentados; a dispersão dos pontos reflete a qualidade de cada sessão, não a forma do dia.",
     "emptyTitle": "Ainda não há sessões suficientes",
     "emptyDescription": "A potência crítica exige sessões com pelo menos quatro esforços sustentados entre 5 e 30 minutos. Preenche-se com o tempo.",
-    "seriesEnvelope": "Limiar temporal"
+    "seriesEnvelope": "Limiar temporal",
+    "refreshing": "A carregar…"
   },
   "scores": {
     "rss": "aRSS",

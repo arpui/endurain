@@ -213,7 +213,8 @@
     "note": "Minden edzéshez egy pont, csak a saját kitartó terheléseib illesztve; a pontok szórása az edzés minőségét tükrözi, nem a napi formát.",
     "emptyTitle": "Még kevés az értelmezhető edzés",
     "emptyDescription": "A kritikus teljesítményhez legalább négy kitartó terhelés kell 5 és 30 perc között. Idővel feltöltődik.",
-    "seriesEnvelope": "Időbeli küszöb"
+    "seriesEnvelope": "Időbeli küszöb",
+    "refreshing": "Betöltés…"
   },
   "scores": {
     "rss": "aRSS",

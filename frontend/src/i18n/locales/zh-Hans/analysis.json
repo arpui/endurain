@@ -213,7 +213,8 @@
     "note": "每次训练一个点，仅由该训练自身的持续输出拟合；点的离散程度反映训练质量，而非当天状态。",
     "emptyTitle": "可拟合的训练还不足",
     "emptyDescription": "临界功率需要至少包含 4 个 5–30 分钟持续输出的训练。随着积累会逐渐填充。",
-    "seriesEnvelope": "时间阈值"
+    "seriesEnvelope": "时间阈值",
+    "refreshing": "加载中…"
   },
   "scores": {
     "rss": "aRSS",

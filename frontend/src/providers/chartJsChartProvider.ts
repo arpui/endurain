@@ -193,7 +193,7 @@ export function buildChartConfiguration(
               zoom: {
                 wheel: { enabled: true },
                 pinch: { enabled: true },
-                mode: 'x',
+                mode: options.zoomY ? 'xy' : 'x',
               },
               pan: { enabled: true, mode: 'x' },
             }

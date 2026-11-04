@@ -213,7 +213,8 @@
     "note": "每次訓練一個點，僅由該訓練自身的持續輸出擬合；點的離散程度反映訓練品質，而非當天狀態。",
     "emptyTitle": "可擬合的訓練還不足",
     "emptyDescription": "臨界功率需要至少包含 4 個 5–30 分鐘持續輸出的訓練。隨著累積會逐漸填充。",
-    "seriesEnvelope": "時間閾值"
+    "seriesEnvelope": "時間閾值",
+    "refreshing": "載入中…"
   },
   "scores": {
     "rss": "aRSS",
