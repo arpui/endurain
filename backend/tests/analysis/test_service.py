@@ -437,6 +437,7 @@ class TestWalks:
                 f"{_SVC}.activity_integration.list_user_activities",
                 side_effect=lambda _u, _db: calls.append("refresh") or [],
             ),
+            patch(f"{_SVC}._session_threshold_fits", return_value=[]),
             patch(f"{_SVC}.activity_streams_integration.get_stream_for_derivation", return_value=None),
             patch(f"{_SVC}.analysis_crud.replace_duration_peaks"),
             patch(f"{_SVC}.analysis_crud.store_settings"),
@@ -1035,6 +1036,20 @@ class TestTemporalSpeedThreshold:
         with patch(f"{_SVC}._session_threshold_fits", return_value=[(_T0_UTC.date(), 3.6)]):
             value = analysis_service._threshold_at(2, "run", _T0_UTC.date(), settings, _db(), measure="speed")
         assert value == 4.2
+
+    def test_no_stored_threshold_still_answers_from_dense_evidence(self):
+        settings = _settings()  # no speed thresholds stored at all
+        day = _T0_UTC.date()
+        fits = [(day - timedelta(days=n), 3.9) for n in (2, 10, 20, 30)]
+        with patch(f"{_SVC}._session_threshold_fits", return_value=fits):
+            value = analysis_service._threshold_at(2, "run", day, settings, _db(), measure="speed")
+        assert 3.8 < value < 3.9
+
+    def test_no_stored_threshold_and_thin_evidence_answers_none(self):
+        settings = _settings()
+        with patch(f"{_SVC}._session_threshold_fits", return_value=[(_T0_UTC.date(), 3.6)]):
+            value = analysis_service._threshold_at(2, "run", _T0_UTC.date(), settings, _db(), measure="speed")
+        assert value is None
 
     def test_dense_speed_evidence_decides_over_the_stored_value(self):
         settings = self._settings_ms(analysis_constants.ThresholdSource.AUTO)

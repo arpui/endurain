@@ -396,7 +396,9 @@ def _threshold_at(
 
     Falls back to the stored threshold when the athlete pinned a manual one,
     when they turned the temporal rule off, or when the window holds too little
-    evidence for an evolution to mean anything.
+    evidence for an evolution to mean anything. Where no threshold is stored at
+    all, dense temporal evidence still answers: an athlete who never refreshed
+    can be scored against their own evolving line rather than against nothing.
 
     Args:
         user_id: The athlete.
@@ -417,10 +419,9 @@ def _threshold_at(
         stored = settings.power_thresholds.get(sport)
         stored_value = float(stored.value_w) if stored is not None else None
         decimals = 1
-    if stored is None:
-        return None
-    if stored.source == analysis_constants.ThresholdSource.MANUAL or (
-        int(dict(settings.method_params).get(analysis_constants.TEMPORAL_CP_PARAM, 1)) != 1
+    if stored is not None and (
+        stored.source == analysis_constants.ThresholdSource.MANUAL
+        or int(dict(settings.method_params).get(analysis_constants.TEMPORAL_CP_PARAM, 1)) != 1
     ):
         return stored_value
     local = analysis_maths.temporal_threshold(
@@ -431,7 +432,9 @@ def _threshold_at(
         decay_per_day=analysis_constants.TEMPORAL_CP_DECAY_PER_DAY,
         min_fits=analysis_constants.TEMPORAL_CP_MIN_FITS,
     )
-    return round(local, decimals) if local is not None else stored_value
+    if local is not None:
+        return round(local, decimals)
+    return stored_value
 
 
 def _load_input(
