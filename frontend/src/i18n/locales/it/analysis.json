@@ -214,7 +214,9 @@
     "emptyTitle": "Ancora non ci sono abbastanza sessioni idonee",
     "emptyDescription": "La potenza critica richiede sessioni con almeno quattro sforzi sostenuti tra 5 e 30 minuti. Si riempirà con il tempo.",
     "seriesEnvelope": "Soglia temporale",
-    "refreshing": "Caricamento…"
+    "refreshing": "Caricamento…",
+    "titleSpeed": "Evoluzione della velocità critica",
+    "seriesSession": "Sessione"
   },
   "scores": {
     "rss": "aRSS",

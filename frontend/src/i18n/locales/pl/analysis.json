@@ -214,7 +214,9 @@
     "emptyTitle": "Za mało nadających się sesji",
     "emptyDescription": "Moc krytyczna wymaga sesji z co najmniej czterema utrzymywanymi wysiłkami między 5 a 30 minutami. Uzupełni się z czasem.",
     "seriesEnvelope": "Próg czasowy",
-    "refreshing": "Wczytywanie…"
+    "refreshing": "Wczytywanie…",
+    "titleSpeed": "Ewolucja prędkości krytycznej",
+    "seriesSession": "Sesja"
   },
   "scores": {
     "rss": "aRSS",

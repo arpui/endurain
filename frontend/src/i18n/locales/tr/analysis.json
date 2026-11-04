@@ -214,7 +214,9 @@
     "emptyTitle": "Henüz yeterince kullanılabilir antrenman yok",
     "emptyDescription": "Kritik güç, 5 ile 30 dakika arasında en az dört kararlı yüklenme gerektirir. Zamanla dolar.",
     "seriesEnvelope": "Zamansal eşik",
-    "refreshing": "Yükleniyor…"
+    "refreshing": "Yükleniyor…",
+    "titleSpeed": "Kritik hızın gelişimi",
+    "seriesSession": "Antrenman"
   },
   "scores": {
     "rss": "aRSS",

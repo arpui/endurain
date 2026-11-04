@@ -214,7 +214,9 @@
     "emptyTitle": "可拟合的训练还不足",
     "emptyDescription": "临界功率需要至少包含 4 个 5–30 分钟持续输出的训练。随着积累会逐渐填充。",
     "seriesEnvelope": "时间阈值",
-    "refreshing": "加载中…"
+    "refreshing": "加载中…",
+    "titleSpeed": "临界速度演变",
+    "seriesSession": "训练"
   },
   "scores": {
     "rss": "aRSS",

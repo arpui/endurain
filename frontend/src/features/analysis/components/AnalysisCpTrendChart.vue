@@ -12,6 +12,15 @@ import { ErrorState } from '@/components/ui/error-state'
 import { Select } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCpTrendQuery } from '@/features/analysis/composables/useAnalysis'
+import { useDisplayUnits } from '@/features/activities/composables/useActivityDetail'
+import { activityTypeUsesPace } from '@/features/activities/utils/activityType'
+import {
+  formatPaceClock,
+  paceToDisplaySeconds,
+  paceUnitLabel,
+  speedToDisplay,
+  speedUnitLabel,
+} from '@/features/activities/utils/format'
 import { useMetricChart } from '@/composables/useMetricChart'
 import { formatMediumDate } from '@/utils/datetime'
 
@@ -25,10 +34,12 @@ const props = defineProps<{
   windowDays?: number
 }>()
 
-/** The sports the chart answers for: only these derive a critical power. */
+/** The sports the chart answers for: only these derive a critical threshold. */
 const SPORT_OPTIONS = ['run', 'bike']
 /** Selectable moving-average widths, in days each point looks back. */
 const MA_OPTIONS = [30, 45, 90]
+/** Representative activity type per sport group, for pace-vs-speed formatting. */
+const REP_TYPE: Record<string, number> = { run: 1, bike: 4 }
 
 const sport = ref('run')
 const maDays = ref(45)
@@ -39,25 +50,40 @@ const MA_COLOR = themeColor('--color-info')
 const THRESHOLD_COLOR = themeColor('--color-muted-foreground')
 const ENVELOPE_COLOR = themeColor('--color-goal')
 
+const units = useDisplayUnits()
 const trendWindow = computed(() =>
   props.windowDays && props.windowDays > 0 ? props.windowDays : null,
 )
 const trendQuery = useCpTrendQuery(sport, trendWindow)
 const trend = computed<CpTrend | undefined>(() => trendQuery.data.value)
 
+/** An athlete without a single power stream gets the trend in their own speeds. */
+const speedMode = computed(() => trend.value?.measure === 'speed')
+
+/** Convert a fitted value (watts, or metres per second in speed mode) into
+ *  what this athlete reads: pace for the running sports, speed elsewhere. */
+function toDisplay(raw: number): number {
+  if (!speedMode.value) return raw
+  const rep = REP_TYPE[sport.value] ?? 1
+  return activityTypeUsesPace(rep)
+    ? paceToDisplaySeconds(1 / raw, rep, units.value)
+    : speedToDisplay(raw, rep, units.value)
+}
+
 /** Moving average over sessions whose date falls within `maDays` of each point.
  *  Computed here (not on the server) because it is a display choice, and the
  *  selector must repaint without refetching. */
-function movingAverage(points: CpTrend['points']): number[] {
+function movingAverage(values: number[]): number[] {
+  const points = trend.value?.points ?? []
   const out: number[] = []
-  points.forEach((point, i) => {
-    const from = new Date(point.date).getTime() - maDays.value * 86_400_000
+  values.forEach((_value, i) => {
+    const from = new Date(points[i]?.date ?? '').getTime() - maDays.value * 86_400_000
     let sum = 0
     let count = 0
     for (let j = i; j >= 0; j -= 1) {
       const prev = points[j]
       if (prev === undefined || new Date(prev.date).getTime() < from) break
-      sum += prev.cpW
+      sum += values[j] as number
       count += 1
     }
     out.push(count > 0 ? Math.round(sum / count) : 0)
@@ -79,44 +105,57 @@ function dataFloor(series: ChartRenderOptions['series']): number | undefined {
   values.sort((a, b) => a - b)
   const idx = Math.floor((values.length - 1) * 0.05)
   const anchor = values[idx] ?? values[values.length - 1] ?? 0
-  const step = anchor >= 300 ? 20 : 10
+  const step = anchor >= 300 ? 20 : anchor >= 100 ? 10 : 1
   return Math.max(0, Math.floor((anchor * 0.95) / step) * step)
 }
 
 /**
- * The CP evolution: one dot per session (colored by power source) with a
- * moving average through them, the temporal threshold the loads actually used
- * as a dashed line, and the current threshold as a dashed reference.
- * Dots stay unjoined: sessions are days apart and a connecting line would
- * invent form that was never measured between them.
+ * The threshold evolution: one dot per session (colored by power source where
+ * watts exist) with a moving average through them and the temporal threshold
+ * the loads actually used as a dashed line. Dots stay unjoined: sessions are
+ * days apart and a connecting line would invent form that was never measured
+ * between them. In speed mode the same story is told in pace, and the axis
+ * inverts so faster sits higher.
  */
 const chartRender = computed<ChartRenderOptions>(() => {
   const points = trend.value?.points ?? []
   const labels = points.map((point) => formatMediumDate(point.date, locale.value))
+  const shown = points.map((point) => toDisplay(point.cpW))
   const isStrid = points.map((point) => point.powerSource === 'stryd')
   const envelopeByDate = new Map(
-    (trend.value?.envelope ?? []).map((sample) => [sample.date, sample.cpW]),
+    (trend.value?.envelope ?? []).map((sample) => [sample.date, toDisplay(sample.cpW)]),
   )
   const series: ChartRenderOptions['series'] = [
     {
       label: t('analysis.cpTrend.seriesMovingAverage', { days: maDays.value }),
-      data: movingAverage(points),
+      data: movingAverage(shown),
       color: MA_COLOR,
       line: true,
     },
-    {
-      label: t('analysis.cpTrend.seriesStryd'),
-      data: points.map((point, i) => (isStrid[i] ? Math.round(point.cpW) : null)),
-      color: STRYD_COLOR,
-      dots: true,
-    },
-    {
-      label: t('analysis.cpTrend.seriesNative'),
-      data: points.map((point, i) => (isStrid[i] ? null : Math.round(point.cpW))),
+  ]
+  if (speedMode.value) {
+    series.push({
+      label: t('analysis.cpTrend.seriesSession'),
+      data: shown.map((value) => Math.round(value)),
       color: NATIVE_COLOR,
       dots: true,
-    },
-  ]
+    })
+  } else {
+    series.push(
+      {
+        label: t('analysis.cpTrend.seriesStryd'),
+        data: shown.map((value, i) => (isStrid[i] ? Math.round(value) : null)),
+        color: STRYD_COLOR,
+        dots: true,
+      },
+      {
+        label: t('analysis.cpTrend.seriesNative'),
+        data: shown.map((value, i) => (isStrid[i] ? null : Math.round(value))),
+        color: NATIVE_COLOR,
+        dots: true,
+      },
+    )
+  }
   if (envelopeByDate.size > 0) {
     series.push({
       label: t('analysis.cpTrend.seriesEnvelope'),
@@ -129,10 +168,10 @@ const chartRender = computed<ChartRenderOptions>(() => {
     })
   }
   const thresholdW = trend.value?.threshold?.valueW
-  if (thresholdW !== undefined && envelopeByDate.size === 0) {
-    // Only when no temporal line exists (thin history): with one, it IS the
-    // threshold those days used, and a second flat line at the all-time peak
-    // just stretches the axis and confuses the read.
+  if (!speedMode.value && thresholdW !== undefined && envelopeByDate.size === 0) {
+    // Only in watts and only when no temporal line exists (thin history): with
+    // one, it IS the threshold those days used, and a second flat line at the
+    // all-time peak just stretches the axis and confuses the read.
     series.push({
       label: t('analysis.cpTrend.seriesThreshold', { watts: Math.round(thresholdW) }),
       data: points.map(() => Math.round(thresholdW)),
@@ -140,11 +179,19 @@ const chartRender = computed<ChartRenderOptions>(() => {
       dashed: true,
     })
   }
+  const rep = REP_TYPE[sport.value] ?? 1
+  const showPace = speedMode.value && activityTypeUsesPace(rep)
   return {
     kind: 'line',
     series,
     labels,
-    valueFormat: (value) => `${Math.round(value)} W`,
+    valueFormat: (value) =>
+      showPace
+        ? `${formatPaceClock(value)}/${paceUnitLabel(rep, units.value)}`
+        : speedMode.value
+          ? `${value.toFixed(1)} ${speedUnitLabel(rep, units.value)}`
+          : `${Math.round(value)} W`,
+    invertY: showPace,
     sharedTooltip: true,
     zoom: true,
     zoomY: true,
@@ -158,7 +205,9 @@ useMetricChart(chartRender)
 <template>
   <Card class="flex min-w-0 flex-col gap-3">
     <div class="flex flex-wrap items-baseline justify-between gap-2">
-      <h3 class="text-card-heading">{{ t('analysis.cpTrend.title') }}</h3>
+      <h3 class="text-card-heading">
+        {{ speedMode ? t('analysis.cpTrend.titleSpeed') : t('analysis.cpTrend.title') }}
+      </h3>
       <div class="flex items-center gap-2">
         <span v-if="trendQuery.isFetching.value" class="text-body text-muted-foreground">
           {{ t('analysis.cpTrend.refreshing') }}

@@ -214,7 +214,9 @@
     "emptyTitle": "Aún no hay sesiones suficientes",
     "emptyDescription": "La potencia crítica requiere sesiones con al menos cuatro esfuerzos sostenidos entre 5 y 30 minutos. Se completará a medida que acumules.",
     "seriesEnvelope": "Umbral temporal",
-    "refreshing": "Actualizando…"
+    "refreshing": "Actualizando…",
+    "titleSpeed": "Evolución de la velocidad crítica",
+    "seriesSession": "Sesión"
   },
   "scores": {
     "rss": "aRSS",

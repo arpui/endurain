@@ -277,6 +277,7 @@ class TestPowerDurationRoute:
 class TestCpTrendRoute:
     def _read(self) -> analysis_schema.CpTrendRead:
         return analysis_schema.CpTrendRead(
+            measure="power",
             sport="run",
             window_days=365,
             threshold=analysis_schema.PowerThresholdRead(

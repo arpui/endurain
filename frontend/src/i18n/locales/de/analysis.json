@@ -214,7 +214,9 @@
     "emptyTitle": "Noch zu wenige auswertbare Einheiten",
     "emptyDescription": "Kritische Leistung braucht Einheiten mit mindestens vier nachhaltigen Belastungen zwischen 5 und 30 Minuten. Sie füllt sich mit der Zeit.",
     "seriesEnvelope": "Zeitliche Schwelle",
-    "refreshing": "Wird geladen…"
+    "refreshing": "Wird geladen…",
+    "titleSpeed": "Verlauf der kritischen Geschwindigkeit",
+    "seriesSession": "Einheit"
   },
   "scores": {
     "rss": "aRSS",

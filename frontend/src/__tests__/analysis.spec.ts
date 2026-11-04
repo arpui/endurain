@@ -275,6 +275,7 @@ describe('power-duration and W-prime mappers', () => {
     return {
       sport: 'run',
       window_days: null,
+      measure: 'power',
       threshold: { value_w: 425.2, w_prime_j: 21000, source: 'auto', cv_pct: 4.1 },
       points: [
         {
@@ -325,6 +326,20 @@ describe('power-duration and W-prime mappers', () => {
     expect(trend.envelope).toEqual([])
     const url: string = vi.mocked(apiFetch).mock.calls[0]?.[0] as string
     expect(new URLSearchParams(url.split('?')[1]).get('window')).toBe('365')
+  })
+
+  it('carries the speed measure and its pace-side threshold', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(
+      makeCpTrendDto({
+        measure: 'speed',
+        threshold: null,
+        speed_threshold: { value_ms: 4.15, w_prime_m: 260, source: 'auto', cv_pct: 3.0 },
+      }),
+    )
+    const trend = await fetchCpTrend('run', null)
+    expect(trend.measure).toBe('speed')
+    expect(trend.threshold).toBeNull()
+    expect(trend.speedThreshold).toEqual({ valueMs: 4.15, wPrimeM: 260, source: 'auto', cvPct: 3 })
   })
 })
 
