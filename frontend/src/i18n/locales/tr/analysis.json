@@ -212,7 +212,8 @@
     "seriesThreshold": "Güncel eşik ({watts} W)",
     "note": "Antrenman başına bir nokta, yalnızca kendi kararlı yüklenmelerinden uyarlanır; nokta saçılımı günün formunu değil antrenmanın kalitesini yansıtır.",
     "emptyTitle": "Henüz yeterince kullanılabilir antrenman yok",
-    "emptyDescription": "Kritik güç, 5 ile 30 dakika arasında en az dört kararlı yüklenme gerektirir. Zamanla dolar."
+    "emptyDescription": "Kritik güç, 5 ile 30 dakika arasında en az dört kararlı yüklenme gerektirir. Zamanla dolar.",
+    "seriesEnvelope": "Zamansal eşik"
   },
   "scores": {
     "rss": "aRSS",

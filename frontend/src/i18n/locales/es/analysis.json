@@ -210,9 +210,10 @@
     "seriesStryd": "Potencia Stryd",
     "seriesNative": "Potencia del dispositivo",
     "seriesThreshold": "Umbral actual ({watts} W)",
-    "note": "Un punto por sesión, ajustado solo con sus propios esfuerzos sostenidos; la dispersión de los puntos refleja la calidad de cada sesión, no la forma del día.",
+    "note": "Un punto por sesión, ajustado solo con sus propios esfuerzos sostenidos; la dispersión de los puntos refleja la calidad de cada sesión, no la forma del día. La línea discontinua es el umbral temporal con el que se puntuaron aquellos días.",
     "emptyTitle": "Aún no hay sesiones suficientes",
-    "emptyDescription": "La potencia crítica requiere sesiones con al menos cuatro esfuerzos sostenidos entre 5 y 30 minutos. Se completará a medida que acumules."
+    "emptyDescription": "La potencia crítica requiere sesiones con al menos cuatro esfuerzos sostenidos entre 5 y 30 minutos. Se completará a medida que acumules.",
+    "seriesEnvelope": "Umbral temporal"
   },
   "scores": {
     "rss": "aRSS",

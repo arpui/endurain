@@ -37,6 +37,7 @@ const STRYD_COLOR = themeColor('--color-hr')
 const NATIVE_COLOR = themeColor('--color-brand-mid')
 const MA_COLOR = themeColor('--color-info')
 const THRESHOLD_COLOR = themeColor('--color-muted-foreground')
+const ENVELOPE_COLOR = themeColor('--color-goal')
 
 const trendWindow = computed(() =>
   props.windowDays && props.windowDays > 0 ? props.windowDays : null,
@@ -65,8 +66,22 @@ function movingAverage(points: CpTrend['points']): number[] {
 }
 
 /**
+ * The axis floor, derived from what is actually on screen: lowest shown value
+ * with a small margin, rounded down to a tidy step. A fixed number would crop
+ * one athlete's history and waste half the plot on another's.
+ */
+function dataFloor(series: ChartRenderOptions['series']): number | undefined {
+  const values = series.flatMap((s) => s.data).filter((v): v is number => v !== null)
+  if (values.length === 0) return undefined
+  const min = Math.min(...values)
+  const step = min >= 300 ? 20 : 10
+  return Math.max(0, Math.floor((min * 0.95) / step) * step)
+}
+
+/**
  * The CP evolution: one dot per session (colored by power source) with a
- * moving average through them and the current threshold as a dashed reference.
+ * moving average through them, the temporal threshold the loads actually used
+ * as a dashed line, and the current threshold as a dashed reference.
  * Dots stay unjoined: sessions are days apart and a connecting line would
  * invent form that was never measured between them.
  */
@@ -74,6 +89,9 @@ const chartRender = computed<ChartRenderOptions>(() => {
   const points = trend.value?.points ?? []
   const labels = points.map((point) => formatMediumDate(point.date, locale.value))
   const isStrid = points.map((point) => point.powerSource === 'stryd')
+  const envelopeByDate = new Map(
+    (trend.value?.envelope ?? []).map((sample) => [sample.date, sample.cpW]),
+  )
   const series: ChartRenderOptions['series'] = [
     {
       label: t('analysis.cpTrend.seriesMovingAverage', { days: maDays.value }),
@@ -94,6 +112,17 @@ const chartRender = computed<ChartRenderOptions>(() => {
       dots: true,
     },
   ]
+  if (envelopeByDate.size > 0) {
+    series.push({
+      label: t('analysis.cpTrend.seriesEnvelope'),
+      data: points.map((point) => {
+        const value = envelopeByDate.get(point.date)
+        return value === undefined ? null : Math.round(value)
+      }),
+      color: ENVELOPE_COLOR,
+      dashed: true,
+    })
+  }
   const thresholdW = trend.value?.threshold?.valueW
   if (thresholdW !== undefined) {
     series.push({
@@ -110,6 +139,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
     valueFormat: (value) => `${Math.round(value)} W`,
     sharedTooltip: true,
     zoom: true,
+    yFloor: dataFloor(series),
   }
 })
 

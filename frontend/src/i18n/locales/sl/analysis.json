@@ -212,7 +212,8 @@
     "seriesThreshold": "Trenutni prag ({watts} W)",
     "note": "Ena točka na sejo, prilagojena le iz njenih lastnih vztrajnih naporov; razpršenost točk odraža kakovost seje, ne formo dneva.",
     "emptyTitle": "Še prem uporabnih sej",
-    "emptyDescription": "Kritična moč zahteva seje z vsaj štirimi vztrajnimi napori med 5 in 30 minutami. Sčasoma se napolni."
+    "emptyDescription": "Kritična moč zahteva seje z vsaj štirimi vztrajnimi napori med 5 in 30 minutami. Sčasoma se napolni.",
+    "seriesEnvelope": "Časovni prag"
   },
   "scores": {
     "rss": "aRSS",

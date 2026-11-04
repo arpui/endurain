@@ -5,7 +5,7 @@ no activity, no mocks. A regression here silently changes every stored load, so 
 expected values are derived in the test from the formula's published definition.
 """
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from math import exp
 
 import pytest
@@ -140,6 +140,40 @@ class TestDurationPeaks:
 
     def test_the_best_average_over_one_window(self):
         assert analysis_maths.best_window_mean([1.0, 5.0, 5.0, 5.0, 1.0], 1.0, 3.0) == pytest.approx(5.0)
+
+
+class TestTemporalThreshold:
+    """The decayed-max envelope that scores an activity against its era."""
+
+    D0 = date(2026, 6, 1)
+
+    def test_recent_evidence_supports_undecayed_and_old_evidence_decays(self):
+        fits = [(self.D0 - timedelta(days=5), 400.0), (self.D0 - timedelta(days=100), 500.0)]
+        value = analysis_maths.temporal_threshold(
+            fits, self.D0, back_days=90, fwd_days=45, decay_per_day=0.0, min_fits=1
+        )
+        assert value == pytest.approx(400.0)  # the 500 sits outside the 90-day window
+
+    def test_age_relaxes_the_answer(self):
+        fits = [(self.D0 - timedelta(days=60), 400.0)]
+        value = analysis_maths.temporal_threshold(
+            fits, self.D0, back_days=90, fwd_days=45, decay_per_day=0.01, min_fits=1
+        )
+        assert value == pytest.approx(400.0 * exp(-0.6))
+
+    def test_future_evidence_counts_without_boosting(self):
+        fits = [(self.D0 + timedelta(days=20), 380.0)]
+        value = analysis_maths.temporal_threshold(
+            fits, self.D0, back_days=90, fwd_days=45, decay_per_day=0.01, min_fits=1
+        )
+        assert value == pytest.approx(380.0)
+
+    def test_a_thin_window_answers_none_for_the_fallback(self):
+        fits = [(self.D0 - timedelta(days=3), 400.0), (self.D0 - timedelta(days=30), 410.0)]
+        assert (
+            analysis_maths.temporal_threshold(fits, self.D0, back_days=90, fwd_days=45, decay_per_day=0.003, min_fits=4)
+            is None
+        )
 
 
 class TestCriticalPowerFit:

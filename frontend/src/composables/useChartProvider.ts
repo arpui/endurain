@@ -102,6 +102,13 @@ export interface ChartRenderOptions {
    * on date-indexed series where each column carries several values (PMC).
    */
   sharedTooltip?: boolean
+  /**
+   * Lower bound of the primary y-axis, in data units. Views derive it from the
+   * series actually shown (a data floor with margin), never a hardcoded number:
+   * a runner's 240 W and a rower's 150 W both fill the plot instead of one of
+   * them floating above a fixed zero. Providers without floor support ignore it.
+   */
+  yFloor?: number
 }
 
 /** Imperative handle to a mounted chart, returned by {@link ChartProvider.mount}. */

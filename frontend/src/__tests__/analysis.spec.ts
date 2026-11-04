@@ -8,6 +8,7 @@ import {
   fetchActivityIntervals,
   fetchAnalysisSettings,
   fetchBestTimes,
+  fetchCpTrend,
   fetchFitnessSeries,
   fetchPowerDuration,
   fetchWprimeBalance,
@@ -267,6 +268,63 @@ describe('power-duration and W-prime mappers', () => {
     const settings = mapSettings(dto)
     expect(settings.fitFromS).toBe(120)
     expect(settings.fitToS).toBe(900)
+  })
+
+  /** Builds a full CpTrendRead wire payload, overridable per case. */
+  function makeCpTrendDto(overrides: Partial<Schemas['CpTrendRead']> = {}): Schemas['CpTrendRead'] {
+    return {
+      sport: 'run',
+      window_days: null,
+      threshold: { value_w: 425.2, w_prime_j: 21000, source: 'auto', cv_pct: 4.1 },
+      points: [
+        {
+          activity_id: 1,
+          date: '2026-01-10',
+          cp_w: 380,
+          w_prime_j: 20000,
+          cv_pct: 5,
+          power_source: 'stryd',
+        },
+        {
+          activity_id: 2,
+          date: '2026-02-10',
+          cp_w: 400,
+          w_prime_j: 21000,
+          cv_pct: 4,
+          power_source: null,
+        },
+      ],
+      envelope: [
+        { date: '2026-01-10', cp_w: 391.5 },
+        { date: '2026-02-10', cp_w: 400 },
+      ],
+      ...overrides,
+    }
+  }
+
+  it('maps the temporal-threshold envelope alongside the points', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(makeCpTrendDto())
+    const trend = await fetchCpTrend('run', null)
+    expect(trend.points[0]).toEqual({
+      activityId: 1,
+      date: '2026-01-10',
+      cpW: 380,
+      wPrimeJ: 20000,
+      cvPct: 5,
+      powerSource: 'stryd',
+    })
+    expect(trend.envelope).toEqual([
+      { date: '2026-01-10', cpW: 391.5 },
+      { date: '2026-02-10', cpW: 400 },
+    ])
+  })
+
+  it('answers an empty envelope when the payload carries none', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({ ...makeCpTrendDto(), envelope: undefined as never })
+    const trend = await fetchCpTrend('run', 365)
+    expect(trend.envelope).toEqual([])
+    const url: string = vi.mocked(apiFetch).mock.calls[0]?.[0] as string
+    expect(new URLSearchParams(url.split('?')[1]).get('window')).toBe('365')
   })
 })
 

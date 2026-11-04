@@ -71,6 +71,31 @@ FIT_MAX_S = 1800.0
 #: Peak durations the fit needs before its slope means anything.
 FIT_MIN_PEAKS = 4
 
+#: A critical power that evolves: the threshold used to score an activity is the
+#: best *decayed* per-session fit around its date, not the all-time peak curve.
+#: Evidence older than the day relaxes at ``DECAY_PER_DAY`` (≈9% over a quarter
+#: of no hard efforts — detraining in the literature); evidence up to FWD_DAYS
+#: ahead still counts undecayed (it is known at scoring time). A window with
+#: fewer than MIN_FITS usable fits falls back to the stored threshold.
+TEMPORAL_CP_BACK_DAYS = 90
+TEMPORAL_CP_FWD_DAYS = 45
+TEMPORAL_CP_DECAY_PER_DAY = 0.003
+TEMPORAL_CP_MIN_FITS = 4
+
+#: A per-session fit counts as evidence only when its regression is tight: the
+#: coefficient of variation must stay under this percent...
+TEMPORAL_CP_MAX_CV_PCT = 10.0
+
+#: ...and the fitted ceiling cannot exceed the session's own best sustained window
+#: average by more than this factor (a two-parameter fit loves to overshoot the
+#: last real data point; the session itself is the bound on what it held).
+TEMPORAL_CP_CEIL_FACTOR = 1.15
+
+#: Method parameter that switches the temporal power threshold off per athlete
+#: (stored in ``method_params``; on by default). Manual thresholds are always
+#: respected regardless.
+TEMPORAL_CP_PARAM = "temporal_cp"
+
 #: Rolling windows, in months back from today, whose duration-intensity curves are
 #: overlaid on the full-history one: recent form read against the athlete's record.
 PD_OVERLAY_MONTHS: tuple[int, ...] = (3, 6)

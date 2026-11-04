@@ -219,6 +219,14 @@ export interface CpTrendPoint {
   powerSource: string | null
 }
 
+/** One sample of the evolving threshold line, on a day the trend shows. */
+export interface CpTrendEnvelopePoint {
+  /** Server date this threshold is answered for. */
+  date: string
+  /** Temporal threshold in watts - what that day's loads were divided by. */
+  cpW: number
+}
+
 /** Critical-power evolution of one athlete and sport. */
 export interface CpTrend {
   sport: string
@@ -227,6 +235,8 @@ export interface CpTrend {
   /** The threshold the sport's loads currently use, the reference line. */
   threshold: PowerThreshold | null
   points: CpTrendPoint[]
+  /** The temporal threshold line, sampled on the points' own days. */
+  envelope: CpTrendEnvelopePoint[]
 }
 
 /** One sample of a W' balance series. */

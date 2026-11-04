@@ -212,7 +212,8 @@
     "seriesThreshold": "Aktuálna prahová hodnota ({watts} W)",
     "note": "Jeden bod za reláciu, fitovaný len z jej vlastných vytrvalých úsilí; rozptyl bodov odráža kvalitu relácie, nie formu dňa.",
     "emptyTitle": "Zatiaľ málo použiteľných relácií",
-    "emptyDescription": "Kritický výkon vyžaduje relácie s aspoň štyrmi vytrvalými úsiliami medzi 5 a 30 minútami. Časom sa doplní."
+    "emptyDescription": "Kritický výkon vyžaduje relácie s aspoň štyrmi vytrvalými úsiliami medzi 5 a 30 minútami. Časom sa doplní.",
+    "seriesEnvelope": "Časový prah"
   },
   "scores": {
     "rss": "aRSS",
