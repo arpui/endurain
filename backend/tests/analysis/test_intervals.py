@@ -185,6 +185,32 @@ class TestTempoBand:
         assert analysis_intervals.SegmentKind.TEMPO not in self._KINDS(analysis)
 
 
+class TestHardDayReps:
+    """A session whose own median sits near the threshold still shows its reps."""
+
+    def test_reps_launched_from_a_warmup_survive_the_contrast_test(self):
+        """Four hard blocks after a real warm-up, rests between: all four are reps.
+
+        The session's median lands near the threshold (a day dominated by its own
+        efforts), so contrast over the median cannot separate reps from surges;
+        the rest before each rep is what identifies them.
+        """
+        analysis = _analyse(
+            (600, 260.0),
+            *[(180, 430.0), (110, 50.0)] * 4,
+            (400, 370.0),
+            threshold_w=350.0,
+        )
+        kinds = [s.kind for s in analysis.segments]
+        assert kinds.count(analysis_intervals.SegmentKind.INTERVAL) == 4
+        assert analysis_intervals.SegmentKind.TEMPO not in kinds
+
+    def test_pushes_without_rest_in_a_steady_day_stay_surges(self):
+        """The surge rule survives: brief pushes in a hard steady day fold up."""
+        analysis = _analyse((600, 370.0), (90, 430.0), (300, 370.0), (90, 430.0), (600, 370.0), threshold_w=350.0)
+        assert len(_efforts(analysis)) == 0
+
+
 class TestClimbs:
     def _hilly(self, pushes: list[tuple[int, float]], base_seconds: int, grade_during: float):
         """Steady running with grade-driven pushes: power rises because the road rises."""
