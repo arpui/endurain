@@ -288,11 +288,19 @@ def _keep_efforts(
             rests = gap_level <= params.recovery_cp * anchor_w
             if not rests and contrast < params.strong_base:
                 continue
-        elif contrast < params.strong_base:
-            # The first run has no gap to judge it by, so it stands on contrast alone:
-            # a session whose opening merely nudges above its own median is a steady
-            # day, not a rep.
-            continue
+        else:
+            # The first run has no kept effort before it, but the session itself
+            # precedes it: the opening stretch (a warm-up) counts as the gap, judged
+            # by the same rest test as between reps. A rep launched from a rest is a
+            # rep even on a day whose median sits near the threshold, where contrast
+            # against the median cannot separate reps from surges - and rejecting the
+            # first one would silently cascade through the whole set.
+            opening_rest = run[0] > 0 and fmean(signal[: run[0]]) <= params.recovery_cp * anchor_w
+            if not opening_rest and contrast < params.strong_base:
+                # With nothing before it (the session opens at the effort) the run
+                # stands on contrast alone: an opening that merely nudges above its
+                # own median is a steady day, not a rep.
+                continue
         kept.append(run)
     return kept
 
