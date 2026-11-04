@@ -97,10 +97,11 @@ export interface ChartRenderOptions {
    */
   zoom?: boolean
   /**
-   * Extends wheel/pinch zoom to the y-axis as well (panning stays horizontal).
-   * For charts whose interesting band is a slice of the value range (critical
-   * power across years): the data floor gives a good start, and this lets the
-   * athlete push it further by hand. Only meaningful together with `zoom`.
+   * Extends wheel/pinch zoom AND drag-panning to the y-axis as well (without
+   * it, panning stays horizontal). For charts whose interesting band is a
+   * slice of the value range (critical power across years): the data floor
+   * gives a good start, and this lets the athlete push it further by hand.
+   * Only meaningful together with `zoom`.
    */
   zoomY?: boolean
   /**

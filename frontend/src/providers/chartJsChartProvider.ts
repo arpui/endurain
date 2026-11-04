@@ -195,7 +195,7 @@ export function buildChartConfiguration(
                 pinch: { enabled: true },
                 mode: options.zoomY ? 'xy' : 'x',
               },
-              pan: { enabled: true, mode: 'x' },
+              pan: { enabled: true, mode: options.zoomY ? 'xy' : 'x' },
             }
           : undefined,
       },

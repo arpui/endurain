@@ -322,8 +322,10 @@ describe('buildChartConfiguration', () => {
       zoom: true,
     })
 
-    const zoomA = both.options?.plugins?.zoom as { zoom?: { mode?: string } } | undefined
+    const zoomA = both.options?.plugins?.zoom as
+      { zoom?: { mode?: string }; pan?: { mode?: string } } | undefined
     expect(zoomA?.zoom?.mode).toBe('xy')
+    expect(zoomA?.pan?.mode).toBe('xy')
     const zoomB = horizontal.options?.plugins?.zoom as
       { zoom?: { mode?: string }; pan?: { mode?: string } } | undefined
     expect(zoomB?.zoom?.mode).toBe('x')
