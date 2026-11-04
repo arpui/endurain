@@ -258,7 +258,7 @@ export type IntervalSegmentDto = Schemas['IntervalSegmentRead']
 export type IntervalRulesDto = Schemas['IntervalRulesRead']
 
 /** What one stretch of an activity was, as the server read it. */
-export type IntervalSegmentKind = 'interval' | 'climb' | 'race' | 'recovery' | 'easy'
+export type IntervalSegmentKind = 'interval' | 'climb' | 'race' | 'recovery' | 'tempo' | 'easy'
 
 /** How the session as a whole reads. */
 export type IntervalSessionShape = 'intervals' | 'fartlek' | 'continuous' | 'terrain' | 'steady'

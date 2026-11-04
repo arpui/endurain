@@ -186,6 +186,15 @@ IV_STRONG_BASE = 1.22
 #: or below this fraction of the threshold.
 IV_RECOVERY_CP = 0.80
 
+#: A sustained stretch held inside the threshold band (between ``IV_EXIT_CP`` and
+#: ``IV_ENTER_CP`` times the threshold) for at least this many seconds is a TEMPO
+#: effort: a threshold block that never broke the ceiling but is no recovery either.
+IV_TEMPO_MIN_S = 120.0
+
+#: A tempo stretch closes when power falls to this fraction of the threshold: a hair
+#: under the opening gate, the same hysteresis that keeps an interval whole.
+IV_TEMPO_EXIT_CP = 0.88
+
 #: A gap no longer than this (seconds), or this share of the effort before it, is the
 #: same effort interrupted by a wobble rather than a rest between two.
 IV_MERGE_GAP_S = 60.0

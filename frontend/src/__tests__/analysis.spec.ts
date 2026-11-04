@@ -290,6 +290,8 @@ describe('activity interval analysis', () => {
         strong_base: 1.22,
         recovery_w: 279,
         effort_if: 1.05,
+        tempo_open_w: 315,
+        tempo_min_s: 120,
         climb_grade_pct: 3.5,
         climb_if: 1.25,
       },

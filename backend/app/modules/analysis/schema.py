@@ -477,6 +477,9 @@ class IntervalRulesRead(BaseModel):
         strong_base: Contrast needed when the gap before was not a real recovery.
         recovery_w: At or below this, a gap counts as a recovery.
         effort_if: Average intensity a flat effort must hold to be an interval.
+        tempo_open_w: Smoothed power at which a sub-threshold block starts counting
+            as tempo (the interval's own closing gate).
+        tempo_min_s: Shortest sustained stretch the tempo gate keeps.
         climb_grade_pct: Mean grade above which terrain explains the effort.
         climb_if: Above this intensity even a graded effort is a rep, not a climb.
     """
@@ -491,6 +494,8 @@ class IntervalRulesRead(BaseModel):
     strong_base: StrictFloat
     recovery_w: StrictFloat
     effort_if: StrictFloat
+    tempo_open_w: StrictFloat
+    tempo_min_s: StrictFloat
     climb_grade_pct: StrictFloat
     climb_if: StrictFloat
 

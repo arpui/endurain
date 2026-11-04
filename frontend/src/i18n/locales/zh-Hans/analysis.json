@@ -143,7 +143,8 @@
       "climb": "爬坡",
       "race": "比赛配速",
       "recovery": "恢复",
-      "easy": "轻松"
+      "easy": "轻松",
+      "tempo": "Tempo"
     },
     "shape": {
       "intervals": "规律间歇",

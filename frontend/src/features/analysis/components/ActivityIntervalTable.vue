@@ -74,7 +74,7 @@ const showClimbRap = computed(() => props.intervals.climbs.some((c) => c.rapMs !
 const BAND_COLUMNS = ['rss_total', 'rss_up', 'rss_high', 'rss_mid', 'rss_low'] as const
 
 /** Effort kinds, so the summary can count them and the table can colour them. */
-const EFFORT_KINDS: IntervalSegmentKind[] = ['interval', 'climb', 'race']
+const EFFORT_KINDS: IntervalSegmentKind[] = ['interval', 'climb', 'race', 'tempo']
 
 /** One row of the timeline table. */
 interface SegmentRow {

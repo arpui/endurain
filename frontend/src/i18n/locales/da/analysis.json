@@ -143,7 +143,8 @@
       "climb": "stigning",
       "race": "løbetempo",
       "recovery": "restitution",
-      "easy": "let"
+      "easy": "let",
+      "tempo": "Tempo"
     },
     "shape": {
       "intervals": "regelmæssige intervaller",

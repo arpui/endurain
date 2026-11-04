@@ -151,6 +151,40 @@ class TestEasyDays:
         assert analysis.segments == ()
 
 
+class TestTempoBand:
+    """Sustained blocks held just under the ceiling are threshold work, not rest."""
+
+    _KINDS = lambda self, a: [s.kind for s in a.segments]  # noqa: E731
+
+    def test_a_three_minute_block_under_the_ceiling_is_tempo(self):
+        analysis = _analyse((300, 300.0), (180, 340.0), (300, 300.0))
+        kinds = self._KINDS(analysis)
+        assert analysis_intervals.SegmentKind.TEMPO in kinds
+        tempo = next(s for s in analysis.segments if s.kind is analysis_intervals.SegmentKind.TEMPO)
+        assert tempo.duration_s >= 120.0
+
+    def test_a_short_dip_into_the_band_is_not_tempo(self):
+        analysis = _analyse((300, 300.0), (60, 340.0), (300, 300.0))
+        assert analysis_intervals.SegmentKind.TEMPO not in self._KINDS(analysis)
+
+    def test_tempo_touching_an_interval_stays_part_of_that_interval(self):
+        analysis = _analyse((300, 300.0), (60, 340.0), (180, 430.0), (60, 340.0), (300, 300.0))
+        assert [s.kind for s in _efforts(analysis)] == [analysis_intervals.SegmentKind.INTERVAL]
+        assert analysis_intervals.SegmentKind.TEMPO not in self._KINDS(analysis)
+
+    def test_a_day_below_the_band_stays_easy(self):
+        analysis = _analyse((300, 300.0), (180, 290.0), (300, 300.0))
+        assert analysis_intervals.SegmentKind.TEMPO not in self._KINDS(analysis)
+
+    def test_shape_is_not_relabelled_by_tempo_blocks(self):
+        analysis = _analyse((300, 300.0), (180, 340.0), (120, 300.0), (180, 340.0), (300, 300.0))
+        assert analysis.shape in (analysis_intervals.SessionShape.CONTINUOUS, analysis_intervals.SessionShape.STEADY)
+
+    def test_no_threshold_means_no_band(self):
+        analysis = _analyse((300, 300.0), (180, 340.0), (300, 300.0), threshold_w=None)
+        assert analysis_intervals.SegmentKind.TEMPO not in self._KINDS(analysis)
+
+
 class TestClimbs:
     def _hilly(self, pushes: list[tuple[int, float]], base_seconds: int, grade_during: float):
         """Steady running with grade-driven pushes: power rises because the road rises."""
