@@ -9621,6 +9621,9 @@ export interface components {
          *         strong_base: Contrast needed when the gap before was not a real recovery.
          *         recovery_w: At or below this, a gap counts as a recovery.
          *         effort_if: Average intensity a flat effort must hold to be an interval.
+         *         tempo_open_w: Smoothed power at which a sub-threshold block starts counting
+         *             as tempo (the interval's own closing gate).
+         *         tempo_min_s: Shortest sustained stretch the tempo gate keeps.
          *         climb_grade_pct: Mean grade above which terrain explains the effort.
          *         climb_if: Above this intensity even a graded effort is a rep, not a climb.
          */
@@ -9641,6 +9644,10 @@ export interface components {
             recovery_w: number;
             /** Effort If */
             effort_if: number;
+            /** Tempo Open W */
+            tempo_open_w: number;
+            /** Tempo Min S */
+            tempo_min_s: number;
             /** Climb Grade Pct */
             climb_grade_pct: number;
             /** Climb If */
@@ -10887,10 +10894,12 @@ export interface components {
          *         CLIMB: A sustained effort explained by the gradient rather than taken as a rep.
          *         RACE: One effort holding most of the session: a race or a long tempo block.
          *         RECOVERY: An easy stretch between two efforts, deep enough to be a rest.
+         *         TEMPO: A sustained stretch held just under the threshold (a threshold block
+         *             that never broke the ceiling). An effort, but not a rep.
          *         EASY: Anything else: warm-up, cooldown, the flat part between pushes.
          * @enum {string}
          */
-        SegmentKind: "interval" | "climb" | "race" | "recovery" | "easy";
+        SegmentKind: "interval" | "climb" | "race" | "recovery" | "tempo" | "easy";
         /**
          * SegmentListItemRead
          * @description Serialized segment as the library list shows it.

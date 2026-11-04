@@ -143,7 +143,8 @@
       "climb": "klim",
       "race": "tempo",
       "recovery": "herstel",
-      "easy": "licht"
+      "easy": "licht",
+      "tempo": "Tempo"
     },
     "shape": {
       "intervals": "regelmatige intervallen",

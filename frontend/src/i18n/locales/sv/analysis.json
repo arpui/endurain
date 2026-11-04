@@ -143,7 +143,8 @@
       "climb": "backe",
       "race": "löpningstempo",
       "recovery": "återhämtning",
-      "easy": "lätt"
+      "easy": "lätt",
+      "tempo": "Tempo"
     },
     "shape": {
       "intervals": "regelmässiga intervall",

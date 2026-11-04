@@ -143,7 +143,8 @@
       "climb": "salita",
       "race": "ritmo gara",
       "recovery": "recupero",
-      "easy": "facile"
+      "easy": "facile",
+      "tempo": "Tempo"
     },
     "shape": {
       "intervals": "intervalli regolari",

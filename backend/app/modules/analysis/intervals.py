@@ -43,6 +43,8 @@ class SegmentKind(StrEnum):
         CLIMB: A sustained effort explained by the gradient rather than taken as a rep.
         RACE: One effort holding most of the session: a race or a long tempo block.
         RECOVERY: An easy stretch between two efforts, deep enough to be a rest.
+        TEMPO: A sustained stretch held just under the threshold (a threshold block
+            that never broke the ceiling). An effort, but not a rep.
         EASY: Anything else: warm-up, cooldown, the flat part between pushes.
     """
 
@@ -50,6 +52,7 @@ class SegmentKind(StrEnum):
     CLIMB = "climb"
     RACE = "race"
     RECOVERY = "recovery"
+    TEMPO = "tempo"
     EASY = "easy"
 
 
@@ -86,6 +89,9 @@ class IntervalParams:
         strong_base: Contrast that makes an effort count without a recovery before it.
         recovery_cp: At or below this fraction of the threshold a gap is a real recovery.
         effort_if: Average intensity a flat run must hold to count as an interval.
+        tempo_min_s: Shortest sustained stretch inside the sub-threshold band that
+            counts as a tempo effort rather than a passing surge.
+        tempo_exit_cp: Fraction of the threshold at which a tempo stretch closes.
         merge_gap_s: A gap no longer than this joins two runs into one effort.
         merge_share: Or a gap no longer than this share of the effort before it.
         climb_grade_pct: Mean grade above which an effort may be terrain rather than a rep.
@@ -104,6 +110,8 @@ class IntervalParams:
     strong_base: float = analysis_constants.IV_STRONG_BASE
     recovery_cp: float = analysis_constants.IV_RECOVERY_CP
     effort_if: float = analysis_constants.IV_EFFORT_IF
+    tempo_min_s: float = analysis_constants.IV_TEMPO_MIN_S
+    tempo_exit_cp: float = analysis_constants.IV_TEMPO_EXIT_CP
     merge_gap_s: float = analysis_constants.IV_MERGE_GAP_S
     merge_share: float = analysis_constants.IV_MERGE_SHARE
     climb_grade_pct: float = analysis_constants.IV_CLIMB_GRADE_PCT
@@ -126,6 +134,8 @@ def params_from(parameters: Mapping[str, float]) -> IntervalParams:
         strong_base=parameters.get("iv_strong_base", defaults.strong_base),
         recovery_cp=parameters.get("iv_recovery_cp", defaults.recovery_cp),
         effort_if=parameters.get("iv_effort_if", defaults.effort_if),
+        tempo_min_s=parameters.get("iv_tempo_min_s", defaults.tempo_min_s),
+        tempo_exit_cp=parameters.get("iv_tempo_exit_cp", defaults.tempo_exit_cp),
         merge_gap_s=parameters.get("iv_merge_gap_s", defaults.merge_gap_s),
         merge_share=parameters.get("iv_merge_share", defaults.merge_share),
         climb_grade_pct=parameters.get("iv_climb_grade_pct", defaults.climb_grade_pct),
@@ -376,6 +386,22 @@ def analyse_activity(
 
     measured_s = len(signal) * period_s
     efforts = [_classify_effort(run, signal, grades_pct, params, anchor_w, period_s, measured_s) for run in runs]
+    if threshold_w:
+        # A second, gentler gate finds the blocks that live just under the ceiling:
+        # held at or above the interval's own closing gate for long enough, they are
+        # threshold work, not recovery. Anything touching a kept interval stays part
+        # of that interval.
+        tempo_open = close_at
+        tempo_close = min(tempo_open - 1.0, params.tempo_exit_cp * threshold_w)
+        tempo = [
+            (run, SegmentKind.TEMPO)
+            for run in _runs_above(signal, period_s, tempo_open, tempo_close, params.tempo_min_s)
+            if not any(run[0] < end and start < run[1] for start, end in runs)
+            and fmean(signal[run[0] : run[1]]) >= tempo_open
+        ]
+        merged = sorted(list(zip(runs, efforts, strict=True)) + tempo)
+        runs = [run for run, _kind in merged]
+        efforts = [kind for _run, kind in merged]
     altitudes_smooth = (
         analysis_maths.moving_median(altitudes_m, _window_samples(period_s, analysis_constants.IV_ELEV_MEDIAN_S))
         if altitudes_m is not None
@@ -395,7 +421,10 @@ def analyse_activity(
         altitudes_smooth,
         raw_parameters,
     )
-    real_efforts = [kind for kind in efforts if kind is not SegmentKind.EASY]
+    # The tempo band informs the timeline, not the session's shape: the shape answers
+    # how the above-threshold reps were arranged, and relabelling a steady day as
+    # fartlek because it held 90-99% of CP would overstate it.
+    real_efforts = [kind for kind in efforts if kind not in (SegmentKind.EASY, SegmentKind.TEMPO)]
     return IntervalAnalysis(
         shape=_shape(real_efforts, segments, base, anchor_w),
         base_power_w=round(base, 1),
@@ -410,6 +439,8 @@ def analyse_activity(
             "strong_base": params.strong_base,
             "recovery_w": round(params.recovery_cp * anchor_w, 1),
             "effort_if": params.effort_if,
+            "tempo_open_w": round(close_at, 1),
+            "tempo_min_s": params.tempo_min_s,
             "climb_grade_pct": params.climb_grade_pct,
             "climb_if": params.climb_if,
         },
