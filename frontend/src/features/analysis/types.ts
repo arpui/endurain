@@ -232,8 +232,12 @@ export interface CpTrend {
   sport: string
   /** Days of history covered, `null` for all of it. */
   windowDays: number | null
+  /** What the fits are in: watts, or metres per second for a no-power athlete. */
+  measure: 'power' | 'speed'
   /** The threshold the sport's loads currently use, the reference line. */
   threshold: PowerThreshold | null
+  /** The pace-side twin, the reference line of a speed trend. */
+  speedThreshold: SpeedThreshold | null
   points: CpTrendPoint[]
   /** The temporal threshold line, sampled on the points' own days. */
   envelope: CpTrendEnvelopePoint[]

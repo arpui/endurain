@@ -214,7 +214,9 @@
     "emptyTitle": "可擬合的訓練還不足",
     "emptyDescription": "臨界功率需要至少包含 4 個 5–30 分鐘持續輸出的訓練。隨著累積會逐漸填充。",
     "seriesEnvelope": "時間閾值",
-    "refreshing": "載入中…"
+    "refreshing": "載入中…",
+    "titleSpeed": "臨界速度演變",
+    "seriesSession": "訓練"
   },
   "scores": {
     "rss": "aRSS",

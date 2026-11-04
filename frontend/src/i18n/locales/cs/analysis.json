@@ -214,7 +214,9 @@
     "emptyTitle": "Zatím málo použitelných relací",
     "emptyDescription": "Kritický výkon vyžaduje relace s alespoň čtyřmi vytrvalými úsilí mezi 5 a 30 minutami. Časem se doplní.",
     "seriesEnvelope": "Časový práh",
-    "refreshing": "Načítání…"
+    "refreshing": "Načítání…",
+    "titleSpeed": "Vývoj kritické rychlosti",
+    "seriesSession": "Aktivita"
   },
   "scores": {
     "rss": "aRSS",

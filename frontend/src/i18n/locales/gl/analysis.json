@@ -214,7 +214,9 @@
     "emptyTitle": "Aínda non hai sesións dabondo",
     "emptyDescription": "A potencia crítica precisa sesións con polo menos catro esforzos sostidos entre 5 e 30 minutos. Encherase co tempo.",
     "seriesEnvelope": "Umbral temporal",
-    "refreshing": "Actualizando…"
+    "refreshing": "Actualizando…",
+    "titleSpeed": "Evolución da velocidade crítica",
+    "seriesSession": "Sesión"
   },
   "scores": {
     "rss": "aRSS",

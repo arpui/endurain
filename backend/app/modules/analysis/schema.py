@@ -384,8 +384,12 @@ class CpTrendRead(BaseModel):
     Attributes:
         sport: The sport group the fits belong to.
         window_days: Days of history covered, or ``None`` for all of it.
+        measure: What the points and envelope are in: ``power`` (watts) or
+            ``speed`` (metres per second, the no-power answer for running).
         threshold: The power threshold the loads of this sport are currently
             measured against, as the reference line, or ``None`` when unset.
+        speed_threshold: The speed threshold, in the same role for a speed
+            trend, or ``None`` when unset.
         points: Per-session CP fits, oldest first.
         envelope: The temporal threshold line - what scoring actually uses per
             day - sampled on the points' own days.
@@ -395,7 +399,9 @@ class CpTrendRead(BaseModel):
 
     sport: StrictStr
     window_days: StrictInt | None
+    measure: StrictStr
     threshold: PowerThresholdRead | None
+    speed_threshold: SpeedThresholdRead | None = None
     points: list[CpTrendPointRead]
     envelope: list[CpTrendEnvelopeRead] = []
 

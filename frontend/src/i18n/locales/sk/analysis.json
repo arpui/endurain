@@ -214,7 +214,9 @@
     "emptyTitle": "Zatiaľ málo použiteľných relácií",
     "emptyDescription": "Kritický výkon vyžaduje relácie s aspoň štyrmi vytrvalými úsiliami medzi 5 a 30 minútami. Časom sa doplní.",
     "seriesEnvelope": "Časový prah",
-    "refreshing": "Načítava…"
+    "refreshing": "Načítava…",
+    "titleSpeed": "Vývoj kritickej rýchlosti",
+    "seriesSession": "Aktivita"
   },
   "scores": {
     "rss": "aRSS",

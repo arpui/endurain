@@ -214,7 +214,9 @@
     "emptyTitle": "Not enough fittable sessions yet",
     "emptyDescription": "Critical power needs sessions with at least four sustained efforts between 5 and 30 minutes. It fills in as you collect them.",
     "seriesEnvelope": "Temporal threshold",
-    "refreshing": "Updating…"
+    "refreshing": "Updating…",
+    "titleSpeed": "Critical speed evolution",
+    "seriesSession": "Session"
   },
   "scores": {
     "rss": "aRSS",

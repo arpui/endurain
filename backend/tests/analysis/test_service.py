@@ -922,10 +922,32 @@ class TestCpTrend:
         assert series.threshold is not None
         assert series.threshold.value_w == 250.0
 
+    def test_no_power_anywhere_answers_in_speed(self):
+        """A runner without watts gets the same trend, fitted over grade-adjusted speed."""
+        profile = [4.6] * 300 + [4.3] * 300 + [4.1] * 600 + [3.9] * 600 + [3.7] * 600
+
+        def _streams(activity_id, stream_type, _key, _db, *, keep_zeros):
+            if stream_type == activity_streams_constants.STREAM_TYPE_SPEED:
+                return 1.0, tuple(v + 0.02 * activity_id for v in profile), ()
+            return 1.0, (), ()
+
+        activities = [_activity(i, start_time=_T0_UTC - timedelta(days=15 * i)) for i in range(1, 5)]
+        analysis_service._threshold_fits_cache.clear()
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}._stream_samples", side_effect=_streams),
+        ):
+            series = analysis_service.get_cp_trend(2, "run", _db())
+        assert series.measure == "speed"
+        assert len(series.points) == 4
+        assert all(1.0 < point.cp_w < 10.0 for point in series.points)
+        assert series.envelope and all(1.0 < e.cp_w < 10.0 for e in series.envelope)
+
     def test_the_envelope_line_accompanies_dense_history(self):
         varied = [350.0] * 300 + [320.0] * 300 + [300.0] * 600 + [280.0] * 800
         activities = [_activity(i, start_time=_T0_UTC - timedelta(days=20 * i)) for i in range(1, 6)]
-        analysis_service._cp_fits_cache.clear()
+        analysis_service._threshold_fits_cache.clear()
         series = self._run(activities, {i: varied for i in range(1, 6)})
         assert len(series.envelope) >= 3
         assert all(e.cp_w > 0 for e in series.envelope)
@@ -946,8 +968,8 @@ class TestTemporalPowerThreshold:
                 )
             }
         )
-        with patch(f"{_SVC}._session_cp_fits", return_value=[(_T0_UTC.date(), 300.0)]):
-            value = analysis_service._power_threshold_at(2, "run", _T0_UTC.date(), settings, _db())
+        with patch(f"{_SVC}._session_threshold_fits", return_value=[(_T0_UTC.date(), 300.0)]):
+            value = analysis_service._threshold_at(2, "run", _T0_UTC.date(), settings, _db(), measure="power")
         assert value == 400.0
 
     def test_the_parameter_switch_off_returns_the_stored_value(self):
@@ -959,8 +981,8 @@ class TestTemporalPowerThreshold:
             },
             method_params={"temporal_cp": 0},
         )
-        with patch(f"{_SVC}._session_cp_fits", return_value=[(_T0_UTC.date(), 300.0)]):
-            value = analysis_service._power_threshold_at(2, "run", _T0_UTC.date(), settings, _db())
+        with patch(f"{_SVC}._session_threshold_fits", return_value=[(_T0_UTC.date(), 300.0)]):
+            value = analysis_service._threshold_at(2, "run", _T0_UTC.date(), settings, _db(), measure="power")
         assert value == 400.0
 
     def test_thin_evidence_falls_back_to_the_stored_threshold(self):
@@ -971,8 +993,8 @@ class TestTemporalPowerThreshold:
                 )
             }
         )
-        with patch(f"{_SVC}._session_cp_fits", return_value=[(_T0_UTC.date(), 300.0)]):
-            value = analysis_service._power_threshold_at(2, "run", _T0_UTC.date(), settings, _db())
+        with patch(f"{_SVC}._session_threshold_fits", return_value=[(_T0_UTC.date(), 300.0)]):
+            value = analysis_service._threshold_at(2, "run", _T0_UTC.date(), settings, _db(), measure="power")
         assert value == 400.0
 
     def test_dense_evidence_decides_over_the_stored_value(self):
@@ -985,9 +1007,42 @@ class TestTemporalPowerThreshold:
         )
         day = _T0_UTC.date()
         fits = [(day - timedelta(days=n), 340.0) for n in (2, 10, 20, 30)]
-        with patch(f"{_SVC}._session_cp_fits", return_value=fits):
-            value = analysis_service._power_threshold_at(2, "run", day, settings, _db())
+        with patch(f"{_SVC}._session_threshold_fits", return_value=fits):
+            value = analysis_service._threshold_at(2, "run", day, settings, _db(), measure="power")
         assert 330.0 < value < 340.0  # freshest fit, lightly decayed
+
+
+class TestTemporalSpeedThreshold:
+    """Pace-side scoring reads the same evolving rule, in metres per second."""
+
+    def _settings_ms(self, source):
+        return _settings(
+            speed_thresholds={
+                "run": analysis_schema.SpeedThresholdRead(value_ms=4.2, w_prime_m=240.0, source=source, cv_pct=2.0)
+            }
+        )
+
+    def test_manual_speed_threshold_is_respected(self):
+        settings = self._settings_ms(analysis_constants.ThresholdSource.MANUAL)
+        day = _T0_UTC.date()
+        fits = [(day - timedelta(days=n), 3.6) for n in (2, 10, 20, 30)]
+        with patch(f"{_SVC}._session_threshold_fits", return_value=fits):
+            value = analysis_service._threshold_at(2, "run", day, settings, _db(), measure="speed")
+        assert value == 4.2
+
+    def test_thin_speed_evidence_falls_back_to_the_stored_value(self):
+        settings = self._settings_ms(analysis_constants.ThresholdSource.AUTO)
+        with patch(f"{_SVC}._session_threshold_fits", return_value=[(_T0_UTC.date(), 3.6)]):
+            value = analysis_service._threshold_at(2, "run", _T0_UTC.date(), settings, _db(), measure="speed")
+        assert value == 4.2
+
+    def test_dense_speed_evidence_decides_over_the_stored_value(self):
+        settings = self._settings_ms(analysis_constants.ThresholdSource.AUTO)
+        day = _T0_UTC.date()
+        fits = [(day - timedelta(days=n), 3.9) for n in (2, 10, 20, 30)]
+        with patch(f"{_SVC}._session_threshold_fits", return_value=fits):
+            value = analysis_service._threshold_at(2, "run", day, settings, _db(), measure="speed")
+        assert 3.8 < value < 3.9
 
 
 class TestWprimeBalance:

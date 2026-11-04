@@ -214,7 +214,9 @@
     "emptyTitle": "Inte tillräckligt många användbara pass",
     "emptyDescription": "Kritisk effekt kräver pass med minst fyra uthålliga insatser mellan 5 och 30 minuter. Den fylls efter hand.",
     "seriesEnvelope": "Tidsberoende tröskel",
-    "refreshing": "Laddar…"
+    "refreshing": "Laddar…",
+    "titleSpeed": "Kritisk hastighet över tid",
+    "seriesSession": "Pass"
   },
   "scores": {
     "rss": "aRSS",

@@ -214,7 +214,9 @@
     "emptyTitle": "For få brukbare økter ennå",
     "emptyDescription": "Kritisk effekt krever økter med minst fire vedvarende innsatser mellom 5 og 30 minutter. Den fylles etter hvert.",
     "seriesEnvelope": "Tidsmessig terskel",
-    "refreshing": "Laster…"
+    "refreshing": "Laster…",
+    "titleSpeed": "Kritisk hastighet over tid",
+    "seriesSession": "Økt"
   },
   "scores": {
     "rss": "aRSS",

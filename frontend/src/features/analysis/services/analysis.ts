@@ -318,15 +318,25 @@ export async function fetchCpTrend(
 /** Maps a critical-power trend DTO (points, reference threshold) to the domain model. */
 function mapCpTrend(dto: CpTrendDto): CpTrend {
   const entry = dto.threshold
+  const speedEntry = dto.speed_threshold
   return {
     sport: dto.sport,
     windowDays: dto.window_days ?? null,
+    measure: dto.measure === 'speed' ? 'speed' : 'power',
     threshold: entry
       ? {
           valueW: entry.value_w,
           wPrimeJ: entry.w_prime_j ?? null,
           source: mapSource(entry.source),
           cvPct: entry.cv_pct ?? null,
+        }
+      : null,
+    speedThreshold: speedEntry
+      ? {
+          valueMs: speedEntry.value_ms,
+          wPrimeM: speedEntry.w_prime_m ?? null,
+          source: mapSource(speedEntry.source),
+          cvPct: speedEntry.cv_pct ?? null,
         }
       : null,
     points: (dto.points ?? []).map((point) => ({

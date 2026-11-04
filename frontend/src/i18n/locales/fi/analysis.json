@@ -214,7 +214,9 @@
     "emptyTitle": "Ei vielä tarpeeksi soveliaita harjoituksia",
     "emptyDescription": "Kriittinen teho vaatii harjoituksia, joissa on vähintään neljä kestävää suoritusta 5–30 minuutin välillä. Se täydentyy ajan myötä.",
     "seriesEnvelope": "Ajallinen kynnys",
-    "refreshing": "Ladataan…"
+    "refreshing": "Ladataan…",
+    "titleSpeed": "Kriittisen nopeuden kehitys",
+    "seriesSession": "Harjoitus"
   },
   "scores": {
     "rss": "aRSS",

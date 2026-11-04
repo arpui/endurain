@@ -214,7 +214,9 @@
     "emptyTitle": "Ainda não há sessões suficientes",
     "emptyDescription": "A potência crítica exige sessões com pelo menos quatro esforços sustentados entre 5 e 30 minutos. Preenche-se com o tempo.",
     "seriesEnvelope": "Limiar temporal",
-    "refreshing": "A carregar…"
+    "refreshing": "A carregar…",
+    "titleSpeed": "Evolução da velocidade crítica",
+    "seriesSession": "Sessão"
   },
   "scores": {
     "rss": "aRSS",
