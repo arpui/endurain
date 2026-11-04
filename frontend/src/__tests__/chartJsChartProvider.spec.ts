@@ -292,6 +292,23 @@ describe('buildChartConfiguration', () => {
     expect(y?.reverse).toBe(false)
   })
 
+  it('clamps the y-axis to a view-derived floor when one is given', () => {
+    const floored = buildChartConfiguration({
+      kind: 'line',
+      series: [{ label: 'CP', data: [260, 420] }],
+      yFloor: 240,
+    })
+    const open = buildChartConfiguration({
+      kind: 'line',
+      series: [{ label: 'CP', data: [260, 420] }],
+    })
+
+    const yA = floored.options?.scales?.y as Record<string, unknown> | undefined
+    expect(yA?.min).toBe(240)
+    const yB = open.options?.scales?.y as Record<string, unknown> | undefined
+    expect(yB?.min).toBeUndefined()
+  })
+
   it('adds pan/zoom config when zoom is enabled and omits it otherwise', () => {
     const zoomed = buildChartConfiguration({
       kind: 'line',

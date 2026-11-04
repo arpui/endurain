@@ -212,7 +212,8 @@
     "seriesThreshold": "Pašreizējais slieksnis ({watts} W)",
     "note": "Viens punkts par nodarbību, pielāgots tikai no tās pašas izturīgajiem pūliņiem; punktu izkliede atspilda nodarbības kvalitāti, ne dienas formu.",
     "emptyTitle": "Vēl par maz izmantojamu nodarbību",
-    "emptyDescription": "Kritiskajai jaudai nepieciešamas nodarbības ar vismaz četriem izturīgiem pūliņiem no 5 līdz 30 minūtēm. Laika gaitā aizpildās."
+    "emptyDescription": "Kritiskajai jaudai nepieciešamas nodarbības ar vismaz četriem izturīgiem pūliņiem no 5 līdz 30 minūtēm. Laika gaitā aizpildās.",
+    "seriesEnvelope": "Temporālais slieksnis"
   },
   "scores": {
     "rss": "aRSS",

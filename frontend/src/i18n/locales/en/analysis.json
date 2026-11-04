@@ -210,9 +210,10 @@
     "seriesStryd": "Stryd power",
     "seriesNative": "Device power",
     "seriesThreshold": "Current threshold ({watts} W)",
-    "note": "One point per session, fitted from its own sustained efforts alone; how scattered the dots are reflects each session's quality, not the day's form.",
+    "note": "One point per session, fitted from its own sustained efforts alone; how scattered the dots are reflects each session's quality, not the day's form. The dashed line is the temporal threshold those days' loads were scored against.",
     "emptyTitle": "Not enough fittable sessions yet",
-    "emptyDescription": "Critical power needs sessions with at least four sustained efforts between 5 and 30 minutes. It fills in as you collect them."
+    "emptyDescription": "Critical power needs sessions with at least four sustained efforts between 5 and 30 minutes. It fills in as you collect them.",
+    "seriesEnvelope": "Temporal threshold"
   },
   "scores": {
     "rss": "aRSS",

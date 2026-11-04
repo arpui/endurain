@@ -212,7 +212,8 @@
     "seriesThreshold": "Dabartinė slenkstis ({watts} W)",
     "note": "Vienas taškas per treniruotę, priderintas tik iš jos pačios ištvermingų įdėjimų; taškų išsklaidymas atspindi treniruotės kokybę, ne dienos formą.",
     "emptyTitle": "Kol kas per maž tinkamų treniruočių",
-    "emptyDescription": "Kritinei galiai reikia treniruočių su bent keturiais ištvermingais įdėjimais nuo 5 iki 30 min. Užpildoma laikui bėgant."
+    "emptyDescription": "Kritinei galiai reikia treniruočių su bent keturiais ištvermingais įdėjimais nuo 5 iki 30 min. Užpildoma laikui bėgant.",
+    "seriesEnvelope": "Temporalinis slenkstis"
   },
   "scores": {
     "rss": "aRSS",

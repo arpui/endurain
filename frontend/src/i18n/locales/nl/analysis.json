@@ -212,7 +212,8 @@
     "seriesThreshold": "Huidige drempel ({watts} W)",
     "note": "Eén punt per sessie, alleen uit haar eigen volgehouden inspanningen past; de spreiding weerspiegelt de kwaliteit van elke sessie, niet de vorm van de dag.",
     "emptyTitle": "Nog te weinig bruikbare sessies",
-    "emptyDescription": "Kritisch vermogen vereist sessies met minstens vier volgehouden inspanningen tussen 5 en 30 minuten. Het vult zich naarmate je ze verzamelt."
+    "emptyDescription": "Kritisch vermogen vereist sessies met minstens vier volgehouden inspanningen tussen 5 en 30 minuten. Het vult zich naarmate je ze verzamelt.",
+    "seriesEnvelope": "Tijdsafhankelijke drempel"
   },
   "scores": {
     "rss": "aRSS",

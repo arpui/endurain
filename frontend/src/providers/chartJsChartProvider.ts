@@ -204,6 +204,11 @@ export function buildChartConfiguration(
         y: {
           display: true,
           reverse: options.invertY ?? false,
+          // A view-provided data floor: the axis starts where the shown series
+          // start, not at an arbitrary zero. Absent means Chart.js's own bounds.
+          ...(options.yFloor !== undefined && Number.isFinite(options.yFloor)
+            ? { min: options.yFloor }
+            : {}),
           ticks: options.valueFormat
             ? { callback: (value) => options.valueFormat?.(Number(value)) ?? String(value) }
             : {},

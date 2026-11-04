@@ -364,6 +364,20 @@ class CpTrendPointRead(BaseModel):
     power_source: StrictStr | None
 
 
+class CpTrendEnvelopeRead(BaseModel):
+    """One sample of the evolving threshold line: decayed best evidence per day.
+
+    Attributes:
+        date: Day the threshold is answered for (samples are evenly spaced).
+        cp_w: Threshold in watts supported by the decayed per-session fits.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    date: date_type
+    cp_w: StrictFloat
+
+
 class CpTrendRead(BaseModel):
     """Serialized critical-power evolution of one athlete and sport.
 
@@ -373,6 +387,8 @@ class CpTrendRead(BaseModel):
         threshold: The power threshold the loads of this sport are currently
             measured against, as the reference line, or ``None`` when unset.
         points: Per-session CP fits, oldest first.
+        envelope: The temporal threshold line - what scoring actually uses per
+            day - sampled on the points' own days.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -381,6 +397,7 @@ class CpTrendRead(BaseModel):
     window_days: StrictInt | None
     threshold: PowerThresholdRead | None
     points: list[CpTrendPointRead]
+    envelope: list[CpTrendEnvelopeRead] = []
 
 
 class WprimePointRead(BaseModel):

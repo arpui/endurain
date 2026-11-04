@@ -212,7 +212,8 @@
     "seriesThreshold": "Prag actual ({watts} W)",
     "note": "Un punct pe sesiune, ajustat doar din eforturile susținute ale acesteia; împrăștierea punctelor reflectă calitatea fiecărei sesiuni, nu forma zilei.",
     "emptyTitle": "Încă puține sesiuni utilizabile",
-    "emptyDescription": "Puterea critică necesită sesiuni cu cel puțin patru eforturi susținute între 5 și 30 de minute. Se completează în timp."
+    "emptyDescription": "Puterea critică necesită sesiuni cu cel puțin patru eforturi susținute între 5 și 30 de minute. Se completează în timp.",
+    "seriesEnvelope": "Prag temporal"
   },
   "scores": {
     "rss": "aRSS",

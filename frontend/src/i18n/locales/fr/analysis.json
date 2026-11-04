@@ -212,7 +212,8 @@
     "seriesThreshold": "Seuil actuel ({watts} W)",
     "note": "Un point par séance, ajusté sur ses seuls efforts soutenus ; la dispersion des points reflète la qualité de chaque séance, pas la forme du jour.",
     "emptyTitle": "Pas encore assez de séances exploitables",
-    "emptyDescription": "La puissance critique exige des séances avec au moins quatre efforts soutenus entre 5 et 30 minutes. Le graphique se remplira au fil de tes séances."
+    "emptyDescription": "La puissance critique exige des séances avec au moins quatre efforts soutenus entre 5 et 30 minutes. Le graphique se remplira au fil de tes séances.",
+    "seriesEnvelope": "Seuil temporel"
   },
   "scores": {
     "rss": "aRSS",

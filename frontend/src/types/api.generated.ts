@@ -6539,6 +6539,23 @@ export interface components {
          */
         Color: "brown" | "dark_brown" | "light_brown" | "yellow" | "green" | "black" | "red" | "white";
         /**
+         * CpTrendEnvelopeRead
+         * @description One sample of the evolving threshold line: decayed best evidence per day.
+         *
+         *     Attributes:
+         *         date: Day the threshold is answered for (samples are evenly spaced).
+         *         cp_w: Threshold in watts supported by the decayed per-session fits.
+         */
+        CpTrendEnvelopeRead: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Cp W */
+            cp_w: number;
+        };
+        /**
          * CpTrendPointRead
          * @description Serialized one session's fitted critical power.
          *
@@ -6579,6 +6596,8 @@ export interface components {
          *         threshold: The power threshold the loads of this sport are currently
          *             measured against, as the reference line, or ``None`` when unset.
          *         points: Per-session CP fits, oldest first.
+         *         envelope: The temporal threshold line - what scoring actually uses per
+         *             day - sampled on the points' own days.
          */
         CpTrendRead: {
             /** Sport */
@@ -6588,6 +6607,11 @@ export interface components {
             threshold: components["schemas"]["PowerThresholdRead"] | null;
             /** Points */
             points: components["schemas"]["CpTrendPointRead"][];
+            /**
+             * Envelope
+             * @default []
+             */
+            envelope: components["schemas"]["CpTrendEnvelopeRead"][];
         };
         /**
          * Currency

@@ -13,7 +13,7 @@ count), while callers drop heart-rate zeros first because they mean "no signal".
 """
 
 from collections.abc import Mapping, Sequence
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from math import exp
 from statistics import median
 
@@ -474,3 +474,47 @@ def grade_adjusted_run_speed(
     )
     factors = np.where(slopes == analysis_constants.GAP_FLAT_CORRECTION_PCT, 1.0, factors)
     return tuple(speeds * factors)
+
+
+def temporal_threshold(
+    fits: Sequence[tuple[date, float]],
+    on_day: date,
+    *,
+    back_days: int,
+    fwd_days: int,
+    decay_per_day: float,
+    min_fits: int,
+) -> float | None:
+    """Return the threshold supported by dated evidence, decayed by age.
+
+    A fit dated ``e`` supports day ``D`` at ``fit * exp(-decay * age)``, where the
+    age is zero for evidence at or after ``D`` (it is known at scoring time). The
+    threshold is the best such support inside the window: hard efforts lift it at
+    once, and without new evidence it relaxes toward the last thing the athlete
+    actually held. Fewer than ``min_fits`` fits in the window means the evidence
+    is too thin to model an evolution, and the caller should fall back.
+
+    Args:
+        fits: ``(day, threshold)`` pairs, any order; already quality-gated.
+        on_day: The day to answer for.
+        back_days: How far back evidence still counts (before decay is applied to it).
+        fwd_days: How far ahead evidence may sit (ahead-of-day evidence counts undecayed).
+        decay_per_day: Fractional relaxation per day of age.
+        min_fits: Least evidence a usable answer needs.
+
+    Returns:
+        The decayed maximum in watts, or ``None`` when the window is too thin.
+    """
+    lo = on_day - timedelta(days=back_days)
+    hi = on_day + timedelta(days=fwd_days)
+    best: float | None = None
+    seen = 0
+    for day, value in fits:
+        if day < lo or day > hi:
+            continue
+        seen += 1
+        age = max(0, (on_day - day).days)
+        support = float(value) * exp(-decay_per_day * age)
+        if best is None or support > best:
+            best = support
+    return best if seen >= min_fits else None

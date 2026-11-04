@@ -279,6 +279,107 @@ def _local_day(activity: activity_schema.ActivityRead) -> date | None:
     return activity.start_time.astimezone(zone).date()
 
 
+# Per-athlete cache of quality-gated CP fits, keyed (user_id, sport). Built lazily
+# by _session_cp_fits (it reads whole streams) and dropped whenever thresholds or
+# history are re-measured, so a recompute pass never scores against stale evidence.
+_cp_fits_cache: dict[tuple[int, str], list[tuple[date, float]]] = {}
+
+
+def _session_cp_fits(user_id: int, sport: str, db: Session) -> list[tuple[date, float]]:
+    """Return the per-session CP fits that qualify as threshold evidence.
+
+    Every session with a power stream gets its own duration-intensity fit (the
+    same arithmetic the CP-trend chart plots); only fits that pass the quality
+    gates count as evidence of a threshold: a tight regression, and a ceiling the
+    session itself can vouch for (the fit cannot overshoot the best sustained
+    window average by more than ``TEMPORAL_CP_CEIL_FACTOR``). Cached per athlete
+    and sport: the streams are read once per recompute pass, and the cache is
+    cleared whenever thresholds or the whole history are re-measured.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group to fit.
+        db: Database session.
+
+    Returns:
+        ``(day, cp_w)`` pairs, quality-gated, oldest first.
+    """
+    key = (user_id, sport)
+    cached = _cp_fits_cache.get(key)
+    if cached is not None:
+        return cached
+    fits: list[tuple[date, float]] = []
+    for activity in activity_integration.list_user_activities(user_id, db):
+        if sport_group(activity.activity_type) != sport or activity.start_time is None:
+            continue
+        period_s, power_w, _ = _stream_samples(
+            activity.id,
+            activity_streams_constants.STREAM_TYPE_POWER,
+            "power",
+            db,
+            keep_zeros=True,
+        )
+        if not power_w or period_s <= 0:
+            continue
+        means = analysis_maths.best_means(power_w, period_s)
+        fit = analysis_maths.fit_cp_wprime(means)
+        if fit is None or fit[2] > analysis_constants.TEMPORAL_CP_MAX_CV_PCT:
+            continue
+        windows = [
+            value
+            for duration, value in means.items()
+            if analysis_constants.FIT_MIN_S <= duration <= analysis_constants.FIT_MAX_S
+        ]
+        sustained = max(windows, default=0.0)
+        if sustained <= 0 or fit[0] > sustained * analysis_constants.TEMPORAL_CP_CEIL_FACTOR:
+            continue
+        fits.append((activity.start_time.date(), fit[0]))
+    fits.sort(key=lambda item: item[0])
+    _cp_fits_cache[key] = fits
+    return fits
+
+
+def _power_threshold_at(
+    user_id: int,
+    sport: str,
+    on_day: date,
+    settings: analysis_schema.AnalysisSettingsRead,
+    db: Session,
+) -> float | None:
+    """The power threshold to score one activity with: temporal where it can be.
+
+    Falls back to the stored threshold when the athlete pinned a manual one, when
+    they turned the temporal rule off, or when the window holds too little
+    evidence for an evolution to mean anything.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group of the activity.
+        on_day: Day of the activity.
+        settings: The athlete's stored settings.
+        db: Database session.
+
+    Returns:
+        Threshold watts, or ``None`` when the sport has none.
+    """
+    stored = settings.power_thresholds.get(sport)
+    if stored is None:
+        return None
+    if stored.source == analysis_constants.ThresholdSource.MANUAL or (
+        int(dict(settings.method_params).get(analysis_constants.TEMPORAL_CP_PARAM, 1)) != 1
+    ):
+        return float(stored.value_w)
+    local = analysis_maths.temporal_threshold(
+        _session_cp_fits(user_id, sport, db),
+        on_day,
+        back_days=analysis_constants.TEMPORAL_CP_BACK_DAYS,
+        fwd_days=analysis_constants.TEMPORAL_CP_FWD_DAYS,
+        decay_per_day=analysis_constants.TEMPORAL_CP_DECAY_PER_DAY,
+        min_fits=analysis_constants.TEMPORAL_CP_MIN_FITS,
+    )
+    return round(local, 1) if local is not None else float(stored.value_w)
+
+
 def _load_input(
     activity: activity_schema.ActivityRead,
     sport: str | None,
@@ -347,6 +448,11 @@ def _load_input(
     if altitude_m is not None and speed_ms is not None:
         grade_pct = analysis_maths.grade_pct_series(altitude_m, speed_ms, anchor_period_s or 1.0)
     threshold = settings.power_thresholds.get(sport) if sport else None
+    power_thr_w = (
+        _power_threshold_at(activity.user_id or 0, sport, activity.start_time.date(), settings, db)
+        if sport and activity.start_time
+        else (float(threshold.value_w) if threshold else None)
+    )
     speed_threshold = settings.speed_thresholds.get(sport) if sport else None
     pace_calibration = settings.pace_calibrations.get(sport) if sport else None
     max_hr = activity.max_hr
@@ -367,7 +473,7 @@ def _load_input(
         max_hr=float(max_hr) if max_hr else None,
         speed_ms=speed_ms,
         grade_pct=grade_pct,
-        power_threshold_w=float(threshold.value_w) if threshold else None,
+        power_threshold_w=power_thr_w,
         speed_threshold_ms=float(speed_threshold.value_ms) if speed_threshold else None,
         pace_calibration=(
             (
@@ -493,6 +599,7 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
     Returns:
         The settings after the refresh.
     """
+    _cp_fits_cache.clear()
     activities = activity_integration.list_user_activities(user_id, db)
     settings = get_settings(user_id, db)
     peaks_by_sport: dict[str, dict[int, float]] = {}
@@ -762,6 +869,7 @@ def _walk_and_measure(db: Session, *, only_missing: bool) -> int:
     Returns:
         The number of load rows written.
     """
+    _cp_fits_cache.clear()
     written = 0
     after_id = 0
     prepared: set[int] = set()
@@ -1182,11 +1290,31 @@ def get_cp_trend(
             )
         )
 
+    envelope: list[analysis_schema.CpTrendEnvelopeRead] = []
+    if points:
+        # Sampled on the points' own days from the same quality-gated fits the
+        # scorer uses, so the line on the chart is exactly the threshold the
+        # loads were divided by. The chart's x-axis is categorical over sessions,
+        # so a day between two sessions has no slot to sit in anyway.
+        evidence = _session_cp_fits(user_id, sport, db)
+        for day in dict.fromkeys(point.date for point in points):
+            value = analysis_maths.temporal_threshold(
+                evidence,
+                day,
+                back_days=analysis_constants.TEMPORAL_CP_BACK_DAYS,
+                fwd_days=analysis_constants.TEMPORAL_CP_FWD_DAYS,
+                decay_per_day=analysis_constants.TEMPORAL_CP_DECAY_PER_DAY,
+                min_fits=analysis_constants.TEMPORAL_CP_MIN_FITS,
+            )
+            if value is not None:
+                envelope.append(analysis_schema.CpTrendEnvelopeRead(date=day, cp_w=round(value, 1)))
+
     return analysis_schema.CpTrendRead(
         sport=sport,
         window_days=window_days,
         threshold=settings.power_thresholds.get(sport),
         points=points,
+        envelope=envelope,
     )
 
 

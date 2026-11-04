@@ -337,6 +337,7 @@ function mapCpTrend(dto: CpTrendDto): CpTrend {
       cvPct: point.cv_pct,
       powerSource: point.power_source ?? null,
     })),
+    envelope: (dto.envelope ?? []).map((sample) => ({ date: sample.date, cpW: sample.cp_w })),
   }
 }
 

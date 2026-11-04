@@ -922,9 +922,72 @@ class TestCpTrend:
         assert series.threshold is not None
         assert series.threshold.value_w == 250.0
 
+    def test_the_envelope_line_accompanies_dense_history(self):
+        varied = [350.0] * 300 + [320.0] * 300 + [300.0] * 600 + [280.0] * 800
+        activities = [_activity(i, start_time=_T0_UTC - timedelta(days=20 * i)) for i in range(1, 6)]
+        analysis_service._cp_fits_cache.clear()
+        series = self._run(activities, {i: varied for i in range(1, 6)})
+        assert len(series.envelope) >= 3
+        assert all(e.cp_w > 0 for e in series.envelope)
+
     def test_unknown_sport_is_refused(self):
         with pytest.raises(core_exceptions.InvalidInputError):
             analysis_service.get_cp_trend(2, "kitesurfing", _db())
+
+
+class TestTemporalPowerThreshold:
+    """Scoring uses the era's threshold: decayed evidence, with fallbacks kept."""
+
+    def test_manual_threshold_is_respected_over_the_envelope(self):
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=400.0, w_prime_j=20000.0, source=analysis_constants.ThresholdSource.MANUAL, cv_pct=None
+                )
+            }
+        )
+        with patch(f"{_SVC}._session_cp_fits", return_value=[(_T0_UTC.date(), 300.0)]):
+            value = analysis_service._power_threshold_at(2, "run", _T0_UTC.date(), settings, _db())
+        assert value == 400.0
+
+    def test_the_parameter_switch_off_returns_the_stored_value(self):
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=400.0, w_prime_j=20000.0, source=analysis_constants.ThresholdSource.AUTO, cv_pct=2.0
+                )
+            },
+            method_params={"temporal_cp": 0},
+        )
+        with patch(f"{_SVC}._session_cp_fits", return_value=[(_T0_UTC.date(), 300.0)]):
+            value = analysis_service._power_threshold_at(2, "run", _T0_UTC.date(), settings, _db())
+        assert value == 400.0
+
+    def test_thin_evidence_falls_back_to_the_stored_threshold(self):
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=400.0, w_prime_j=20000.0, source=analysis_constants.ThresholdSource.AUTO, cv_pct=2.0
+                )
+            }
+        )
+        with patch(f"{_SVC}._session_cp_fits", return_value=[(_T0_UTC.date(), 300.0)]):
+            value = analysis_service._power_threshold_at(2, "run", _T0_UTC.date(), settings, _db())
+        assert value == 400.0
+
+    def test_dense_evidence_decides_over_the_stored_value(self):
+        settings = _settings(
+            power_thresholds={
+                "run": analysis_schema.PowerThresholdRead(
+                    value_w=400.0, w_prime_j=20000.0, source=analysis_constants.ThresholdSource.AUTO, cv_pct=2.0
+                )
+            }
+        )
+        day = _T0_UTC.date()
+        fits = [(day - timedelta(days=n), 340.0) for n in (2, 10, 20, 30)]
+        with patch(f"{_SVC}._session_cp_fits", return_value=fits):
+            value = analysis_service._power_threshold_at(2, "run", day, settings, _db())
+        assert 330.0 < value < 340.0  # freshest fit, lightly decayed
 
 
 class TestWprimeBalance:
