@@ -213,7 +213,8 @@
     "note": "Un punt per sessió, ajustat només amb els seus propis esforços sostinguts; la dispersió dels punts reflecteix la qualitat de cada sessió, no la forma del dia. La línia discontinua és el llindar temporal amb què es puntuaven aquells dies.",
     "emptyTitle": "Encara no hi ha prou sessions ajustables",
     "emptyDescription": "La potència crítica requereix sessions amb almenys quatre esforços sostinguts entre 5 i 30 minuts. S'omplirà a mesura que n'acumulis.",
-    "seriesEnvelope": "Llindar temporal"
+    "seriesEnvelope": "Llindar temporal",
+    "refreshing": "Actualitzant…"
   },
   "scores": {
     "rss": "aRSS",

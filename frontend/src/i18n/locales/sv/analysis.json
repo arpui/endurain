@@ -213,7 +213,8 @@
     "note": "En punkt per pass, anpassad bara från passets uthålliga insatser; spridningen speglar varje passes kvalitet, inte dagens form.",
     "emptyTitle": "Inte tillräckligt många användbara pass",
     "emptyDescription": "Kritisk effekt kräver pass med minst fyra uthålliga insatser mellan 5 och 30 minuter. Den fylls efter hand.",
-    "seriesEnvelope": "Tidsberoende tröskel"
+    "seriesEnvelope": "Tidsberoende tröskel",
+    "refreshing": "Laddar…"
   },
   "scores": {
     "rss": "aRSS",

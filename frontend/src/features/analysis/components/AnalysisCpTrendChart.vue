@@ -66,16 +66,21 @@ function movingAverage(points: CpTrend['points']): number[] {
 }
 
 /**
- * The axis floor, derived from what is actually on screen: lowest shown value
- * with a small margin, rounded down to a tidy step. A fixed number would crop
- * one athlete's history and waste half the plot on another's.
+ * The axis floor, derived from what is actually on screen: the fifth percentile
+ * of shown values with a small margin, rounded down to a tidy step. Not the
+ * absolute minimum: one junk fit from a bad session should not push every real
+ * dot into the top third of the plot. A fixed number would do the same harm
+ * across athletes (a rower's 150 W against a runner's 400 W), and the y-zoom
+ * lets anyone push the floor further by hand.
  */
 function dataFloor(series: ChartRenderOptions['series']): number | undefined {
   const values = series.flatMap((s) => s.data).filter((v): v is number => v !== null)
   if (values.length === 0) return undefined
-  const min = Math.min(...values)
-  const step = min >= 300 ? 20 : 10
-  return Math.max(0, Math.floor((min * 0.95) / step) * step)
+  values.sort((a, b) => a - b)
+  const idx = Math.floor((values.length - 1) * 0.05)
+  const anchor = values[idx] ?? values[values.length - 1] ?? 0
+  const step = anchor >= 300 ? 20 : 10
+  return Math.max(0, Math.floor((anchor * 0.95) / step) * step)
 }
 
 /**
@@ -124,7 +129,10 @@ const chartRender = computed<ChartRenderOptions>(() => {
     })
   }
   const thresholdW = trend.value?.threshold?.valueW
-  if (thresholdW !== undefined) {
+  if (thresholdW !== undefined && envelopeByDate.size === 0) {
+    // Only when no temporal line exists (thin history): with one, it IS the
+    // threshold those days used, and a second flat line at the all-time peak
+    // just stretches the axis and confuses the read.
     series.push({
       label: t('analysis.cpTrend.seriesThreshold', { watts: Math.round(thresholdW) }),
       data: points.map(() => Math.round(thresholdW)),
@@ -139,6 +147,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
     valueFormat: (value) => `${Math.round(value)} W`,
     sharedTooltip: true,
     zoom: true,
+    zoomY: true,
     yFloor: dataFloor(series),
   }
 })
@@ -151,6 +160,9 @@ useMetricChart(chartRender)
     <div class="flex flex-wrap items-baseline justify-between gap-2">
       <h3 class="text-card-heading">{{ t('analysis.cpTrend.title') }}</h3>
       <div class="flex items-center gap-2">
+        <span v-if="trendQuery.isFetching.value" class="text-body text-muted-foreground">
+          {{ t('analysis.cpTrend.refreshing') }}
+        </span>
         <Select v-model="sport" :aria-label="t('analysis.sport.label')" class="w-36">
           <option v-for="option in SPORT_OPTIONS" :key="option" :value="option">
             {{ t(`home.sports.${option}`) }}

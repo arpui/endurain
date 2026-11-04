@@ -97,6 +97,13 @@ export interface ChartRenderOptions {
    */
   zoom?: boolean
   /**
+   * Extends wheel/pinch zoom to the y-axis as well (panning stays horizontal).
+   * For charts whose interesting band is a slice of the value range (critical
+   * power across years): the data floor gives a good start, and this lets the
+   * athlete push it further by hand. Only meaningful together with `zoom`.
+   */
+  zoomY?: boolean
+  /**
    * One hover shows every series aligned to the x label under the cursor (a
    * shared crosshair tooltip), rather than only the nearest point. Reads well
    * on date-indexed series where each column carries several values (PMC).

@@ -309,6 +309,27 @@ describe('buildChartConfiguration', () => {
     expect(yB?.min).toBeUndefined()
   })
 
+  it('zooms the y-axis too when zoomY is requested', () => {
+    const both = buildChartConfiguration({
+      kind: 'line',
+      series: [{ label: 'CP', data: [1] }],
+      zoom: true,
+      zoomY: true,
+    })
+    const horizontal = buildChartConfiguration({
+      kind: 'line',
+      series: [{ label: 'HR', data: [1] }],
+      zoom: true,
+    })
+
+    const zoomA = both.options?.plugins?.zoom as { zoom?: { mode?: string } } | undefined
+    expect(zoomA?.zoom?.mode).toBe('xy')
+    const zoomB = horizontal.options?.plugins?.zoom as
+      { zoom?: { mode?: string }; pan?: { mode?: string } } | undefined
+    expect(zoomB?.zoom?.mode).toBe('x')
+    expect(zoomB?.pan?.mode).toBe('x')
+  })
+
   it('adds pan/zoom config when zoom is enabled and omits it otherwise', () => {
     const zoomed = buildChartConfiguration({
       kind: 'line',

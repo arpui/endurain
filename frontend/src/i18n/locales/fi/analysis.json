@@ -213,7 +213,8 @@
     "note": "Yksi piste per harjoitus, sovitettu vain harjoituksen omista kestävistä suorituksista; pisteiden hajonta kuvaa harjoituksen laatua, ei päivän kuntoa.",
     "emptyTitle": "Ei vielä tarpeeksi soveliaita harjoituksia",
     "emptyDescription": "Kriittinen teho vaatii harjoituksia, joissa on vähintään neljä kestävää suoritusta 5–30 minuutin välillä. Se täydentyy ajan myötä.",
-    "seriesEnvelope": "Ajallinen kynnys"
+    "seriesEnvelope": "Ajallinen kynnys",
+    "refreshing": "Ladataan…"
   },
   "scores": {
     "rss": "aRSS",

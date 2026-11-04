@@ -213,7 +213,8 @@
     "note": "Jeden bod za relaci, fitovaný pouze z jejích vlastních vytrvalých úsilí; rozptyl bodů odráží kvalitu relace, nikoli formu dne.",
     "emptyTitle": "Zatím málo použitelných relací",
     "emptyDescription": "Kritický výkon vyžaduje relace s alespoň čtyřmi vytrvalými úsilí mezi 5 a 30 minutami. Časem se doplní.",
-    "seriesEnvelope": "Časový práh"
+    "seriesEnvelope": "Časový práh",
+    "refreshing": "Načítání…"
   },
   "scores": {
     "rss": "aRSS",

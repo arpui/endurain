@@ -213,7 +213,8 @@
     "note": "Ett punkt per økt, tilpasset kun fra øktas egne vedvarende innsatser; spredningen speiler hver økts kvalitet, ikke dagsformen.",
     "emptyTitle": "For få brukbare økter ennå",
     "emptyDescription": "Kritisk effekt krever økter med minst fire vedvarende innsatser mellom 5 og 30 minutter. Den fylles etter hvert.",
-    "seriesEnvelope": "Tidsmessig terskel"
+    "seriesEnvelope": "Tidsmessig terskel",
+    "refreshing": "Laster…"
   },
   "scores": {
     "rss": "aRSS",
