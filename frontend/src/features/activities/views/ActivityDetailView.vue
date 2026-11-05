@@ -15,6 +15,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
 import { activityTypeIsRunning } from '@/features/activities/utils/activityType'
+import { gradeTrailSection } from '@/features/analysis/utils/trailDegree'
+import type { TrailSection } from '@/features/analysis/types'
 import { themeColor } from '@/lib/themeColor'
 import ActivityDetailHeader from '@/features/activities/components/ActivityDetailHeader.vue'
 import ActivityIntervalTable from '@/features/analysis/components/ActivityIntervalTable.vue'
@@ -107,14 +109,37 @@ const { data: trailSections } = useTrailSectionsQuery(
   computed(() => activityLoaded.value && isOwner.value && isRunActivity.value),
 )
 const showTrailSections = computed(() => (trailSections.value?.sections.length ?? 0) > 0)
-// Technical stretches drawn over the track in the caution (effort) accent.
+// The section both surfaces point at: chosen from the table or from the map.
+const trailSelected = ref<number | null>(null)
+// Technical stretches over the track, coloured by how assertively the detector
+// claims each one (grades read against the threshold the server itself used).
 const mapOverlays = computed(() =>
-  (trailSections.value?.sections ?? []).map((section) => ({
-    points: section.points,
-    color: themeColor('--color-effort'),
-    name: `${(section.startM / 1000).toFixed(2)} km`,
-  })),
+  (trailSections.value?.sections ?? []).map((section, index) => {
+    const grade = gradeTrailSection(section.score, trailSections.value?.threshold ?? 0)
+    const isSelected = trailSelected.value === section.startM
+    return {
+      points: section.points,
+      color: themeColor(grade.colorToken),
+      weight: isSelected ? grade.weight + 3 : grade.weight,
+      opacity: isSelected ? 1 : grade.opacity,
+      name: `#${index + 1} · ${(section.startM / 1000).toFixed(2)} km`,
+      onSelect: () => {
+        trailSelected.value = section.startM
+      },
+    }
+  }),
 )
+// Where the map should travel when a row is picked.
+const trailFocus = computed(() => {
+  const section = (trailSections.value?.sections ?? []).find(
+    (candidate) => candidate.startM === trailSelected.value,
+  )
+  return section ? section.points : []
+})
+/** Table row click: select the section and move the map to it. */
+function selectTrailSection(section: TrailSection): void {
+  trailSelected.value = section.startM
+}
 // The analysis laps table replaces the plain one for the owner: same rows, plus
 // power, stride length, the lap's ascent-and-descent pair and its share of the aRSS.
 const { data: lapDynamics } = useLapDynamicsQuery(
@@ -368,6 +393,7 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
       <ActivityGallery
         :points="showMap ? trackPoints : []"
         :overlays="showTrailSections ? mapOverlays : []"
+        :focus-on="trailFocus"
         :activity-id="activity.id"
         :is-owner="isOwner"
       />
@@ -460,6 +486,8 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
         :sections="trailSections!"
         :activity-type="activity?.activityType ?? 0"
         :units="units"
+        :selected="trailSelected"
+        @select="selectTrailSection"
       />
 
       <Card v-if="showSegments || isOwner" class="flex flex-col gap-3">

@@ -462,6 +462,7 @@ export async function fetchTrailSections(
   })
   return {
     vBaseMs: dto.v_base_ms,
+    threshold: dto.threshold,
     cadenceAvailable: dto.cadence_available,
     technicalM: dto.technical_m,
     totalM: dto.total_m,

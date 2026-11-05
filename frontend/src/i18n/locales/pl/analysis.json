@@ -182,7 +182,16 @@
       "descent": "zjazd",
       "ascent": "podbieg",
       "flat": "płasko"
-    }
+    },
+    "colTram": "#",
+    "colRange": "odcinek",
+    "colDegree": "stopień",
+    "degree": {
+      "light": "lekki",
+      "technical": "techniczny",
+      "veryTechnical": "bardzo techniczny"
+    },
+    "clickHint": "Wybierz wiersz, aby zobaczyć odcinek na mapie, lub kliknij odcinek."
   },
   "sectionBest": "Najlepsze czasy",
   "bestTimes": {

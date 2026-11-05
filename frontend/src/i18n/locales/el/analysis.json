@@ -182,7 +182,16 @@
       "descent": "κάθοδος",
       "ascent": "άνοδος",
       "flat": "επίπεδο"
-    }
+    },
+    "colTram": "#",
+    "colRange": "τμήμα",
+    "colDegree": "βαθμός",
+    "degree": {
+      "light": "ελαφρύ",
+      "technical": "τεχνικό",
+      "veryTechnical": "πολύ τεχνικό"
+    },
+    "clickHint": "Διάλεξε γραμμή για να δεις το τμήμα στον χάρτη, ή κάνε κλικ πάνω του."
   },
   "sectionBest": "Κορυφαίες επιδόσεις",
   "bestTimes": {

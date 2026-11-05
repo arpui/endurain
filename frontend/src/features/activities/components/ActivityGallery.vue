@@ -23,6 +23,8 @@ const props = withDefaults(
     points: GeoPoint[]
     /** Extra polylines drawn over the map (e.g. analysed technical sections). */
     overlays?: MapOverlay[]
+    /** When set, the map viewport is fitted to these points (e.g. one section). */
+    focusOn?: GeoPoint[]
     /** The activity whose photos populate the remaining slides. */
     activityId: number
     /**
@@ -194,6 +196,7 @@ async function confirmDelete(): Promise<void> {
           v-if="slide.kind === 'map'"
           :points="points"
           :overlays="overlays"
+          :focus-on="focusOn"
           :label="t('activities.map.label')"
         />
         <component

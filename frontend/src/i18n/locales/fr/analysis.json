@@ -182,7 +182,16 @@
       "descent": "descente",
       "ascent": "montée",
       "flat": "plat"
-    }
+    },
+    "colTram": "#",
+    "colRange": "section",
+    "colDegree": "degré",
+    "degree": {
+      "light": "léger",
+      "technical": "technique",
+      "veryTechnical": "très technique"
+    },
+    "clickHint": "Choisis une ligne pour voir le segment sur la carte, ou clique sur un segment."
   },
   "sectionBest": "Meilleures perfs",
   "bestTimes": {

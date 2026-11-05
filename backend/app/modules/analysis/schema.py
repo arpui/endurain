@@ -414,6 +414,8 @@ class TrailSectionsRead(BaseModel):
     Attributes:
         activity_id: The activity analysed.
         v_base_ms: The session's own flat-ground reference pace.
+        threshold: The index cut the detector used, so a view can grade sections
+            against the model's own number instead of inventing one.
         cadence_available: Whether the stride/cadence terms could be used.
         technical_m: Total metres flagged technical.
         total_m: Total ground covered.
@@ -423,6 +425,7 @@ class TrailSectionsRead(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     activity_id: StrictInt
+    threshold: StrictFloat
     v_base_ms: StrictFloat
     cadence_available: StrictBool
     technical_m: StrictFloat

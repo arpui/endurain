@@ -13,6 +13,8 @@ const props = withDefaults(
     points: GeoPoint[]
     /** Extra polylines drawn above the track (e.g. analysed sections). */
     overlays?: MapOverlay[]
+    /** When set, the viewport is fitted to these points instead of the track. */
+    focusOn?: GeoPoint[]
     /** Whether the map responds to pan/zoom. */
     interactive?: boolean
     /** Accessible description of the drawn track (feature-specific wording). */
@@ -64,6 +66,14 @@ watch(
       overlays: props.overlays,
       interactive: props.interactive,
     })
+  },
+)
+watch(
+  () => props.focusOn,
+  (points) => {
+    if (points && points.length > 0) {
+      instance?.focus(points)
+    }
   },
 )
 

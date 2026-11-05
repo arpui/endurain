@@ -279,6 +279,7 @@ class TestTrailSectionsRoute:
         client = TestClient(_build_app(MagicMock()))
         read = analysis_schema.TrailSectionsRead(
             activity_id=9,
+            threshold=0.38,
             v_base_ms=2.47,
             cadence_available=True,
             technical_m=5750.0,

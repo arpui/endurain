@@ -182,7 +182,16 @@
       "descent": "下坡",
       "ascent": "上坡",
       "flat": "平路"
-    }
+    },
+    "colTram": "#",
+    "colRange": "路段",
+    "colDegree": "程度",
+    "degree": {
+      "light": "轻度",
+      "technical": "技术性",
+      "veryTechnical": "高难度"
+    },
+    "clickHint": "选择一行可在地图上查看该路段，或直接点击地图上的路段。"
   },
   "sectionBest": "最佳成绩",
   "bestTimes": {

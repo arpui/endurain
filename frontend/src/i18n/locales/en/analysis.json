@@ -172,7 +172,7 @@
     "title": "Technical sections",
     "experimental": "experimental",
     "summary": "{technical}% of the ground ({metres} m of {of} m) reads as technical terrain.",
-    "hint": "Sections where the pace falls short of what the grade explains, with irregular stride and braking on descents. On the map they are drawn in amber. This detector is still being calibrated against real routes.",
+    "hint": "Sections where the pace falls short of what the grade explains, with irregular stride and braking on descents. On the map they are drawn in amber, red where the detector is most confident. This detector is still being calibrated against real routes.",
     "colStart": "start",
     "colLength": "length",
     "colDirection": "direction",
@@ -182,7 +182,16 @@
       "descent": "descent",
       "ascent": "ascent",
       "flat": "flat"
-    }
+    },
+    "colTram": "#",
+    "colRange": "stretch",
+    "colDegree": "degree",
+    "degree": {
+      "light": "light",
+      "technical": "technical",
+      "veryTechnical": "very technical"
+    },
+    "clickHint": "Pick a row to see the stretch on the map, or click a stretch on the map."
   },
   "sectionBest": "Best times",
   "bestTimes": {

@@ -2180,6 +2180,7 @@ def get_trail_sections(
     if activity is None or sport_group(activity.activity_type) != "run":
         return analysis_schema.TrailSectionsRead(
             activity_id=activity_id,
+            threshold=analysis_constants.TRAIL_THRESHOLD,
             v_base_ms=0.0,
             cadence_available=False,
             technical_m=0.0,
@@ -2196,6 +2197,7 @@ def get_trail_sections(
     if not speeds or period_s <= 0:
         return analysis_schema.TrailSectionsRead(
             activity_id=activity_id,
+            threshold=analysis_constants.TRAIL_THRESHOLD,
             v_base_ms=0.0,
             cadence_available=False,
             technical_m=0.0,
@@ -2221,6 +2223,7 @@ def get_trail_sections(
     if ele_a is None:
         return analysis_schema.TrailSectionsRead(
             activity_id=activity_id,
+            threshold=analysis_constants.TRAIL_THRESHOLD,
             v_base_ms=0.0,
             cadence_available=False,
             technical_m=0.0,
@@ -2289,6 +2292,7 @@ def get_trail_sections(
         )
     return analysis_schema.TrailSectionsRead(
         activity_id=activity_id,
+        threshold=analysis_constants.TRAIL_THRESHOLD,
         v_base_ms=analysis.v_base_ms,
         cadence_available=analysis.cadence_available,
         technical_m=round(analysis.technical_m, 1),

@@ -36,6 +36,12 @@ export interface MapOverlay {
   color: string
   /** Optional label for the provider's tooltip/legend. */
   name?: string
+  /** Stroke width in pixels; providers default to their own emphasis. */
+  weight?: number
+  /** Stroke opacity in [0, 1]; providers default to their own emphasis. */
+  opacity?: number
+  /** Called when the viewer picks the overlay on the map. */
+  onSelect?: () => void
 }
 
 /** Options controlling a single map render. */
@@ -54,6 +60,8 @@ export interface MapInstance {
   update(options: MapRenderOptions): void
   /** Re-fits the viewport to the current track (e.g. after the user panned). */
   recenter(): void
+  /** Fits the viewport to one subset of the drawn geometry (e.g. a section). */
+  focus(points: GeoPoint[]): void
   /** Tears down the map and releases resources. */
   destroy(): void
 }
@@ -79,6 +87,7 @@ const noopMapProvider: MapProvider = {
     return {
       update() {},
       recenter() {},
+      focus() {},
       destroy() {},
     }
   },

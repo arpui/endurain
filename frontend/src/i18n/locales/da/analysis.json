@@ -182,7 +182,16 @@
       "descent": "nedad",
       "ascent": "opad",
       "flat": "fladt"
-    }
+    },
+    "colTram": "#",
+    "colRange": "strækning",
+    "colDegree": "grad",
+    "degree": {
+      "light": "let",
+      "technical": "teknisk",
+      "veryTechnical": "meget teknisk"
+    },
+    "clickHint": "Vælg en række for at se strækningen på kortet, eller klik på en strækning."
   },
   "sectionBest": "Bedste tider",
   "bestTimes": {

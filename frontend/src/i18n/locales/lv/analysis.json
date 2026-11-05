@@ -182,7 +182,16 @@
       "descent": "nolaidums",
       "ascent": "kāpums",
       "flat": "plakans"
-    }
+    },
+    "colTram": "#",
+    "colRange": "posms",
+    "colDegree": "pakāpe",
+    "degree": {
+      "light": "viegls",
+      "technical": "tehnisks",
+      "veryTechnical": "ļoti tehnisks"
+    },
+    "clickHint": "Izvēlies rindu, lai redzētu posmu kartē, vai klikšķini uz posma."
   },
   "sectionBest": "Labākie laiki",
   "bestTimes": {

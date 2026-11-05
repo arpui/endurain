@@ -182,7 +182,16 @@
       "descent": "afdaling",
       "ascent": "stijging",
       "flat": "vlak"
-    }
+    },
+    "colTram": "#",
+    "colRange": "vak",
+    "colDegree": "graad",
+    "degree": {
+      "light": "licht",
+      "technical": "technisch",
+      "veryTechnical": "zeer technisch"
+    },
+    "clickHint": "Kies een rij om het stuk op de kaart te zien, of klik op een stuk."
   },
   "sectionBest": "Tijden",
   "bestTimes": {

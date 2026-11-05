@@ -182,7 +182,16 @@
       "descent": "baixada",
       "ascent": "subida",
       "flat": "chan"
-    }
+    },
+    "colTram": "#",
+    "colRange": "tramo",
+    "colDegree": "grao",
+    "degree": {
+      "light": "lixeiro",
+      "technical": "técnico",
+      "veryTechnical": "moi técnico"
+    },
+    "clickHint": "Escolle unha fila para ver o tramo no mapa, ou preme sobre un tramo."
   },
   "sectionBest": "Mellores tempos",
   "bestTimes": {

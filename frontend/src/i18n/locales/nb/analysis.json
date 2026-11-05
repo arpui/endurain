@@ -182,7 +182,16 @@
       "descent": "nedover",
       "ascent": "opover",
       "flat": "flat"
-    }
+    },
+    "colTram": "#",
+    "colRange": "strekning",
+    "colDegree": "grad",
+    "degree": {
+      "light": "lett",
+      "technical": "teknisk",
+      "veryTechnical": "svært teknisk"
+    },
+    "clickHint": "Velg en rad for å se partiet på kartet, eller klikk på et parti."
   },
   "sectionBest": "Bestetider",
   "bestTimes": {

@@ -182,7 +182,16 @@
       "descent": "iniş",
       "ascent": "çıkış",
       "flat": "düz"
-    }
+    },
+    "colTram": "#",
+    "colRange": "bölüm",
+    "colDegree": "derece",
+    "degree": {
+      "light": "hafif",
+      "technical": "teknik",
+      "veryTechnical": "çok teknik"
+    },
+    "clickHint": "Bölümü haritada görmek için bir satır seç ya da haritada bir bölüme tıkla."
   },
   "sectionBest": "En iyi dereceler",
   "bestTimes": {

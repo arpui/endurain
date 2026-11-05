@@ -182,7 +182,16 @@
       "descent": "spust",
       "ascent": "vzpon",
       "flat": "ravno"
-    }
+    },
+    "colTram": "#",
+    "colRange": "odsek",
+    "colDegree": "stopnja",
+    "degree": {
+      "light": "blag",
+      "technical": "tehničen",
+      "veryTechnical": "zelo tehničen"
+    },
+    "clickHint": "Izberi vrsto za prikaz odseka na zemljevidu ali klikni nanj."
   },
   "sectionBest": "Najboljši časi",
   "bestTimes": {
