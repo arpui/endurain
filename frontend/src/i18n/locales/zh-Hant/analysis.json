@@ -217,7 +217,9 @@
     "seriesEnvelope": "時間閾值",
     "refreshing": "載入中…",
     "titleSpeed": "臨界速度演變",
-    "seriesSession": "訓練"
+    "seriesSession": "訓練",
+    "resetZoom": "重設縮放",
+    "loadingSlow": "正在讀取全部歷史；首次載入可能需一分鐘"
   },
   "scores": {
     "rss": "aRSS",

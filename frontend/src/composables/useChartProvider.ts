@@ -125,6 +125,11 @@ export interface ChartInstance {
   update(options: ChartRenderOptions): void
   /** Tears down the chart and releases resources. */
   destroy(): void
+  /**
+   * Returns an interactive zoom to the default view (all data). Only present
+   * on providers supporting zoom; views call it through a guard.
+   */
+  resetZoom?(): void
 }
 
 /**

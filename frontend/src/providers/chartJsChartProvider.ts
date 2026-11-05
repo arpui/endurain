@@ -254,6 +254,12 @@ export function createChartJsChartProvider(config: ChartJsChartProviderConfig = 
       let chart = new Chart(canvas, initialConfig)
 
       return {
+        resetZoom(): void {
+          // The zoom plugin decorates the chart instance with resetZoom once
+          // zoom is configured; absent means the chart never offered zoom.
+          const zoomable = chart as unknown as { resetZoom?: () => void }
+          zoomable.resetZoom?.()
+        },
         update(next: ChartRenderOptions): void {
           const nextConfig = buildChartConfiguration(next, palette)
           // Chart.js can't swap a chart's geometry in place, so recreate when

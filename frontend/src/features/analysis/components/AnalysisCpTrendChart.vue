@@ -6,6 +6,7 @@ import type { CpTrend } from '@/features/analysis/types'
 import type { ChartRenderOptions } from '@/composables/useChartProvider'
 
 import { themeColor } from '@/lib/themeColor'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
@@ -199,7 +200,7 @@ const chartRender = computed<ChartRenderOptions>(() => {
   }
 })
 
-useMetricChart(chartRender)
+const chartHandle = useMetricChart(chartRender)
 </script>
 
 <template>
@@ -209,6 +210,15 @@ useMetricChart(chartRender)
         {{ speedMode ? t('analysis.cpTrend.titleSpeed') : t('analysis.cpTrend.title') }}
       </h3>
       <div class="flex items-center gap-2">
+        <Button
+          v-if="(trend?.points.length ?? 0) > 0"
+          variant="ghost"
+          size="sm"
+          class="text-caption text-muted-foreground"
+          @click="chartHandle.resetZoom()"
+        >
+          {{ t('analysis.cpTrend.resetZoom') }}
+        </Button>
         <span v-if="trendQuery.isFetching.value" class="text-body text-muted-foreground">
           {{ t('analysis.cpTrend.refreshing') }}
         </span>
@@ -225,7 +235,10 @@ useMetricChart(chartRender)
       </div>
     </div>
     <ErrorState v-if="trendQuery.isError.value" :title="t('analysis.loadFailed')" />
-    <Skeleton v-else-if="trendQuery.isPending.value" class="h-80 w-full" />
+    <template v-else-if="trendQuery.isPending.value">
+      <Skeleton class="h-80 w-full" />
+      <p class="text-body text-muted-foreground">{{ t('analysis.cpTrend.loadingSlow') }}</p>
+    </template>
     <EmptyState
       v-else-if="(trend?.points.length ?? 0) === 0"
       :title="t('analysis.cpTrend.emptyTitle')"

@@ -217,7 +217,9 @@
     "seriesEnvelope": "Tidsberoende tröskel",
     "refreshing": "Laddar…",
     "titleSpeed": "Kritisk hastighet över tid",
-    "seriesSession": "Pass"
+    "seriesSession": "Pass",
+    "resetZoom": "Återställ zoom",
+    "loadingSlow": "Läser hela historiken – första laddningen kan ta en minut"
   },
   "scores": {
     "rss": "aRSS",

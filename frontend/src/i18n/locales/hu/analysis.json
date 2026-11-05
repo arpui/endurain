@@ -217,7 +217,9 @@
     "seriesEnvelope": "Időbeli küszöb",
     "refreshing": "Betöltés…",
     "titleSpeed": "A kritikus sebesség fejlődése",
-    "seriesSession": "Edzés"
+    "seriesSession": "Edzés",
+    "resetZoom": "Nagyítás alaphelyzetbe",
+    "loadingSlow": "A teljes előzmények olvasása; az első betöltés egy percig tarthat"
   },
   "scores": {
     "rss": "aRSS",

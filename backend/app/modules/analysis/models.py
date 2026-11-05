@@ -230,6 +230,59 @@ class DurationPeak(Base, TimestampMixin):
     )
 
 
+class ThresholdFit(Base, TimestampMixin):
+    """One session's quality-gated threshold fit, persisted as temporal evidence.
+
+    Rebuilding the per-session fits means reading every power (or speed) stream
+    the athlete owns - a minute of work that used to repeat on the first request
+    after each restart. The fits depend only on the streams, so they are kept
+    here: built once per pass and dropped whenever the streams are re-measured
+    (threshold refresh, full recompute), so the temporal line and the chart
+    answer from a plain query the rest of the time.
+
+    Attributes:
+        user_id: The athlete the evidence belongs to.
+        sport: Sport group the fit was made for.
+        measure: ``power`` (watts) or ``speed`` (metres per second).
+        activity_id: The session the fit came from.
+        started_on: Day the fit supports.
+        value: Fitted threshold, in the measure's units.
+    """
+
+    __tablename__ = "analysis_threshold_fits"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Athlete the evidence belongs to",
+    )
+    sport: Mapped[str] = mapped_column(
+        String(length=32),
+        primary_key=True,
+        comment="Sport group the fit was made for",
+    )
+    measure: Mapped[str] = mapped_column(
+        String(length=8),
+        primary_key=True,
+        comment="power (watts) or speed (metres per second)",
+    )
+    activity_id: Mapped[int] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Session the fit came from",
+    )
+    started_on: Mapped[date] = mapped_column(
+        Date,
+        nullable=False,
+        comment="Day the fit supports",
+    )
+    value: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        comment="Fitted threshold in the measure's units",
+    )
+
+
 class PeakFlag(Base, TimestampMixin):
     """One session the peak builder refused, with the numbers behind the refusal.
 

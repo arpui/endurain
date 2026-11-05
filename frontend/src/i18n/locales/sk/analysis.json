@@ -217,7 +217,9 @@
     "seriesEnvelope": "Časový prah",
     "refreshing": "Načítava…",
     "titleSpeed": "Vývoj kritickej rýchlosti",
-    "seriesSession": "Aktivita"
+    "seriesSession": "Aktivita",
+    "resetZoom": "Obnoviť priblíženie",
+    "loadingSlow": "Číta sa celá história – prvé načítanie môže trvať minútu"
   },
   "scores": {
     "rss": "aRSS",

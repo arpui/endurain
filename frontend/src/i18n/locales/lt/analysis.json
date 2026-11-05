@@ -217,7 +217,9 @@
     "seriesEnvelope": "Temporalinis slenkstis",
     "refreshing": "Kraunama…",
     "titleSpeed": "Kritinio greičio kaita",
-    "seriesSession": "Treniruotė"
+    "seriesSession": "Treniruotė",
+    "resetZoom": "Atstatyti mastelį",
+    "loadingSlow": "Skaitoma visa istorija; pirmas įkėlimas gali užtrukti minutę"
   },
   "scores": {
     "rss": "aRSS",

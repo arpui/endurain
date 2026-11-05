@@ -217,7 +217,9 @@
     "seriesEnvelope": "Tijdsafhankelijke drempel",
     "refreshing": "Laden…",
     "titleSpeed": "Ontwikkeling van kritische snelheid",
-    "seriesSession": "Sessie"
+    "seriesSession": "Sessie",
+    "resetZoom": "Zoom resetten",
+    "loadingSlow": "De hele geschiedenis wordt gelezen; het laden kan een minuut duren"
   },
   "scores": {
     "rss": "aRSS",

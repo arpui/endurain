@@ -217,7 +217,9 @@
     "seriesEnvelope": "Temporal threshold",
     "refreshing": "Updating…",
     "titleSpeed": "Critical speed evolution",
-    "seriesSession": "Session"
+    "seriesSession": "Session",
+    "resetZoom": "Reset zoom",
+    "loadingSlow": "Reading the whole history; the first load can take a minute"
   },
   "scores": {
     "rss": "aRSS",

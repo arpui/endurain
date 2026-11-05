@@ -217,7 +217,9 @@
     "seriesEnvelope": "Časovni prag",
     "refreshing": "Nalaganje…",
     "titleSpeed": "Razvoj kritične hitrosti",
-    "seriesSession": "Aktivnost"
+    "seriesSession": "Aktivnost",
+    "resetZoom": "Ponastavi povečavo",
+    "loadingSlow": "Branje celotne zgodovine – prvo nalaganje lahko truti minuto"
   },
   "scores": {
     "rss": "aRSS",

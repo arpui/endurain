@@ -217,7 +217,9 @@
     "seriesEnvelope": "Ajaline lävi",
     "refreshing": "Laadimine…",
     "titleSpeed": "Kriitilise kiiruse areng",
-    "seriesSession": "Treening"
+    "seriesSession": "Treening",
+    "resetZoom": "Lähtesta suum",
+    "loadingSlow": "Kogu ajalugu loetakse – esimene laadimine võib võtta minutikese"
   },
   "scores": {
     "rss": "aRSS",

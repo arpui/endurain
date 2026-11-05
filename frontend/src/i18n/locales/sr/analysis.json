@@ -217,7 +217,9 @@
     "seriesEnvelope": "Времени праг",
     "refreshing": "Учитавање…",
     "titleSpeed": "Кретање критичне брзине",
-    "seriesSession": "Тренинг"
+    "seriesSession": "Тренинг",
+    "resetZoom": "Ресетуј зум",
+    "loadingSlow": "Чита се цела историја – прво учитавање може потрајати минут"
   },
   "scores": {
     "rss": "aRSS",

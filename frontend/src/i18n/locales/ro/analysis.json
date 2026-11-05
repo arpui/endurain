@@ -217,7 +217,9 @@
     "seriesEnvelope": "Prag temporal",
     "refreshing": "Se încarcă…",
     "titleSpeed": "Evoluția vitezei critice",
-    "seriesSession": "Antrenament"
+    "seriesSession": "Antrenament",
+    "resetZoom": "Resetare zoom",
+    "loadingSlow": "Se citește tot istoricul – prima încărcare poate dura un minut"
   },
   "scores": {
     "rss": "aRSS",

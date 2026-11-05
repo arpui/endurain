@@ -217,7 +217,9 @@
     "seriesEnvelope": "Limiar temporal",
     "refreshing": "A carregar…",
     "titleSpeed": "Evolução da velocidade crítica",
-    "seriesSession": "Sessão"
+    "seriesSession": "Sessão",
+    "resetZoom": "Repor o zoom",
+    "loadingSlow": "A ler todo o histórico; a primeira carregamento pode demorar um minuto"
   },
   "scores": {
     "rss": "aRSS",
