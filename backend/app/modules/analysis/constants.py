@@ -104,12 +104,17 @@ TEMPORAL_CP_PARAM = "temporal_cp"
 #: at 1 min, 1.64 at 2 min, 1.50 at 5 min); the floor keeps surges on low-NP
 #: days (walks) from being flagged. The tiers: ``(max_duration_s, ratio_cap)``.
 PEAK_OUTLIER_MIN_S = 30.0
-PEAK_OUTLIER_TIERS: tuple[tuple[float, float], ...] = ((60.0, 1.9), (180.0, 1.7), (600.0, 1.55), (3600.0, 1.45))
+PEAK_OUTLIER_TIERS: tuple[tuple[float, float], ...] = (
+    (60.0, 2.6),
+    (180.0, 1.9),
+    (600.0, 1.7),
+    (3600.0, 1.45),
+)
 
 #: Absolute floors per sport group, in watts: sustained by whom for how long is
 #: no longer a human reading (run: world-class 1 min sits near 500 W even with
 #: pod inflation; ride: 1 min above a kilowatt is a track sprinter).
-PEAK_OUTLIER_FLOOR_W: dict[str, float] = {"run": 700.0, "bike": 1000.0}
+PEAK_OUTLIER_FLOOR_W: dict[str, float] = {"run": 800.0, "bike": 1000.0}
 PEAK_OUTLIER_FLOOR_W_DEFAULT = 800.0
 
 #: Rolling windows, in months back from today, whose duration-intensity curves are

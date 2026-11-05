@@ -151,7 +151,7 @@ class TestPeakViolation:
         assert bad is not None
         duration, value, ratio, cap = bad
         assert duration == 60 and value == 1044.0
-        assert ratio == pytest.approx(3.03, abs=0.01) and cap == 1.9
+        assert ratio == pytest.approx(3.03, abs=0.01) and cap == 2.6
 
     def test_a_walk_surge_stays_unflagged(self):
         """High ratio but small watts: a hill surge on a 90 W walk is honest."""
