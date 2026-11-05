@@ -105,6 +105,7 @@ const rows = computed(() =>
         threshold: props.sections.threshold,
         technicalRatio: props.sections.technicalRatio,
         hardRatio: props.sections.hardRatio,
+        veryMaxLengthM: props.sections.veryMaxLengthM,
       }),
     }))
     .sort((left, right) => right.section.score - left.section.score),

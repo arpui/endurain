@@ -553,6 +553,8 @@ export interface TrailSections {
   technicalRatio: number
   /** Multiple of the cut that counts as a hard core. */
   hardRatio: number
+  /** Longest stretch that may read as extreme as a whole. */
+  veryMaxLengthM: number
   /** Whether the stride/cadence terms could be used at all. */
   cadenceAvailable: boolean
   /** Total metres flagged technical. */

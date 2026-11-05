@@ -120,6 +120,7 @@ const mapOverlays = computed(() => {
     threshold: trailSections.value?.threshold ?? 0,
     technicalRatio: trailSections.value?.technicalRatio ?? 1.3,
     hardRatio: trailSections.value?.hardRatio ?? 1.8,
+    veryMaxLengthM: trailSections.value?.veryMaxLengthM ?? 200,
   }
   const overlays: MapOverlay[] = []
   sections.forEach((section, index) => {

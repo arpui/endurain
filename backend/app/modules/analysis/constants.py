@@ -543,6 +543,11 @@ TRAIL_MIN_LENGTH_M = 75.0
 #: the core as a place, not as a bigger number for the whole stretch: an athlete
 #: judging a 1,5 km descent remembers a block of stones inside it, and calling the
 #: kilometre and a half "extreme" is what makes the claim feel wrong.
+#: Longest stretch that may be called extreme as a whole. An athlete judging a
+#: stretch asked for no more than a couple of hundred metres of homogeneity: past
+#: that, a stretch holds a hard block *and* runnable ground, and the block is what
+#: should be called extreme.
+TRAIL_VERY_MAX_LENGTH_M = 200.0
 TRAIL_TECHNICAL_RATIO = 1.3
 TRAIL_HARD_RATIO = 1.8
 TRAIL_W_SPEED = 0.55

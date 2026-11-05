@@ -471,6 +471,8 @@ class TrailSectionsRead(BaseModel):
         technical_ratio: How far above the cut a section reads as firmly technical.
         hard_ratio: How far above the cut a window counts as a hard core, which is
             what the athlete would call very technical ground.
+        very_max_length_m: Longest stretch that may be called extreme as a whole:
+            beyond it, only the hard core inside is.
         cadence_available: Whether the stride/cadence terms could be used.
         technical_m: Total metres flagged technical.
         total_m: Total ground covered.
@@ -483,6 +485,7 @@ class TrailSectionsRead(BaseModel):
     threshold: StrictFloat
     technical_ratio: StrictFloat
     hard_ratio: StrictFloat
+    very_max_length_m: StrictFloat
     v_base_ms: StrictFloat
     cadence_available: StrictBool
     technical_m: StrictFloat

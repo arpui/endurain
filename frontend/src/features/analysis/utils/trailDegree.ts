@@ -3,18 +3,20 @@
  *
  * A detector that only answers "technical / not technical" cannot show the
  * athlete what it believes strongly and what it barely believes, and the
- * difference is exactly what the calibration loop needs to see. The bands below
- * are multiples of *the detector's own threshold*, which the payload carries:
- * neither the view nor the model keeps a hand-set constant, and no per-session
- * quantile is used, because quantiles would invent differences in a session
- * whose sections all score alike.
+ * difference is exactly what the calibration loop needs to see. The bands are
+ * multiples of *the detector's own threshold*, carried in the payload: neither the
+ * view nor the model keeps a hand-set constant, and no per-session quantile is
+ * used, because quantiles would invent differences in a session whose sections
+ * all score alike.
  *
- * "Very technical" is deliberately narrow. A stretch over a few hundred metres
- * usually holds one block of stones and runnable ground around it, so calling the
- * whole stretch extreme reads wrong to anyone who walked it. Where the detector
- * found a hard *core* inside a stretch, the stretch is graded "technical, with a
- * hard core" and the core itself is what gets painted extreme - as a place, not
- * as a bigger adjective over a kilometre and a half.
+ * "Very technical" is deliberately narrow. A stretch longer than a couple of
+ * hundred metres usually holds one block of hard ground and runnable ground around
+ * it, so calling the whole stretch extreme reads wrong to anyone who walked it -
+ * the block gets the extreme colour, the stretch around it stays amber. And where
+ * the cartography describes the ground as ordinary (a marked hiking path, paved,
+ * an easy track grade) the measured claim is capped: the body's reason for slowing
+ * there is vegetation, navigation or fatigue, not the kind of ground that throws a
+ * runner.
  */
 import type { TrailSection } from '@/features/analysis/types'
 import type { ThemeColorToken } from '@/lib/themeColor'
@@ -30,6 +32,8 @@ export interface TrailRatios {
   technicalRatio: number
   /** Multiple of the cut that reads as a hard core. */
   hardRatio: number
+  /** Longest stretch that may be extreme as a whole; beyond it, only its core is. */
+  veryMaxLengthM: number
 }
 
 /** How one section should read: grade, colour token, stroke weight and alpha. */
@@ -45,11 +49,31 @@ export interface TrailGrade {
   labelKey: string
 }
 
-/** A share of a stretch above which a core that fills it makes the whole extreme. */
-const CORE_IS_THE_WHOLE_SHARE = 0.8
+/** Surfaces and track grades the map calls rideable-or-walkable ground. */
+const EASY_SURFACES = new Set(['asphalt', 'paved', 'concrete', 'compacted', 'cement'])
+const EASY_TRACKTYPES = new Set(['grade1', 'grade2'])
 
 /**
- * Grades one section's index against the ratios the detector used.
+ * Whether the cartography describes the ground as ordinary, which caps the claim.
+ *
+ * @param osm - What the map says about the stretch, when it says anything.
+ * @returns `true` when the mapped ground cannot be called extreme.
+ */
+export function mapSaysEasy(osm: TrailSection['osm']): boolean {
+  if (!osm) {
+    return false
+  }
+  return (
+    osm.sacScale === 'hiking' ||
+    osm.mtbScale === '0' ||
+    osm.mtbScale === '1' ||
+    (osm.surface !== null && EASY_SURFACES.has(osm.surface)) ||
+    (osm.tracktype !== null && EASY_TRACKTYPES.has(osm.tracktype))
+  )
+}
+
+/**
+ * Grades one section against the ratios the detector used.
  *
  * @param section - The measured section.
  * @param ratios - The threshold and band multiples the server answered with.
@@ -57,24 +81,17 @@ const CORE_IS_THE_WHOLE_SHARE = 0.8
  */
 export function gradeTrailSection(section: TrailSection, ratios: TrailRatios): TrailGrade {
   const ratio = ratios.threshold > 0 ? section.score / ratios.threshold : 0
-  const coreLength =
-    section.coreStartM !== null && section.coreEndM !== null
-      ? section.coreEndM - section.coreStartM
-      : 0
-  const fillsTheStretch =
-    section.lengthM > 0 && coreLength / section.lengthM >= CORE_IS_THE_WHOLE_SHARE
 
-  if (section.coreScore !== null && fillsTheStretch) {
-    return {
-      degree: 'very',
-      colorToken: '--color-hr',
-      weight: 7,
-      opacity: 0.95,
-      labelKey: 'analysis.trail.degree.veryTechnical',
-    }
-  }
   if (section.coreScore !== null) {
-    // the extreme ground is a block inside; the stretch around it is only technical
+    if (section.lengthM <= ratios.veryMaxLengthM && !mapSaysEasy(section.osm)) {
+      return {
+        degree: 'very',
+        colorToken: '--color-hr',
+        weight: 7,
+        opacity: 0.95,
+        labelKey: 'analysis.trail.degree.veryTechnical',
+      }
+    }
     return {
       degree: 'mixed',
       colorToken: '--color-effort',
@@ -83,6 +100,7 @@ export function gradeTrailSection(section: TrailSection, ratios: TrailRatios): T
       labelKey: 'analysis.trail.degree.mixed',
     }
   }
+
   if (ratio >= ratios.technicalRatio) {
     return {
       degree: 'technical',
@@ -111,7 +129,7 @@ export function gradeTrailSection(section: TrailSection, ratios: TrailRatios): T
  * @param sectionLengthM - Ground the section covers, from its own measurement.
  * @param fromM - Ground position where the range starts, in the section's frame.
  * @param toM - Ground position where it ends.
- * @returns The points inside the range; all of them when the range is empty.
+ * @returns The points inside the range; all of them when the range selects none.
  */
 export function pointsWithin<T extends { lat: number; lng: number }>(
   points: T[],

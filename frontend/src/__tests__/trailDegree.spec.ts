@@ -4,7 +4,7 @@ import type { TrailSection } from '@/features/analysis/types'
 
 import { gradeTrailSection, pointsWithin } from '@/features/analysis/utils/trailDegree'
 
-const RATIOS = { threshold: 0.38, technicalRatio: 1.3, hardRatio: 1.8 }
+const RATIOS = { threshold: 0.38, technicalRatio: 1.3, hardRatio: 1.8, veryMaxLengthM: 200 }
 
 /** Build a measured section, overriding only what a case cares about. */
 function section(overrides: Partial<TrailSection> = {}): TrailSection {
@@ -38,17 +38,45 @@ describe('gradeTrailSection', () => {
     expect(grade.colorToken).toBe('--color-effort')
   })
 
-  it('grades a short stretch whose whole length is hard as very technical', () => {
+  it('grades a short stretch whose ground is hard as very technical', () => {
     const short = section({
-      lengthM: 150,
-      score: 0.83,
+      lengthM: 125,
+      score: 0.77,
       coreStartM: 5000,
-      coreEndM: 5140,
-      coreScore: 0.83,
+      coreEndM: 5025,
+      coreScore: 0.77,
     })
     const grade = gradeTrailSection(short, RATIOS)
     expect(grade.degree).toBe('very')
     expect(grade.colorToken).toBe('--color-hr')
+  })
+
+  it('lets the cartography keep a stretch out of the extreme band', () => {
+    // the plants case: slow and erratic over a marked hiking path is not extreme ground
+    const short = section({
+      lengthM: 75,
+      score: 0.74,
+      coreStartM: 5000,
+      coreEndM: 5025,
+      coreScore: 0.74,
+      osm: {
+        wayId: 1,
+        name: null,
+        sacScale: 'hiking',
+        mtbScale: null,
+        surface: null,
+        smoothness: null,
+        tracktype: null,
+        trailVisibility: 'good',
+        width: null,
+        incline: null,
+        startM: 0,
+        endM: 300,
+        coveredM: 75,
+        cacheDate: '2026-11-05',
+      },
+    })
+    expect(gradeTrailSection(short, RATIOS).degree).toBe('mixed')
   })
 
   it('does not call a long stretch extreme because a block inside it is', () => {

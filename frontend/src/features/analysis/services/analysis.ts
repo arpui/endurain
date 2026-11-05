@@ -465,6 +465,7 @@ export async function fetchTrailSections(
     threshold: dto.threshold,
     technicalRatio: dto.technical_ratio,
     hardRatio: dto.hard_ratio,
+    veryMaxLengthM: dto.very_max_length_m,
     cadenceAvailable: dto.cadence_available,
     technicalM: dto.technical_m,
     totalM: dto.total_m,

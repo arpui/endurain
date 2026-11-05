@@ -282,6 +282,7 @@ class TestTrailSectionsRoute:
             threshold=0.38,
             technical_ratio=1.3,
             hard_ratio=1.8,
+            very_max_length_m=200.0,
             v_base_ms=2.47,
             cadence_available=True,
             technical_m=5750.0,
