@@ -3730,6 +3730,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/power-flags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Power Flags
+         * @description Return the caller's sessions the duration-intensity curve held out.
+         *
+         *     A session is held out when its best average for a duration is implausible
+         *     against its own normalized power and an absolute floor; the curve stops
+         *     trusting it and this says so, with the numbers.
+         */
+        get: operations["get_power_flags_api_v1_analysis_power_flags_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/cp-trend": {
         parameters: {
             query?: never;
@@ -10616,6 +10640,38 @@ export interface components {
             name: string;
             /** Start Time */
             start_time: string | null;
+        };
+        /**
+         * PowerFlagRead
+         * @description Serialized one session held out of the duration-intensity curve.
+         *
+         *     Attributes:
+         *         activity_id: The refused session.
+         *         started_on: Day of the session.
+         *         duration_s: Duration of the strongest implausible average, in seconds.
+         *         value_w: The refused best average, in watts.
+         *         session_np_w: The session's own normalized power, in watts.
+         *         ratio: ``value_w / session_np_w``.
+         *         cap: The tier ratio the session exceeded.
+         */
+        PowerFlagRead: {
+            /** Activity Id */
+            activity_id: number;
+            /**
+             * Started On
+             * Format: date
+             */
+            started_on: string;
+            /** Duration S */
+            duration_s: number;
+            /** Value W */
+            value_w: number;
+            /** Session Np W */
+            session_np_w: number;
+            /** Ratio */
+            ratio: number;
+            /** Cap */
+            cap: number;
         };
         /**
          * PowerThresholdRead
@@ -19131,6 +19187,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PowerDurationRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_power_flags_api_v1_analysis_power_flags_get: {
+        parameters: {
+            query: {
+                sport: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PowerFlagRead"][];
                 };
             };
             /** @description Validation Error */

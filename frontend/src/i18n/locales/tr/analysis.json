@@ -133,7 +133,8 @@
     "seriesBalance": "Kalan W′",
     "balanceTitle": "Zaman içinde kalan W′",
     "overlayName": "{months} ay",
-    "overlayCp": "Son pencerelerin CP değeri: {windows}"
+    "overlayCp": "Son pencerelerin CP değeri: {windows}",
+    "flagsNotice": "{count} antrenman inanılmaz zirveler nedeniyle eğriden çıkarıldı"
   },
   "intervals": {
     "title": "Interval analizi",

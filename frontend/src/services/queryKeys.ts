@@ -438,6 +438,7 @@ export const queryKeys = {
      */
     cpTrend: (sport: string, windowDays: number | null) =>
       ['analysis', 'cp-trend', sport, windowDays] as const,
+    powerFlags: (sport: string) => ['analysis', 'power-flags', sport] as const,
     /**
      * @param id - Activity whose per-lap dynamics are keyed.
      * @returns A lap-dynamics query key for one activity.

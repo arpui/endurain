@@ -28,6 +28,8 @@ import type {
   LoadMethod,
   DurationPeak,
   DurationPeakDto,
+  PowerFlag,
+  PowerFlagDto,
   PowerDuration,
   PowerDurationDto,
   PowerDurationFit,
@@ -313,6 +315,30 @@ export async function fetchCpTrend(
   if (windowDays !== null) params.set('window', String(windowDays))
   const dto = await apiFetch<CpTrendDto>(`/analysis/cp-trend?${params.toString()}`, { signal })
   return mapCpTrend(dto)
+}
+
+/**
+ * Fetches the sessions the caller's duration-intensity curve held out.
+ *
+ * @param sport - Sport group to read.
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns The refused sessions and the numbers behind each refusal.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchPowerFlags(sport: string, signal?: AbortSignal): Promise<PowerFlag[]> {
+  const dto = await apiFetch<PowerFlagDto[]>(
+    `/analysis/power-flags?sport=${encodeURIComponent(sport)}`,
+    { signal },
+  )
+  return dto.map((flag) => ({
+    activityId: flag.activity_id,
+    startedOn: flag.started_on,
+    durationS: flag.duration_s,
+    valueW: flag.value_w,
+    sessionNpW: flag.session_np_w,
+    ratio: flag.ratio,
+    cap: flag.cap,
+  }))
 }
 
 /** Maps a critical-power trend DTO (points, reference threshold) to the domain model. */

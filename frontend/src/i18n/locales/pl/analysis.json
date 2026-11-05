@@ -133,7 +133,8 @@
     "seriesBalance": "W′ pozostało",
     "balanceTitle": "W′ pozostałe w czasie",
     "overlayName": "{months} miesiące",
-    "overlayCp": "CP ostatnich okien: {windows}"
+    "overlayCp": "CP ostatnich okien: {windows}",
+    "flagsNotice": "{count} sesje wykluczone z krzywej z powodu niewiarygodnych szczytów"
   },
   "intervals": {
     "title": "Analiza interwałów",

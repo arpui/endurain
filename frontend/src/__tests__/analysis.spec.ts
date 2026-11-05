@@ -11,6 +11,7 @@ import {
   fetchCpTrend,
   fetchFitnessSeries,
   fetchPowerDuration,
+  fetchPowerFlags,
   fetchWprimeBalance,
   mapActivityIntervals,
   mapFitnessSeries,
@@ -340,6 +341,34 @@ describe('power-duration and W-prime mappers', () => {
     expect(trend.measure).toBe('speed')
     expect(trend.threshold).toBeNull()
     expect(trend.speedThreshold).toEqual({ valueMs: 4.15, wPrimeM: 260, source: 'auto', cvPct: 3 })
+  })
+})
+
+describe('power-flags fetch', () => {
+  it('maps the sessions held out of the curve', async () => {
+    vi.mocked(apiFetch).mockResolvedValue([
+      {
+        activity_id: 1059,
+        started_on: '2023-06-25',
+        duration_s: 60,
+        value_w: 1044.0,
+        session_np_w: 345.0,
+        ratio: 3.03,
+        cap: 1.9,
+      },
+    ])
+    const flags = await fetchPowerFlags('run')
+    expect(flags).toEqual([
+      {
+        activityId: 1059,
+        startedOn: '2023-06-25',
+        durationS: 60,
+        valueW: 1044,
+        sessionNpW: 345,
+        ratio: 3.03,
+        cap: 1.9,
+      },
+    ])
   })
 })
 

@@ -142,6 +142,34 @@ class TestDurationPeaks:
         assert analysis_maths.best_window_mean([1.0, 5.0, 5.0, 5.0, 1.0], 1.0, 3.0) == pytest.approx(5.0)
 
 
+class TestPeakViolation:
+    """The double gate that keeps sensor runaways out of the record curve."""
+
+    def test_runaway_is_flagged_with_its_numbers(self):
+        means = {60: 1044.0, 120: 879.0, 300: 430.0}
+        bad = analysis_maths.peak_violation(means, 345.0, 700.0)
+        assert bad is not None
+        duration, value, ratio, cap = bad
+        assert duration == 60 and value == 1044.0
+        assert ratio == pytest.approx(3.03, abs=0.01) and cap == 1.9
+
+    def test_a_walk_surge_stays_unflagged(self):
+        """High ratio but small watts: a hill surge on a 90 W walk is honest."""
+        assert analysis_maths.peak_violation({60: 250.0}, 88.0, 700.0) is None
+
+    def test_a_hard_session_stays_unflagged(self):
+        """High watts but modest ratio: a real max effort is honest."""
+        assert analysis_maths.peak_violation({300: 680.0, 600: 640.0, 1200: 600.0}, 560.0, 700.0) is None
+
+    def test_sprints_are_never_judged(self):
+        assert analysis_maths.peak_violation({10: 1200.0}, 300.0, 700.0) is None
+
+    def test_tier_cap_grows_stricter_with_duration(self):
+        means = {900: 900.0}  # 1.8x NP at 15 min: plausible only under the 1 min cap
+        bad = analysis_maths.peak_violation(means, 500.0, 700.0)
+        assert bad is not None and bad[3] == 1.45
+
+
 class TestTemporalThreshold:
     """The decayed-max envelope that scores an activity against its era."""
 

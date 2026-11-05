@@ -133,7 +133,8 @@
     "seriesBalance": "剩餘 W′",
     "balanceTitle": "剩餘 W′ 隨時間變化",
     "overlayName": "{months} 個月",
-    "overlayCp": "近期視窗 CP：{windows}"
+    "overlayCp": "近期視窗 CP：{windows}",
+    "flagsNotice": "因峰值不可信而從曲線中排除 {count} 次訓練"
   },
   "intervals": {
     "title": "間歇分析",

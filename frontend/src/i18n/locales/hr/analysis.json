@@ -133,7 +133,8 @@
     "seriesBalance": "W′ preostalo",
     "balanceTitle": "W′ preostalo kroz vrijeme",
     "overlayName": "{months} mjeseci",
-    "overlayCp": "CP nedavnih prozora: {windows}"
+    "overlayCp": "CP nedavnih prozora: {windows}",
+    "flagsNotice": "{count} aktivnosti izuzeto iz krivlje zbog nevjerojatnih vrhova"
   },
   "intervals": {
     "title": "Analiza intervala",

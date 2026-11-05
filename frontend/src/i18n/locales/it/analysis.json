@@ -133,7 +133,8 @@
     "seriesBalance": "W′ residua",
     "balanceTitle": "W′ residua nel tempo",
     "overlayName": "{months} mesi",
-    "overlayCp": "CP delle finestre recenti: {windows}"
+    "overlayCp": "CP delle finestre recenti: {windows}",
+    "flagsNotice": "{count} sessioni escluse dalla curva per picchi non credibili"
   },
   "intervals": {
     "title": "Analisi degli intervalli",

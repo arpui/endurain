@@ -133,7 +133,8 @@
     "seriesBalance": "W′ υπόλοιπο",
     "balanceTitle": "Υπόλοιπο W′ με την πάροδο του χρόνου",
     "overlayName": "{months} μήνες",
-    "overlayCp": "CP πρόσφατων παραθύρων: {windows}"
+    "overlayCp": "CP πρόσφατων παραθύρων: {windows}",
+    "flagsNotice": "{count} προπονήσεις εκτός καμπύλης λόγω απίθανων κορυφών"
   },
   "intervals": {
     "title": "Ανάλυση διαστημάτων",

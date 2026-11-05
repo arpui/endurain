@@ -447,6 +447,59 @@ class TestWalks:
         assert calls == ["refresh"]
 
 
+class TestPeakPlausibility:
+    """Refresh refuses the runaway session and says so - honest peaks stand."""
+
+    @staticmethod
+    def _runaway_stream():
+        """Normal 30 min, a 2-minute kilowatt runaway, normal again."""
+        watts = [300.0] * 1800 + [1050.0] * 120 + [300.0] * 1800 + [240.0] * 900
+        return _stream(watts)
+
+    def _refresh(self, activities, streams):
+        db = _db()
+        stored: list[analysis_schema.AnalysisSettingsRead] = []
+        flags_written: list = []
+
+        def _replace_flags(user_id, sport, records, _db):
+            flags_written.append((sport, records))
+            return len(records)
+
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(
+                f"{_SVC}.activity_streams_integration.get_stream_for_derivation",
+                side_effect=lambda activity_id, stream_type, _db: streams.get((activity_id, stream_type)),
+            ),
+            patch(f"{_SVC}.analysis_crud.replace_duration_peaks") as peaks,
+            patch(f"{_SVC}.analysis_crud.replace_peak_flags", side_effect=_replace_flags),
+            patch(f"{_SVC}.analysis_crud.store_settings", side_effect=_capture_settings(stored)),
+        ):
+            analysis_service.refresh_thresholds(2, db)
+        return stored, peaks, flags_written
+
+    def test_the_runaway_session_is_held_out_and_flagged(self):
+        acts = [_activity(activity_id=i) for i in (1, 2, 3, 4)]
+        streams = {
+            (i, 2): self._runaway_stream() if i == 1 else _stream([300.0] * 1800 + [200.0] * 1800) for i in (1, 2, 3, 4)
+        }
+        _stored, peaks, flags = self._refresh(acts, streams)
+        assert flags and flags[0][0] == "run"
+        record = flags[0][1][0]
+        assert record.activity_id == 1 and record.value_w > 900 and record.ratio > 1.9
+        written = [call.args[2] for call in peaks.call_args_list]
+        curve = {rec.duration_s: rec.value for rec in written[0]}
+        assert curve.get(60, 0.0) < 900  # the honest sessions define the 1 min point
+
+    def test_the_held_out_session_still_counts_for_nothing_else_it_touched(self):
+        """Flags replace per sport on every pass: a repaired session re-enters."""
+        acts = [_activity(activity_id=i) for i in (1, 2, 3, 4)]
+        streams = {(i, 2): _stream([300.0] * 1800 + [200.0] * 1800) for i in (1, 2, 3, 4)}
+        _stored, _peaks, flags = self._refresh(acts, streams)
+        assert flags and flags[0][1] == []
+
+
 class TestReads:
     def test_only_the_owner_reads_an_activity_loads(self):
         with (
@@ -2014,7 +2067,7 @@ class TestPaceCalibration:
 
     @staticmethod
     def _runs(count: int = 4) -> list:
-        return [SimpleNamespace(id=100 + i, activity_type=2) for i in range(count)]
+        return [SimpleNamespace(id=100 + i, activity_type=2, start_time=_T0_UTC) for i in range(count)]
 
     @staticmethod
     def _paired_streams():

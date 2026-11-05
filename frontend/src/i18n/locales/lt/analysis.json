@@ -133,7 +133,8 @@
     "seriesBalance": "W′ likę",
     "balanceTitle": "W′ likutis laikui bėgant",
     "overlayName": "{months} mėnesiai",
-    "overlayCp": "Neseni langai CP: {windows}"
+    "overlayCp": "Neseni langai CP: {windows}",
+    "flagsNotice": "{count} treniruotės pašalintos iš kreivės dėl nepatikimų viršūnių"
   },
   "intervals": {
     "title": "Intervalų analizė",

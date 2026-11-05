@@ -133,7 +133,8 @@
     "seriesBalance": "W′ zbývá",
     "balanceTitle": "W′ zbývající v čase",
     "overlayName": "{months} měsíce",
-    "overlayCp": "CP posledních oken: {windows}"
+    "overlayCp": "CP posledních oken: {windows}",
+    "flagsNotice": "{count} aktivity vyloučeny z křivky kvůli neuvěřitelným špičkám"
   },
   "intervals": {
     "title": "Analýza intervalů",

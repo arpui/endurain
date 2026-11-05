@@ -2,12 +2,13 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import type { DurationPeak, PowerDurationOverlay } from '@/features/analysis/types'
+import type { DurationPeak, PowerDurationOverlay, PowerFlag } from '@/features/analysis/types'
 import type { ChartRenderOptions } from '@/composables/useChartProvider'
 
 import { themeColor, themeColorAlpha } from '@/lib/themeColor'
 import { Card } from '@/components/ui/card'
 import { useMetricChart } from '@/composables/useMetricChart'
+import { formatMediumDate } from '@/utils/datetime'
 import { formatDurationLabel } from '@/features/analysis/utils/format'
 
 const props = defineProps<{
@@ -15,9 +16,11 @@ const props = defineProps<{
   points: DurationPeak[]
   /** Rolling recent windows overlaid on the record, largest first by the caller. */
   overlays?: PowerDurationOverlay[]
+  /** Sessions the curve held out as implausible, oldest first. */
+  flags?: PowerFlag[]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const CURVE_COLOR = themeColor('--color-brand-mid')
 
@@ -97,6 +100,13 @@ useMetricChart(chartRender)
     <div ref="chartContainer" class="relative h-64 w-full min-w-0" />
     <p v-if="overlayCpNote" class="text-caption text-muted-foreground">
       {{ t('analysis.power.overlayCp', { windows: overlayCpNote }) }}
+    </p>
+    <p v-if="(flags?.length ?? 0) > 0" class="text-caption text-warning">
+      {{ t('analysis.power.flagsNotice', { count: flags?.length ?? 0 }) }}
+      <span v-for="flag in flags" :key="flag.activityId" class="tabular-nums">
+        · {{ formatMediumDate(flag.startedOn, locale) }} {{ Math.round(flag.valueW) }} W /
+        {{ formatDurationLabel(flag.durationS) }}
+      </span>
     </p>
   </Card>
 </template>

@@ -133,7 +133,8 @@
     "seriesBalance": "W′ restante",
     "balanceTitle": "W′ restante en el tiempo",
     "overlayName": "{months} meses",
-    "overlayCp": "CP de las ventanas recientes: {windows}"
+    "overlayCp": "CP de las ventanas recientes: {windows}",
+    "flagsNotice": "{count} sesiones excluidas de la curva porque sus picos no son creíbles"
   },
   "intervals": {
     "title": "Análisis de intervalos",

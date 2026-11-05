@@ -133,7 +133,8 @@
     "seriesBalance": "W′ rămas",
     "balanceTitle": "W′ rămas în timp",
     "overlayName": "{months} luni",
-    "overlayCp": "CP ferestre recente: {windows}"
+    "overlayCp": "CP ferestre recente: {windows}",
+    "flagsNotice": "{count} antrenamente excluse din curbă din cauza vârfurilor nerealiste"
   },
   "intervals": {
     "title": "Analiza intervalelor",

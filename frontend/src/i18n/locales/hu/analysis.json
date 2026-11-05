@@ -133,7 +133,8 @@
     "seriesBalance": "W′ maradék",
     "balanceTitle": "W′ maradék idővel",
     "overlayName": "{months} hónap",
-    "overlayCp": "A közelmúlt ablakainak CP: {windows}"
+    "overlayCp": "A közelmúlt ablakainak CP: {windows}",
+    "flagsNotice": "{count} edzés kizárva a görbéből hihetetlen csúcsértékek miatt"
   },
   "intervals": {
     "title": "Intervallumelemzés",
