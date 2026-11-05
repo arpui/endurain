@@ -191,7 +191,10 @@
       "technical": "tehnički",
       "veryTechnical": "vrlo tehnički"
     },
-    "clickHint": "Odaberi redak da vidiš dionicu na karti, ili klikni na dionicu."
+    "clickHint": "Odaberi redak da vidiš dionicu na karti, ili klikni na dionicu.",
+    "colMap": "karta",
+    "mapMissing": "nema OSM podataka",
+    "mapMissingHint": "Nitrira mapa staza ne pokriva dionicu: nedostaje ekstrakt ili teren nije u OSM-u."
   },
   "sectionBest": "Najbolja vremena",
   "bestTimes": {

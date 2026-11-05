@@ -477,6 +477,24 @@ export async function fetchTrailSections(
       score: section.score,
       direction: section.direction as TrailSection['direction'],
       points: (section.points ?? []).map((point) => ({ lat: point.lat, lng: point.lon })),
+      osm: section.osm
+        ? {
+            wayId: section.osm.way_id,
+            name: section.osm.name ?? null,
+            sacScale: section.osm.sac_scale ?? null,
+            mtbScale: section.osm.mtb_scale ?? null,
+            surface: section.osm.surface ?? null,
+            smoothness: section.osm.smoothness ?? null,
+            tracktype: section.osm.tracktype ?? null,
+            trailVisibility: section.osm.trail_visibility ?? null,
+            width: section.osm.width ?? null,
+            incline: section.osm.incline ?? null,
+            startM: section.osm.start_m,
+            endM: section.osm.end_m,
+            coveredM: section.osm.covered_m,
+            cacheDate: section.osm.cache_date,
+          }
+        : null,
     })),
   }
 }

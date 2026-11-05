@@ -191,7 +191,10 @@
       "technical": "tehničen",
       "veryTechnical": "zelo tehničen"
     },
-    "clickHint": "Izberi vrsto za prikaz odseka na zemljevidu ali klikni nanj."
+    "clickHint": "Izberi vrsto za prikaz odseka na zemljevidu ali klikni nanj.",
+    "colMap": "zemljevid",
+    "mapMissing": "ni podatkov OSM",
+    "mapMissingHint": "nobena kartirana pot ne pokriva tega odseka: manjka izpisek ali teren ni v OSM."
   },
   "sectionBest": "Najboljši časi",
   "bestTimes": {

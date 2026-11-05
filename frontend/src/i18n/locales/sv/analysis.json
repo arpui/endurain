@@ -191,7 +191,10 @@
       "technical": "teknisk",
       "veryTechnical": "mycket teknisk"
     },
-    "clickHint": "Välj en rad för att se avsnittet på kartan, eller klicka på ett avsnitt."
+    "clickHint": "Välj en rad för att se avsnittet på kartan, eller klicka på ett avsnitt.",
+    "colMap": "karta",
+    "mapMissing": "inga OSM-data",
+    "mapMissingHint": "ingen kartlagd stig täcker detta avsnitt: utdraget saknas eller terrängen finns inte i OSM."
   },
   "sectionBest": "Bästa tider",
   "bestTimes": {

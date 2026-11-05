@@ -43,6 +43,44 @@ function range(startM: number, lengthM: number): string {
 }
 
 /**
+ * What the cartography claims about the same ground, shown as it claims it.
+ *
+ * Deliberately raw: these are OpenStreetMap's own vocabularies (``T3``, ``rock``,
+ * ``grade4``), and translating them into our words would quietly invent the
+ * correspondence between the two scales that the calibration is meant to measure.
+ */
+function mapClaim(osm: TrailSection['osm']): string {
+  if (!osm) {
+    return t('analysis.trail.mapMissing')
+  }
+  const parts = [osm.sacScale, osm.mtbScale, osm.surface, osm.tracktype, osm.smoothness]
+    .filter(Boolean)
+    .slice(0, 2)
+  return parts.length > 0 ? parts.join(' · ') : (osm.name ?? `OSM ${osm.wayId}`)
+}
+
+/** Every claim the map makes about the stretch, for the row's tooltip. */
+function mapDetail(osm: TrailSection['osm']): string {
+  if (!osm) {
+    return t('analysis.trail.mapMissingHint')
+  }
+  const pairs = [
+    ['sac_scale', osm.sacScale],
+    ['mtb:scale', osm.mtbScale],
+    ['surface', osm.surface],
+    ['smoothness', osm.smoothness],
+    ['tracktype', osm.tracktype],
+    ['trail_visibility', osm.trailVisibility],
+    ['width', osm.width],
+    ['incline', osm.incline],
+  ].filter((pair): pair is [string, string] => pair[1] !== null)
+  const where = `${osm.startM.toFixed(0)}–${osm.endM.toFixed(0)} m`
+  return [pairs.map(([key, value]) => `${key}=${value}`).join(' · '), where, osm.cacheDate]
+    .filter(Boolean)
+    .join('\n')
+}
+
+/**
  * Rows ordered by how assertively the detector claims them, while each row
  * keeps the number of its ground order — the number the map draws beside it.
  */
@@ -77,7 +115,7 @@ const rows = computed(() =>
       </p>
 
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[30rem] border-collapse text-meta">
+        <table class="w-full min-w-[34rem] border-collapse text-meta">
           <thead>
             <tr class="text-caption border-b border-border text-left">
               <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colTram') }}</th>
@@ -85,6 +123,7 @@ const rows = computed(() =>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colDegree') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colDirection') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colGrade') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colMap') }}</th>
               <th class="py-2 font-medium">{{ t('analysis.trail.colScore') }}</th>
             </tr>
           </thead>
@@ -112,6 +151,9 @@ const rows = computed(() =>
                 {{ t(`analysis.trail.directions.${row.section.direction}`) }}
               </td>
               <td class="py-2 pe-3">{{ row.section.gradePct.toFixed(1) }} %</td>
+              <td class="py-2 pe-3 text-muted-foreground" :title="mapDetail(row.section.osm)">
+                {{ mapClaim(row.section.osm) }}
+              </td>
               <td class="py-2">{{ row.section.score.toFixed(2) }}</td>
             </tr>
           </tbody>

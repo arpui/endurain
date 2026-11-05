@@ -378,6 +378,48 @@ class TrailPointRead(BaseModel):
     lon: StrictFloat
 
 
+class TrailOsmRead(BaseModel):
+    """Serialized what OpenStreetMap claims about the ground a stretch lies on.
+
+    Reported exactly as the map states it, never blended with the measured index:
+    the two answers disagreeing is information, and collapsing them would throw
+    the disagreement away. Absent attributes are absent from the map, not zero.
+
+    Attributes:
+        way_id: The OpenStreetMap way id.
+        name: Way name, when mapped.
+        sac_scale: Hiking difficulty (T0-T6), when mapped.
+        mtb_scale: IMBA-style difficulty (0-5), when mapped.
+        surface: What the ground is made of, when mapped.
+        smoothness: How rough the ride reads, when mapped.
+        tracktype: How drivable the track is, when mapped.
+        trail_visibility: Whether the path can be found, when mapped.
+        width: Way width, when mapped.
+        incline: How the way itself is signed to climb, when mapped.
+        start_m: Offset along the way where the stretch starts.
+        end_m: Offset along the way where it ends.
+        covered_m: Ground of the stretch the way accounts for.
+        cache_date: Day of the extract this was read from.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    way_id: StrictInt
+    name: StrictStr | None = None
+    sac_scale: StrictStr | None = None
+    mtb_scale: StrictStr | None = None
+    surface: StrictStr | None = None
+    smoothness: StrictStr | None = None
+    tracktype: StrictStr | None = None
+    trail_visibility: StrictStr | None = None
+    width: StrictStr | None = None
+    incline: StrictStr | None = None
+    start_m: StrictFloat
+    end_m: StrictFloat
+    covered_m: StrictFloat
+    cache_date: str
+
+
 class TrailSectionRead(BaseModel):
     """Serialized one technical stretch of a trail run.
 
@@ -392,6 +434,7 @@ class TrailSectionRead(BaseModel):
         score: Peak smoothed technicality index inside it.
         direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
         points: The section's own polyline, for map overlays.
+        osm: What the cartography says about this ground, when it says anything.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -406,6 +449,7 @@ class TrailSectionRead(BaseModel):
     score: StrictFloat
     direction: StrictStr
     points: list[TrailPointRead]
+    osm: TrailOsmRead | None = None
 
 
 class TrailSectionsRead(BaseModel):

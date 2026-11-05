@@ -11884,6 +11884,60 @@ export interface components {
             refresh_token_expires_in: number;
         };
         /**
+         * TrailOsmRead
+         * @description Serialized what OpenStreetMap claims about the ground a stretch lies on.
+         *
+         *     Reported exactly as the map states it, never blended with the measured index:
+         *     the two answers disagreeing is information, and collapsing them would throw
+         *     the disagreement away. Absent attributes are absent from the map, not zero.
+         *
+         *     Attributes:
+         *         way_id: The OpenStreetMap way id.
+         *         name: Way name, when mapped.
+         *         sac_scale: Hiking difficulty (T0-T6), when mapped.
+         *         mtb_scale: IMBA-style difficulty (0-5), when mapped.
+         *         surface: What the ground is made of, when mapped.
+         *         smoothness: How rough the ride reads, when mapped.
+         *         tracktype: How drivable the track is, when mapped.
+         *         trail_visibility: Whether the path can be found, when mapped.
+         *         width: Way width, when mapped.
+         *         incline: How the way itself is signed to climb, when mapped.
+         *         start_m: Offset along the way where the stretch starts.
+         *         end_m: Offset along the way where it ends.
+         *         covered_m: Ground of the stretch the way accounts for.
+         *         cache_date: Day of the extract this was read from.
+         */
+        TrailOsmRead: {
+            /** Way Id */
+            way_id: number;
+            /** Name */
+            name?: string | null;
+            /** Sac Scale */
+            sac_scale?: string | null;
+            /** Mtb Scale */
+            mtb_scale?: string | null;
+            /** Surface */
+            surface?: string | null;
+            /** Smoothness */
+            smoothness?: string | null;
+            /** Tracktype */
+            tracktype?: string | null;
+            /** Trail Visibility */
+            trail_visibility?: string | null;
+            /** Width */
+            width?: string | null;
+            /** Incline */
+            incline?: string | null;
+            /** Start M */
+            start_m: number;
+            /** End M */
+            end_m: number;
+            /** Covered M */
+            covered_m: number;
+            /** Cache Date */
+            cache_date: string;
+        };
+        /**
          * TrailPointRead
          * @description Serialized one point of a technical section's polyline.
          *
@@ -11912,6 +11966,7 @@ export interface components {
          *         score: Peak smoothed technicality index inside it.
          *         direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
          *         points: The section's own polyline, for map overlays.
+         *         osm: What the cartography says about this ground, when it says anything.
          */
         TrailSectionRead: {
             /** Start M */
@@ -11934,6 +11989,7 @@ export interface components {
             direction: string;
             /** Points */
             points: components["schemas"]["TrailPointRead"][];
+            osm?: components["schemas"]["TrailOsmRead"] | null;
         };
         /**
          * TrailSectionsRead

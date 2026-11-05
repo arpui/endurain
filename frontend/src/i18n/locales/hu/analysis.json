@@ -191,7 +191,10 @@
       "technical": "technikai",
       "veryTechnical": "nagyon technikai"
     },
-    "clickHint": "Válassz egy sort a szakasz térképen való megjelenítéséhez, vagy kattints a szakaszra."
+    "clickHint": "Válassz egy sort a szakasz térképen való megjelenítéséhez, vagy kattints a szakaszra.",
+    "colMap": "térkép",
+    "mapMissing": "nincs OSM adat",
+    "mapMissingHint": "egy térképezett ösvény sem fedi ezt a szakaszt: hiányzik a kivonat, vagy a terep nincs az OSM-ben."
   },
   "sectionBest": "Legjobb idők",
   "bestTimes": {

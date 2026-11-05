@@ -4,6 +4,7 @@ from datetime import date, datetime
 
 from sqlalchemy import (
     JSON,
+    BigInteger,
     CheckConstraint,
     Date,
     DateTime,
@@ -15,6 +16,7 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 import modules.analysis.constants as analysis_constants
@@ -438,6 +440,50 @@ class TrailSession(Base, TimestampMixin):
     )
 
 
+class OsmPath(Base, TimestampMixin):
+    """One OpenStreetMap way the trail detector can be read against.
+
+    What the map says about the ground (``sac_scale``, ``mtb:scale``, ``surface``,
+    ``trail_visibility``) and what the athlete's own pace and stride say about it
+    are two independent answers, and the interesting cases are where they
+    disagree: an unmapped gully, or a path tagged innocently that has eroded into
+    steps. Keeping the cartography in a table - imported by a maintenance script,
+    never fetched per request - lets both answers sit side by side and lets the
+    extract's date be recorded with them.
+
+    Attributes:
+        way_id: The OpenStreetMap way id.
+        name: Way name, when mapped.
+        tags: The cartographic attributes the way carries.
+        geometry: Ordered ``[[lat, lng], ...]`` polyline as the way is drawn.
+        length_m: Length along the stored geometry.
+        min_lat: South edge of the geometry bounding box.
+        min_lng: West edge of the geometry bounding box.
+        max_lat: North edge of the geometry bounding box.
+        max_lng: East edge of the geometry bounding box.
+        cache_date: Day the extract was taken.
+    """
+
+    __tablename__ = "analysis_osm_paths"
+
+    way_id: Mapped[int] = mapped_column(
+        BigInteger,
+        primary_key=True,
+        comment="OpenStreetMap way id",
+    )
+    name: Mapped[str | None] = mapped_column(String(length=256), nullable=True, comment="Way name, when mapped")
+    tags: Mapped[dict] = mapped_column(JSONB, nullable=False, comment="Cartographic attributes the way carries")
+    geometry: Mapped[list] = mapped_column(
+        JSONB, nullable=False, comment="Ordered [[lat, lng], ...] polyline as the way is drawn"
+    )
+    length_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Length along the stored geometry")
+    min_lat: Mapped[float] = mapped_column(Float, nullable=False, comment="South edge of the geometry bounding box")
+    min_lng: Mapped[float] = mapped_column(Float, nullable=False, comment="West edge of the geometry bounding box")
+    max_lat: Mapped[float] = mapped_column(Float, nullable=False, comment="North edge of the geometry bounding box")
+    max_lng: Mapped[float] = mapped_column(Float, nullable=False, comment="East edge of the geometry bounding box")
+    cache_date: Mapped[date] = mapped_column(Date, nullable=False, comment="Day the extract was taken")
+
+
 class TrailSection(Base, TimestampMixin):
     """One technical stretch the trail detector read in a session.
 
@@ -521,6 +567,25 @@ class TrailSection(Base, TimestampMixin):
     end_t: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, comment="Timestamp of the stretch's last sample"
     )
+    osm_way_id: Mapped[int | None] = mapped_column(
+        ForeignKey("analysis_osm_paths.way_id", ondelete="SET NULL"),
+        nullable=True,
+        comment="Way the stretch was matched to",
+    )
+    osm_start_m: Mapped[float | None] = mapped_column(
+        Float, nullable=True, comment="Offset along the way where the stretch starts"
+    )
+    osm_end_m: Mapped[float | None] = mapped_column(
+        Float, nullable=True, comment="Offset along the way where the stretch ends"
+    )
+    osm_covered_m: Mapped[float | None] = mapped_column(
+        Float, nullable=True, comment="Ground of the stretch the way accounts for"
+    )
+    osm_cache_date: Mapped[date | None] = mapped_column(
+        Date,
+        nullable=True,
+        comment="Extract the stretch was matched against (also records an honest miss)",
+    )
 
     __table_args__ = (
         CheckConstraint(
@@ -537,4 +602,5 @@ class TrailSection(Base, TimestampMixin):
             ondelete="CASCADE",
         ),
         Index("ix_analysis_trail_sections_user_method", "user_id", "method"),
+        Index("ix_analysis_trail_sections_osm_way", "osm_way_id"),
     )

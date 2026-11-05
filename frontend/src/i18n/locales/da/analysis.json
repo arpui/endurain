@@ -191,7 +191,10 @@
       "technical": "teknisk",
       "veryTechnical": "meget teknisk"
     },
-    "clickHint": "Vælg en række for at se strækningen på kortet, eller klik på en strækning."
+    "clickHint": "Vælg en række for at se strækningen på kortet, eller klik på en strækning.",
+    "colMap": "kort",
+    "mapMissing": "ingen OSM-data",
+    "mapMissingHint": "Intet kortlagt spor dækker strækningen: extractet mangler, eller terrænet er ikke i OSM."
   },
   "sectionBest": "Bedste tider",
   "bestTimes": {

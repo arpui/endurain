@@ -191,7 +191,10 @@
       "technical": "tehnic",
       "veryTechnical": "foarte tehnic"
     },
-    "clickHint": "Alege un rând pentru a vedea porțiunea pe hartă, sau click pe o porțiune."
+    "clickHint": "Alege un rând pentru a vedea porțiunea pe hartă, sau click pe o porțiune.",
+    "colMap": "hartă",
+    "mapMissing": "fără date OSM",
+    "mapMissingHint": "nicio potecă cartografiată acoperă această porțiune: lipsește extrasul sau terenul nu este în OSM."
   },
   "sectionBest": "Timpi de referință",
   "bestTimes": {

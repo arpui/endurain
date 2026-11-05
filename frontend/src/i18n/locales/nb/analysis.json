@@ -191,7 +191,10 @@
       "technical": "teknisk",
       "veryTechnical": "svært teknisk"
     },
-    "clickHint": "Velg en rad for å se partiet på kartet, eller klikk på et parti."
+    "clickHint": "Velg en rad for å se partiet på kartet, eller klikk på et parti.",
+    "colMap": "kart",
+    "mapMissing": "ingen OSM-data",
+    "mapMissingHint": "ingen kartlagt sti dekker dette partiet: uttrekket mangler eller terrenget er ikke i OSM."
   },
   "sectionBest": "Bestetider",
   "bestTimes": {

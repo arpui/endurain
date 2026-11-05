@@ -191,7 +191,10 @@
       "technical": "técnico",
       "veryTechnical": "muito técnico"
     },
-    "clickHint": "Escolhe uma linha para ver o troço no mapa, ou clica num troço."
+    "clickHint": "Escolhe uma linha para ver o troço no mapa, ou clica num troço.",
+    "colMap": "mapa",
+    "mapMissing": "sem dados OSM",
+    "mapMissingHint": "nenhum caminho cartografado cobre este troço: falta o extrato ou o terreno não está no OSM."
   },
   "sectionBest": "Melhores tempos",
   "bestTimes": {

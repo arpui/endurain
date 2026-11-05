@@ -191,7 +191,10 @@
       "technical": "technique",
       "veryTechnical": "très technique"
     },
-    "clickHint": "Choisis une ligne pour voir le segment sur la carte, ou clique sur un segment."
+    "clickHint": "Choisis une ligne pour voir le segment sur la carte, ou clique sur un segment.",
+    "colMap": "carte",
+    "mapMissing": "pas de données OSM",
+    "mapMissingHint": "Aucun chemin cartographié ne couvre ce segment : l'extrait manque ou le terrain n'est pas dans OSM."
   },
   "sectionBest": "Meilleures perfs",
   "bestTimes": {

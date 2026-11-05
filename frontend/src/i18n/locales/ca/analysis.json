@@ -191,7 +191,10 @@
       "technical": "tècnic",
       "veryTechnical": "molt tècnic"
     },
-    "clickHint": "Tria una fila per veure el tram al mapa, o fes clic sobre un tram del mapa."
+    "clickHint": "Tria una fila per veure el tram al mapa, o fes clic sobre un tram del mapa.",
+    "colMap": "mapa",
+    "mapMissing": "sense dades d'OSM",
+    "mapMissingHint": "Cap camí cartografiat cobreix aquest tram: falta l'extract o el terra no és a OSM."
   },
   "sectionBest": "Millors temps",
   "bestTimes": {

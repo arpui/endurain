@@ -413,6 +413,54 @@ describe('trail technical sections', () => {
       score: 0.83,
       direction: 'descent',
       points: [{ lat: 42.47, lng: 0.99 }],
+      osm: null,
+    })
+  })
+
+  it('keeps the cartographic claim beside the measured one, as OSM states it', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      activity_id: 9,
+      threshold: 0.38,
+      v_base_ms: 2.46,
+      cadence_available: true,
+      technical_m: 1225.0,
+      total_m: 18693.8,
+      sections: [
+        {
+          start_m: 7675.0,
+          length_m: 1225.0,
+          grade_pct: -15.3,
+          avg_speed_ms: 1.51,
+          gap_deficit: 0.68,
+          cadence_jitter: 0.36,
+          brake_score: 0.81,
+          score: 0.83,
+          direction: 'descent',
+          points: [],
+          osm: {
+            way_id: 4242,
+            name: 'Camí de la Teula',
+            sac_scale: 'T3',
+            surface: 'rock',
+            trail_visibility: 'no',
+            start_m: 300.0,
+            end_m: 1520.0,
+            covered_m: 1220.0,
+            cache_date: '2026-11-01',
+          },
+        },
+      ],
+    } satisfies Schemas['TrailSectionsRead'])
+    const [section] = (await fetchTrailSections(9)).sections
+    expect(section?.score).toBe(0.83)
+    expect(section?.osm).toMatchObject({
+      wayId: 4242,
+      name: 'Camí de la Teula',
+      sacScale: 'T3',
+      surface: 'rock',
+      trailVisibility: 'no',
+      mtbScale: null,
+      cacheDate: '2026-11-01',
     })
   })
 })

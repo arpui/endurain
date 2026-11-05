@@ -191,7 +191,10 @@
       "technical": "tecnico",
       "veryTechnical": "molto tecnico"
     },
-    "clickHint": "Scegli una riga per vedere il tratto sulla mappa, o clicca su un tratto."
+    "clickHint": "Scegli una riga per vedere il tratto sulla mappa, o clicca su un tratto.",
+    "colMap": "mappa",
+    "mapMissing": "nessun dato OSM",
+    "mapMissingHint": "Nessun percorso mappato copre questo tratto: manca l'estratto o il terreno non è in OSM."
   },
   "sectionBest": "Tempi migliori",
   "bestTimes": {
