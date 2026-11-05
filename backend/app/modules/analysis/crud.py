@@ -379,6 +379,10 @@ def replace_threshold_fits(
                 activity_id=record.activity_id,
                 started_on=record.started_on,
                 value=record.value,
+                w_prime=record.w_prime,
+                cv_pct=record.cv_pct,
+                sustained=record.sustained,
+                power_source=record.power_source,
             )
         )
     return len(records)
