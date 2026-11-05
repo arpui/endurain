@@ -726,7 +726,19 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
                     else None
                 )
                 if aligned_v is not None and len(aligned_v) == len(power_w):
-                    runaway = analysis_maths.short_peak_runaway(power_w, list(aligned_v), period_s)
+                    grades: list[float] | None = None
+                    _, ele_values, ele_stamps = _stream_samples(
+                        activity.id,
+                        activity_streams_constants.STREAM_TYPE_ELEVATION,
+                        "ele",
+                        db,
+                        keep_zeros=True,
+                    )
+                    if ele_values and power_stamps:
+                        aligned_e = _align_to_power(ele_values, ele_stamps, power_stamps, period_s)
+                        if aligned_e is not None and len(aligned_e) == len(power_w):
+                            grades = list(analysis_maths.grade_pct_series(list(aligned_e), list(aligned_v), period_s))
+                    runaway = analysis_maths.short_peak_runaway(power_w, list(aligned_v), period_s, grades)
             if violation is not None or runaway is not None:
                 # The session's stream carries a peak no athlete holds for that
                 # long (a sensor runaway: a kilowatt at walking speed). Skip it

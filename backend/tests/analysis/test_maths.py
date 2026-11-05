@@ -160,9 +160,21 @@ class TestShortPeakRunaway:
         assert analysis_maths.short_peak_runaway(*self._session(1000.0, 4.0), 1.0) is None
 
     def test_a_steep_slow_climb_stands(self):
-        """Slow + huge is also what a real climb looks like: the neighborhood saves it."""
+        """Huge watts at slow speed is what a wall looks like: the grade exempts it."""
+        power, speeds = self._session(1000.0, 1.7)
+        grades = [0.0] * 600 + [30.0] * 15 + [0.0] * 600
+        assert analysis_maths.short_peak_runaway(power, speeds, 1.0, grades) is None
+
+    def test_a_steep_near_stall_still_falls(self):
+        """958 W at 1.9 km/h is the pod, whatever the grade: power needs motion."""
+        power, speeds = self._session(1000.0, 0.5)
+        grades = [0.0] * 600 + [30.0] * 15 + [0.0] * 600
+        assert analysis_maths.short_peak_runaway(power, speeds, 1.0, grades) is not None
+
+    def test_the_neighborhood_still_rescues_a_sustained_push(self):
+        """A hard block that is not isolated stands (isolation test unchanged)."""
         power, speeds = self._session(1000.0, 1.4)
-        for lo in (480, 510, 660, 690):  # the surrounding minutes carry the same effort
+        for lo in (480, 510, 660, 690):
             power[lo : lo + 90] = [900.0] * 90
         assert analysis_maths.short_peak_runaway(power, speeds, 1.0) is None
 

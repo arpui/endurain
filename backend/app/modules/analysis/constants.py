@@ -512,3 +512,11 @@ RSS_SLOW_SPEED_MS = 5.0
 PEAK_RUNAWAY_MIN_W = 900.0
 PEAK_RUNAWAY_MAX_V_MS = 3.0
 PEAK_RUNAWAY_NEIGHBOR_SHARE = 0.7
+
+#: The context rule exempts slow windows that sit on a real climb (grade above
+#: GRADE_EXEMPT_PCT: huge watts at walking pace is what a wall looks like to a
+#: footpod), but nothing exempts a near-stall (below STALL_V_MS): power scales
+#: with ground speed, so hundreds of watts without movement is the sensor, not
+#: the athlete.
+PEAK_RUNAWAY_STALL_V_MS = 1.0
+PEAK_RUNAWAY_GRADE_EXEMPT_PCT = 12.0

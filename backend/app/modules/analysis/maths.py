@@ -569,32 +569,42 @@ def short_peak_runaway(
     power_w: Sequence[float],
     speeds_ms: Sequence[float],
     period_s: float,
+    grades_pct: Sequence[float] | None = None,
     *,
     min_w: float = analysis_constants.PEAK_RUNAWAY_MIN_W,
     max_speed_ms: float = analysis_constants.PEAK_RUNAWAY_MAX_V_MS,
     neighbor_share: float = analysis_constants.PEAK_RUNAWAY_NEIGHBOR_SHARE,
+    stall_v_ms: float = analysis_constants.PEAK_RUNAWAY_STALL_V_MS,
+    grade_exempt_pct: float = analysis_constants.PEAK_RUNAWAY_GRADE_EXEMPT_PCT,
 ) -> tuple[int, float, float] | None:
     """Detect the sensor-runaway signature in the sub-thirty-second tail.
 
     Watts alone cannot judge a five-second peak (a real sprint is physically
     enormous); what gives a runaway away is context: a huge short average while
     the athlete barely moves, with honest effort nowhere near it. A steep climb
-    can hold high watts at low speed, but then the surrounding samples are high
-    too - the isolation test keeps those. Returns ``(duration_s, value_w,
+    legitimately looks like huge watts at slow speed - its grade exempts the
+    window - but power always scales with ground speed, so a near-stall (any
+    grade) is the sensor, never the athlete. Returns ``(duration_s, value_w,
     mean_speed_ms)`` for the strongest signature, or ``None``.
 
     Args:
         power_w: The session's power samples.
         speeds_ms: Speed samples aligned one-to-one to ``power_w``.
         period_s: Seconds between samples.
+        grades_pct: Grade per sample aligned to ``power_w``, or ``None`` when
+            the session has no altitude stream.
         min_w: Only windows averaging above this are candidates.
         max_speed_ms: Below this mean speed the window counts as barely moving.
         neighbor_share: A window is isolated when every neighboring 30 s block
             stays under this share of its average.
+        stall_v_ms: Under this mean speed no grade exempts the window.
+        grade_exempt_pct: Above this mean |grade| a slow window stands.
     """
     n = len(power_w)
     if n < 120 or len(speeds_ms) != n or period_s <= 0:
         return None
+    if grades_pct is not None and len(grades_pct) != n:
+        grades_pct = None
     pre_p = [0.0] * (n + 1)
     pre_v = [0.0] * (n + 1)
     for i in range(n):
@@ -622,6 +632,10 @@ def short_peak_runaway(
             v_mean = window_mean(pre_v, lo, lo + win)
             if v_mean >= max_speed_ms:
                 continue
+            if grades_pct is not None and v_mean > stall_v_ms:
+                g_mean = sum(abs(grades_pct[i]) for i in range(lo, lo + win)) / win
+                if g_mean >= grade_exempt_pct:
+                    continue
             first = lo // bucket
             last = (lo + win - 1) // bucket
             isolated = all(
