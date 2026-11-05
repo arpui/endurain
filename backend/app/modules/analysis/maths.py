@@ -563,3 +563,72 @@ def peak_violation(
         if ratio > cap and (worst is None or ratio > worst[2]):
             worst = (int(duration), float(value), ratio, cap)
     return worst
+
+
+def short_peak_runaway(
+    power_w: Sequence[float],
+    speeds_ms: Sequence[float],
+    period_s: float,
+    *,
+    min_w: float = analysis_constants.PEAK_RUNAWAY_MIN_W,
+    max_speed_ms: float = analysis_constants.PEAK_RUNAWAY_MAX_V_MS,
+    neighbor_share: float = analysis_constants.PEAK_RUNAWAY_NEIGHBOR_SHARE,
+) -> tuple[int, float, float] | None:
+    """Detect the sensor-runaway signature in the sub-thirty-second tail.
+
+    Watts alone cannot judge a five-second peak (a real sprint is physically
+    enormous); what gives a runaway away is context: a huge short average while
+    the athlete barely moves, with honest effort nowhere near it. A steep climb
+    can hold high watts at low speed, but then the surrounding samples are high
+    too - the isolation test keeps those. Returns ``(duration_s, value_w,
+    mean_speed_ms)`` for the strongest signature, or ``None``.
+
+    Args:
+        power_w: The session's power samples.
+        speeds_ms: Speed samples aligned one-to-one to ``power_w``.
+        period_s: Seconds between samples.
+        min_w: Only windows averaging above this are candidates.
+        max_speed_ms: Below this mean speed the window counts as barely moving.
+        neighbor_share: A window is isolated when every neighboring 30 s block
+            stays under this share of its average.
+    """
+    n = len(power_w)
+    if n < 120 or len(speeds_ms) != n or period_s <= 0:
+        return None
+    pre_p = [0.0] * (n + 1)
+    pre_v = [0.0] * (n + 1)
+    for i in range(n):
+        pre_p[i + 1] = pre_p[i] + power_w[i]
+        pre_v[i + 1] = pre_v[i] + speeds_ms[i]
+    bucket = max(int(30.0 / period_s), 1)
+    nb = (n + bucket - 1) // bucket
+    bucket_mean = [
+        (pre_p[min((b + 1) * bucket, n)] - pre_p[b * bucket]) / (min((b + 1) * bucket, n) - b * bucket)
+        for b in range(nb)
+    ]
+
+    def window_mean(pre: list[float], lo: int, hi: int) -> float:
+        return (pre[hi] - pre[lo]) / (hi - lo)
+
+    best: tuple[int, float, float] | None = None
+    for dur_s in (5, 10, 15, 20, 25):
+        win = max(int(dur_s / period_s), 1)
+        if win >= n:
+            continue
+        for lo in range(n - win + 1):
+            mean = window_mean(pre_p, lo, lo + win)
+            if mean < min_w:
+                continue
+            v_mean = window_mean(pre_v, lo, lo + win)
+            if v_mean >= max_speed_ms:
+                continue
+            first = lo // bucket
+            last = (lo + win - 1) // bucket
+            isolated = all(
+                bucket_mean[b] < mean * neighbor_share
+                for b in range(max(first - 3, 0), min(last + 4, nb))
+                if b < first or b > last
+            )
+            if isolated and (best is None or mean > best[1]):
+                best = (dur_s, mean, v_mean)
+    return best

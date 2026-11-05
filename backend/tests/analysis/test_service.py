@@ -447,6 +447,46 @@ class TestWalks:
         assert calls == ["refresh"]
 
 
+class TestShortRunawayContext:
+    """A kilowatt at walking speed, alone, exits the curve even in 15 seconds."""
+
+    def test_an_isolated_slow_spike_is_flagged_by_context(self):
+        power = [250.0] * 600 + [1000.0] * 15 + [250.0] * 600
+        speeds = [2.5] * 600 + [1.4] * 15 + [2.5] * 600
+        clean_watts = [300.0] * 1215
+        clean_speeds = [2.5] * 1215
+        acts = [_activity(activity_id=i) for i in (1, 2, 3, 4)]
+        flags_written: list = []
+
+        def _fake(activity_id, stream_type, _db):
+            if stream_type == 2:
+                values = power if activity_id == 1 else clean_watts
+                key = "power"
+            else:
+                values = speeds if activity_id == 1 else clean_speeds
+                key = "vel"
+            return SimpleNamespace(
+                stream_waypoints=[
+                    {"time": (_T0_UTC + timedelta(seconds=k)).isoformat(), key: v} for k, v in enumerate(values)
+                ]
+            )
+
+        with (
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=acts),
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=None),
+            patch(f"{_SVC}.activity_streams_integration.get_stream_for_derivation", side_effect=_fake),
+            patch(f"{_SVC}.analysis_crud.replace_duration_peaks") as peaks,
+            patch(f"{_SVC}.analysis_crud.replace_peak_flags", side_effect=lambda u, s, r, _db: flags_written.append(r)),
+            patch(f"{_SVC}.analysis_crud.store_settings", side_effect=_capture_settings([])),
+        ):
+            analysis_service.refresh_thresholds(2, _db())
+        assert flags_written and flags_written[0]
+        record = flags_written[0][0]
+        assert record.duration_s in (5, 10, 15) and record.value_w == 1000.0 and record.cap == 0.0
+        curve = {rec.duration_s: rec.value for rec in peaks.call_args_list[0].args[2]}
+        assert curve.get(15, 0.0) < 900
+
+
 class TestPeakPlausibility:
     """Refresh refuses the runaway session and says so - honest peaks stand."""
 

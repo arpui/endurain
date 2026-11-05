@@ -142,6 +142,34 @@ class TestDurationPeaks:
         assert analysis_maths.best_window_mean([1.0, 5.0, 5.0, 5.0, 1.0], 1.0, 3.0) == pytest.approx(5.0)
 
 
+class TestShortPeakRunaway:
+    """Context, not watts, judges the seconds: speed and neighborhood decide."""
+
+    @staticmethod
+    def _session(spike_w: float, spike_v: float, watts=250.0, v=2.5):
+        power = [watts] * 600 + [spike_w] * 15 + [watts] * 600
+        speeds = [v] * 600 + [spike_v] * 15 + [v] * 600
+        return power, speeds
+
+    def test_isolated_slow_spike_is_a_runaway(self):
+        hit = analysis_maths.short_peak_runaway(*self._session(1000.0, 1.4), 1.0)
+        assert hit is not None
+        assert hit[0] in (5, 10, 15) and hit[1] == pytest.approx(1000.0)
+
+    def test_a_fast_sprint_stands(self):
+        assert analysis_maths.short_peak_runaway(*self._session(1000.0, 4.0), 1.0) is None
+
+    def test_a_steep_slow_climb_stands(self):
+        """Slow + huge is also what a real climb looks like: the neighborhood saves it."""
+        power, speeds = self._session(1000.0, 1.4)
+        for lo in (480, 510, 660, 690):  # the surrounding minutes carry the same effort
+            power[lo : lo + 90] = [900.0] * 90
+        assert analysis_maths.short_peak_runaway(power, speeds, 1.0) is None
+
+    def test_small_spikes_are_never_hunted(self):
+        assert analysis_maths.short_peak_runaway(*self._session(700.0, 1.4), 1.0) is None
+
+
 class TestPeakViolation:
     """The double gate that keeps sensor runaways out of the record curve."""
 
@@ -163,13 +191,9 @@ class TestPeakViolation:
         """High watts but modest ratio: a real max effort is honest."""
         assert analysis_maths.peak_violation({300: 680.0, 600: 640.0, 1200: 600.0}, 560.0, self._BANDS) is None
 
-    def test_a_sprint_peak_is_physiologically_huge_and_stands(self):
-        """Literature keeps 5-10 s peaks enormous: only unit-scale absurdities fall."""
-        assert analysis_maths.peak_violation({5: 1125.0, 10: 1028.0}, 300.0, self._BANDS) is None
-        assert analysis_maths.peak_violation({5: 2400.0}, 300.0, self._BANDS) is not None
-
-    def test_the_short_tier_sits_between_sprint_and_minute_caps(self):
-        assert analysis_maths.peak_violation({20: 1600.0}, 500.0, self._BANDS) is not None  # 3.2x at 20 s
+    def test_sub_thirty_second_peaks_are_not_judged(self):
+        """Short sprint peaks may be physically huge; context judges them, not watts."""
+        assert analysis_maths.peak_violation({1: 9000.0, 5: 1125.0, 29: 1600.0}, 300.0, self._BANDS) is None
 
     def test_tier_cap_grows_stricter_with_duration(self):
         means = {900: 900.0}  # 1.8x NP at 15 min: plausible only under the 1 min cap

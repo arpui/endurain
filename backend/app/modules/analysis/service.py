@@ -696,26 +696,56 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
                 analysis_maths.peak_violation(
                     means,
                     session_np_w,
-                    (
-                        (10.0, analysis_constants.PEAK_OUTLIER_SPRINT_FLOOR_W),
-                        (30.0, analysis_constants.PEAK_OUTLIER_SHORT_FLOOR_W),
-                        (float("inf"), floor_w),
-                    ),
+                    ((float("inf"), floor_w),),
                 )
                 if activity.start_time
                 else None
             )
-            if violation is not None:
+            runaway = None
+            if (
+                violation is None
+                and activity.start_time is not None
+                and sport in _PACE_FIT_SPORTS
+                and any(d < 30 and v >= analysis_constants.PEAK_RUNAWAY_MIN_W for d, v in means.items())
+            ):
+                # Sub-thirty-second watts cannot be judged in the abstract (a real
+                # sprint peak is physically enormous), so the seconds are judged by
+                # context: huge short average, barely any ground speed, and no
+                # honest effort around it. A steep climb is slow too, but never
+                # isolated - the neighboring samples carry the same effort.
+                _, vel_values, vel_stamps = _stream_samples(
+                    activity.id,
+                    activity_streams_constants.STREAM_TYPE_SPEED,
+                    "vel",
+                    db,
+                    keep_zeros=True,
+                )
+                aligned_v = (
+                    _align_to_power(vel_values, vel_stamps, power_stamps, period_s)
+                    if vel_values and power_stamps
+                    else None
+                )
+                if aligned_v is not None and len(aligned_v) == len(power_w):
+                    runaway = analysis_maths.short_peak_runaway(power_w, list(aligned_v), period_s)
+            if violation is not None or runaway is not None:
                 # The session's stream carries a peak no athlete holds for that
                 # long (a sensor runaway: a kilowatt at walking speed). Skip it
                 # whole - the same corrupt stretch bends every duration near it
                 # - and record why, instead of silently out-ranking honest data.
-                duration_s, value_w, ratio, cap = violation
+                if violation is not None:
+                    duration_s, value_w, ratio, cap = violation
+                    reason = "implausible peak"
+                else:
+                    duration_s, value_w, _ = runaway
+                    ratio = value_w / session_np_w if session_np_w else 0.0
+                    cap = 0.0
+                    reason = "isolated spike at walking speed"
                 logger.warning(
-                    "Held session out of the duration-intensity curve: implausible peak",
+                    "Held session out of the duration-intensity curve",
                     extra=core_logger.context(
                         user_id=user_id,
                         activity_id=activity.id,
+                        reason=reason,
                         duration_s=duration_s,
                         value_w=round(value_w),
                         session_np_w=round(session_np_w),
