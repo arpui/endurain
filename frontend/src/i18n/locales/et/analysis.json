@@ -189,12 +189,14 @@
     "degree": {
       "light": "kerge",
       "technical": "tehniline",
-      "veryTechnical": "väga tehniline"
+      "veryTechnical": "väga tehniline",
+      "mixed": "tehniline, kõva tuumikuga"
     },
     "clickHint": "Vali rida, et näha lõiku kaardil, või klõpsa lõigule.",
     "colMap": "kaart",
     "mapMissing": "OSM-andmed puuduvad",
-    "mapMissingHint": "ükski kaardistatud rada ei kata seda lõiku: extract puudub või maastik pole OSM-is."
+    "mapMissingHint": "ükski kaardistatud rada ei kata seda lõiku: extract puudub või maastik pole OSM-is.",
+    "core": "tuumik {score} vahemikus {range}"
   },
   "sectionBest": "Parimad ajad",
   "bestTimes": {

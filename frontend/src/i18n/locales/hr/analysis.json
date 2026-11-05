@@ -189,12 +189,14 @@
     "degree": {
       "light": "blag",
       "technical": "tehnički",
-      "veryTechnical": "vrlo tehnički"
+      "veryTechnical": "vrlo tehnički",
+      "mixed": "tehnički, s tvrdom jezgrom"
     },
     "clickHint": "Odaberi redak da vidiš dionicu na karti, ili klikni na dionicu.",
     "colMap": "karta",
     "mapMissing": "nema OSM podataka",
-    "mapMissingHint": "Nitrira mapa staza ne pokriva dionicu: nedostaje ekstrakt ili teren nije u OSM-u."
+    "mapMissingHint": "Nitrira mapa staza ne pokriva dionicu: nedostaje ekstrakt ili teren nije u OSM-u.",
+    "core": "jezgra {score} na {range}"
   },
   "sectionBest": "Najbolja vremena",
   "bestTimes": {

@@ -15,7 +15,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
 import { activityTypeIsRunning } from '@/features/activities/utils/activityType'
-import { gradeTrailSection } from '@/features/analysis/utils/trailDegree'
+import { gradeTrailSection, pointsWithin } from '@/features/analysis/utils/trailDegree'
+import type { MapOverlay } from '@/composables/useMapProvider'
 import type { TrailSection } from '@/features/analysis/types'
 import { themeColor } from '@/lib/themeColor'
 import ActivityDetailHeader from '@/features/activities/components/ActivityDetailHeader.vue'
@@ -113,11 +114,18 @@ const showTrailSections = computed(() => (trailSections.value?.sections.length ?
 const trailSelected = ref<number | null>(null)
 // Technical stretches over the track, coloured by how assertively the detector
 // claims each one (grades read against the threshold the server itself used).
-const mapOverlays = computed(() =>
-  (trailSections.value?.sections ?? []).map((section, index) => {
-    const grade = gradeTrailSection(section.score, trailSections.value?.threshold ?? 0)
+const mapOverlays = computed(() => {
+  const sections = trailSections.value?.sections ?? []
+  const ratios = {
+    threshold: trailSections.value?.threshold ?? 0,
+    technicalRatio: trailSections.value?.technicalRatio ?? 1.3,
+    hardRatio: trailSections.value?.hardRatio ?? 1.8,
+  }
+  const overlays: MapOverlay[] = []
+  sections.forEach((section, index) => {
+    const grade = gradeTrailSection(section, ratios)
     const isSelected = trailSelected.value === section.startM
-    return {
+    overlays.push({
       points: section.points,
       color: themeColor(grade.colorToken),
       weight: isSelected ? grade.weight + 3 : grade.weight,
@@ -132,9 +140,29 @@ const mapOverlays = computed(() =>
       onSelect: () => {
         trailSelected.value = section.startM
       },
+    })
+    // the hard block is painted as itself: an extreme adjective over a kilometre
+    // and a half of mixed ground is what makes the claim read wrong
+    if (section.coreScore !== null && section.coreStartM !== null && section.coreEndM !== null) {
+      overlays.push({
+        points: pointsWithin(
+          section.points,
+          section.lengthM,
+          section.coreStartM - section.startM,
+          section.coreEndM - section.startM,
+        ),
+        color: themeColor('--color-hr'),
+        weight: 7,
+        opacity: 0.95,
+        name: `#${index + 1} · ${t('analysis.trail.degree.veryTechnical')}`,
+        onSelect: () => {
+          trailSelected.value = section.startM
+        },
+      })
     }
-  }),
-)
+  })
+  return overlays
+})
 // Where the map should travel when a row is picked.
 const trailFocus = computed(() => {
   const section = (trailSections.value?.sections ?? []).find(

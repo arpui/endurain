@@ -538,6 +538,13 @@ def trail_direction_sql_list() -> str:
 TRAIL_WINDOW_M = 25.0
 TRAIL_THRESHOLD = 0.38
 TRAIL_MIN_LENGTH_M = 75.0
+#: How far above the cut a window has to be to count as a hard *core* inside a
+#: stretch, and how far above it to read as firmly technical. The detector reports
+#: the core as a place, not as a bigger number for the whole stretch: an athlete
+#: judging a 1,5 km descent remembers a block of stones inside it, and calling the
+#: kilometre and a half "extreme" is what makes the claim feel wrong.
+TRAIL_TECHNICAL_RATIO = 1.3
+TRAIL_HARD_RATIO = 1.8
 TRAIL_W_SPEED = 0.55
 TRAIL_W_CADENCE = 0.20
 TRAIL_W_BRAKE = 0.25
@@ -554,6 +561,12 @@ TRAIL_BRAKE_SPAN_M = 0.45
 TRAIL_MIN_SAMPLES = 8
 
 
+#: Which shape of observation the detector writes. Raised when the model records
+#: something new (a field, a term), so rows written by an earlier shape stay stored
+#: as what they were and the new pass does not overwrite them.
+TRAIL_MODEL_VERSION = 2
+
+
 def trail_model_stamp() -> str:
     """Return the parameters the trail detector runs with, as a short stamp.
 
@@ -565,7 +578,7 @@ def trail_model_stamp() -> str:
         A compact id: threshold, weights, window and minimum length.
     """
     return (
-        f"trail:{TRAIL_THRESHOLD}/{TRAIL_W_SPEED}/{TRAIL_W_CADENCE}/{TRAIL_W_BRAKE}"
+        f"trail:{TRAIL_MODEL_VERSION}:{TRAIL_THRESHOLD}/{TRAIL_W_SPEED}/{TRAIL_W_CADENCE}/{TRAIL_W_BRAKE}"
         f"/{TRAIL_WINDOW_M:.0f}/{TRAIL_MIN_LENGTH_M:.0f}"
     )
 

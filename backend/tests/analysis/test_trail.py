@@ -2,6 +2,7 @@
 
 import numpy as np
 
+import modules.analysis.constants as analysis_constants
 import modules.analysis.trail as analysis_trail
 
 
@@ -84,3 +85,42 @@ class TestRobustness:
         c = [np.nan if i % 3 == 0 else v for i, v in enumerate(c)]
         out = analysis_trail.analyse_technical_sections(s, d, e, c)
         assert out.sections == []
+
+
+class TestHardCoresInsideAStretch:
+    """A long stretch holds a block of hard ground, not a uniform hardness."""
+
+    def test_a_long_stretch_reports_where_inside_it_the_ground_is_hardest(self):
+        flat = _session(300, 3.0, 0.0, 160)
+        # 600 m of hard descent, then 600 m of merely steep-but-rough descent
+        hard = _session(500, 1.25, -0.28, [130, 185, 140, 180], start_dist=flat[1][-1] + 1.25)
+        easier = _session(
+            500,
+            1.7,
+            -0.26,
+            [155, 168, 158, 165],
+            start_dist=hard[1][-1] + 1.7,
+        )
+        out = analysis_trail.analyse_technical_sections(
+            [*flat[0], *hard[0], *easier[0]],
+            [*flat[1], *hard[1], *easier[1]],
+            [*flat[2], *hard[2], *easier[2]],
+            [*flat[3], *hard[3], *easier[3]],
+        )
+        section = max(out.sections, key=lambda item: item.length_m)
+        assert section.core_start_m is not None and section.core_end_m is not None
+        assert section.core_score is not None and section.core_score >= 1.8 * analysis_constants.TRAIL_THRESHOLD
+        # the core sits inside the stretch, and is shorter than it
+        assert section.core_start_m >= section.start_m
+        assert section.core_end_m <= section.start_m + section.length_m
+        assert section.core_end_m - section.core_start_m < section.length_m
+
+    def test_a_uniformly_medium_stretch_has_no_hard_core(self):
+        flat = _session(300, 3.0, 0.0, 160)
+        # technical by the cut, but nowhere near the hard ratio
+        s, d, e, c = _session(900, 1.9, -0.12, [150, 172, 155, 168], start_dist=flat[1][-1] + 1.9)
+        out = analysis_trail.analyse_technical_sections([*flat[0], *s], [*flat[1], *d], [*flat[2], *e], [*flat[3], *c])
+        assert out.sections
+        for section in out.sections:
+            assert section.core_start_m is None
+            assert section.core_score is None

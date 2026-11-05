@@ -35,6 +35,17 @@ const technicalPct = computed(() =>
     : 0,
 )
 
+/** Where inside a long stretch the hard ground actually is. */
+function coreLabel(section: TrailSection): string {
+  if (section.coreScore === null || section.coreStartM === null || section.coreEndM === null) {
+    return ''
+  }
+  return t('analysis.trail.core', {
+    score: section.coreScore.toFixed(2),
+    range: range(section.coreStartM, section.coreEndM - section.coreStartM),
+  })
+}
+
 /** Kilometre range a section covers, in the units the rest of the page uses. */
 function range(startM: number, lengthM: number): string {
   return `${combineMetric(formatDistance(startM, props.activityType, props.units))}–${combineMetric(
@@ -90,7 +101,11 @@ const rows = computed(() =>
       section,
       /** Shared with the map overlay label, so a judgement is one character. */
       number: index + 1,
-      grade: gradeTrailSection(section.score, props.sections.threshold),
+      grade: gradeTrailSection(section, {
+        threshold: props.sections.threshold,
+        technicalRatio: props.sections.technicalRatio,
+        hardRatio: props.sections.hardRatio,
+      }),
     }))
     .sort((left, right) => right.section.score - left.section.score),
 )
@@ -144,7 +159,15 @@ const rows = computed(() =>
                     :style="{ backgroundColor: themeColor(row.grade.colorToken) }"
                     aria-hidden="true"
                   />
-                  {{ t(row.grade.labelKey) }}
+                  <span>
+                    {{ t(row.grade.labelKey) }}
+                    <span
+                      v-if="coreLabel(row.section)"
+                      class="block text-caption text-muted-foreground"
+                    >
+                      {{ coreLabel(row.section) }}
+                    </span>
+                  </span>
                 </span>
               </td>
               <td class="py-2 pe-3">

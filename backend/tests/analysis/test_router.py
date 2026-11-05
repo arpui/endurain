@@ -280,6 +280,8 @@ class TestTrailSectionsRoute:
         read = analysis_schema.TrailSectionsRead(
             activity_id=9,
             threshold=0.38,
+            technical_ratio=1.3,
+            hard_ratio=1.8,
             v_base_ms=2.47,
             cadence_available=True,
             technical_m=5750.0,
@@ -295,6 +297,9 @@ class TestTrailSectionsRoute:
                     brake_score=0.86,
                     score=0.83,
                     direction="descent",
+                    core_start_m=8100.0,
+                    core_end_m=8400.0,
+                    core_score=0.91,
                     points=[analysis_schema.TrailPointRead(lat=42.47, lon=0.99)],
                 )
             ],

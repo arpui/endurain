@@ -189,12 +189,14 @@
     "degree": {
       "light": "let",
       "technical": "teknisk",
-      "veryTechnical": "meget teknisk"
+      "veryTechnical": "meget teknisk",
+      "mixed": "teknisk, med hård kerne"
     },
     "clickHint": "Vælg en række for at se strækningen på kortet, eller klik på en strækning.",
     "colMap": "kort",
     "mapMissing": "ingen OSM-data",
-    "mapMissingHint": "Intet kortlagt spor dækker strækningen: extractet mangler, eller terrænet er ikke i OSM."
+    "mapMissingHint": "Intet kortlagt spor dækker strækningen: extractet mangler, eller terrænet er ikke i OSM.",
+    "core": "kerne {score} ved {range}"
   },
   "sectionBest": "Bedste tider",
   "bestTimes": {

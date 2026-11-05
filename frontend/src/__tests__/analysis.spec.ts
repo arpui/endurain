@@ -378,6 +378,8 @@ describe('trail technical sections', () => {
     vi.mocked(apiFetch).mockResolvedValue({
       activity_id: 9,
       threshold: 0.38,
+      technical_ratio: 1.3,
+      hard_ratio: 1.8,
       v_base_ms: 2.47,
       cadence_available: true,
       technical_m: 5750.0,
@@ -393,6 +395,9 @@ describe('trail technical sections', () => {
           brake_score: 0.86,
           score: 0.83,
           direction: 'descent',
+          core_start_m: 8100.0,
+          core_end_m: 8400.0,
+          core_score: 0.91,
           points: [{ lat: 42.47, lon: 0.99 }],
         },
       ],
@@ -401,6 +406,7 @@ describe('trail technical sections', () => {
     expect(apiFetch).toHaveBeenCalledWith('/activities/9/trail-sections', expect.anything())
     expect(sections.vBaseMs).toBe(2.47)
     expect(sections.threshold).toBe(0.38)
+    expect(sections.hardRatio).toBe(1.8)
     expect(sections.technicalM).toBe(5750)
     expect(sections.sections[0]).toEqual({
       startM: 7675,
@@ -412,6 +418,9 @@ describe('trail technical sections', () => {
       brakeScore: 0.86,
       score: 0.83,
       direction: 'descent',
+      coreStartM: 8100,
+      coreEndM: 8400,
+      coreScore: 0.91,
       points: [{ lat: 42.47, lng: 0.99 }],
       osm: null,
     })
@@ -421,6 +430,8 @@ describe('trail technical sections', () => {
     vi.mocked(apiFetch).mockResolvedValue({
       activity_id: 9,
       threshold: 0.38,
+      technical_ratio: 1.3,
+      hard_ratio: 1.8,
       v_base_ms: 2.46,
       cadence_available: true,
       technical_m: 1225.0,
@@ -436,6 +447,9 @@ describe('trail technical sections', () => {
           brake_score: 0.81,
           score: 0.83,
           direction: 'descent',
+          core_start_m: 8100.0,
+          core_end_m: 8400.0,
+          core_score: 0.91,
           points: [],
           osm: {
             way_id: 4242,

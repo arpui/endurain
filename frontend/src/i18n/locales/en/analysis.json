@@ -189,12 +189,14 @@
     "degree": {
       "light": "light",
       "technical": "technical",
-      "veryTechnical": "very technical"
+      "veryTechnical": "very technical",
+      "mixed": "technical, with a hard core"
     },
     "clickHint": "Pick a row to see the stretch on the map, or click a stretch on the map.",
     "colMap": "map",
     "mapMissing": "no OSM data",
-    "mapMissingHint": "No mapped way covers this stretch: the extract is missing or the ground is unmapped."
+    "mapMissingHint": "No mapped way covers this stretch: the extract is missing or the ground is unmapped.",
+    "core": "core {score} at {range}"
   },
   "sectionBest": "Best times",
   "bestTimes": {

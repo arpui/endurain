@@ -189,12 +189,14 @@
     "degree": {
       "light": "ligeiro",
       "technical": "técnico",
-      "veryTechnical": "muito técnico"
+      "veryTechnical": "muito técnico",
+      "mixed": "técnico, com núcleo duro"
     },
     "clickHint": "Escolhe uma linha para ver o troço no mapa, ou clica num troço.",
     "colMap": "mapa",
     "mapMissing": "sem dados OSM",
-    "mapMissingHint": "nenhum caminho cartografado cobre este troço: falta o extrato ou o terreno não está no OSM."
+    "mapMissingHint": "nenhum caminho cartografado cobre este troço: falta o extrato ou o terreno não está no OSM.",
+    "core": "núcleo {score} em {range}"
   },
   "sectionBest": "Melhores tempos",
   "bestTimes": {

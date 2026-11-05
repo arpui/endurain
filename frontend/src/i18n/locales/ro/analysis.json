@@ -189,12 +189,14 @@
     "degree": {
       "light": "ușor",
       "technical": "tehnic",
-      "veryTechnical": "foarte tehnic"
+      "veryTechnical": "foarte tehnic",
+      "mixed": "tehnic, cu un nucleu dur"
     },
     "clickHint": "Alege un rând pentru a vedea porțiunea pe hartă, sau click pe o porțiune.",
     "colMap": "hartă",
     "mapMissing": "fără date OSM",
-    "mapMissingHint": "nicio potecă cartografiată acoperă această porțiune: lipsește extrasul sau terenul nu este în OSM."
+    "mapMissingHint": "nicio potecă cartografiată acoperă această porțiune: lipsește extrasul sau terenul nu este în OSM.",
+    "core": "nucleu {score} la {range}"
   },
   "sectionBest": "Timpi de referință",
   "bestTimes": {

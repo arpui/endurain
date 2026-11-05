@@ -189,12 +189,14 @@
     "degree": {
       "light": "lätt",
       "technical": "teknisk",
-      "veryTechnical": "mycket teknisk"
+      "veryTechnical": "mycket teknisk",
+      "mixed": "teknisk, med hård kärna"
     },
     "clickHint": "Välj en rad för att se avsnittet på kartan, eller klicka på ett avsnitt.",
     "colMap": "karta",
     "mapMissing": "inga OSM-data",
-    "mapMissingHint": "ingen kartlagd stig täcker detta avsnitt: utdraget saknas eller terrängen finns inte i OSM."
+    "mapMissingHint": "ingen kartlagd stig täcker detta avsnitt: utdraget saknas eller terrängen finns inte i OSM.",
+    "core": "kärna {score} vid {range}"
   },
   "sectionBest": "Bästa tider",
   "bestTimes": {

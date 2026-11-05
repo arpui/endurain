@@ -189,12 +189,14 @@
     "degree": {
       "light": "enyhe",
       "technical": "technikai",
-      "veryTechnical": "nagyon technikai"
+      "veryTechnical": "nagyon technikai",
+      "mixed": "technikai, kemény maggal"
     },
     "clickHint": "Válassz egy sort a szakasz térképen való megjelenítéséhez, vagy kattints a szakaszra.",
     "colMap": "térkép",
     "mapMissing": "nincs OSM adat",
-    "mapMissingHint": "egy térképezett ösvény sem fedi ezt a szakaszt: hiányzik a kivonat, vagy a terep nincs az OSM-ben."
+    "mapMissingHint": "egy térképezett ösvény sem fedi ezt a szakaszt: hiányzik a kivonat, vagy a terep nincs az OSM-ben.",
+    "core": "mag {score} itt: {range}"
   },
   "sectionBest": "Legjobb idők",
   "bestTimes": {

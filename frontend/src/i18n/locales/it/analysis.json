@@ -189,12 +189,14 @@
     "degree": {
       "light": "leggero",
       "technical": "tecnico",
-      "veryTechnical": "molto tecnico"
+      "veryTechnical": "molto tecnico",
+      "mixed": "tecnico, con nucleo duro"
     },
     "clickHint": "Scegli una riga per vedere il tratto sulla mappa, o clicca su un tratto.",
     "colMap": "mappa",
     "mapMissing": "nessun dato OSM",
-    "mapMissingHint": "Nessun percorso mappato copre questo tratto: manca l'estratto o il terreno non è in OSM."
+    "mapMissingHint": "Nessun percorso mappato copre questo tratto: manca l'estratto o il terreno non è in OSM.",
+    "core": "nucleo {score} su {range}"
   },
   "sectionBest": "Tempi migliori",
   "bestTimes": {

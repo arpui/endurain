@@ -463,6 +463,8 @@ export async function fetchTrailSections(
   return {
     vBaseMs: dto.v_base_ms,
     threshold: dto.threshold,
+    technicalRatio: dto.technical_ratio,
+    hardRatio: dto.hard_ratio,
     cadenceAvailable: dto.cadence_available,
     technicalM: dto.technical_m,
     totalM: dto.total_m,
@@ -475,6 +477,9 @@ export async function fetchTrailSections(
       cadenceJitter: section.cadence_jitter,
       brakeScore: section.brake_score,
       score: section.score,
+      coreStartM: section.core_start_m ?? null,
+      coreEndM: section.core_end_m ?? null,
+      coreScore: section.core_score ?? null,
       direction: section.direction as TrailSection['direction'],
       points: (section.points ?? []).map((point) => ({ lat: point.lat, lng: point.lon })),
       osm: section.osm

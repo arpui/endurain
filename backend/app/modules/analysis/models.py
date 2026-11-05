@@ -581,6 +581,13 @@ class TrailSection(Base, TimestampMixin):
     osm_covered_m: Mapped[float | None] = mapped_column(
         Float, nullable=True, comment="Ground of the stretch the way accounts for"
     )
+    core_start_m: Mapped[float | None] = mapped_column(
+        Float, nullable=True, comment="Ground position where the hard block inside starts"
+    )
+    core_end_m: Mapped[float | None] = mapped_column(
+        Float, nullable=True, comment="Ground position where that block ends"
+    )
+    core_score: Mapped[float | None] = mapped_column(Float, nullable=True, comment="Peak index inside the hard block")
     osm_cache_date: Mapped[date | None] = mapped_column(
         Date,
         nullable=True,

@@ -184,6 +184,9 @@ class TrailSectionRecord:
         brake_score: Downhill braking share over it (0-1).
         score: Peak smoothed technicality index inside it.
         direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
+        core_start_m: Ground position where the hard block inside starts, if any.
+        core_end_m: Ground position where that block ends.
+        core_score: Peak index inside the hard block.
         v_base_ms: The session's own flat-ground reference pace.
         cadence_available: Whether the stride terms could be used at all.
         total_m: Ground covered by the session.
@@ -200,6 +203,9 @@ class TrailSectionRecord:
     brake_score: float
     score: float
     direction: str
+    core_start_m: float | None
+    core_end_m: float | None
+    core_score: float | None
     v_base_ms: float
     cadence_available: bool
     total_m: float

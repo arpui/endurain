@@ -2272,6 +2272,8 @@ def _empty_trail_sections(activity_id: int) -> analysis_schema.TrailSectionsRead
     return analysis_schema.TrailSectionsRead(
         activity_id=activity_id,
         threshold=analysis_constants.TRAIL_THRESHOLD,
+        technical_ratio=analysis_constants.TRAIL_TECHNICAL_RATIO,
+        hard_ratio=analysis_constants.TRAIL_HARD_RATIO,
         v_base_ms=0.0,
         cadence_available=False,
         technical_m=0.0,
@@ -2382,6 +2384,9 @@ def get_trail_sections(
                 brake_score=section.brake_score,
                 score=section.score,
                 direction=section.direction,
+                core_start_m=section.core_start_m,
+                core_end_m=section.core_end_m,
+                core_score=section.core_score,
                 points=[analysis_schema.TrailPointRead(lat=lat, lon=lon) for lat, lon in pts[::step]],
                 osm=cartography.get(round(section.start_m, 3)),
             )
@@ -2389,6 +2394,8 @@ def get_trail_sections(
     return analysis_schema.TrailSectionsRead(
         activity_id=activity_id,
         threshold=analysis_constants.TRAIL_THRESHOLD,
+        technical_ratio=analysis_constants.TRAIL_TECHNICAL_RATIO,
+        hard_ratio=analysis_constants.TRAIL_HARD_RATIO,
         v_base_ms=analysis.v_base_ms,
         cadence_available=analysis.cadence_available,
         technical_m=round(analysis.technical_m, 1),
@@ -2432,6 +2439,9 @@ def compute_trail_sections_for_activity(activity_id: int, db: Session) -> int:
             brake_score=section.brake_score,
             score=section.score,
             direction=section.direction,
+            core_start_m=section.core_start_m,
+            core_end_m=section.core_end_m,
+            core_score=section.core_score,
             v_base_ms=analysis.v_base_ms,
             cadence_available=analysis.cadence_available,
             total_m=round(analysis.total_m, 1),

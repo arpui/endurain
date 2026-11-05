@@ -189,12 +189,14 @@
     "degree": {
       "light": "lett",
       "technical": "teknisk",
-      "veryTechnical": "svært teknisk"
+      "veryTechnical": "svært teknisk",
+      "mixed": "teknisk, med hard kjerne"
     },
     "clickHint": "Velg en rad for å se partiet på kartet, eller klikk på et parti.",
     "colMap": "kart",
     "mapMissing": "ingen OSM-data",
-    "mapMissingHint": "ingen kartlagt sti dekker dette partiet: uttrekket mangler eller terrenget er ikke i OSM."
+    "mapMissingHint": "ingen kartlagt sti dekker dette partiet: uttrekket mangler eller terrenget er ikke i OSM.",
+    "core": "kjerne {score} ved {range}"
   },
   "sectionBest": "Bestetider",
   "bestTimes": {

@@ -189,12 +189,14 @@
     "degree": {
       "light": "licht",
       "technical": "technisch",
-      "veryTechnical": "zeer technisch"
+      "veryTechnical": "zeer technisch",
+      "mixed": "technisch, met harde kern"
     },
     "clickHint": "Kies een rij om het stuk op de kaart te zien, of klik op een stuk.",
     "colMap": "kaart",
     "mapMissing": "geen OSM-gegevens",
-    "mapMissingHint": "geen in kaart gebracht pad dekt dit stuk: de extract ontbreekt of het terrein staat niet in OSM."
+    "mapMissingHint": "geen in kaart gebracht pad dekt dit stuk: de extract ontbreekt of het terrein staat niet in OSM.",
+    "core": "kern {score} op {range}"
   },
   "sectionBest": "Tijden",
   "bestTimes": {

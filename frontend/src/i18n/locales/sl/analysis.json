@@ -189,12 +189,14 @@
     "degree": {
       "light": "blag",
       "technical": "tehničen",
-      "veryTechnical": "zelo tehničen"
+      "veryTechnical": "zelo tehničen",
+      "mixed": "tehnično, s trdim jedrom"
     },
     "clickHint": "Izberi vrsto za prikaz odseka na zemljevidu ali klikni nanj.",
     "colMap": "zemljevid",
     "mapMissing": "ni podatkov OSM",
-    "mapMissingHint": "nobena kartirana pot ne pokriva tega odseka: manjka izpisek ali teren ni v OSM."
+    "mapMissingHint": "nobena kartirana pot ne pokriva tega odseka: manjka izpisek ali teren ni v OSM.",
+    "core": "jedro {score} na {range}"
   },
   "sectionBest": "Najboljši časi",
   "bestTimes": {

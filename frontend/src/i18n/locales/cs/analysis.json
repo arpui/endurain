@@ -189,12 +189,14 @@
     "degree": {
       "light": "mírný",
       "technical": "technický",
-      "veryTechnical": "velmi technický"
+      "veryTechnical": "velmi technický",
+      "mixed": "technický, s tvrdým jádrem"
     },
     "clickHint": "Vyber řádek pro zobrazení úseku na mapě, nebo klikni na úsek v mapě.",
     "colMap": "mapa",
     "mapMissing": "bez dat OSM",
-    "mapMissingHint": "Žádná mapovaná cesta nepokrývá tento úsek: chybí extrakt nebo terén není v OSM."
+    "mapMissingHint": "Žádná mapovaná cesta nepokrývá tento úsek: chybí extrakt nebo terén není v OSM.",
+    "core": "jádro {score} v {range}"
   },
   "sectionBest": "Nejlepší časy",
   "bestTimes": {

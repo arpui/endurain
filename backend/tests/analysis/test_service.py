@@ -1422,6 +1422,9 @@ class TestTrailObservations:
                     brake_score=0.81,
                     score=0.83,
                     direction="descent",
+                    core_start_m=8100.0,
+                    core_end_m=8400.0,
+                    core_score=0.91,
                     start_index=600,
                     end_index=1300,
                 )
@@ -1534,6 +1537,9 @@ class TestTrailCartography:
                     brake_score=0.81,
                     score=0.83,
                     direction="descent",
+                    core_start_m=None,
+                    core_end_m=None,
+                    core_score=None,
                     start_index=0,
                     end_index=3,
                 )

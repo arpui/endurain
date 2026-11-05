@@ -189,12 +189,14 @@
     "degree": {
       "light": "hafif",
       "technical": "teknik",
-      "veryTechnical": "çok teknik"
+      "veryTechnical": "çok teknik",
+      "mixed": "teknik, sert bir çekirdekle"
     },
     "clickHint": "Bölümü haritada görmek için bir satır seç ya da haritada bir bölüme tıkla.",
     "colMap": "harita",
     "mapMissing": "OSM verisi yok",
-    "mapMissingHint": "bu bölümü hiçbir haritalanmış patika kapsamıyor: döküm eksik ya da arazi OSM'de değil."
+    "mapMissingHint": "bu bölümü hiçbir haritalanmış patika kapsamıyor: döküm eksik ya da arazi OSM'de değil.",
+    "core": "çekirdek {score}, {range}"
   },
   "sectionBest": "En iyi dereceler",
   "bestTimes": {

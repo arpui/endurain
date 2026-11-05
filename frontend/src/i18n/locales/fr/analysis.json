@@ -189,12 +189,14 @@
     "degree": {
       "light": "léger",
       "technical": "technique",
-      "veryTechnical": "très technique"
+      "veryTechnical": "très technique",
+      "mixed": "technique, avec un noyau dur"
     },
     "clickHint": "Choisis une ligne pour voir le segment sur la carte, ou clique sur un segment.",
     "colMap": "carte",
     "mapMissing": "pas de données OSM",
-    "mapMissingHint": "Aucun chemin cartographié ne couvre ce segment : l'extrait manque ou le terrain n'est pas dans OSM."
+    "mapMissingHint": "Aucun chemin cartographié ne couvre ce segment : l'extrait manque ou le terrain n'est pas dans OSM.",
+    "core": "noyau {score} sur {range}"
   },
   "sectionBest": "Meilleures perfs",
   "bestTimes": {

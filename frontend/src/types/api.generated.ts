@@ -11965,6 +11965,11 @@ export interface components {
          *         brake_score: Downhill braking share over it (0-1).
          *         score: Peak smoothed technicality index inside it.
          *         direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
+         *         core_start_m: Where the hardest continuous block inside the stretch starts
+         *             (ground metres from the start of the data), when one clears the hard
+         *             ratio; ``null`` when the stretch has no such block.
+         *         core_end_m: Where that block ends.
+         *         core_score: Peak index inside the hard block.
          *         points: The section's own polyline, for map overlays.
          *         osm: What the cartography says about this ground, when it says anything.
          */
@@ -11987,6 +11992,12 @@ export interface components {
             score: number;
             /** Direction */
             direction: string;
+            /** Core Start M */
+            core_start_m?: number | null;
+            /** Core End M */
+            core_end_m?: number | null;
+            /** Core Score */
+            core_score?: number | null;
             /** Points */
             points: components["schemas"]["TrailPointRead"][];
             osm?: components["schemas"]["TrailOsmRead"] | null;
@@ -12000,6 +12011,9 @@ export interface components {
          *         v_base_ms: The session's own flat-ground reference pace.
          *         threshold: The index cut the detector used, so a view can grade sections
          *             against the model's own number instead of inventing one.
+         *         technical_ratio: How far above the cut a section reads as firmly technical.
+         *         hard_ratio: How far above the cut a window counts as a hard core, which is
+         *             what the athlete would call very technical ground.
          *         cadence_available: Whether the stride/cadence terms could be used.
          *         technical_m: Total metres flagged technical.
          *         total_m: Total ground covered.
@@ -12010,6 +12024,10 @@ export interface components {
             activity_id: number;
             /** Threshold */
             threshold: number;
+            /** Technical Ratio */
+            technical_ratio: number;
+            /** Hard Ratio */
+            hard_ratio: number;
             /** V Base Ms */
             v_base_ms: number;
             /** Cadence Available */

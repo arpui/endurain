@@ -189,12 +189,14 @@
     "degree": {
       "light": "viegls",
       "technical": "tehnisks",
-      "veryTechnical": "ļoti tehnisks"
+      "veryTechnical": "ļoti tehnisks",
+      "mixed": "tehnisks, ar cietu kodolu"
     },
     "clickHint": "Izvēlies rindu, lai redzētu posmu kartē, vai klikšķini uz posma.",
     "colMap": "karte",
     "mapMissing": "nav OSM datu",
-    "mapMissingHint": "nevi mapē celiļi neklāj šo posmu: trūkst eksporta vai reljefs nav OSM."
+    "mapMissingHint": "nevi mapē celiļi neklāj šo posmu: trūkst eksporta vai reljefs nav OSM.",
+    "core": "kodols {score} pie {range}"
   },
   "sectionBest": "Labākie laiki",
   "bestTimes": {

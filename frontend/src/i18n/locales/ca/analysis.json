@@ -189,12 +189,14 @@
     "degree": {
       "light": "lleuger",
       "technical": "tècnic",
-      "veryTechnical": "molt tècnic"
+      "veryTechnical": "molt tècnic",
+      "mixed": "tècnic, amb nucli dur"
     },
     "clickHint": "Tria una fila per veure el tram al mapa, o fes clic sobre un tram del mapa.",
     "colMap": "mapa",
     "mapMissing": "sense dades d'OSM",
-    "mapMissingHint": "Cap camí cartografiat cobreix aquest tram: falta l'extract o el terra no és a OSM."
+    "mapMissingHint": "Cap camí cartografiat cobreix aquest tram: falta l'extract o el terra no és a OSM.",
+    "core": "nucli {score} a {range}"
   },
   "sectionBest": "Millors temps",
   "bestTimes": {

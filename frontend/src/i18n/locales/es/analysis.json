@@ -189,12 +189,14 @@
     "degree": {
       "light": "ligero",
       "technical": "técnico",
-      "veryTechnical": "muy técnico"
+      "veryTechnical": "muy técnico",
+      "mixed": "técnico, con núcleo duro"
     },
     "clickHint": "Elige una fila para ver el tramo en el mapa, o haz clic en un tramo del mapa.",
     "colMap": "mapa",
     "mapMissing": "sin datos de OSM",
-    "mapMissingHint": "Ningún camino cartografiado cubre este tramo: falta el extracto o el terreno no está en OSM."
+    "mapMissingHint": "Ningún camino cartografiado cubre este tramo: falta el extracto o el terreno no está en OSM.",
+    "core": "núcleo {score} en {range}"
   },
   "sectionBest": "Mejores tiempos",
   "bestTimes": {

@@ -40,6 +40,10 @@ class TechnicalSection:
         brake_score: Downhill braking share over it (0-1).
         score: Highest smoothed technicality index inside it.
         direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
+        core_start_m: Ground position where the hardest continuous block inside it
+            starts, when one clears the hard ratio (``None`` otherwise).
+        core_end_m: Ground position where that block ends.
+        core_score: Peak index inside the hard block.
         start_index: First sample index of the section (map polylines use it).
         end_index: Last sample index (exclusive).
     """
@@ -53,6 +57,9 @@ class TechnicalSection:
     brake_score: float
     score: float
     direction: str
+    core_start_m: float | None
+    core_end_m: float | None
+    core_score: float | None
     start_index: int
     end_index: int
 
@@ -211,6 +218,14 @@ def analyse_technical_sections(
                 b += 1
             length = (b - start) * window_m
             if length >= min_length_m:
+                hard_index = threshold * analysis_constants.TRAIL_HARD_RATIO
+                peak = start + int(np.argmax(smooth[start:b]))
+                core_lo = core_hi = peak
+                while core_lo > start and smooth[core_lo - 1] >= hard_index:
+                    core_lo -= 1
+                while core_hi < b - 1 and smooth[core_hi + 1] >= hard_index:
+                    core_hi += 1
+                has_core = smooth[peak] >= hard_index
                 mg = float(np.mean(gr[start:b]))
                 sections.append(
                     TechnicalSection(
@@ -223,6 +238,9 @@ def analyse_technical_sections(
                         brake_score=round(float(np.mean(brake[start:b])), 2),
                         score=round(float(np.max(smooth[start:b])), 2),
                         direction="descent" if mg < -0.05 else ("ascent" if mg > 0.05 else "flat"),
+                        core_start_m=bins[core_lo] if has_core else None,
+                        core_end_m=bins[core_hi + 1] if has_core else None,
+                        core_score=round(float(smooth[peak]), 2) if has_core else None,
                         start_index=int(first_sample[start]),
                         end_index=int(last_sample[b - 1]) + 1,
                     )

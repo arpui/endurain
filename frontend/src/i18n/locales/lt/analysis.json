@@ -189,12 +189,14 @@
     "degree": {
       "light": "lengvas",
       "technical": "techninis",
-      "veryTechnical": "labai techninis"
+      "veryTechnical": "labai techninis",
+      "mixed": "techniška, su kietu branduoliu"
     },
     "clickHint": "Pasirink eilutę, kad matytum ruožą žemėlapyje, arba spustelėk ruožą.",
     "colMap": "žemėlapis",
     "mapMissing": "nėra OSM duomenų",
-    "mapMissingHint": "jokios nubrėžtos takas nedengia šio ruožo: trūksta ištraukos arba teritorija nėra OSM."
+    "mapMissingHint": "jokios nubrėžtos takas nedengia šio ruožo: trūksta ištraukos arba teritorija nėra OSM.",
+    "core": "branduolys {score} ties {range}"
   },
   "sectionBest": "Geriausi laikai",
   "bestTimes": {

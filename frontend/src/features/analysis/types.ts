@@ -530,6 +530,12 @@ export interface TrailSection {
   brakeScore: number
   /** Peak smoothed technicality index inside it. */
   score: number
+  /** Ground position where the hard block inside starts, when there is one. */
+  coreStartM: number | null
+  /** Ground position where that block ends. */
+  coreEndM: number | null
+  /** Peak index inside the hard block. */
+  coreScore: number | null
   direction: TrailSectionDirection
   /** The section's own polyline, for map overlays. */
   points: GeoPoint[]
@@ -543,6 +549,10 @@ export interface TrailSections {
   vBaseMs: number
   /** The index cut the detector used; grades read their sections against it. */
   threshold: number
+  /** Multiple of the cut that reads as firmly technical. */
+  technicalRatio: number
+  /** Multiple of the cut that counts as a hard core. */
+  hardRatio: number
   /** Whether the stride/cadence terms could be used at all. */
   cadenceAvailable: boolean
   /** Total metres flagged technical. */

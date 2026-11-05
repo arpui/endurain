@@ -189,12 +189,14 @@
     "degree": {
       "light": "kevyt",
       "technical": "tekninen",
-      "veryTechnical": "erittäin tekninen"
+      "veryTechnical": "erittäin tekninen",
+      "mixed": "tekninen, kova ydin"
     },
     "clickHint": "Valitse rivi nähdäksesi osuuden kartalla, tai klikkaa kartan osuutta.",
     "colMap": "kartta",
     "mapMissing": "ei OSM-tietoja",
-    "mapMissingHint": "kään kartioitu reitti ei kata tätä osuutta: aineisto puuttuu tai maasto ei ole OSM:ssä."
+    "mapMissingHint": "kään kartioitu reitti ei kata tätä osuutta: aineisto puuttuu tai maasto ei ole OSM:ssä.",
+    "core": "ydin {score} välillä {range}"
   },
   "sectionBest": "Parhaat ajat",
   "bestTimes": {
