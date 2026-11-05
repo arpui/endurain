@@ -217,7 +217,9 @@
     "seriesEnvelope": "Vremenski prag",
     "refreshing": "Učitavanje…",
     "titleSpeed": "Kretija kritične brzine",
-    "seriesSession": "Aktivnost"
+    "seriesSession": "Aktivnost",
+    "resetZoom": "Poništi zum",
+    "loadingSlow": "Čita se cijela povijest – prvi se put može učitavati minutu"
   },
   "scores": {
     "rss": "aRSS",

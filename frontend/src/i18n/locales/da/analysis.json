@@ -217,7 +217,9 @@
     "seriesEnvelope": "Tidslig tærskel",
     "refreshing": "Indlæser…",
     "titleSpeed": "Kritisk hastighed over tid",
-    "seriesSession": "Aktivitet"
+    "seriesSession": "Aktivitet",
+    "resetZoom": "Nulstil zoom",
+    "loadingSlow": "Læser hele historikken – første indlæsning kan tage et minut"
   },
   "scores": {
     "rss": "aRSS",

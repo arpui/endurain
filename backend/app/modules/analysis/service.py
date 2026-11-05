@@ -346,7 +346,13 @@ def _session_threshold_fits(
     cached = _threshold_fits_cache.get(key)
     if cached is not None:
         return cached
+    stored = analysis_crud.list_threshold_fits(user_id, sport, measure, db)
+    if stored:
+        fits = [(row.started_on, float(row.value)) for row in stored]
+        _threshold_fits_cache[key] = fits
+        return fits
     fits: list[tuple[date, float]] = []
+    fit_records: list[analysis_contracts.ThresholdFitRecord] = []
     for activity in activity_integration.list_user_activities(user_id, db):
         if sport_group(activity.activity_type) != sport or activity.start_time is None:
             continue
@@ -378,7 +384,16 @@ def _session_threshold_fits(
         if sustained <= 0 or fit[0] > sustained * analysis_constants.TEMPORAL_CP_CEIL_FACTOR:
             continue
         fits.append((activity.start_time.date(), fit[0]))
+        fit_records.append(
+            analysis_contracts.ThresholdFitRecord(
+                activity_id=activity.id,
+                started_on=activity.start_time.date(),
+                value=fit[0],
+            )
+        )
     fits.sort(key=lambda item: item[0])
+    if fit_records:
+        analysis_crud.replace_threshold_fits(user_id, sport, measure, fit_records, db)
     _threshold_fits_cache[key] = fits
     return fits
 
@@ -662,6 +677,7 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
         The settings after the refresh.
     """
     _threshold_fits_cache.clear()
+    analysis_crud.clear_threshold_fits(user_id, db)
     activities = activity_integration.list_user_activities(user_id, db)
     settings = get_settings(user_id, db)
     peaks_by_sport: dict[str, dict[int, float]] = {}
@@ -1027,6 +1043,7 @@ def _walk_and_measure(db: Session, *, only_missing: bool) -> int:
         The number of load rows written.
     """
     _threshold_fits_cache.clear()
+    analysis_crud.clear_threshold_fits(None, db)
     written = 0
     after_id = 0
     prepared: set[int] = set()

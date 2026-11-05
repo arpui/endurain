@@ -217,7 +217,9 @@
     "seriesEnvelope": "Zamansal eşik",
     "refreshing": "Yükleniyor…",
     "titleSpeed": "Kritik hızın gelişimi",
-    "seriesSession": "Antrenman"
+    "seriesSession": "Antrenman",
+    "resetZoom": "Yakınlaştırmayı sıfırla",
+    "loadingSlow": "Tüm geçmiş okunuyor; ilk yükleme bir dakika sürebilir"
   },
   "scores": {
     "rss": "aRSS",

@@ -217,7 +217,9 @@
     "seriesEnvelope": "Temporālais slieksnis",
     "refreshing": "Ielādē…",
     "titleSpeed": "Kritiskā ātruma attīstība",
-    "seriesSession": "Treņējums"
+    "seriesSession": "Treņējums",
+    "resetZoom": "Atiestatīt tuvinājumu",
+    "loadingSlow": "Lasām visu vēsturi – pirmā ielāde var aizņemt minūti"
   },
   "scores": {
     "rss": "aRSS",

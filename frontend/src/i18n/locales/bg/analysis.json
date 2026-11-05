@@ -217,7 +217,9 @@
     "seriesEnvelope": "Временен праг",
     "refreshing": "Актуализиране…",
     "titleSpeed": "Развитие на критичната скорост",
-    "seriesSession": "Тренировка"
+    "seriesSession": "Тренировка",
+    "resetZoom": "Нулира мащаба",
+    "loadingSlow": "Чете се цялата история – първото зареждане може да отнеме минутка"
   },
   "scores": {
     "rss": "aRSS",

@@ -217,7 +217,9 @@
     "seriesEnvelope": "Llindar temporal",
     "refreshing": "Actualitzant…",
     "titleSpeed": "Evolució de la velocitat crítica",
-    "seriesSession": "Sessió"
+    "seriesSession": "Sessió",
+    "resetZoom": "Restableix el zoom",
+    "loadingSlow": "S'està llegint tot l'historial; el primer carregament pot trigar un minut"
   },
   "scores": {
     "rss": "aRSS",

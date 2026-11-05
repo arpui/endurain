@@ -217,7 +217,9 @@
     "seriesEnvelope": "Próg czasowy",
     "refreshing": "Wczytywanie…",
     "titleSpeed": "Ewolucja prędkości krytycznej",
-    "seriesSession": "Sesja"
+    "seriesSession": "Sesja",
+    "resetZoom": "Zresetuj powiększenie",
+    "loadingSlow": "Odczytywana jest cała historia – pierwsze ładowanie może zająć minutę"
   },
   "scores": {
     "rss": "aRSS",

@@ -217,7 +217,9 @@
     "seriesEnvelope": "Zeitliche Schwelle",
     "refreshing": "Wird geladen…",
     "titleSpeed": "Verlauf der kritischen Geschwindigkeit",
-    "seriesSession": "Einheit"
+    "seriesSession": "Einheit",
+    "resetZoom": "Zoom zurücksetzen",
+    "loadingSlow": "Die gesamte Geschichte wird gelesen; das erste Laden kann eine Minute dauern"
   },
   "scores": {
     "rss": "aRSS",

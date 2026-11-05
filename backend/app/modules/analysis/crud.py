@@ -344,6 +344,96 @@ def replace_peak_flags(
     return len(records)
 
 
+def replace_threshold_fits(
+    user_id: int,
+    sport: str,
+    measure: str,
+    records: Sequence[analysis_contracts.ThresholdFitRecord],
+    db: Session,
+) -> int:
+    """Replace one athlete's persisted threshold evidence for one sport and measure.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group the fits belong to.
+        measure: ``power`` or ``speed``.
+        records: The quality-gated fits.
+        db: Database session.
+
+    Returns:
+        The number of rows written.
+    """
+    db.execute(
+        delete(analysis_models.ThresholdFit).where(
+            analysis_models.ThresholdFit.user_id == user_id,
+            analysis_models.ThresholdFit.sport == sport,
+            analysis_models.ThresholdFit.measure == measure,
+        )
+    )
+    for record in records:
+        db.add(
+            analysis_models.ThresholdFit(
+                user_id=user_id,
+                sport=sport,
+                measure=measure,
+                activity_id=record.activity_id,
+                started_on=record.started_on,
+                value=record.value,
+            )
+        )
+    return len(records)
+
+
+def list_threshold_fits(
+    user_id: int,
+    sport: str,
+    measure: str,
+    db: Session,
+) -> list[analysis_models.ThresholdFit]:
+    """Return persisted threshold evidence for one athlete, sport and measure.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group stored.
+        measure: ``power`` or ``speed``.
+        db: Database session.
+
+    Returns:
+        The fit rows, oldest day first.
+    """
+    return list(
+        db.scalars(
+            select(analysis_models.ThresholdFit)
+            .where(
+                analysis_models.ThresholdFit.user_id == user_id,
+                analysis_models.ThresholdFit.sport == sport,
+                analysis_models.ThresholdFit.measure == measure,
+            )
+            .order_by(analysis_models.ThresholdFit.started_on)
+        ).all()
+    )
+
+
+def clear_threshold_fits(
+    user_id: int | None,
+    db: Session,
+) -> int:
+    """Drop persisted threshold evidence (``None``: every athlete) before a rebuild.
+
+    Args:
+        user_id: The athlete whose evidence expires, or ``None`` for all.
+        db: Database session.
+
+    Returns:
+        The number of rows removed.
+    """
+    stmt = delete(analysis_models.ThresholdFit)
+    if user_id is not None:
+        stmt = stmt.where(analysis_models.ThresholdFit.user_id == user_id)
+    result = db.execute(stmt)
+    return result.rowcount
+
+
 def list_peak_flags(
     user_id: int,
     sport: str,

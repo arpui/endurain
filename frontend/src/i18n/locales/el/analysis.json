@@ -217,7 +217,9 @@
     "seriesEnvelope": "Χρονικό όριο",
     "refreshing": "Φόρτωση…",
     "titleSpeed": "Εξέλιξη κρίσιμης ταχύτητας",
-    "seriesSession": "Προπόνηση"
+    "seriesSession": "Προπόνηση",
+    "resetZoom": "Επαναφορά ζουμ",
+    "loadingSlow": "Ανάγνωση όλου του ιστορικού – η πρώτη φόρτωση μπορεί να κρατήσει ένα λεπτό"
   },
   "scores": {
     "rss": "aRSS",

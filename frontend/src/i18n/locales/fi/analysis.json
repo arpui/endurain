@@ -217,7 +217,9 @@
     "seriesEnvelope": "Ajallinen kynnys",
     "refreshing": "Ladataan…",
     "titleSpeed": "Kriittisen nopeuden kehitys",
-    "seriesSession": "Harjoitus"
+    "seriesSession": "Harjoitus",
+    "resetZoom": "Nollaa zoomaus",
+    "loadingSlow": "Koko historia luetaan; ensimmäinen lataus voi viedä minuutin"
   },
   "scores": {
     "rss": "aRSS",

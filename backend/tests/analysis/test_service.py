@@ -967,6 +967,8 @@ class TestCpTrend:
             patch(f"{_SVC}.analysis_crud.get_settings", return_value=settings or _settings()),
             patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
             patch(f"{_SVC}._stream_samples", side_effect=self._streams(watts_by_id)),
+            patch(f"{_SVC}.analysis_crud.list_threshold_fits", return_value=[]),
+            patch(f"{_SVC}.analysis_crud.replace_threshold_fits", return_value=0),
         ):
             return analysis_service.get_cp_trend(2, "run", _db(), window_days=window_days)
 
@@ -1031,6 +1033,8 @@ class TestCpTrend:
             patch(f"{_SVC}.analysis_crud.get_settings", return_value=_settings()),
             patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
             patch(f"{_SVC}._stream_samples", side_effect=_streams),
+            patch(f"{_SVC}.analysis_crud.list_threshold_fits", return_value=[]),
+            patch(f"{_SVC}.analysis_crud.replace_threshold_fits", return_value=0),
         ):
             series = analysis_service.get_cp_trend(2, "run", _db())
         assert series.measure == "speed"
@@ -1049,6 +1053,34 @@ class TestCpTrend:
     def test_unknown_sport_is_refused(self):
         with pytest.raises(core_exceptions.InvalidInputError):
             analysis_service.get_cp_trend(2, "kitesurfing", _db())
+
+
+class TestThresholdFitPersistence:
+    """The stream scan happens once: stored evidence answers the rest."""
+
+    def test_stored_fits_answer_without_touching_streams(self):
+        rows = [SimpleNamespace(started_on=date(2026, 1, 5), value=340.0)]
+        analysis_service._threshold_fits_cache.clear()
+        with (
+            patch(f"{_SVC}.analysis_crud.list_threshold_fits", return_value=rows),
+            patch(f"{_SVC}.activity_integration.list_user_activities", side_effect=AssertionError("no scan")),
+        ):
+            fits = analysis_service._session_threshold_fits(2, "run", _db())
+        assert fits == [(date(2026, 1, 5), 340.0)]
+
+    def test_a_scan_persists_its_fits(self):
+        varied = [350.0] * 300 + [320.0] * 300 + [300.0] * 600 + [280.0] * 800
+        activities = [_activity(i, start_time=_T0_UTC - timedelta(days=9 * i)) for i in range(1, 5)]
+        analysis_service._threshold_fits_cache.clear()
+        with (
+            patch(f"{_SVC}.analysis_crud.get_settings", return_value=_settings()),
+            patch(f"{_SVC}.activity_integration.list_user_activities", return_value=activities),
+            patch(f"{_SVC}._stream_samples", side_effect=TestCpTrend._streams(TestCpTrend, {i: varied for i in range(1, 5)})),
+            patch(f"{_SVC}.analysis_crud.list_threshold_fits", return_value=[]),
+            patch(f"{_SVC}.analysis_crud.replace_threshold_fits", return_value=0) as replaced,
+        ):
+            analysis_service.get_cp_trend(2, "run", _db())
+        assert replaced.called and replaced.call_args.args[3]
 
 
 class TestTemporalPowerThreshold:

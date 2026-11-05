@@ -28,7 +28,13 @@ import { useRenderProvidersReady } from '@/providers'
  *
  * @param render - The chart's reactive render options (a computed/getter).
  */
-export function useMetricChart(render: MaybeRefOrGetter<ChartRenderOptions>): void {
+/** Handle returned by {@link useMetricChart} for view-level chart commands. */
+export interface MetricChartHandle {
+  /** Returns an interactive zoom to the default view (no-op before mount). */
+  resetZoom(): void
+}
+
+export function useMetricChart(render: MaybeRefOrGetter<ChartRenderOptions>): MetricChartHandle {
   const ready = useRenderProvidersReady()
   const container = useTemplateRef<HTMLElement>('chartContainer')
   let instance: ChartInstance | null = null
@@ -59,4 +65,10 @@ export function useMetricChart(render: MaybeRefOrGetter<ChartRenderOptions>): vo
     instance?.destroy()
     instance = null
   })
+
+  return {
+    resetZoom(): void {
+      instance?.resetZoom?.()
+    },
+  }
 }

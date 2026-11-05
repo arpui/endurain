@@ -129,3 +129,18 @@ class PeakFlagRecord:
     session_np_w: float
     ratio: float
     cap: float
+
+
+@dataclass(frozen=True)
+class ThresholdFitRecord:
+    """One persisted per-session threshold fit serving as temporal evidence.
+
+    Attributes:
+        activity_id: The session the fit came from.
+        started_on: Day the fit supports.
+        value: Fitted threshold, in the measure's units.
+    """
+
+    activity_id: int
+    started_on: date
+    value: float

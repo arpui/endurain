@@ -217,7 +217,9 @@
     "seriesEnvelope": "Часовий поріг",
     "refreshing": "Завантаження…",
     "titleSpeed": "Еволюція критичної швидкості",
-    "seriesSession": "Тренування"
+    "seriesSession": "Тренування",
+    "resetZoom": "Скинути масштаб",
+    "loadingSlow": "Читається вся історія – перше завантаження може тривати хвилину"
   },
   "scores": {
     "rss": "aRSS",
