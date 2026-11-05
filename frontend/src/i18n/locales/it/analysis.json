@@ -182,7 +182,16 @@
       "descent": "discesa",
       "ascent": "salita",
       "flat": "piatto"
-    }
+    },
+    "colTram": "#",
+    "colRange": "tratto",
+    "colDegree": "grado",
+    "degree": {
+      "light": "leggero",
+      "technical": "tecnico",
+      "veryTechnical": "molto tecnico"
+    },
+    "clickHint": "Scegli una riga per vedere il tratto sulla mappa, o clicca su un tratto."
   },
   "sectionBest": "Tempi migliori",
   "bestTimes": {

@@ -377,6 +377,7 @@ describe('trail technical sections', () => {
   it('maps the sections and turns their points into map coordinates', async () => {
     vi.mocked(apiFetch).mockResolvedValue({
       activity_id: 9,
+      threshold: 0.38,
       v_base_ms: 2.47,
       cadence_available: true,
       technical_m: 5750.0,
@@ -399,6 +400,7 @@ describe('trail technical sections', () => {
     const sections = await fetchTrailSections(9)
     expect(apiFetch).toHaveBeenCalledWith('/activities/9/trail-sections', expect.anything())
     expect(sections.vBaseMs).toBe(2.47)
+    expect(sections.threshold).toBe(0.38)
     expect(sections.technicalM).toBe(5750)
     expect(sections.sections[0]).toEqual({
       startM: 7675,

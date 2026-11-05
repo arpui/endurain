@@ -48,7 +48,7 @@ describe('useMapProvider', () => {
   it('registers a concrete provider and reports available', () => {
     const fake: MapProvider = {
       name: 'fake-map',
-      mount: () => ({ update: () => {}, recenter: () => {}, destroy: () => {} }),
+      mount: () => ({ update: () => {}, recenter: () => {}, focus: () => {}, destroy: () => {} }),
     }
     setMapProvider(fake)
     const { provider, isAvailable } = useMapProvider()

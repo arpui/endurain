@@ -182,7 +182,16 @@
       "descent": "Abstieg",
       "ascent": "Anstieg",
       "flat": "flach"
-    }
+    },
+    "colTram": "#",
+    "colRange": "Abschnitt",
+    "colDegree": "Grad",
+    "degree": {
+      "light": "leicht",
+      "technical": "technisch",
+      "veryTechnical": "sehr technisch"
+    },
+    "clickHint": "Zeile wählen, um den Abschnitt auf der Karte zu sehen, oder auf einen Abschnitt klicken."
   },
   "sectionBest": "Bestzeiten",
   "bestTimes": {

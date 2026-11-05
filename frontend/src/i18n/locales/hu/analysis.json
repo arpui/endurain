@@ -182,7 +182,16 @@
       "descent": "lejtő",
       "ascent": "emelkedő",
       "flat": "sík"
-    }
+    },
+    "colTram": "#",
+    "colRange": "szakasz",
+    "colDegree": "fok",
+    "degree": {
+      "light": "enyhe",
+      "technical": "technikai",
+      "veryTechnical": "nagyon technikai"
+    },
+    "clickHint": "Válassz egy sort a szakasz térképen való megjelenítéséhez, vagy kattints a szakaszra."
   },
   "sectionBest": "Legjobb idők",
   "bestTimes": {

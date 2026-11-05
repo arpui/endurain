@@ -182,7 +182,16 @@
       "descent": "laskumine",
       "ascent": "tõus",
       "flat": "tasane"
-    }
+    },
+    "colTram": "#",
+    "colRange": "lõik",
+    "colDegree": "tase",
+    "degree": {
+      "light": "kerge",
+      "technical": "tehniline",
+      "veryTechnical": "väga tehniline"
+    },
+    "clickHint": "Vali rida, et näha lõiku kaardil, või klõpsa lõigule."
   },
   "sectionBest": "Parimad ajad",
   "bestTimes": {

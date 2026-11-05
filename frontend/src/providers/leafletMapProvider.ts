@@ -161,11 +161,16 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
         for (const overlay of extra) {
           const points = toLatLngs(overlay.points)
           if (points.length > 0) {
-            const line = polyline(points, { color: overlay.color, weight: 6, opacity: 0.85 }).addTo(
-              map,
-            )
+            const line = polyline(points, {
+              color: overlay.color,
+              weight: overlay.weight ?? 6,
+              opacity: overlay.opacity ?? 0.85,
+            }).addTo(map)
             if (overlay.name) {
               line.bindTooltip(overlay.name)
+            }
+            if (overlay.onSelect) {
+              line.on('click', overlay.onSelect)
             }
             overlays.push(line)
           }
@@ -188,6 +193,12 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
         },
         recenter(): void {
           fit(currentTrack)
+        },
+        focus(points: GeoPoint[]): void {
+          const bounds = boundsOf({ points })
+          if (bounds) {
+            map.fitBounds(bounds, { padding: [24, 24] })
+          }
         },
         destroy(): void {
           map.remove()

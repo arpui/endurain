@@ -182,7 +182,16 @@
       "descent": "спуштање",
       "ascent": "успон",
       "flat": "равно"
-    }
+    },
+    "colTram": "#",
+    "colRange": "deonica",
+    "colDegree": "степен",
+    "degree": {
+      "light": "благ",
+      "technical": "технички",
+      "veryTechnical": "веома технички"
+    },
+    "clickHint": "Изабери ред да видиш деоницу на карти, или кликни на њу."
   },
   "sectionBest": "Најбоља времена",
   "bestTimes": {

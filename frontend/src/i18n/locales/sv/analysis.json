@@ -182,7 +182,16 @@
       "descent": "nedför",
       "ascent": "uppför",
       "flat": "platt"
-    }
+    },
+    "colTram": "#",
+    "colRange": "sträcka",
+    "colDegree": "grad",
+    "degree": {
+      "light": "lätt",
+      "technical": "teknisk",
+      "veryTechnical": "mycket teknisk"
+    },
+    "clickHint": "Välj en rad för att se avsnittet på kartan, eller klicka på ett avsnitt."
   },
   "sectionBest": "Bästa tider",
   "bestTimes": {

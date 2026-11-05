@@ -182,7 +182,16 @@
       "descent": "спуск",
       "ascent": "підйом",
       "flat": "рівно"
-    }
+    },
+    "colTram": "#",
+    "colRange": "ділянка",
+    "colDegree": "ступінь",
+    "degree": {
+      "light": "легкий",
+      "technical": "технічний",
+      "veryTechnical": "дуже технічний"
+    },
+    "clickHint": "Оберіть рядок, щоб побачити ділянку на мапі, або клацніть нею."
   },
   "sectionBest": "Найкращі часи",
   "bestTimes": {

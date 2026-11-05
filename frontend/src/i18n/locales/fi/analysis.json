@@ -182,7 +182,16 @@
       "descent": "lasku",
       "ascent": "nousu",
       "flat": "tasainen"
-    }
+    },
+    "colTram": "#",
+    "colRange": "osuus",
+    "colDegree": "taso",
+    "degree": {
+      "light": "kevyt",
+      "technical": "tekninen",
+      "veryTechnical": "erittäin tekninen"
+    },
+    "clickHint": "Valitse rivi nähdäksesi osuuden kartalla, tai klikkaa kartan osuutta."
   },
   "sectionBest": "Parhaat ajat",
   "bestTimes": {

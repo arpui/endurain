@@ -182,7 +182,16 @@
       "descent": "spuštanje",
       "ascent": "uspon",
       "flat": "ravno"
-    }
+    },
+    "colTram": "#",
+    "colRange": "dionica",
+    "colDegree": "stupanj",
+    "degree": {
+      "light": "blag",
+      "technical": "tehnički",
+      "veryTechnical": "vrlo tehnički"
+    },
+    "clickHint": "Odaberi redak da vidiš dionicu na karti, ili klikni na dionicu."
   },
   "sectionBest": "Najbolja vremena",
   "bestTimes": {

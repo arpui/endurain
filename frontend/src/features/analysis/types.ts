@@ -506,6 +506,8 @@ export interface TrailSection {
 export interface TrailSections {
   /** The session's own flat-ground reference pace, m/s. */
   vBaseMs: number
+  /** The index cut the detector used; grades read their sections against it. */
+  threshold: number
   /** Whether the stride/cadence terms could be used at all. */
   cadenceAvailable: boolean
   /** Total metres flagged technical. */

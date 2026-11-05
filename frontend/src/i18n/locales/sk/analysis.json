@@ -182,7 +182,16 @@
       "descent": "klesanie",
       "ascent": "stúpanie",
       "flat": "rovina"
-    }
+    },
+    "colTram": "#",
+    "colRange": "úsek",
+    "colDegree": "stupeň",
+    "degree": {
+      "light": "mierny",
+      "technical": "technický",
+      "veryTechnical": "veľmi technický"
+    },
+    "clickHint": "Vyber riadok a uvidí úsek na mape, alebo klikni na úsek."
   },
   "sectionBest": "Najlepšie časy",
   "bestTimes": {

@@ -182,7 +182,16 @@
       "descent": "coborâre",
       "ascent": "urcare",
       "flat": "plat"
-    }
+    },
+    "colTram": "#",
+    "colRange": "porțiune",
+    "colDegree": "grad",
+    "degree": {
+      "light": "ușor",
+      "technical": "tehnic",
+      "veryTechnical": "foarte tehnic"
+    },
+    "clickHint": "Alege un rând pentru a vedea porțiunea pe hartă, sau click pe o porțiune."
   },
   "sectionBest": "Timpi de referință",
   "bestTimes": {

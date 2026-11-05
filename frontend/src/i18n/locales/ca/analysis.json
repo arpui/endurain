@@ -172,7 +172,7 @@
     "title": "Trams tècnics",
     "experimental": "experimental",
     "summary": "El {technical}% del terreny ({metres} m de {of} m) es llegeix com a tècnic.",
-    "hint": "Trams on el ritme queda per sota del que explica el pendent, amb passada irregular i frenades a les baixades. Al mapa es dibuixen en ambre. Aquest detector encara s'està calibrant amb rutes reals.",
+    "hint": "Trams on el ritme queda per sota del que explica el pendent, amb passada irregular i frenades a les baixades. Al mapa es dibuixen en ambre, i en vermell quan el detector n'està més segur. Aquest detector encara s'està calibrant amb rutes reals.",
     "colStart": "inici",
     "colLength": "longitud",
     "colDirection": "direcció",
@@ -182,7 +182,16 @@
       "descent": "baixada",
       "ascent": "pujada",
       "flat": "pla"
-    }
+    },
+    "colTram": "#",
+    "colRange": "tram",
+    "colDegree": "grau",
+    "degree": {
+      "light": "lleuger",
+      "technical": "tècnic",
+      "veryTechnical": "molt tècnic"
+    },
+    "clickHint": "Tria una fila per veure el tram al mapa, o fes clic sobre un tram del mapa."
   },
   "sectionBest": "Millors temps",
   "bestTimes": {
