@@ -2501,6 +2501,9 @@ def reconcile_trail_sections(db: Session, *, only_missing: bool = True) -> int:
             activity_ids = [activity_id for activity_id in activity_ids if activity_id not in measured]
         for activity_id in activity_ids:
             written += compute_trail_sections_for_activity(activity_id, db)
+        # the pass outlives any request, and a page of measurements is worthless
+        # if the session closes before it lands
+        db.commit()
     logger.info(
         "Trail observation pass finished", extra=core_logger.context(only_missing=only_missing, sections=written)
     )
