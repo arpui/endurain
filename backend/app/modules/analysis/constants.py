@@ -560,7 +560,11 @@ TRAIL_MIN_LENGTH_M = 75.0
 #: should be called extreme.
 TRAIL_VERY_MAX_LENGTH_M = 200.0
 TRAIL_TECHNICAL_RATIO = 1.3
-TRAIL_HARD_RATIO = 1.8
+#: A window counts as a hard core above this multiple of the cut. Measured against
+#: the athlete's own verdicts: at 1,8x about a sixth of the hard claims read "not
+#: that much", and the band was raised until that rate fell without dropping the
+#: claims he confirmed.
+TRAIL_HARD_RATIO = 2.0
 TRAIL_W_SPEED = 0.55
 TRAIL_W_CADENCE = 0.20
 TRAIL_W_BRAKE = 0.25
@@ -591,11 +595,11 @@ def trail_model_stamp() -> str:
     parameters must stay readable as what it was, not be taken for the new answer.
 
     Returns:
-        A compact id: threshold, weights, window and minimum length.
+        A compact id: threshold, weights, window, minimum length and hard band.
     """
     return (
         f"trail:{TRAIL_MODEL_VERSION}:{TRAIL_THRESHOLD}/{TRAIL_W_SPEED}/{TRAIL_W_CADENCE}/{TRAIL_W_BRAKE}"
-        f"/{TRAIL_WINDOW_M:.0f}/{TRAIL_MIN_LENGTH_M:.0f}"
+        f"/{TRAIL_WINDOW_M:.0f}/{TRAIL_MIN_LENGTH_M:.0f}/{TRAIL_HARD_RATIO}"
     )
 
 

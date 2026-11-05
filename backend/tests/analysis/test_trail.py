@@ -109,7 +109,8 @@ class TestHardCoresInsideAStretch:
         )
         section = max(out.sections, key=lambda item: item.length_m)
         assert section.core_start_m is not None and section.core_end_m is not None
-        assert section.core_score is not None and section.core_score >= 1.8 * analysis_constants.TRAIL_THRESHOLD
+        assert section.core_score is not None
+        assert section.core_score >= analysis_constants.TRAIL_HARD_RATIO * analysis_constants.TRAIL_THRESHOLD
         # the core sits inside the stretch, and is shorter than it
         assert section.core_start_m >= section.start_m
         assert section.core_end_m <= section.start_m + section.length_m
