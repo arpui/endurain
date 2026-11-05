@@ -523,7 +523,7 @@ def temporal_threshold(
 def peak_violation(
     means: Mapping[int, float],
     session_np_w: float,
-    floor_w: float,
+    floor_bands: Sequence[tuple[float, float]],
     *,
     min_s: float = analysis_constants.PEAK_OUTLIER_MIN_S,
     tiers: Sequence[tuple[float, float]] = analysis_constants.PEAK_OUTLIER_TIERS,
@@ -531,16 +531,19 @@ def peak_violation(
     """Return the most implausible peak of one session's duration-intensity curve.
 
     A peak is implausible when it exceeds BOTH its tier's multiple of the
-    session's own normalized power AND an absolute floor: the ratio alone would
-    flag every surge on a walk day, the floor alone would flag an honest max on
-    an easy day. Returns ``(duration_s, value_w, ratio, cap)`` for the strongest
-    violation, or ``None`` when the session's curve is plausible end to end.
+    session's own normalized power AND the absolute floor of its duration band:
+    the ratio alone would flag every surge on a walk day, the floor alone would
+    flag an honest max on an easy day. Returns ``(duration_s, value_w, ratio,
+    cap)`` for the strongest violation, or ``None`` when the session's curve is
+    plausible end to end.
 
     Args:
         means: Best average power per duration for the session, in watts.
         session_np_w: The session's own normalized power, in watts.
-        floor_w: Absolute watt floor under which nothing is flagged.
-        min_s: Durations below this (sprints) are never judged.
+        floor_bands: ``(max_duration_s, floor_w)`` ascending, last band open;
+            seconds are judged against higher floors (a 5-s sprint peak is
+            physiologically huge) than minutes are.
+        min_s: Durations below this are never judged.
         tiers: ``(max_duration_s, ratio_cap)`` steps, ascending.
 
     Returns:
@@ -550,7 +553,10 @@ def peak_violation(
         return None
     worst: tuple[int, float, float, float] | None = None
     for duration, value in means.items():
-        if duration < min_s or value < floor_w:
+        if duration < min_s:
+            continue
+        floor_w = next((band_floor for band_max, band_floor in floor_bands if duration <= band_max), floor_bands[-1][1])
+        if value < floor_w:
             continue
         cap = next((tier_cap for tier_max, tier_cap in tiers if duration <= tier_max), tiers[-1][1])
         ratio = value / session_np_w

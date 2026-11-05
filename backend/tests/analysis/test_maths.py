@@ -145,9 +145,11 @@ class TestDurationPeaks:
 class TestPeakViolation:
     """The double gate that keeps sensor runaways out of the record curve."""
 
+    _BANDS = ((10.0, 2000.0), (30.0, 1500.0), (float("inf"), 700.0))
+
     def test_runaway_is_flagged_with_its_numbers(self):
         means = {60: 1044.0, 120: 879.0, 300: 430.0}
-        bad = analysis_maths.peak_violation(means, 345.0, 700.0)
+        bad = analysis_maths.peak_violation(means, 345.0, self._BANDS)
         assert bad is not None
         duration, value, ratio, cap = bad
         assert duration == 60 and value == 1044.0
@@ -155,18 +157,23 @@ class TestPeakViolation:
 
     def test_a_walk_surge_stays_unflagged(self):
         """High ratio but small watts: a hill surge on a 90 W walk is honest."""
-        assert analysis_maths.peak_violation({60: 250.0}, 88.0, 700.0) is None
+        assert analysis_maths.peak_violation({60: 250.0}, 88.0, self._BANDS) is None
 
     def test_a_hard_session_stays_unflagged(self):
         """High watts but modest ratio: a real max effort is honest."""
-        assert analysis_maths.peak_violation({300: 680.0, 600: 640.0, 1200: 600.0}, 560.0, 700.0) is None
+        assert analysis_maths.peak_violation({300: 680.0, 600: 640.0, 1200: 600.0}, 560.0, self._BANDS) is None
 
-    def test_sprints_are_never_judged(self):
-        assert analysis_maths.peak_violation({10: 1200.0}, 300.0, 700.0) is None
+    def test_a_sprint_peak_is_physiologically_huge_and_stands(self):
+        """Literature keeps 5-10 s peaks enormous: only unit-scale absurdities fall."""
+        assert analysis_maths.peak_violation({5: 1125.0, 10: 1028.0}, 300.0, self._BANDS) is None
+        assert analysis_maths.peak_violation({5: 2400.0}, 300.0, self._BANDS) is not None
+
+    def test_the_short_tier_sits_between_sprint_and_minute_caps(self):
+        assert analysis_maths.peak_violation({20: 1600.0}, 500.0, self._BANDS) is not None  # 3.2x at 20 s
 
     def test_tier_cap_grows_stricter_with_duration(self):
         means = {900: 900.0}  # 1.8x NP at 15 min: plausible only under the 1 min cap
-        bad = analysis_maths.peak_violation(means, 500.0, 700.0)
+        bad = analysis_maths.peak_violation(means, 500.0, self._BANDS)
         assert bad is not None and bad[3] == 1.45
 
 

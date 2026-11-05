@@ -692,7 +692,19 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
                 analysis_constants.PEAK_OUTLIER_FLOOR_W_DEFAULT,
             )
             session_np_w = analysis_maths.normalized_power(power_w, period_s)
-            violation = analysis_maths.peak_violation(means, session_np_w, floor_w) if activity.start_time else None
+            violation = (
+                analysis_maths.peak_violation(
+                    means,
+                    session_np_w,
+                    (
+                        (10.0, analysis_constants.PEAK_OUTLIER_SPRINT_FLOOR_W),
+                        (30.0, analysis_constants.PEAK_OUTLIER_SHORT_FLOOR_W),
+                        (float("inf"), floor_w),
+                    ),
+                )
+                if activity.start_time
+                else None
+            )
             if violation is not None:
                 # The session's stream carries a peak no athlete holds for that
                 # long (a sensor runaway: a kilowatt at walking speed). Skip it

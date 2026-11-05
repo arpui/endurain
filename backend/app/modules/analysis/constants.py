@@ -101,21 +101,32 @@ TEMPORAL_CP_PARAM = "temporal_cp"
 #: sensor cannot poison neighbouring durations) when it exceeds BOTH the tier
 #: ratio over the session's own normalized power AND an absolute floor. The
 #: ratios come from the observed distribution of plausible sessions (p99: 1.86
-#: at 1 min, 1.64 at 2 min, 1.50 at 5 min); the floor keeps surges on low-NP
+#: at 1 min, 1.64 at 2 min, 1.50 at 5 min); the floors keep surges on low-NP
 #: days (walks) from being flagged. The tiers: ``(max_duration_s, ratio_cap)``.
-PEAK_OUTLIER_MIN_S = 30.0
+#: The short tiers are literature-anchored: elite sustained power caps near
+#: 6.4 W/kg (van Dijk & van Megen, The Secret of Running), 5-s Wingate peaks run
+#: 13-16 W/kg in trained athletes and ATP-PC bursts reach ~25 W/kg in elite
+#: sprinters - a 1-min all-out is therefore ~4x the athlete's own threshold at
+#: seconds and ~3x at half a minute, which is what ``(10, 4.0)`` and
+#: ``(30, 3.0)`` encode; below 30 s only unit-scale absurdities (floors 2000 W
+#: and 1500 W) are impossible.
+PEAK_OUTLIER_MIN_S = 1.0
 PEAK_OUTLIER_TIERS: tuple[tuple[float, float], ...] = (
+    (10.0, 4.0),
+    (30.0, 3.0),
     (60.0, 2.6),
     (180.0, 1.9),
     (600.0, 1.7),
     (3600.0, 1.45),
 )
 
-#: Absolute floors per sport group, in watts: sustained by whom for how long is
-#: no longer a human reading (run: world-class 1 min sits near 500 W even with
-#: pod inflation; ride: 1 min above a kilowatt is a track sprinter).
+#: Absolute floors per sport group and duration band, in watts: beyond any
+#: human reading at that length even for a 100 kg sprinter (run) or a track
+#: standing start (ride).
 PEAK_OUTLIER_FLOOR_W: dict[str, float] = {"run": 800.0, "bike": 1000.0}
 PEAK_OUTLIER_FLOOR_W_DEFAULT = 800.0
+PEAK_OUTLIER_SHORT_FLOOR_W = 1500.0
+PEAK_OUTLIER_SPRINT_FLOOR_W = 2000.0
 
 #: Rolling windows, in months back from today, whose duration-intensity curves are
 #: overlaid on the full-history one: recent form read against the athlete's record.
