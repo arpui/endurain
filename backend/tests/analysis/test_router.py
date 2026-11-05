@@ -326,6 +326,67 @@ class TestTrailSectionMarksRoute:
         assert svc.call_args.args[2] == 7675.0
 
 
+class TestTrailNetworkRoute:
+    def test_the_athlete_reads_their_crossed_network(self):
+        client = TestClient(_build_app(MagicMock()))
+        read = analysis_schema.TrailNetworkRead(
+            method="trail:2",
+            threshold=0.38,
+            technical_ratio=1.3,
+            hard_ratio=2.0,
+            min_descents=3,
+            ways=[
+                analysis_schema.TrailNetworkWayRead(
+                    way_id=4242,
+                    name="Corriol",
+                    claim="hard",
+                    descent_crossings=4,
+                    ascent_crossings=1,
+                    hard_crossings=3,
+                    med_score=0.84,
+                    q1=0.8,
+                    q3=0.87,
+                    min_score=0.7,
+                    max_score=0.9,
+                    med_grade_pct=-19.0,
+                    length_m=1800.0,
+                    geometry=[[42.47, 0.99], [42.471, 0.991]],
+                    sac_scale="demanding_mountain_hiking",
+                    mtb_scale=None,
+                    surface="rock",
+                    tracktype=None,
+                )
+            ],
+        )
+        with patch("modules.analysis.router.analysis_service.get_trail_network", return_value=read) as net:
+            response = client.get("/analysis/trail-network")
+        assert response.status_code == 200
+        body = response.json()
+        assert body["ways"][0]["claim"] == "hard"
+        assert body["ways"][0]["geometry"] == [[42.47, 0.99], [42.471, 0.991]]
+        assert net.call_args.kwargs["bbox"] is None
+
+    def test_a_half_given_viewport_is_refused(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/trail-network?south=42.0&north=43.0")
+        assert response.status_code == 400
+
+    def test_a_full_viewport_reaches_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        read = analysis_schema.TrailNetworkRead(
+            method="m", threshold=0.38, technical_ratio=1.3, hard_ratio=2.0, min_descents=3, ways=[]
+        )
+        with patch("modules.analysis.router.analysis_service.get_trail_network", return_value=read) as net:
+            response = client.get("/analysis/trail-network?south=42.0&west=1.0&north=43.0&east=2.0")
+        assert response.status_code == 200
+        assert net.call_args.kwargs["bbox"] == (42.0, 1.0, 43.0, 2.0)
+
+    def test_an_inverted_viewport_is_refused(self):
+        client = TestClient(_build_app(MagicMock()))
+        response = client.get("/analysis/trail-network?south=43.0&west=1.0&north=42.0&east=2.0")
+        assert response.status_code == 400
+
+
 class TestTrailSectionsRoute:
     def test_the_owner_reads_the_technical_sections(self):
         client = TestClient(_build_app(MagicMock()))

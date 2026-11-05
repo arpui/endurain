@@ -476,6 +476,8 @@ export type TrailSectionsDto = Schemas['TrailSectionsRead']
 export type TrailSectionDto = Schemas['TrailSectionRead']
 export type TrailOsmDto = Schemas['TrailOsmRead']
 export type TrailMarkDto = Schemas['TrailMarkRead']
+export type TrailNetworkDto = Schemas['TrailNetworkRead']
+export type TrailNetworkWayDto = Schemas['TrailNetworkWayRead']
 export type TrailPointDto = Schemas['TrailPointRead']
 
 /** What the athlete says about a stretch the detector claimed. */
@@ -569,4 +571,63 @@ export interface TrailSections {
   totalM: number
   /** The technical stretches, in ground order. */
   sections: TrailSection[]
+}
+
+/** What a way's own descents back, once enough of them agree. */
+export type TrailClaim = 'hard' | 'technical' | 'mild' | 'thin'
+
+/** One mapped way of the crossed network, judged by its descents. */
+export interface TrailNetworkWay {
+  /** The OSM way this is. */
+  wayId: number
+  /** The way's mapped name, when it carries one. */
+  name: string | null
+  /** What its descents back. */
+  claim: TrailClaim
+  /** Distinct sessions that went down it: the measurement. */
+  descentCrossings: number
+  /** Distinct sessions that crossed it the other way: corroboration only. */
+  ascentCrossings: number
+  /** Descent crossings that contained a hard core. */
+  hardCrossings: number
+  /** Median, across descents, of the harshest index each reached. */
+  medScore: number
+  /** First quartile of that distribution. */
+  q1: number
+  /** Third quartile of it. */
+  q3: number
+  /** The gentlest descent of it. */
+  minScore: number
+  /** The harshest descent of it. */
+  maxScore: number
+  /** Median grade of the descent crossings, percent. */
+  medGradePct: number
+  /** The way's length as drawn, metres. */
+  lengthM: number
+  /** The ordered polyline: what the map draws and a route would join. */
+  points: GeoPoint[]
+  /** The way's mapped hiking difficulty, when mapped. */
+  sacScale: string | null
+  /** The way's mapped MTB difficulty, when mapped. */
+  mtbScale: string | null
+  /** The way's mapped surface, when mapped. */
+  surface: string | null
+  /** The way's mapped track grade, when mapped. */
+  tracktype: string | null
+}
+
+/** The crossed network: ways with measured descents, best claim first. */
+export interface TrailNetwork {
+  /** The detector stamp the observations carry. */
+  method: string
+  /** The index cut the detector used. */
+  threshold: number
+  /** Multiple of the cut a median needs to read firmly technical. */
+  technicalRatio: number
+  /** Multiple of the cut for a hard claim. */
+  hardRatio: number
+  /** Descents a way needs before anything is claimed for it. */
+  minDescents: number
+  /** The ways, best claim first. */
+  ways: TrailNetworkWay[]
 }

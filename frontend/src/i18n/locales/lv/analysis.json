@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Celiņu tīkls",
+  "trailNetwork": {
+    "title": "Celiņu tīkls",
+    "subtitle": "Visi kartētie celiņi, kurus šķērsoji, vērtēti tikai pēc tavām nolaišanās reizēm",
+    "mapLabel": "Nolaišanās tīkls",
+    "colWay": "Celiņš",
+    "colClaim": "Pakāpe",
+    "colDescents": "Nolaišanās",
+    "colMedian": "Mediāna",
+    "colSpread": "Izkliede",
+    "colGrade": "Slīpums",
+    "claim": {
+      "hard": "grūts",
+      "technical": "tehnisks",
+      "mild": "viegls",
+      "thin": "vēl par maz"
+    },
+    "hint": "Karte zīmē vienu līniju katram celiņam, iekrāsotu pēc tā, ko apstiprina nolaišanās. Celiņam vajadzīgas vismaz {min} nolaišanās, pirms kaut ko apgalvo; izkliede rāda, vai šķērsojumi sakrīt.",
+    "empty": {
+      "title": "Vēl nav šķērsotu celiņu",
+      "description": "Vajadzīgas dažas nolaišanās pa to pašu celiņu, lai šim skatam būtu pierādījumu."
+    }
   }
 }

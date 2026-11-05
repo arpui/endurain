@@ -120,6 +120,13 @@ const router = createRouter({
       meta: { requiresAuth: true, cardless: true },
     },
     {
+      path: '/analysis/trail-network',
+      name: 'analysis-trail-network',
+      component: () => import('@/features/analysis/views/TrailNetworkView.vue'),
+      // Cardless: the view supplies its own map/card surfaces.
+      meta: { requiresAuth: true, cardless: true },
+    },
+    {
       path: '/analysis/best-times',
       name: 'analysis-best-times',
       component: () => import('@/features/analysis/views/BestTimesView.vue'),

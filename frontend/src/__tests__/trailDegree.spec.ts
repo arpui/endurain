@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest'
 
 import type { TrailSection } from '@/features/analysis/types'
 
-import { gradeTrailSection, pointsWithin } from '@/features/analysis/utils/trailDegree'
+import {
+  gradeTrailSection,
+  gradeTrailWay,
+  pointsWithin,
+} from '@/features/analysis/utils/trailDegree'
 
 const RATIOS = { threshold: 0.38, technicalRatio: 1.3, hardRatio: 1.8, veryMaxLengthM: 200 }
 
@@ -121,5 +125,14 @@ describe('pointsWithin', () => {
 
   it('returns the points untouched for a degenerate polyline', () => {
     expect(pointsWithin([line[0] as (typeof line)[0]], 300, 0, 100)).toEqual([line[0]])
+  })
+})
+
+describe('gradeTrailWay', () => {
+  it('keeps thin ways grey and hard ways red, each with its own word', () => {
+    expect(gradeTrailWay('thin')).toMatchObject({ colorToken: '--color-muted-foreground' })
+    expect(gradeTrailWay('hard')).toMatchObject({ colorToken: '--color-hr' })
+    expect(gradeTrailWay('technical').labelKey).toContain('claim')
+    expect(gradeTrailWay('mild').weight).toBeLessThan(gradeTrailWay('technical').weight)
   })
 })

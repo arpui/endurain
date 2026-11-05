@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Stignätverk",
+  "trailNetwork": {
+    "title": "Stignätverk",
+    "subtitle": "Alla kartlagda stigar du har korsat, bedömda enbart utifrån dina nedstigningar",
+    "mapLabel": "Nedstigningsnätverk",
+    "colWay": "Stig",
+    "colClaim": "Grad",
+    "colDescents": "Nedstigningar",
+    "colMedian": "Median",
+    "colSpread": "Spridning",
+    "colGrade": "Lutning",
+    "claim": {
+      "hard": "tuff",
+      "technical": "teknisk",
+      "mild": "måttlig",
+      "thin": "inte tillräckligt än"
+    },
+    "hint": "Kartan ritar en linje per stig, färgad efter vad nedstigningarna stöder. En stig behöver minst {min} nedstigningar innan något påstås; spridningen visar hur väl passagerna överensstämmer.",
+    "empty": {
+      "title": "Inga korsade stigar ännu",
+      "description": "Några nedstigningar samma stig krävs innan den här vyn har evidens."
+    }
   }
 }

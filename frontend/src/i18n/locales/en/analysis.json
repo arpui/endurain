@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Trail network",
+  "trailNetwork": {
+    "title": "Trail network",
+    "subtitle": "Every mapped way you have crossed, judged only by your descents of it — the climb tells nothing.",
+    "mapLabel": "Descended network",
+    "colWay": "Way",
+    "colClaim": "Claim",
+    "colDescents": "Descents",
+    "colMedian": "Median",
+    "colSpread": "Spread",
+    "colGrade": "Grade",
+    "claim": {
+      "hard": "hard",
+      "technical": "technical",
+      "mild": "mild",
+      "thin": "not enough yet"
+    },
+    "hint": "The map draws one line per way, coloured by the claim its descents support. One way needs at least {min} descents before anything is claimed for it; the spread shows how much the crossings agree.",
+    "empty": {
+      "title": "No crossed ways yet",
+      "description": "A few descents of the same path accumulate the evidence this view needs."
+    }
   }
 }

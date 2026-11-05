@@ -44,9 +44,12 @@ import type {
   ActivityLoadsSummary,
   ActivityLoadsSummaryDto,
   TrailMarkDto,
+  TrailNetworkDto,
+  TrailNetworkWay,
   TrailSection,
   TrailSections,
   TrailSectionsDto,
+  TrailNetwork,
   TrailVerdict,
 } from '../types'
 import type { Schemas } from '@/types'
@@ -703,4 +706,45 @@ export async function deleteTrailSectionMark(
     method: 'DELETE',
     signal,
   })
+}
+
+/**
+ * Read the network of mapped ways the athlete has crossed, each judged by its
+ * own descents.
+ *
+ * @param signal - Optional abort signal.
+ * @returns The crossed ways, best claim first.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchTrailNetwork(signal?: AbortSignal): Promise<TrailNetwork> {
+  const dto = await apiFetch<TrailNetworkDto>('/analysis/trail-network', { signal })
+  return {
+    method: dto.method,
+    threshold: dto.threshold,
+    technicalRatio: dto.technical_ratio,
+    hardRatio: dto.hard_ratio,
+    minDescents: dto.min_descents,
+    ways: (dto.ways ?? []).map((way): TrailNetworkWay => ({
+      wayId: way.way_id,
+      name: way.name ?? null,
+      claim: way.claim as TrailNetworkWay['claim'],
+      descentCrossings: way.descent_crossings,
+      ascentCrossings: way.ascent_crossings,
+      hardCrossings: way.hard_crossings,
+      medScore: way.med_score,
+      q1: way.q1,
+      q3: way.q3,
+      minScore: way.min_score,
+      maxScore: way.max_score,
+      medGradePct: way.med_grade_pct,
+      lengthM: way.length_m,
+      points: (way.geometry ?? []).flatMap(([lat, lng]) =>
+        lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+      ),
+      sacScale: way.sac_scale ?? null,
+      mtbScale: way.mtb_scale ?? null,
+      surface: way.surface ?? null,
+      tracktype: way.tracktype ?? null,
+    })),
+  }
 }

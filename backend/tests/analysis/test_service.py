@@ -6,6 +6,7 @@ the athlete typed is never overwritten, and who may read a stored load. The
 formulas themselves are tested in ``test_methods.py``.
 """
 
+import statistics
 from datetime import UTC, date, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
@@ -1505,6 +1506,86 @@ class TestTrailObservations:
             written = analysis_service.reconcile_trail_sections(db)
         assert written == 3
         assert [call.args[0] for call in measure.call_args_list] == [11]
+
+
+class TestTrailNetwork:
+    """Per-way aggregation judged on descents, the athlete's tiredness rule included."""
+
+    @staticmethod
+    def _path(way_id: int = 4242):
+        return SimpleNamespace(
+            way_id=way_id,
+            name="Corriol",
+            length_m=1800.0,
+            geometry=[[42.47, 0.99], [42.471, 0.991]],
+            tags={"sac_scale": "demanding_mountain_hiking", "surface": "rock", "tracktype": "grade4"},
+        )
+
+    @staticmethod
+    def _section(activity_id: int, direction: str, score: float, core: float | None = None, grade: float = -18.0):
+        return SimpleNamespace(
+            activity_id=activity_id, direction=direction, score=score, core_score=core, grade_pct=grade
+        )
+
+    def test_a_way_is_claimed_by_the_worst_of_each_descent_not_by_its_stretches(self):
+        db = _db()
+        rows = [
+            (self._path(), self._section(1, "descent", 0.70)),
+            (self._path(), self._section(1, "descent", 0.90)),
+            (self._path(), self._section(2, "descent", 0.80, core=0.80)),
+            (self._path(), self._section(3, "descent", 0.86, core=0.86)),
+            (self._path(), self._section(4, "descent", 0.88, core=0.88)),
+            (self._path(), self._section(5, "ascent", 0.95)),
+        ]
+        with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=rows):
+            out = analysis_service.get_trail_network(2, db)
+        way = out.ways[0]
+        assert way.descent_crossings == 4
+        assert way.ascent_crossings == 1
+        assert way.hard_crossings == 3
+        assert way.min_score == 0.8 and way.max_score == 0.9  # the 0.70 stretch is absorbed by its own descent
+        assert way.med_score == statistics.median([0.9, 0.8, 0.86, 0.88])
+        assert way.claim == "hard"
+        assert way.sac_scale == "demanding_mountain_hiking"
+
+    def test_fewer_descents_than_the_minimum_report_thin_never_a_claim(self):
+        db = _db()
+        rows = [
+            (self._path(), self._section(1, "descent", 0.95, core=0.95)),
+            (self._path(), self._section(2, "descent", 0.92)),
+        ]
+        with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=rows):
+            out = analysis_service.get_trail_network(2, db)
+        assert out.ways[0].claim == "thin"
+        assert out.min_descents == analysis_constants.TRAIL_NETWORK_MIN_DESCENTS
+
+    def test_a_way_only_walked_upwards_is_not_part_of_the_network(self):
+        db = _db()
+        rows = [(self._path(), self._section(1, "ascent", 0.9))]
+        with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=rows):
+            out = analysis_service.get_trail_network(2, db)
+        assert out.ways == []
+
+    def test_hard_ways_sort_before_technical_ones(self):
+        db = _db()
+        technical = self._path(way_id=99)
+        rows = [
+            (technical, self._section(1, "descent", 0.55)),
+            (technical, self._section(2, "descent", 0.55)),
+            (technical, self._section(3, "descent", 0.55)),
+            (self._path(), self._section(1, "descent", 0.85)),
+            (self._path(), self._section(2, "descent", 0.85)),
+            (self._path(), self._section(3, "descent", 0.85)),
+        ]
+        with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=rows):
+            out = analysis_service.get_trail_network(2, db)
+        assert [(w.way_id, w.claim) for w in out.ways] == [(4242, "hard"), (99, "technical")]
+
+    def test_the_viewport_travels_to_the_query_not_the_aggregation(self):
+        db = _db()
+        with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=[]) as read:
+            analysis_service.get_trail_network(2, db, bbox=(42.0, 1.0, 43.0, 2.0))
+        assert read.call_args.kwargs["bbox"] == (42.0, 1.0, 43.0, 2.0)
 
 
 class TestTrailCartography:

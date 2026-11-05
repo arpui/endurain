@@ -16,6 +16,7 @@ import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
   deleteTrailSectionMark,
+  fetchTrailNetwork,
   fetchTrailSections,
   postTrailSectionMark,
   fetchActivityLapDynamics,
@@ -338,5 +339,20 @@ export function useTrailSectionMarkMutation(
       verdict === null
         ? deleteTrailSectionMark(id.value, startM)
         : postTrailSectionMark(id.value, startM, verdict),
+  })
+}
+
+/**
+ * The athlete's crossed ways as a network: each judged by its descents, with
+ * the spread across crossings shown rather than hidden.
+ *
+ * @returns The TanStack query for the network payload.
+ */
+export function useTrailNetworkQuery() {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  return useQuery({
+    queryKey: queryKeys.analysis.trailNetwork(),
+    queryFn: ({ signal }) => fetchTrailNetwork(signal),
+    enabled: isAuthenticated,
   })
 }

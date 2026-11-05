@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "路径网络",
+  "trailNetwork": {
+    "title": "路径网络",
+    "subtitle": "所有你走过并已绘制的路径，只以下坡表现评判——上坡说明不了什么",
+    "mapLabel": "下坡网络",
+    "colWay": "路径",
+    "colClaim": "等级",
+    "colDescents": "下坡次数",
+    "colMedian": "中位数",
+    "colSpread": "离散度",
+    "colGrade": "坡度",
+    "claim": {
+      "hard": "难",
+      "technical": "技术性",
+      "mild": "平缓",
+      "thin": "尚不足"
+    },
+    "hint": "地图每条路径画一条线，按下坡证据着色。一条路径至少需要 {min} 次下坡才会被断言；离散度显示各次穿越是否一致。",
+    "empty": {
+      "title": "尚无穿越过的路径",
+      "description": "同一条路径上还需几次下坡，此视图才有依据。"
+    }
   }
 }

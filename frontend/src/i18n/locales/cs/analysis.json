@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Síť cest",
+  "trailNetwork": {
+    "title": "Síť cest",
+    "subtitle": "Všechny zakreslené cesty, kterými jsi prošel, posuzované pouze podle sestupů",
+    "mapLabel": "Síť sestupů",
+    "colWay": "Cesta",
+    "colClaim": "Stupeň",
+    "colDescents": "Sestupy",
+    "colMedian": "Medián",
+    "colSpread": "Rozptyl",
+    "colGrade": "Sklon",
+    "claim": {
+      "hard": "náročné",
+      "technical": "technické",
+      "mild": "mírné",
+      "thin": "zatím málo"
+    },
+    "hint": "Mapa kreslí jednu čáru na cestu, barevně podle stupně sestupů. Cesta potřebuje alespoň {min} sestupů, než se o ní něco tvrdí; rozptyl ukazuje, jak si průchody rozumí.",
+    "empty": {
+      "title": "Zatím žádné prošlé cesty",
+      "description": "Je potřeba několik sestupů touž cestou, aby tento pohled měl důkazy."
+    }
   }
 }

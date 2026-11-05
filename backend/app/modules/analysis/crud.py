@@ -755,6 +755,48 @@ def get_osm_paths_by_ids(
     }
 
 
+def list_trail_way_evidence(
+    user_id: int,
+    method: str,
+    db: Session,
+    *,
+    bbox: tuple[float, float, float, float] | None = None,
+) -> list[tuple[analysis_models.OsmPath, analysis_models.TrailSection]]:
+    """Return every measured stretch that sits on a mapped way, together with that way.
+
+    Args:
+        user_id: The athlete whose observations are considered.
+        method: The detector parameters stamped on the observations.
+        db: Database session.
+        bbox: Optional ``(south, west, north, east)`` viewport; a way whose bounding
+            box intersects it qualifies.
+
+    Returns:
+        ``(way, stretch)`` pairs for every matched observation of that model.
+    """
+    query = (
+        select(analysis_models.OsmPath, analysis_models.TrailSection)
+        .join(
+            analysis_models.TrailSection,
+            analysis_models.TrailSection.osm_way_id == analysis_models.OsmPath.way_id,
+        )
+        .where(
+            analysis_models.TrailSection.user_id == user_id,
+            analysis_models.TrailSection.method == method,
+            analysis_models.TrailSection.osm_way_id.is_not(None),
+        )
+    )
+    if bbox is not None:
+        south, west, north, east = bbox
+        query = query.where(
+            analysis_models.OsmPath.min_lat <= north,
+            analysis_models.OsmPath.max_lat >= south,
+            analysis_models.OsmPath.min_lng <= east,
+            analysis_models.OsmPath.max_lng >= west,
+        )
+    return list(db.execute(query))
+
+
 def list_sections_needing_osm_match(
     method: str,
     cache_date: date,

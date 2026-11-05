@@ -18,6 +18,7 @@ import {
   mapSettings,
   queueLoadRecompute,
   queueThresholdRefresh,
+  fetchTrailNetwork,
   fetchTrailSections,
   updateAnalysisSettings,
 } from '@/features/analysis/services/analysis'
@@ -635,5 +636,58 @@ describe('best-splits table', () => {
     expect(url).not.toContain('months=')
     expect(table.months).toBeNull()
     expect(table.records).toEqual([])
+  })
+})
+
+describe('trail network', () => {
+  it('maps the crossed ways, their bands and their geometry', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      method: 'trail:2',
+      threshold: 0.38,
+      technical_ratio: 1.3,
+      hard_ratio: 2.0,
+      min_descents: 3,
+      ways: [
+        {
+          way_id: 4242,
+          name: 'Corriol',
+          claim: 'hard',
+          descent_crossings: 4,
+          ascent_crossings: 1,
+          hard_crossings: 3,
+          med_score: 0.84,
+          q1: 0.8,
+          q3: 0.87,
+          min_score: 0.7,
+          max_score: 0.9,
+          med_grade_pct: -19,
+          length_m: 1800,
+          geometry: [
+            [42.47, 0.99],
+            [42.471, 0.991],
+          ],
+          sac_scale: 'demanding_mountain_hiking',
+          mtb_scale: null,
+          surface: 'rock',
+          tracktype: null,
+        },
+      ],
+    })
+    const network = await fetchTrailNetwork()
+    expect(apiFetch).toHaveBeenCalledWith('/analysis/trail-network', expect.anything())
+    expect(network.minDescents).toBe(3)
+    expect(network.hardRatio).toBe(2.0)
+    expect(network.ways[0]).toMatchObject({
+      wayId: 4242,
+      claim: 'hard',
+      descentCrossings: 4,
+      medScore: 0.84,
+    })
+    expect(network.ways[0]?.points).toEqual([
+      { lat: 42.47, lng: 0.99 },
+      { lat: 42.471, lng: 0.991 },
+    ])
+    expect(network.ways[0]?.sacScale).toBe('demanding_mountain_hiking')
+    expect(network.ways[0]?.tracktype).toBeNull()
   })
 })

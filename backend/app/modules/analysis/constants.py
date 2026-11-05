@@ -612,3 +612,10 @@ OSM_MATCH_MIN_COVERAGE = 0.6
 #: How many stretches one matching pass takes, so an import of a whole region is
 #: worked through in bounded transactions.
 OSM_MATCH_PAGE = 500
+
+#: A way earns a claim in the network only once its ground has been descended in
+#: this many separate sessions: fewer, and one tired day or one bad season could
+#: be the whole signal.
+TRAIL_NETWORK_MIN_DESCENTS = 3
+#: Ways handed back by one network read, best-claimed first.
+TRAIL_NETWORK_MAX_WAYS = 300

@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Mreža putova",
+  "trailNetwork": {
+    "title": "Mreža putova",
+    "subtitle": "Sve kartirane staze kojima ste prošli, prosuđene samo po vašim silascima",
+    "mapLabel": "Mreža silazaka",
+    "colWay": "Staza",
+    "colClaim": "Razina",
+    "colDescents": "Silasci",
+    "colMedian": "Medijan",
+    "colSpread": "Raspršenje",
+    "colGrade": "Nagib",
+    "claim": {
+      "hard": "težak",
+      "technical": "tehnički",
+      "mild": "blag",
+      "thin": "još premalo"
+    },
+    "hint": "Karta crta jednu liniju po stazi, obojanu prema onome što silasci potvrđuju. Stazi treba barem {min} silazaka prije bilo kakve tvrdnje; raspršenje pokazuje prelaze li se putovanja.",
+    "empty": {
+      "title": "Još nema pređenih staza",
+      "description": "Treba nekoliko silazaka istom stazi da ovaj prikaz ima dokaze."
+    }
   }
 }

@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Polkuverkosto",
+  "trailNetwork": {
+    "title": "Polkuverkosto",
+    "subtitle": "Kaikki kartoitetut polut, joilla olet kulkenut, arvioidaan vain laskeutumistesi mukaan",
+    "mapLabel": "Laskeutumisverkosto",
+    "colWay": "Polku",
+    "colClaim": "Taso",
+    "colDescents": "Laskeutumiset",
+    "colMedian": "Mediaani",
+    "colSpread": "Hajonta",
+    "colGrade": "Kaltevuus",
+    "claim": {
+      "hard": "vaativa",
+      "technical": "tekninen",
+      "mild": "pehmeä",
+      "thin": "vielä liian vähän"
+    },
+    "hint": "Kartta piirtää kutakin polkua kohden yhden viivan, väritys laskeutumisten näyttämänä. Polku tarvitsee vähintään {min} laskeutumista ennen väitteitä; hajonta näyttää, ovatko kulenniset samaa mieltä.",
+    "empty": {
+      "title": "Ei vielä kuljettuja polkuja",
+      "description": "Muutama laskeutuma samaa polkua pitkin tarvitaan, jolla näkymällä on näyttöä."
+    }
   }
 }

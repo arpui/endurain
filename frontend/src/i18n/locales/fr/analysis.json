@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Réseau de sentiers",
+  "trailNetwork": {
+    "title": "Réseau de sentiers",
+    "subtitle": "Tous les sentiers cartographiés que vous avez traversés, jugés uniquement par vos descentes — la montée ne dit rien.",
+    "mapLabel": "Réseau de descentes",
+    "colWay": "Sentier",
+    "colClaim": "Degré",
+    "colDescents": "Descentes",
+    "colMedian": "Médiane",
+    "colSpread": "Dispersion",
+    "colGrade": "Pente",
+    "claim": {
+      "hard": "dur",
+      "technical": "technique",
+      "mild": "léger",
+      "thin": "pas encore assez"
+    },
+    "hint": "La carte trace une ligne par sentier, colorée selon ce que ses descentes confirment. Un sentier exige au moins {min} descentes avant toute affirmation ; la dispersion montre si les passages concordent.",
+    "empty": {
+      "title": "Aucun sentier traversé pour l'instant",
+      "description": "Il faut quelques descentes du même sentier pour que cette vue ait des preuves."
+    }
   }
 }

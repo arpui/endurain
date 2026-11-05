@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Ösvárhálózat",
+  "trailNetwork": {
+    "title": "Ösvárhálózat",
+    "subtitle": "Minden feltérképezett ösvény, amelyet bejártál, csak a lefelé haladás alapján ítélve",
+    "mapLabel": "Lefelé hálózat",
+    "colWay": "Ösvény",
+    "colClaim": "Fokozat",
+    "colDescents": "Lefelé",
+    "colMedian": "Medián",
+    "colSpread": "Szórás",
+    "colGrade": "Lejtés",
+    "claim": {
+      "hard": "kemény",
+      "technical": "technikai",
+      "mild": "enyhe",
+      "thin": "egyelőre kevés"
+    },
+    "hint": "A térképen ösvényenként egy vonal, a lejtmenetek által alátámasztott jelöléssel. Egy ösvénynek legalább {min} lefelé átjárás kell, mielőtt bármit állítanánk; a szórás mutatja, mennyire értenek egyet az átjárások.",
+    "empty": {
+      "title": "Még nincs bejárt ösvény",
+      "description": "Néhány ugyanazon ösvényen megtett lefelé haladás kell, hogy ez a nézet bizonyítékokra támaszkodhasson."
+    }
   }
 }
