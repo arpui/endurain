@@ -144,3 +144,7 @@ class ThresholdFitRecord:
     activity_id: int
     started_on: date
     value: float
+    w_prime: float = 0.0
+    cv_pct: float = 0.0
+    sustained: float = 0.0
+    power_source: str | None = None

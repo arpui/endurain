@@ -281,6 +281,29 @@ class ThresholdFit(Base, TimestampMixin):
         nullable=False,
         comment="Fitted threshold in the measure's units",
     )
+    w_prime: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        default=0.0,
+        comment="Fitted anaerobic capacity (joules or metres): an index tied to the fit window",
+    )
+    cv_pct: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        default=0.0,
+        comment="Regression error of the fit, percent of the mean",
+    )
+    sustained: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        default=0.0,
+        comment="Best sustained window average inside the fit range, the ceiling the fit must not overshoot",
+    )
+    power_source: Mapped[str | None] = mapped_column(
+        String(length=32),
+        nullable=True,
+        comment="Where the session's watts came from, when tagged",
+    )
 
 
 class PeakFlag(Base, TimestampMixin):
