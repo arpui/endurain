@@ -168,6 +168,22 @@
     "colContrast": "vs seja",
     "rules": "Kako je zaznano: na ravnem šteje odsek kot interval samo, če drži ≥{effortIf}·CP; naprezanje se odpre pri {openW} W in zapre pod {closeW} W; najmanj {minS} s (pod {shortS} s je potrebnih {shortBase} mediane seje; brez pravega počitka —≤{recoveryW} W—, {strongBase}); s strmino >{climbGrade}% in IF<{climbIf} šteje kot vzpon."
   },
+  "trail": {
+    "title": "Tehnični odseki",
+    "experimental": "eksperimentalno",
+    "summary": "{technical}% terena ({metres} m od {of} m) je prebrano kot tehnično.",
+    "hint": "Odseki, kjer tempo zaostaja za tistim, kar pojasni naklon, z neenakomernim korakom in zaviranjem v spustih. Na zemljevidu so izrisani jantarasto. Detektor je še v kalibraciji z dejanskimi trasami.",
+    "colStart": "začetek",
+    "colLength": "dolžina",
+    "colDirection": "smer",
+    "colGrade": "strmina",
+    "colScore": "ocena",
+    "directions": {
+      "descent": "spust",
+      "ascent": "vzpon",
+      "flat": "ravno"
+    }
+  },
   "sectionBest": "Najboljši časi",
   "bestTimes": {
     "title": "Najboljši časi",

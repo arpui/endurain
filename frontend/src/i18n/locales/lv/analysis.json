@@ -168,6 +168,22 @@
     "colContrast": "vs sesija",
     "rules": "Kā šeit nosaka: plakanie posmā atkarums skaitas par intervālu tikai, ja tas saglabā ≥{effortIf}·CP; slodze sākas pie {openW} W un beidzas zem {closeW} W; minimums {minS} s (zem {shortS} s nepieciešams {shortBase} no sesijas mediānas; bez īsta atpūtas —≤{recoveryW} W—, {strongBase}); ar slīpumu >{climbGrade}% un IF<{climbIf} skaitas kā kāpiens."
   },
+  "trail": {
+    "title": "Tehniskie posmi",
+    "experimental": "eksperimentāls",
+    "summary": "{technical}% no reljefa ({metres} m no {of} m) izskatās pēc tehniska.",
+    "hint": "Posmi, kuru temps atpaliek no tā, ko izskaidro slīpums, ar nevienmėrīgus soļus un bremzēšanu nolaidos. Kartē tie ir iezīmēti dzintara krāsā. Detektoru vēl kalibrē ar reāliem maršrutiem.",
+    "colStart": "sākums",
+    "colLength": "garums",
+    "colDirection": "virziens",
+    "colGrade": "slīpums",
+    "colScore": "vērtējums",
+    "directions": {
+      "descent": "nolaidums",
+      "ascent": "kāpums",
+      "flat": "plakans"
+    }
+  },
   "sectionBest": "Labākie laiki",
   "bestTimes": {
     "title": "Labākie laiki",

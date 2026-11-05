@@ -15,6 +15,7 @@ import { useInvalidatingMutation } from '@/composables/useInvalidatingMutation'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
+  fetchTrailSections,
   fetchActivityLapDynamics,
   fetchActivityLoadsSummaries,
   fetchAnalysisSettings,
@@ -212,6 +213,34 @@ export function useActivityIntervalsQuery(
   return useQuery({
     queryKey: computed(() => queryKeys.analysis.intervals(id.value)),
     queryFn: ({ signal }) => fetchActivityIntervals(id.value, signal),
+    enabled: computed(() => id.value > 0 && toValue(enabled) && isAuthenticated.value),
+  })
+}
+
+/**
+ * Which stretches of one trail run read as technical terrain.
+ *
+ * Computed on read by the server from the activity's own speed, altitude and
+ * cadence streams; only run sports answer, so the parent gates the query on
+ * the activity type. Experimental: the calibration loop with the athlete is open.
+ *
+ * @param activityId - Reactive activity id.
+ * @param enabled - Whether the parent wants it (loaded, owned, trail run).
+ * @returns The TanStack query result for the technical sections.
+ */
+export function useTrailSectionsQuery(
+  activityId: MaybeRefOrGetter<number | null | undefined>,
+  enabled: MaybeRefOrGetter<boolean> = true,
+) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => {
+    const value = toValue(activityId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.trailSections(id.value)),
+    queryFn: ({ signal }) => fetchTrailSections(id.value, signal),
     enabled: computed(() => id.value > 0 && toValue(enabled) && isAuthenticated.value),
   })
 }

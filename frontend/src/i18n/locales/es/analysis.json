@@ -168,6 +168,22 @@
     "colContrast": "vs sesión",
     "rules": "Cómo se detecta aquí: en llano un tramo cuenta como intervalo solo si mantiene ≥{effortIf}·CP; se abre uno a {openW} W y se cierra por debajo de {closeW} W; mínimo {minS} s (bajo {shortS} s hace falta {shortBase} la mediana de la sesión; sin recuperación real —≤{recoveryW} W—, {strongBase}); con pendiente >{climbGrade}% e IF<{climbIf} cuenta como subida."
   },
+  "trail": {
+    "title": "Tramos técnicos",
+    "experimental": "experimental",
+    "summary": "El {technical}% del terreno ({metres} m de {of} m) se lee como técnico.",
+    "hint": "Tramos donde el ritmo queda por debajo de lo que explica la pendiente, con zancada irregular y frenadas en las bajadas. En el mapa se dibujan en ámbar. Este detector todavía se está calibrando con rutas reales.",
+    "colStart": "inicio",
+    "colLength": "longitud",
+    "colDirection": "dirección",
+    "colGrade": "pendiente",
+    "colScore": "puntuación",
+    "directions": {
+      "descent": "bajada",
+      "ascent": "subida",
+      "flat": "llano"
+    }
+  },
   "sectionBest": "Mejores tiempos",
   "bestTimes": {
     "title": "Mejores tiempos",

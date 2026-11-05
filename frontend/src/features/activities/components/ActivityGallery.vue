@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { RouterLink, type RouteLocationRaw } from 'vue-router'
 import { ChevronLeft, ChevronRight, Trash2, X } from '@lucide/vue'
 
-import type { GeoPoint } from '@/composables/useMapProvider'
+import type { GeoPoint, MapOverlay } from '@/composables/useMapProvider'
 import type { ActivityMedia } from '@/features/activities/types'
 
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
@@ -21,6 +21,8 @@ const props = withDefaults(
   defineProps<{
     /** GPS track points; when non-empty the interactive map leads the slides. */
     points: GeoPoint[]
+    /** Extra polylines drawn over the map (e.g. analysed technical sections). */
+    overlays?: MapOverlay[]
     /** The activity whose photos populate the remaining slides. */
     activityId: number
     /**
@@ -188,7 +190,12 @@ async function confirmDelete(): Promise<void> {
         :class="heightClass"
         :aria-hidden="index !== current"
       >
-        <RouteMap v-if="slide.kind === 'map'" :points="points" :label="t('activities.map.label')" />
+        <RouteMap
+          v-if="slide.kind === 'map'"
+          :points="points"
+          :overlays="overlays"
+          :label="t('activities.map.label')"
+        />
         <component
           :is="thumbnailTo ? RouterLink : 'div'"
           v-else-if="slide.kind === 'thumbnail'"

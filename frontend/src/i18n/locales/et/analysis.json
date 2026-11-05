@@ -168,6 +168,22 @@
     "colContrast": "vs session",
     "rules": "Kuidas siin tuvastatakse: tasasel loeb lõik intervalliks vaid siis, kui peab ≥{effortIf}·CP; koormus avneb {openW} W juures ja sulgub alla {closeW} W; vähemalt {minS} s (alla {shortS} s on vaja {shortBase} sessioni mediaanist; ilma tõelise puhkuseta —≤{recoveryW} W—, {strongBase}); üle {climbGrade}% tõusuga ja IF<{climbIf} loetakse tõusuks."
   },
+  "trail": {
+    "title": "Tehnilised lõigud",
+    "experimental": "eksperimentaalne",
+    "summary": "{technical}% maastikust ({metres} m {of} m-st) näitab tehnilist maastikku.",
+    "hint": "Lõigud, kus tempojääb miinimumini sellest, mida kallak selgitab, ebaühtlase sammuga ja pidurdamisega laskumistel. Kaardil märgitatakse need merevaigukollaselt. Süsteemi kalibreeritakse endiselt reaalsete radadega.",
+    "colStart": "algus",
+    "colLength": "pikkus",
+    "colDirection": "suund",
+    "colGrade": "tõus",
+    "colScore": "skoor",
+    "directions": {
+      "descent": "laskumine",
+      "ascent": "tõus",
+      "flat": "tasane"
+    }
+  },
   "sectionBest": "Parimad ajad",
   "bestTimes": {
     "title": "Parimad ajad",

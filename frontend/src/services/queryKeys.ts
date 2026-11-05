@@ -427,6 +427,11 @@ export const queryKeys = {
      */
     intervals: (id: number) => ['analysis', 'intervals', id] as const,
     /**
+     * @param id - Activity whose technical terrain is keyed.
+     * @returns A technical-sections query key for one activity.
+     */
+    trailSections: (id: number) => ['analysis', 'trail-sections', id] as const,
+    /**
      * @param months - Window in months back from today, `null` for all history.
      * @returns A best-splits query key for one window.
      */

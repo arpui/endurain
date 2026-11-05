@@ -168,6 +168,22 @@
     "colContrast": "vs pass",
     "rules": "Så upptäcks det här: på plant räknas en sträcka som intervall bara om den håller ≥{effortIf}·CP; en insats öppnas vid {openW} W och stängs under {closeW} W; minst {minS} s (under {shortS} s krävs {shortBase} passets median; utan riktig återhämtning —≤{recoveryW} W—, {strongBase}); med lutning >{climbGrade}% och IF<{climbIf} räknas det som backe."
   },
+  "trail": {
+    "title": "Tekniska avsnitt",
+    "experimental": "experimentell",
+    "summary": "{technical}% av terrängen ({metres} m av {of} m) läses som teknisk.",
+    "hint": "Avsnitt där farten är lägre än vad lutningen förklarar, med oregelbundna steg och inbromsningar i nedförsbacke. På kartan ritas de i bärnstensfärg. Detektorn kalibreras fortfarande mot verkliga rutter.",
+    "colStart": "start",
+    "colLength": "längd",
+    "colDirection": "riktning",
+    "colGrade": "lutning",
+    "colScore": "poäng",
+    "directions": {
+      "descent": "nedför",
+      "ascent": "uppför",
+      "flat": "platt"
+    }
+  },
   "sectionBest": "Bästa tider",
   "bestTimes": {
     "title": "Bästa tider",

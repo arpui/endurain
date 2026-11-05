@@ -168,6 +168,22 @@
     "colContrast": "vs sessão",
     "rules": "Como é detetado aqui: em plano um troço conta como intervalo só se mantiver ≥{effortIf}·CP; abre-se um esforço a {openW} W e fecha abaixo de {closeW} W; mínimo {minS} s (abaixo de {shortS} s exige {shortBase} a mediana da sessão; sem recuperação real —≤{recoveryW} W—, {strongBase}); com inclinação >{climbGrade}% e IF<{climbIf} conta como subida."
   },
+  "trail": {
+    "title": "Troços técnicos",
+    "experimental": "experimental",
+    "summary": "{technical}% do terreno ({metres} m de {of} m) é lido como técnico.",
+    "hint": "Troços onde o ritmo fica aquém do que o declive explica, com passada irregular e travagens nas descidas. No mapa são desenhados a âmbar. Este detetor ainda está a ser calibrado com percursos reais.",
+    "colStart": "início",
+    "colLength": "comprimento",
+    "colDirection": "direção",
+    "colGrade": "inclinação",
+    "colScore": "pontuação",
+    "directions": {
+      "descent": "descida",
+      "ascent": "subida",
+      "flat": "plano"
+    }
+  },
   "sectionBest": "Melhores tempos",
   "bestTimes": {
     "title": "Melhores tempos",

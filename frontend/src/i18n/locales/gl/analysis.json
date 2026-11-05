@@ -168,6 +168,22 @@
     "colContrast": "vs sesión",
     "rules": "Como se detecta aquí: en chanzo un tramo conta como intervalo só se mantén ≥{effortIf}·CP; ábrese un esforzo a {openW} W e péchase por debaixo de {closeW} W; mínimo {minS} s (baixo {shortS} s require {shortBase} a mediana da sesión; sen recuperación real —≤{recoveryW} W—, {strongBase}); con pendente >{climbGrade}% e IF<{climbIf} conta como subida."
   },
+  "trail": {
+    "title": "Tramos técnicos",
+    "experimental": "experimental",
+    "summary": "O {technical}% do terreo ({metres} m de {of} m) lése como técnico.",
+    "hint": "Tramos onde o ritmo queda por debaixo do que explica a pendente, con pisada irregular e freadas nas baixadas. No mapa debújarase en ámbar. Este detector aínda se está a calibrar con rutas reais.",
+    "colStart": "inicio",
+    "colLength": "lonxitude",
+    "colDirection": "dirección",
+    "colGrade": "pendente",
+    "colScore": "puntuación",
+    "directions": {
+      "descent": "baixada",
+      "ascent": "subida",
+      "flat": "chan"
+    }
+  },
   "sectionBest": "Mellores tempos",
   "bestTimes": {
     "title": "Mellores tempos",

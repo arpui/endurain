@@ -168,6 +168,22 @@
     "colContrast": "vs edzés",
     "rules": "Így kerül felismerésre: laposon egy szakasz csak akkor számít intervallumnak, ha tartja a ≥{effortIf}·CP-t; a terhelés {openW} W-nál nyílik és {closeW} W alatt zárul; minimum {minS} s ({shortS} s alatt az edzés mediánjának {shortBase}?a kell; valódi regeneráció nélkül —≤{recoveryW} W—, {strongBase}); >{climbGrade}% emelkedővel és IF<{climbIf}emelkedőnek számít."
   },
+  "trail": {
+    "title": "Technikai szakaszok",
+    "experimental": "kísérleti",
+    "summary": "A terep {technical}%-a ({metres} m / {of} m) technikai jellegű.",
+    "hint": "Olyan szakaszok, ahol a tempó elmarad attól, amit az emelkedés magyarázna, szabálytalan lépésekkel és fékezéssel lejtőn. A térképen borostyánsárgán jelennek meg. Az észlelőt még valós útvonalakon kalibráljuk.",
+    "colStart": "kezdés",
+    "colLength": "hossz",
+    "colDirection": "irány",
+    "colGrade": "emelkedő",
+    "colScore": "pontszám",
+    "directions": {
+      "descent": "lejtő",
+      "ascent": "emelkedő",
+      "flat": "sík"
+    }
+  },
   "sectionBest": "Legjobb idők",
   "bestTimes": {
     "title": "Legjobb idők",

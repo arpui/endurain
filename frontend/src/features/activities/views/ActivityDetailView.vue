@@ -14,13 +14,17 @@ import { ErrorState } from '@/components/ui/error-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
+import { activityTypeIsRunning } from '@/features/activities/utils/activityType'
+import { themeColor } from '@/lib/themeColor'
 import ActivityDetailHeader from '@/features/activities/components/ActivityDetailHeader.vue'
 import ActivityIntervalTable from '@/features/analysis/components/ActivityIntervalTable.vue'
 import ActivityLoadScores from '@/features/analysis/components/ActivityLoadScores.vue'
 import LapDynamicsTable from '@/features/analysis/components/LapDynamicsTable.vue'
+import TrailSectionsCard from '@/features/analysis/components/TrailSectionsCard.vue'
 import {
   useActivityIntervalsQuery,
   useLapDynamicsQuery,
+  useTrailSectionsQuery,
 } from '@/features/analysis/composables/useAnalysis'
 import ActivityGallery from '@/features/activities/components/ActivityGallery.vue'
 import ActivityGearCard from '@/features/activities/components/ActivityGearCard.vue'
@@ -92,6 +96,24 @@ const showIntervals = computed(
     // Terrain climbs need only altitude and speed: they answer for athletes
     // without a power meter too.
     (intervals.value?.climbs.length ?? 0) > 0,
+)
+// Which stretches of a trail or run read as technical terrain (experimental):
+// same owner gate as the intervals; the endpoint answers empty for non-run sports.
+const isRunActivity = computed(
+  () => !!activity.value && activityTypeIsRunning(activity.value.activityType),
+)
+const { data: trailSections } = useTrailSectionsQuery(
+  activityId,
+  computed(() => activityLoaded.value && isOwner.value && isRunActivity.value),
+)
+const showTrailSections = computed(() => (trailSections.value?.sections.length ?? 0) > 0)
+// Technical stretches drawn over the track in the caution (effort) accent.
+const mapOverlays = computed(() =>
+  (trailSections.value?.sections ?? []).map((section) => ({
+    points: section.points,
+    color: themeColor('--color-effort'),
+    name: `${(section.startM / 1000).toFixed(2)} km`,
+  })),
 )
 // The analysis laps table replaces the plain one for the owner: same rows, plus
 // power, stride length, the lap's ascent-and-descent pair and its share of the aRSS.
@@ -345,6 +367,7 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
 
       <ActivityGallery
         :points="showMap ? trackPoints : []"
+        :overlays="showTrailSections ? mapOverlays : []"
         :activity-id="activity.id"
         :is-owner="isOwner"
       />
@@ -429,6 +452,15 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
           :units="units"
         />
       </Card>
+
+      <!-- Which stretches read as technical ground: experimental pass, owners
+           only, shown when it finds anything at all. -->
+      <TrailSectionsCard
+        v-if="showTrailSections"
+        :sections="trailSections!"
+        :activity-type="activity?.activityType ?? 0"
+        :units="units"
+      />
 
       <Card v-if="showSegments || isOwner" class="flex flex-col gap-3">
         <div class="flex items-center justify-between gap-2">

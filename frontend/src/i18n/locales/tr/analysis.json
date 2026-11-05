@@ -168,6 +168,22 @@
     "colContrast": "vs seans",
     "rules": "Burada algılama: düz zeminde bir bölüm ancak ≥{effortIf}·CP sürdürürse interval sayılır; efor {openW} W'te açılır ve {closeW} W altında kapanır; asgari {minS} s ({shortS} s altındaysa seans medyanının {shortBase}'i gerekir; gerçek toparlanma olmadan —≤{recoveryW} W—, {strongBase}); >{climbGrade}% eğim ve IF<{climbIf} tırmanış sayılır."
   },
+  "trail": {
+    "title": "Teknik bölümler",
+    "experimental": "deneysel",
+    "summary": "Arazinin {technical}%'i ({metres} m / {of} m) teknik olarak okunuyor.",
+    "hint": "Temponun eğimin açıkladığının gerisinde kaldığı, düzensiz adımlar ve inişlerde frenleme görülen bölümler. Haritada kehribar rengiyle çizilir. Bu algılayıcı hâlâ gerçek rotalarla kalibre ediliyor.",
+    "colStart": "başlangıç",
+    "colLength": "uzunluk",
+    "colDirection": "yön",
+    "colGrade": "eğim",
+    "colScore": "puan",
+    "directions": {
+      "descent": "iniş",
+      "ascent": "çıkış",
+      "flat": "düz"
+    }
+  },
   "sectionBest": "En iyi dereceler",
   "bestTimes": {
     "title": "En iyi dereceler",

@@ -168,6 +168,22 @@
     "colContrast": "vs session",
     "rules": "Så detekteres det her: på fladt tæller en strækning kun som interval, hvis den holder ≥{effortIf}·CP; en anstrengelse åbner ved {openW} W og lukker under {closeW} W; mindst {minS} s (under {shortS} s kræves {shortBase} af sessionens median; uden rigtig restitution —≤{recoveryW} W—, {strongBase}); med stigning >{climbGrade}% og IF<{climbIf} tæller det som stigning."
   },
+  "trail": {
+    "title": "Tekniske sektioner",
+    "experimental": "eksperimentel",
+    "summary": "{technical}% af terrænet ({metres} m af {of} m) læses som teknisk.",
+    "hint": "Strækninger, hvor farten er lavere, end stigningen kan forklare, med uregelmæssigt skridt og bremsen ned ad bakke. På kortet vises de med rav. Detektoren kalibreres stadig efter ruter i virkeligheden.",
+    "colStart": "start",
+    "colLength": "længde",
+    "colDirection": "retning",
+    "colGrade": "stigning",
+    "colScore": "score",
+    "directions": {
+      "descent": "nedad",
+      "ascent": "opad",
+      "flat": "fladt"
+    }
+  },
   "sectionBest": "Bedste tider",
   "bestTimes": {
     "title": "Bedste tider",

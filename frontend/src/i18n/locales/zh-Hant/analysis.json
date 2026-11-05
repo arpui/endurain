@@ -168,6 +168,22 @@
     "colContrast": "對比本次",
     "rules": "此處的判定方式：平路上只有維持 ≥{effortIf}·CP 的段落才算間歇；強度段在 {openW} W 開啟、低於 {closeW} W 結束；最短 {minS} 秒（低於 {shortS} 秒需達到本次中位數的 {shortBase}；無真正恢復——≤{recoveryW} W——時需 {strongBase}）；坡度 >{climbGrade}% 且 IF<{climbIf} 計為爬坡。"
   },
+  "trail": {
+    "title": "技術路段",
+    "experimental": "實驗性",
+    "summary": "{technical}% 的地面（{metres} 公尺 / 共 {of} 公尺）被判定為技術性路段。",
+    "hint": "配速低於坡度所能解釋、步頻不穩且下坡有煞車的路段。地圖上以琥珀色繪製。此偵測器仍在用真實路線校準。",
+    "colStart": "開始",
+    "colLength": "長度",
+    "colDirection": "方向",
+    "colGrade": "坡度",
+    "colScore": "評分",
+    "directions": {
+      "descent": "下坡",
+      "ascent": "上坡",
+      "flat": "平路"
+    }
+  },
   "sectionBest": "最佳成績",
   "bestTimes": {
     "title": "最佳成績",

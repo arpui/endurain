@@ -168,6 +168,22 @@
     "colContrast": "vs sesja",
     "rules": "Jak to wykrywać: na płaskim odcinek liczy się jako interwał tylko, jeśli utrzymuje ≥{effortIf}·CP; akcent otwiera się przy {openW} W i zamyka poniżej {closeW} W; minimum {minS} s (poniżej {shortS} s wymaga {shortBase} mediany sesji; bez prawdziwej regeneracji —≤{recoveryW} W—, {strongBase}); nachylenie >{climbGrade}% z IF<{climbIf} liczy się jako podbieg."
   },
+  "trail": {
+    "title": "Odcinki techniczne",
+    "experimental": "eksperymentalne",
+    "summary": "{technical}% terenu ({metres} m z {of} m) jest odczytywane jako techniczne.",
+    "hint": "Odcinki, na których tempo jest wolniejsze, niż wynika to ze spadku, z nierównym krokiem i hamowaniem na zjazdach. Na mapie są rysowane bursztynowym kolorem. Ten detektor jest nadal kalibrowany na prawdziwych trasach.",
+    "colStart": "start",
+    "colLength": "długość",
+    "colDirection": "kierunek",
+    "colGrade": "nachylenie",
+    "colScore": "ocena",
+    "directions": {
+      "descent": "zjazd",
+      "ascent": "podbieg",
+      "flat": "płasko"
+    }
+  },
   "sectionBest": "Najlepsze czasy",
   "bestTimes": {
     "title": "Najlepsze czasy",

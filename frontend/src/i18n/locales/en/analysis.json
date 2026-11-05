@@ -168,6 +168,22 @@
     "colContrast": "vs session",
     "rules": "How it is detected here: on the flat a stretch counts as an interval only if it holds ≥{effortIf}·CP; an effort opens at {openW} W and closes below {closeW} W; minimum {minS} s (under {shortS} s it needs {shortBase} the session median; with no real recovery —≤{recoveryW} W—, {strongBase}); a grade above {climbGrade}% with IF<{climbIf} counts as a climb."
   },
+  "trail": {
+    "title": "Technical sections",
+    "experimental": "experimental",
+    "summary": "{technical}% of the ground ({metres} m of {of} m) reads as technical terrain.",
+    "hint": "Sections where the pace falls short of what the grade explains, with irregular stride and braking on descents. On the map they are drawn in amber. This detector is still being calibrated against real routes.",
+    "colStart": "start",
+    "colLength": "length",
+    "colDirection": "direction",
+    "colGrade": "grade",
+    "colScore": "score",
+    "directions": {
+      "descent": "descent",
+      "ascent": "ascent",
+      "flat": "flat"
+    }
+  },
   "sectionBest": "Best times",
   "bestTimes": {
     "title": "Best times",

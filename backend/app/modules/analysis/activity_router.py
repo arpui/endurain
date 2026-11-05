@@ -79,6 +79,28 @@ def get_activity_lap_dynamics(
 
 
 @router.get(
+    "/trail-sections",
+    response_model=analysis_schema.TrailSectionsRead,
+)
+def get_trail_sections(
+    activity_id: activity_dependencies.ActivityId,
+    _check_scopes: Annotated[
+        Callable,
+        Security(auth_dependencies.check_scopes, scopes=["analysis:read"]),
+    ],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.TrailSectionsRead:
+    """Return the technical stretches of one trail run (experimental).
+
+    Spatial windows where the pace falls short of what the grade explains,
+    with stride mechanics changed, are read as technical terrain: the ground,
+    not the gradient, is what cost. Polylines included for the map.
+    """
+    return analysis_service.get_trail_sections(activity_id, token_user_id, db)
+
+
+@router.get(
     "/intervals",
     response_model=analysis_schema.ActivityIntervalsRead,
 )
