@@ -279,12 +279,14 @@
       "hard": "vaativa",
       "technical": "tekninen",
       "mild": "pehmeä",
-      "thin": "vielä liian vähän"
+      "thin": "vielä liian vähän",
+      "plain": "Kuljettu, ei väitettä"
     },
     "hint": "Kartta piirtää kutakin polkua kohden yhden viivan, väritys laskeutumisten näyttämänä. Polku tarvitsee vähintään {min} laskeutumista ennen väitteitä; hajonta näyttää, ovatko kulenniset samaa mieltä.",
     "empty": {
       "title": "Ei vielä kuljettuja polkuja",
       "description": "Muutama laskeutuma samaa polkua pitkin tarvitaan, jolla näkymällä on näyttöä."
-    }
+    },
+    "colCrossings": "Kulennukset"
   }
 }

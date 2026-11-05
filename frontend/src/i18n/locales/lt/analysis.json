@@ -279,12 +279,14 @@
       "hard": "sunkus",
       "technical": "techniškas",
       "mild": "lengvas",
-      "thin": "kol kas nepakanka"
+      "thin": "kol kas nepakanka",
+      "plain": "Pereita, nieko neįvertinta"
     },
     "hint": "Žemėlapis brėžia po liniją kiekvienam takui, nuspalvintą pagal tai, ką patvirtina nusileidimai. Takui reikia bent {min} nusileidimų, kol kas nors teigiama; sklaida rodo, ar pravažiai sutaria.",
     "empty": {
       "title": "Dar nėra pereitų takų",
       "description": "Reikia kelių nusileidimų tuo pačiu taku, kad šis vaizdas turėtų įrodymų."
-    }
+    },
+    "colCrossings": "Pravažimai"
   }
 }

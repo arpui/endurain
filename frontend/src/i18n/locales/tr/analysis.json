@@ -279,12 +279,14 @@
       "hard": "zor",
       "technical": "teknik",
       "mild": "yumuşak",
-      "thin": "henüz yetersiz"
+      "thin": "henüz yetersiz",
+      "plain": "Geçildi, iddia yok"
     },
     "hint": "Harita patika başına bir çizgi çizer, inişlerin desteklediği renkle. Bir patika herhangi bir iddia için en az {min} iniş ister; yayılım geçişlerin ne ölçüde örtüştüğünü gösterir.",
     "empty": {
       "title": "Henüz geçilen patika yok",
       "description": "Bu görünümün kanıt için aynı patikadan birkaç inişe ihtiyacı var."
-    }
+    },
+    "colCrossings": "Geçisler"
   }
 }

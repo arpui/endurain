@@ -279,12 +279,14 @@
       "hard": "náročné",
       "technical": "technické",
       "mild": "mírné",
-      "thin": "zatím málo"
+      "thin": "zatím málo",
+      "plain": "Prošlo, bez tvrzení"
     },
     "hint": "Mapa kreslí jednu čáru na cestu, barevně podle stupně sestupů. Cesta potřebuje alespoň {min} sestupů, než se o ní něco tvrdí; rozptyl ukazuje, jak si průchody rozumí.",
     "empty": {
       "title": "Zatím žádné prošlé cesty",
       "description": "Je potřeba několik sestupů touž cestou, aby tento pohled měl důkazy."
-    }
+    },
+    "colCrossings": "Průchody"
   }
 }

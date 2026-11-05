@@ -30,7 +30,7 @@ const container = ref<HTMLElement | null>(null)
 let instance: MapInstance | null = null
 
 /** The four claims, in map order: what the colours mean. */
-const LEGEND: TrailClaim[] = ['hard', 'technical', 'mild', 'thin']
+const LEGEND: TrailClaim[] = ['hard', 'technical', 'mild', 'thin', 'plain']
 
 /** One coloured polyline per way; the picked one rides at full opacity. */
 function overlays(): MapOverlay[] {

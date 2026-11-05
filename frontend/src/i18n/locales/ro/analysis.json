@@ -279,12 +279,14 @@
       "hard": "dur",
       "technical": "tehnic",
       "mild": "ușor",
-      "thin": "încă puține"
+      "thin": "încă puține",
+      "plain": "Străbătut, fără pretenții"
     },
     "hint": "Harta desenează o linie per potecă, colorată după ce susțin coborârile. O potecă are nevoie de cel puțin {min} coborâri înainte de a afirma ceva; împrăștierea arată cât de mult se potrivesc trecerile.",
     "empty": {
       "title": "Încă nicio potecă străbătută",
       "description": "Sunt necesare câteva coborâri pe aceeași potecă pentru ca această vedere să aibă dovezi."
-    }
+    },
+    "colCrossings": "Treceri"
   }
 }

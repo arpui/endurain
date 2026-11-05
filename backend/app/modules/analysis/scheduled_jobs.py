@@ -43,6 +43,17 @@ def reconcile_trail_sections() -> None:
         analysis_service.reconcile_trail_sections(db)
 
 
+def reconcile_way_crossings() -> None:
+    """Match every run activity's whole track against the mapped ways.
+
+    Technical stretches alone would make the network show only remarkable
+    ground; the paths between them are the network, and they come from this
+    coverage pass. Scheduler-invoked, so it opens its own session.
+    """
+    with core_database.SessionLocal() as db:
+        analysis_service.reconcile_way_crossings(db)
+
+
 def match_trail_cartography() -> None:
     """Say which mapped way each measured technical stretch lies on.
 
@@ -85,6 +96,11 @@ def recurring_jobs() -> tuple[core_scheduler.ScheduledJob, ...]:
             match_trail_cartography,
             3600,
             "match measured stretches to the imported OpenStreetMap extract",
+        ),
+        core_scheduler.ScheduledJob(
+            reconcile_way_crossings,
+            3600,
+            "cover run activities' full tracks against the mapped ways",
         ),
     )
 

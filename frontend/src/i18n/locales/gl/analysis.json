@@ -279,12 +279,14 @@
       "hard": "duro",
       "technical": "técnico",
       "mild": "suave",
-      "thin": "aínda non abonda"
+      "thin": "aínda non abonda",
+      "plain": "Cruzado, sen reclamar nada"
     },
     "hint": "O mapa debuxa unha liña por camiño, coloreada segundo o que afirman os seus descensos. Un camiño precisa polo menos {min} descensos antes de afirmar nada; a dispersión mostra se as travesías coinciden.",
     "empty": {
       "title": "Aínda non hai camiños cruzados",
       "description": "Faltan algúns descensos polo mesmo camiño para que esta vista teña evidencia."
-    }
+    },
+    "colCrossings": "Travesías"
   }
 }

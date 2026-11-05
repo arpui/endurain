@@ -438,6 +438,11 @@ class TrailSession(Base, TimestampMixin):
     technical_m: Mapped[float] = mapped_column(
         Float, nullable=False, default=0.0, comment="Ground flagged technical over it"
     )
+    coverage_cache_date: Mapped[date | None] = mapped_column(
+        Date,
+        nullable=True,
+        comment="Extract the session's full track was matched against",
+    )
 
 
 class OsmPath(Base, TimestampMixin):
@@ -655,4 +660,51 @@ class TrailSection(Base, TimestampMixin):
         ),
         Index("ix_analysis_trail_sections_user_method", "user_id", "method"),
         Index("ix_analysis_trail_sections_osm_way", "osm_way_id"),
+    )
+
+
+class WayCrossing(Base, TimestampMixin):
+    """One pass of one activity over one mapped way.
+
+    Technical stretches show where the ground was remarkable; crossings show
+    where the athlete actually ran. The full set is what makes the network a
+    network: the ordinary paths between the hard ones are the ground a future
+    route is assembled from, and they are missing until each activity's whole
+    track is matched, not just its technical parts.
+
+    Attributes:
+        user_id: The athlete who crossed it.
+        activity_id: The session of the crossing.
+        way_id: The OSM way the track ran along.
+        start_m: Offset along the way (drawn order) where the crossing starts.
+        end_m: Offset along the way where it ends.
+        covered_m: Ground of the crossing the way accounts for.
+        cache_date: Day of the extract this crossing was checked against.
+    """
+
+    __tablename__ = "analysis_way_crossings"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, comment="Athlete who crossed it"
+    )
+    activity_id: Mapped[int] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"), primary_key=True, comment="Session of the crossing"
+    )
+    way_id: Mapped[int] = mapped_column(
+        ForeignKey("analysis_osm_paths.way_id", ondelete="CASCADE"), primary_key=True, comment="OSM way crossed"
+    )
+    start_m: Mapped[float] = mapped_column(
+        Float, primary_key=True, comment="Offset along the way where the crossing starts, in drawn order"
+    )
+    end_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Offset along the way where it ends")
+    covered_m: Mapped[float] = mapped_column(
+        Float, nullable=False, comment="Ground of the crossing the way accounts for"
+    )
+    cache_date: Mapped[date] = mapped_column(
+        Date, nullable=False, comment="Extract the crossing was checked against (an honest miss has no row)"
+    )
+
+    __table_args__ = (
+        Index("ix_analysis_way_crossings_activity", "activity_id"),
+        Index("ix_analysis_way_crossings_user_way", "user_id", "way_id"),
     )

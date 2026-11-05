@@ -652,6 +652,7 @@ describe('trail network', () => {
           way_id: 4242,
           name: 'Corriol',
           claim: 'hard',
+          crossings_total: 6,
           descent_crossings: 4,
           ascent_crossings: 1,
           hard_crossings: 3,

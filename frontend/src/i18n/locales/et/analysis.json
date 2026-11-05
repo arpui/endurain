@@ -279,12 +279,14 @@
       "hard": "karm",
       "technical": "tehniline",
       "mild": "pehme",
-      "thin": "viel liiga vähe"
+      "thin": "viel liiga vähe",
+      "plain": "Ületatud, väide puudub"
     },
     "hint": "Kaart joonistab iga raja kohta ühe joone, värvitud sellest, mida laskumised toetavad. Raja kohta vajatakse vähemalt {min} laskumist, enne midagi väidetakse; hajuvus näitab, kas ületused on ühel meelel.",
     "empty": {
       "title": "Ületatud radu veel pole",
       "description": "Sama raja mõned laskumised on vajalikud, et see vaade saaks tõendusmaterjali."
-    }
+    },
+    "colCrossings": "Ületused"
   }
 }

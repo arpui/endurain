@@ -535,10 +535,12 @@ class TrailNetworkWayRead(BaseModel):
     Attributes:
         way_id: The OSM way this is.
         name: The way's mapped name, when it carries one.
+        crossings_total: Distinct sessions whose track ran over it, technical or not.
         claim: What its descents back: ``hard`` or ``technical`` once enough
             crossings put its median index over that band, ``mild`` when the
-            crossings are enough but the ground is ordinary, and ``thin`` when
-            they are not enough to claim anything yet.
+            crossings are enough but the ground is ordinary, ``thin`` when they
+            are not enough to claim anything yet, and ``plain`` when the
+            activity's whole track ran over it but no technical stretch did.
         descent_crossings: Distinct sessions that went down it: the measurement.
         ascent_crossings: Distinct sessions that crossed it the other way, shown
             as corroboration only: a broken path can be climbed fast.
@@ -563,16 +565,17 @@ class TrailNetworkWayRead(BaseModel):
 
     way_id: StrictInt
     name: StrictStr | None
-    claim: Literal["hard", "technical", "mild", "thin"]
+    claim: Literal["hard", "technical", "mild", "thin", "plain"]
+    crossings_total: StrictInt
     descent_crossings: StrictInt
     ascent_crossings: StrictInt
     hard_crossings: StrictInt
-    med_score: StrictFloat
-    q1: StrictFloat
-    q3: StrictFloat
-    min_score: StrictFloat
-    max_score: StrictFloat
-    med_grade_pct: StrictFloat
+    med_score: StrictFloat | None
+    q1: StrictFloat | None
+    q3: StrictFloat | None
+    min_score: StrictFloat | None
+    max_score: StrictFloat | None
+    med_grade_pct: StrictFloat | None
     length_m: StrictFloat
     geometry: list[list[float]]
     sac_scale: StrictStr | None
@@ -592,7 +595,7 @@ class TrailNetworkRead(BaseModel):
             as firmly technical.
         hard_ratio: Multiple of the cut for a hard claim.
         min_descents: Descents a way needs before anything is claimed for it.
-        ways: The ways with measured descents, best claim first.
+        ways: The ways the athlete ran over - technical evidence or not - best claim first.
     """
 
     model_config = ConfigDict(extra="forbid")

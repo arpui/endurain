@@ -198,3 +198,40 @@ def match_stretch(
             best_coverage = coverage
 
     return best
+
+
+def chunk_polyline(
+    points: Sequence[tuple[float, float]],
+    chunk_m: float = analysis_constants.OSM_COVER_CHUNK_M,
+) -> list[list[tuple[float, float]]]:
+    """Split a track polyline into consecutive ground-length chunks.
+
+    Chunks share their boundary point, so the coverage pass never loses the
+    ground between two of them. Shorter than one chunk, the whole line is one
+    chunk; fewer than two points, no chunks.
+
+    Args:
+        points: Ordered ``(lat, lng)`` pairs of the track.
+        chunk_m: Ground length each chunk aims to cover.
+
+    Returns:
+        The chunks, in track order.
+    """
+    if len(points) < 2:
+        return []
+    xy = _to_xy(points, points[0][0], points[0][1])
+    offsets = _arc_offsets(xy)
+    chunks: list[list[tuple[float, float]]] = []
+    start_index = 0
+    start_offset = 0.0
+    for index in range(1, len(points)):
+        if offsets[index] - start_offset >= chunk_m:
+            chunk = list(points[start_index : index + 1])
+            if len(chunk) >= 2:
+                chunks.append(chunk)
+            start_index = index
+            start_offset = offsets[index]
+    tail = list(points[start_index:])
+    if len(tail) >= 2:
+        chunks.append(tail)
+    return chunks

@@ -257,3 +257,20 @@ class OsmMatchRecord:
     start_m: float
     end_m: float
     covered_m: float
+
+
+@dataclass(frozen=True)
+class WayCrossingRecord:
+    """One pass of an activity's track over one mapped way.
+
+    Attributes:
+        way_id: The matched way.
+        start_m: Offset along the way where the crossing starts, in drawn order.
+        end_m: Offset along the way where it ends.
+        covered_m: Ground of the crossing the way accounts for.
+    """
+
+    way_id: int
+    start_m: float
+    end_m: float
+    covered_m: float

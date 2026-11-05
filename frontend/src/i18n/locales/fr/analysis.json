@@ -279,12 +279,14 @@
       "hard": "dur",
       "technical": "technique",
       "mild": "léger",
-      "thin": "pas encore assez"
+      "thin": "pas encore assez",
+      "plain": "Traversé, sans affirmation"
     },
     "hint": "La carte trace une ligne par sentier, colorée selon ce que ses descentes confirment. Un sentier exige au moins {min} descentes avant toute affirmation ; la dispersion montre si les passages concordent.",
     "empty": {
       "title": "Aucun sentier traversé pour l'instant",
       "description": "Il faut quelques descentes du même sentier pour que cette vue ait des preuves."
-    }
+    },
+    "colCrossings": "Passages"
   }
 }

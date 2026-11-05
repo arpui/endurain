@@ -279,12 +279,14 @@
       "hard": "grūts",
       "technical": "tehnisks",
       "mild": "viegls",
-      "thin": "vēl par maz"
+      "thin": "vēl par maz",
+      "plain": "Šķērsots, bez apgalvojuma"
     },
     "hint": "Karte zīmē vienu līniju katram celiņam, iekrāsotu pēc tā, ko apstiprina nolaišanās. Celiņam vajadzīgas vismaz {min} nolaišanās, pirms kaut ko apgalvo; izkliede rāda, vai šķērsojumi sakrīt.",
     "empty": {
       "title": "Vēl nav šķērsotu celiņu",
       "description": "Vajadzīgas dažas nolaišanās pa to pašu celiņu, lai šim skatam būtu pierādījumu."
-    }
+    },
+    "colCrossings": "Šķērsojumi"
   }
 }

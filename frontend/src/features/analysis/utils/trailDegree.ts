@@ -208,6 +208,12 @@ const CLAIM_GRADES: Record<TrailClaim, TrailWayGrade> = {
     opacity: 0.45,
     labelKey: 'analysis.trailNetwork.claim.thin',
   },
+  plain: {
+    colorToken: '--color-ink',
+    weight: 3,
+    opacity: 0.5,
+    labelKey: 'analysis.trailNetwork.claim.plain',
+  },
 }
 
 /**

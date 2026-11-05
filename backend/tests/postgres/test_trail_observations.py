@@ -11,11 +11,14 @@ row is also only exercised by a real database.
 from dataclasses import replace
 from datetime import UTC, date, datetime
 
+from sqlalchemy import select
+
 import modules.activities.activity.contracts as activity_contracts
 import modules.activities.activity.crud as activity_crud
 import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
 import modules.analysis.crud as analysis_crud
+import modules.analysis.models as analysis_models
 import modules.analysis.service as analysis_service
 from tests._helpers.db import ensure_user
 
@@ -302,6 +305,55 @@ class TestTrailWayEvidence:
         assert {pair[0].way_id for pair in pairs} == {4242, 99}
         assert {pair[0].way_id for pair in near} == {4242}
         assert {pair[1].start_m for pair in near} == {7675.0}
+
+
+class TestWayCrossings:
+    def test_crossings_replace_round_trip_and_the_marker_gates_the_pass(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            activity_id = _run_activity(db)
+            analysis_crud.replace_osm_paths([_way(way_id=4242)], db)
+            session_row, sections = _observation(sections=1)
+            analysis_crud.replace_trail_observation(
+                user_id=_USER_ID,
+                activity_id=activity_id,
+                method=_METHOD,
+                observation=session_row,
+                sections=sections,
+                db=db,
+            )
+            db.commit()
+
+            assert analysis_crud.activity_ids_needing_coverage([activity_id], _METHOD, date(2026, 11, 1), db) == {
+                activity_id
+            }
+
+            first = [
+                analysis_contracts.WayCrossingRecord(way_id=4242, start_m=0.0, end_m=500.0, covered_m=500.0),
+                analysis_contracts.WayCrossingRecord(way_id=4242, start_m=600.0, end_m=900.0, covered_m=300.0),
+            ]
+            assert analysis_crud.replace_way_crossings(_USER_ID, activity_id, date(2026, 11, 1), first, db) == 2
+            analysis_crud.set_trail_session_coverage_date(activity_id, _METHOD, date(2026, 11, 1), db)
+            db.commit()
+
+            assert analysis_crud.list_user_way_crossing_counts(_USER_ID, db) == {4242: 1}
+            assert analysis_crud.activity_ids_needing_coverage([activity_id], _METHOD, date(2026, 11, 1), db) == set()
+            # a newer extract reopens the question
+            assert analysis_crud.activity_ids_needing_coverage([activity_id], _METHOD, date(2026, 12, 1), db) == {
+                activity_id
+            }
+
+            second = [analysis_contracts.WayCrossingRecord(way_id=4242, start_m=0.0, end_m=900.0, covered_m=900.0)]
+            assert analysis_crud.replace_way_crossings(_USER_ID, activity_id, date(2026, 12, 1), second, db) == 1
+            db.commit()
+            rows = (
+                db.execute(
+                    select(analysis_models.WayCrossing).where(analysis_models.WayCrossing.activity_id == activity_id)
+                )
+                .scalars()
+                .all()
+            )
+            assert len(rows) == 1 and rows[0].covered_m == 900.0
 
 
 class TestOsmPaths:

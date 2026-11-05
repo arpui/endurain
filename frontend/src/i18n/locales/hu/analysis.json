@@ -279,12 +279,14 @@
       "hard": "kemény",
       "technical": "technikai",
       "mild": "enyhe",
-      "thin": "egyelőre kevés"
+      "thin": "egyelőre kevés",
+      "plain": "Bejárt, igény nélkül"
     },
     "hint": "A térképen ösvényenként egy vonal, a lejtmenetek által alátámasztott jelöléssel. Egy ösvénynek legalább {min} lefelé átjárás kell, mielőtt bármit állítanánk; a szórás mutatja, mennyire értenek egyet az átjárások.",
     "empty": {
       "title": "Még nincs bejárt ösvény",
       "description": "Néhány ugyanazon ösvényen megtett lefelé haladás kell, hogy ez a nézet bizonyítékokra támaszkodhasson."
-    }
+    },
+    "colCrossings": "Áthaladások"
   }
 }

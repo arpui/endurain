@@ -7,7 +7,7 @@ flushes: the service owns the transaction.
 from collections.abc import Sequence
 from datetime import date
 
-from sqlalchemy import delete, func, or_, select
+from sqlalchemy import delete, distinct, func, or_, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
@@ -753,6 +753,112 @@ def get_osm_paths_by_ids(
         path.way_id: path
         for path in db.scalars(select(analysis_models.OsmPath).where(analysis_models.OsmPath.way_id.in_(way_ids)))
     }
+
+
+def replace_way_crossings(
+    user_id: int,
+    activity_id: int,
+    cache_date: date,
+    crossings: Sequence[analysis_contracts.WayCrossingRecord],
+    db: Session,
+) -> int:
+    """Replace one activity's stored crossings over mapped ways.
+
+    A session's coverage is a whole-track answer: re-measuring it replaces the
+    previous answer rather than appending to it, so the same pass never
+    double-counts a way.
+
+    Args:
+        user_id: The athlete who crossed them.
+        activity_id: The session measured.
+        cache_date: Day of the extract the crossings were checked against.
+        crossings: The passes found, along-way offsets included.
+        db: Database session.
+
+    Returns:
+        The number of crossings stored.
+    """
+    db.execute(
+        delete(analysis_models.WayCrossing).where(
+            analysis_models.WayCrossing.user_id == user_id,
+            analysis_models.WayCrossing.activity_id == activity_id,
+        )
+    )
+    for record in crossings:
+        db.add(
+            analysis_models.WayCrossing(
+                user_id=user_id,
+                activity_id=activity_id,
+                way_id=record.way_id,
+                start_m=record.start_m,
+                end_m=record.end_m,
+                covered_m=record.covered_m,
+                cache_date=cache_date,
+            )
+        )
+    return len(crossings)
+
+
+def set_trail_session_coverage_date(activity_id: int, method: str, cache_date: date, db: Session) -> None:
+    """Mark the session's observation row as covered against the current extract.
+
+    An activity whose track lies on no mapped way stores no crossings, so the
+    session row is what tells the next pass the question was already asked.
+    """
+    db.execute(
+        update(analysis_models.TrailSession)
+        .where(
+            analysis_models.TrailSession.activity_id == activity_id,
+            analysis_models.TrailSession.method == method,
+        )
+        .values(coverage_cache_date=cache_date)
+    )
+
+
+def activity_ids_needing_coverage(activity_ids: Sequence[int], method: str, cache_date: date, db: Session) -> set[int]:
+    """Which of the given activities still need their whole track matched to ways.
+
+    Args:
+        activity_ids: The candidate activities.
+        method: The current detector stamp, whose session rows carry the marker.
+        cache_date: Day of the extract in store; an older marker means a newer extract.
+        db: Database session.
+
+    Returns:
+        The activities with no session row yet, or one not yet covered against this extract.
+    """
+    if not activity_ids:
+        return set()
+    rows = db.execute(
+        select(
+            analysis_models.TrailSession.activity_id,
+            analysis_models.TrailSession.coverage_cache_date,
+        ).where(
+            analysis_models.TrailSession.activity_id.in_(activity_ids),
+            analysis_models.TrailSession.method == method,
+        )
+    )
+    return {activity_id for activity_id, covered in rows if covered is None or covered < cache_date}
+
+
+def list_user_way_crossing_counts(user_id: int, db: Session) -> dict[int, int]:
+    """Count how many sessions crossed each mapped way of the caller.
+
+    Args:
+        user_id: The athlete whose crossings count.
+        db: Database session.
+
+    Returns:
+        Way id to number of distinct sessions that ran over it.
+    """
+    rows = db.execute(
+        select(
+            analysis_models.WayCrossing.way_id,
+            func.count(distinct(analysis_models.WayCrossing.activity_id)),
+        ).where(analysis_models.WayCrossing.user_id == user_id)
+        .group_by(analysis_models.WayCrossing.way_id)
+    ).all()
+    return {int(way_id): int(count) for way_id, count in rows}
 
 
 def list_trail_way_evidence(

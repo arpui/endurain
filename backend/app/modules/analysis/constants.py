@@ -612,10 +612,14 @@ OSM_MATCH_MIN_COVERAGE = 0.6
 #: How many stretches one matching pass takes, so an import of a whole region is
 #: worked through in bounded transactions.
 OSM_MATCH_PAGE = 500
+#: Ground length of the track chunk the coverage pass matches at a time. Longer
+#: than the detector's window: a crossing needs no fine resolution, only which
+#: way the runner was on.
+OSM_COVER_CHUNK_M = 150.0
 
 #: A way earns a claim in the network only once its ground has been descended in
 #: this many separate sessions: fewer, and one tired day or one bad season could
 #: be the whole signal.
 TRAIL_NETWORK_MIN_DESCENTS = 3
 #: Ways handed back by one network read, best-claimed first.
-TRAIL_NETWORK_MAX_WAYS = 300
+TRAIL_NETWORK_MAX_WAYS = 800

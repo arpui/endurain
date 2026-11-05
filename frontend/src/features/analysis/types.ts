@@ -574,7 +574,7 @@ export interface TrailSections {
 }
 
 /** What a way's own descents back, once enough of them agree. */
-export type TrailClaim = 'hard' | 'technical' | 'mild' | 'thin'
+export type TrailClaim = 'hard' | 'technical' | 'mild' | 'thin' | 'plain'
 
 /** One mapped way of the crossed network, judged by its descents. */
 export interface TrailNetworkWay {
@@ -584,24 +584,26 @@ export interface TrailNetworkWay {
   name: string | null
   /** What its descents back. */
   claim: TrailClaim
+  /** Distinct sessions whose track ran over it, technical or not. */
+  crossingsTotal: number
   /** Distinct sessions that went down it: the measurement. */
   descentCrossings: number
   /** Distinct sessions that crossed it the other way: corroboration only. */
   ascentCrossings: number
   /** Descent crossings that contained a hard core. */
   hardCrossings: number
-  /** Median, across descents, of the harshest index each reached. */
-  medScore: number
+  /** Median, across descents, of the harshest index each reached; null when it has none. */
+  medScore: number | null
   /** First quartile of that distribution. */
-  q1: number
+  q1: number | null
   /** Third quartile of it. */
-  q3: number
+  q3: number | null
   /** The gentlest descent of it. */
-  minScore: number
+  minScore: number | null
   /** The harshest descent of it. */
-  maxScore: number
+  maxScore: number | null
   /** Median grade of the descent crossings, percent. */
-  medGradePct: number
+  medGradePct: number | null
   /** The way's length as drawn, metres. */
   lengthM: number
   /** The ordered polyline: what the map draws and a route would join. */

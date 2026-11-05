@@ -279,12 +279,14 @@
       "hard": "hård",
       "technical": "teknisk",
       "mild": "let",
-      "thin": "ikke nok endnu"
+      "thin": "ikke nok endnu",
+      "plain": "Krydset, intet hævdet"
     },
     "hint": "Kortet tegner én linje pr. sti, farvet efter hvad nedstigningerne bakker op om. En sti skal bruge mindst {min} nedstigninger, før der påstås noget; spredningen viser, om passagerne er enige.",
     "empty": {
       "title": "Ingen passerede stier endnu",
       "description": "Et par nedstigninger ad samme sti skal til, før denne visning har evidens nedstigningsnetværk"
-    }
+    },
+    "colCrossings": "Gennemgange"
   }
 }
