@@ -168,6 +168,22 @@
     "colContrast": "vs Einheit",
     "rules": "So wird erkannt: auf flachem Grund zählt ein Abschnitt nur als Intervall, wenn er ≥{effortIf}·CP hält; ein Einsatz beginnt bei {openW} W und endet unter {closeW} W; mindestens {minS} s (unter {shortS} s braucht er {shortBase} des Einheiten-Medians; ohne echte Erholung —≤{recoveryW} W— {strongBase}); bei Steigung >{climbGrade}% und IF<{climbIf} zählt er als Anstieg."
   },
+  "trail": {
+    "title": "Technische Passagen",
+    "experimental": "experimentell",
+    "summary": "{technical}% des Geländes ({metres} m von {of} m) werden als technisch gelesen.",
+    "hint": "Abschnitte, in denen das Tempo hinter dem zurückbleibt, was die Steigung erklärt, mit unregelmäßigem Schritt und Bremsen in Abfahrten. Auf der Karte sind sie bernsteinfarben markiert. Der Detektor wird noch an echten Routen kalibriert.",
+    "colStart": "Beginn",
+    "colLength": "Länge",
+    "colDirection": "Richtung",
+    "colGrade": "Steigung",
+    "colScore": "Wertung",
+    "directions": {
+      "descent": "Abstieg",
+      "ascent": "Anstieg",
+      "flat": "flach"
+    }
+  },
   "sectionBest": "Bestzeiten",
   "bestTimes": {
     "title": "Bestzeiten",

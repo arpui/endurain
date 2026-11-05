@@ -520,3 +520,26 @@ PEAK_RUNAWAY_NEIGHBOR_SHARE = 0.7
 #: the athlete.
 PEAK_RUNAWAY_STALL_V_MS = 1.0
 PEAK_RUNAWAY_GRADE_EXEMPT_PCT = 12.0
+
+#: Technical-terrain detection for trail runs (experimental, calibration open):
+#: spatial windows of WINDOW_M metres; a window is technical when the GAP
+#: (Minetti) speed deficit, the cadence jitter and the downhill braking share
+#: add up over THRESHOLD, after smoothing; runs shorter than MIN_LENGTH_M are
+#: dropped. Weights: speed anomaly / cadence instability / braking in descent.
+TRAIL_WINDOW_M = 25.0
+TRAIL_THRESHOLD = 0.38
+TRAIL_MIN_LENGTH_M = 75.0
+TRAIL_W_SPEED = 0.55
+TRAIL_W_CADENCE = 0.20
+TRAIL_W_BRAKE = 0.25
+#: A near-flat window slower than this is a pause, not terrain.
+TRAIL_REST_V_MS = 1.4
+#: Cadence jitter scaling: cv of cadence times this lands the term in [0, 1].
+TRAIL_CAD_JITTER_SCALE = 5.0
+#: Downhill braking: below this grade, a stride under BRAKE_STRIDE_M (measured
+#: from cadence and speed) scores the brake term over its span to BRAKE_SPAN_M.
+TRAIL_BRAKE_GRADE = -0.07
+TRAIL_BRAKE_STRIDE_M = 1.05
+TRAIL_BRAKE_SPAN_M = 0.45
+#: A window needs at least this many moving samples to be judged at all.
+TRAIL_MIN_SAMPLES = 8

@@ -168,6 +168,22 @@
     "colContrast": "vs suoritus",
     "rules": "Näin havaitaan: tasangolla jakso on intervalli vain jos se pitää ≥{effortIf}·CP; suoritus avautuu {openW} W:issa ja sulkeutuu alle {closeW} W; vähintään {minS} s (alle {shortS} s vaaditaan {shortBase} session mediaanista; ilman kunnon palautusta —≤{recoveryW} W—, {strongBase}); yli {climbGrade}% nousulla ja IF<{climbIf} lasketaan nousuksi."
   },
+  "trail": {
+    "title": "Tekniset osuudet",
+    "experimental": "kokeellinen",
+    "summary": "{technical}% maastosta ({metres} m / {of} m) näyttää tekniseltä.",
+    "hint": "Osuudet, joissa vauhti jää alle sen, mitä nousu selittää, epäsäännöllisin askelin ja jarrutuksin mäkilaskuissa. Kartalla ne on merkitty meripihkanvärisiksi. Tunnistinta kalibroidaan yää todellisilla reiteillä.",
+    "colStart": "alku",
+    "colLength": "pituus",
+    "colDirection": "suunta",
+    "colGrade": "nousu",
+    "colScore": "pistemäärä",
+    "directions": {
+      "descent": "lasku",
+      "ascent": "nousu",
+      "flat": "tasainen"
+    }
+  },
   "sectionBest": "Parhaat ajat",
   "bestTimes": {
     "title": "Parhaat ajat",

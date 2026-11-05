@@ -18,6 +18,7 @@ import {
   mapSettings,
   queueLoadRecompute,
   queueThresholdRefresh,
+  fetchTrailSections,
   updateAnalysisSettings,
 } from '@/features/analysis/services/analysis'
 
@@ -369,6 +370,48 @@ describe('power-flags fetch', () => {
         cap: 1.9,
       },
     ])
+  })
+})
+
+describe('trail technical sections', () => {
+  it('maps the sections and turns their points into map coordinates', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      activity_id: 9,
+      v_base_ms: 2.47,
+      cadence_available: true,
+      technical_m: 5750.0,
+      total_m: 18760.0,
+      sections: [
+        {
+          start_m: 7675.0,
+          length_m: 1325.0,
+          grade_pct: -14.7,
+          avg_speed_ms: 1.52,
+          gap_deficit: 0.67,
+          cadence_jitter: 0.32,
+          brake_score: 0.86,
+          score: 0.83,
+          direction: 'descent',
+          points: [{ lat: 42.47, lon: 0.99 }],
+        },
+      ],
+    } satisfies Schemas['TrailSectionsRead'])
+    const sections = await fetchTrailSections(9)
+    expect(apiFetch).toHaveBeenCalledWith('/activities/9/trail-sections', expect.anything())
+    expect(sections.vBaseMs).toBe(2.47)
+    expect(sections.technicalM).toBe(5750)
+    expect(sections.sections[0]).toEqual({
+      startM: 7675,
+      lengthM: 1325,
+      gradePct: -14.7,
+      avgSpeedMs: 1.52,
+      gapDeficit: 0.67,
+      cadenceJitter: 0.32,
+      brakeScore: 0.86,
+      score: 0.83,
+      direction: 'descent',
+      points: [{ lat: 42.47, lng: 0.99 }],
+    })
   })
 })
 

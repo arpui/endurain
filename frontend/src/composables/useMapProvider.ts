@@ -28,10 +28,22 @@ export interface MapTrack {
   finish?: GeoPoint
 }
 
+/** An extra polyline drawn on top of the track (e.g. an analysed section). */
+export interface MapOverlay {
+  /** Ordered coordinates forming the overlay polyline. */
+  points: GeoPoint[]
+  /** Stroke colour as a CSS colour string. */
+  color: string
+  /** Optional label for the provider's tooltip/legend. */
+  name?: string
+}
+
 /** Options controlling a single map render. */
 export interface MapRenderOptions {
   /** The track to display. */
   track: MapTrack
+  /** Extra polylines rendered above the track. */
+  overlays?: MapOverlay[]
   /** Whether the map responds to pan/zoom. Defaults to provider preference. */
   interactive?: boolean
 }

@@ -168,6 +168,22 @@
     "colContrast": "vs sesija",
     "rules": "Kako se ovdje prepoznaje: na ravnom se dionica broji kao interval samo ako drži ≥{effortIf}·CP; napor se otvara pri {openW} W i zatvara ispod {closeW} W; najmanje {minS} s (ispod {shortS} s treba {shortBase} medijana sesije; bez pravog odmora —≤{recoveryW} W—, {strongBase}); uz nagib >{climbGrade}% i IF<{climbIf} broji se kao uspon."
   },
+  "trail": {
+    "title": "Tehnički dionici",
+    "experimental": "eksperimentalno",
+    "summary": "{technical}% terena ({metres} m od {of} m) čita se kao tehnički.",
+    "hint": "Dionici u kojima tempo zaostaje za ono što objašnjava nagib, s neujednačenim korakom i kočenjem pri spuštanju. Na karti su označeni jantarnom bojom. Detektor se još kalibrira na stvarnim rutama.",
+    "colStart": "početak",
+    "colLength": "dužina",
+    "colDirection": "smjer",
+    "colGrade": "nagib",
+    "colScore": "ocjena",
+    "directions": {
+      "descent": "spuštanje",
+      "ascent": "uspon",
+      "flat": "ravno"
+    }
+  },
   "sectionBest": "Najbolja vremena",
   "bestTimes": {
     "title": "Najbolja vremena",

@@ -168,6 +168,22 @@
     "colContrast": "vs aktivita",
     "rules": "Ako sa to detekuje: na rovine sa úsek počíta ako interval len pri ≥{effortIf}·CP; úsek sa otvára pri {openW} W a zatvára pod {closeW} W; minimum {minS} s (pod {shortS} s treba {shortBase} mediánu aktivity; bez skutočnej regenerácie —≤{recoveryW} W—, {strongBase}); so stúpaním >{climbGrade}% a IF<{climbIf} sa počíta ako stúpanie."
   },
+  "trail": {
+    "title": "Technické úseky",
+    "experimental": "experimentálne",
+    "summary": "{technical} % terénu ({metres} m z {of} m) sa javí ako technický.",
+    "hint": "Úseky, kde tempo zaostáva za to, čo vysvetľuje sklon, s nepravidelným krokom a brzdením v klesaniach. Na mape sú vyznačené jantarovou farbou. Detektor sa ešte kalibruje na reálnych trase.",
+    "colStart": "začiatok",
+    "colLength": "dĺžka",
+    "colDirection": "smer",
+    "colGrade": "stúpanie",
+    "colScore": "skóre",
+    "directions": {
+      "descent": "klesanie",
+      "ascent": "stúpanie",
+      "flat": "rovina"
+    }
+  },
   "sectionBest": "Najlepšie časy",
   "bestTimes": {
     "title": "Najlepšie časy",

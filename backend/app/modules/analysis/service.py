@@ -13,6 +13,7 @@ one, and every stored load records the threshold it was divided by.
 """
 
 import calendar
+import statistics
 from bisect import bisect_left
 from collections.abc import Mapping, Sequence
 from datetime import UTC, date, datetime, timedelta
@@ -38,6 +39,7 @@ import modules.analysis.intervals as analysis_intervals
 import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
+import modules.analysis.trail as analysis_trail
 import modules.users.users.integration_service as users_integration
 
 logger = core_logger.get_logger(__name__)
@@ -2145,6 +2147,154 @@ def _lap_stride_length_m(lap: activity_laps_schema.ActivityLapsRead) -> float | 
     if lap.total_cycles and distance > 0:
         return distance / float(lap.total_cycles)
     return None
+
+
+def get_trail_sections(
+    activity_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> analysis_schema.TrailSectionsRead:
+    """Return which stretches of one trail run read as technical, for its owner.
+
+    Experimental (the calibration loop is open): spatial windows compare the
+    observed pace against what the grade alone explains - the same Minetti GAP
+    the pace-side numbers use - and where the pace falls short while stride
+    mechanics change (cadence erratic, stride braking on descents) the ground
+    itself is what costs. Only run sports answer; everything is computed on
+    read from the stored streams, so nothing new is written anywhere.
+
+    Args:
+        activity_id: The activity to read.
+        requester_user_id: The athlete asking; only their own activity answers.
+        db: Database session.
+
+    Returns:
+        The technical sections with their polylines, plus session context.
+
+    Raises:
+        NotFoundError: If the activity is not the requester's.
+    """
+    if not activity_integration.owns_activity(activity_id, requester_user_id, db):
+        raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
+    activity = activity_integration.get_activity_for_derivation(activity_id, db)
+    if activity is None or sport_group(activity.activity_type) != "run":
+        return analysis_schema.TrailSectionsRead(
+            activity_id=activity_id,
+            v_base_ms=0.0,
+            cadence_available=False,
+            technical_m=0.0,
+            total_m=0.0,
+            sections=[],
+        )
+    period_s, speeds, stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_SPEED,
+        "vel",
+        db,
+        keep_zeros=True,
+    )
+    if not speeds or period_s <= 0:
+        return analysis_schema.TrailSectionsRead(
+            activity_id=activity_id,
+            v_base_ms=0.0,
+            cadence_available=False,
+            technical_m=0.0,
+            total_m=0.0,
+            sections=[],
+        )
+    _, ele_values, ele_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_ELEVATION,
+        "ele",
+        db,
+        keep_zeros=True,
+    )
+    _, cad_values, cad_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_CADENCE,
+        "cad",
+        db,
+        keep_zeros=True,
+    )
+    ele_a = _align_to_power(ele_values, ele_stamps, stamps, period_s) if ele_values else None
+    cad_a = _align_to_power(cad_values, cad_stamps, stamps, period_s) if cad_values else None
+    if ele_a is None:
+        return analysis_schema.TrailSectionsRead(
+            activity_id=activity_id,
+            v_base_ms=0.0,
+            cadence_available=False,
+            technical_m=0.0,
+            total_m=0.0,
+            sections=[],
+        )
+    # alignment marks a gap as 0.0; altitude carries across a gap (jumping to
+    # sea level twice would forge two walls)
+    ele_fixed: list[float] = []
+    last = 0.0
+    for value in ele_a:
+        if value:
+            last = float(value)
+        ele_fixed.append(last)
+    # Garmin stores cycles/min; stride maths wants steps per minute
+    cadence: list[float] | None = None
+    if cad_a is not None:
+        live = [float(v) for v in cad_a if v > 0]
+        if live:
+            factor = 2.0 if statistics.median(live) < 110.0 else 1.0
+            cadence = [float(v) * factor for v in cad_a]
+    cum: list[float] = []
+    running = 0.0
+    for speed in speeds:
+        cum.append(running)
+        running += float(speed) * period_s
+    analysis = analysis_trail.analyse_technical_sections(
+        speeds,
+        cum,
+        ele_fixed,
+        cadence,
+    )
+
+    map_stream = activity_streams_integration.get_stream_for_derivation(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_MAP,
+        db,
+    )
+    track: list[tuple[datetime, float, float]] = []
+    for point in (map_stream.stream_waypoints if map_stream is not None else None) or []:
+        if not isinstance(point, dict) or point.get("lat") is None or point.get("lon") is None:
+            continue
+        track.append((datetime.fromisoformat(point["time"]), float(point["lat"]), float(point["lon"])))
+
+    sections: list[analysis_schema.TrailSectionRead] = []
+    for section in analysis.sections:
+        if not track or section.start_index >= len(stamps) or section.end_index < 1:
+            continue
+        lo_t = stamps[min(section.start_index, len(stamps) - 1)]
+        hi_t = stamps[min(section.end_index - 1, len(stamps) - 1)]
+        pts = [(lat, lon) for t, lat, lon in track if lo_t <= t <= hi_t]
+        step = max(len(pts) // 150, 1)
+        sections.append(
+            analysis_schema.TrailSectionRead(
+                start_m=section.start_m,
+                length_m=section.length_m,
+                grade_pct=section.grade_pct,
+                avg_speed_ms=section.avg_speed_ms,
+                gap_deficit=section.gap_deficit,
+                cadence_jitter=section.cadence_jitter,
+                brake_score=section.brake_score,
+                score=section.score,
+                direction=section.direction,
+                points=[analysis_schema.TrailPointRead(lat=lat, lon=lon) for lat, lon in pts[::step]],
+            )
+        )
+    return analysis_schema.TrailSectionsRead(
+        activity_id=activity_id,
+        v_base_ms=analysis.v_base_ms,
+        cadence_available=analysis.cadence_available,
+        technical_m=round(analysis.technical_m, 1),
+        total_m=round(analysis.total_m, 1),
+        sections=sections,
+    )
 
 
 def get_best_times(

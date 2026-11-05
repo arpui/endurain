@@ -4,6 +4,7 @@
  * the service mappers.
  */
 
+import type { GeoPoint } from '@/composables/useMapProvider'
 import type { Schemas } from '@/types'
 
 export type AnalysisSettingsDto = Schemas['AnalysisSettingsRead']
@@ -469,4 +470,48 @@ export interface ActivityLoadsSummary {
   powerRecalibrated: boolean
   /** Every formula's load, keyed for O(1) lookup in cards and strips. */
   loads: Partial<Record<LoadMethod, ActivityLoad>>
+}
+
+export type TrailSectionsDto = Schemas['TrailSectionsRead']
+export type TrailSectionDto = Schemas['TrailSectionRead']
+export type TrailPointDto = Schemas['TrailPointRead']
+
+/** Which way the ground moved through a technical stretch. */
+export type TrailSectionDirection = 'descent' | 'ascent' | 'flat'
+
+/** One technical stretch of a trail run, with its own polyline for the map. */
+export interface TrailSection {
+  /** Ground position where it starts, metres from the start of the data. */
+  startM: number
+  /** Ground covered by the stretch. */
+  lengthM: number
+  /** Mean grade over it, in percent. */
+  gradePct: number
+  /** Mean ground speed through it, m/s. */
+  avgSpeedMs: number
+  /** How far below the grade-explained pace it ran (0-1). */
+  gapDeficit: number
+  /** Cadence instability over it (0-1). */
+  cadenceJitter: number
+  /** Downhill braking share over it (0-1). */
+  brakeScore: number
+  /** Peak smoothed technicality index inside it. */
+  score: number
+  direction: TrailSectionDirection
+  /** The section's own polyline, for map overlays. */
+  points: GeoPoint[]
+}
+
+/** The technical-terrain pass over one activity (experimental). */
+export interface TrailSections {
+  /** The session's own flat-ground reference pace, m/s. */
+  vBaseMs: number
+  /** Whether the stride/cadence terms could be used at all. */
+  cadenceAvailable: boolean
+  /** Total metres flagged technical. */
+  technicalM: number
+  /** Total ground covered. */
+  totalM: number
+  /** The technical stretches, in ground order. */
+  sections: TrailSection[]
 }

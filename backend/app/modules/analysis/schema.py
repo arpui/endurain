@@ -364,6 +364,72 @@ class CpTrendPointRead(BaseModel):
     power_source: StrictStr | None
 
 
+class TrailPointRead(BaseModel):
+    """Serialized one point of a technical section's polyline.
+
+    Attributes:
+        lat: Latitude in decimal degrees.
+        lon: Longitude in decimal degrees.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    lat: StrictFloat
+    lon: StrictFloat
+
+
+class TrailSectionRead(BaseModel):
+    """Serialized one technical stretch of a trail run.
+
+    Attributes:
+        start_m: Ground position where it starts, from the start of the data.
+        length_m: Ground covered by the stretch.
+        grade_pct: Mean grade, in percent.
+        avg_speed_ms: Mean ground speed through it.
+        gap_deficit: Shortfall against the pace the grade explains (0-1).
+        cadence_jitter: Cadence instability over it (0-1).
+        brake_score: Downhill braking share over it (0-1).
+        score: Peak smoothed technicality index inside it.
+        direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
+        points: The section's own polyline, for map overlays.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    start_m: StrictFloat
+    length_m: StrictFloat
+    grade_pct: StrictFloat
+    avg_speed_ms: StrictFloat
+    gap_deficit: StrictFloat
+    cadence_jitter: StrictFloat
+    brake_score: StrictFloat
+    score: StrictFloat
+    direction: StrictStr
+    points: list[TrailPointRead]
+
+
+class TrailSectionsRead(BaseModel):
+    """Serialized technical-terrain pass over one activity (experimental).
+
+    Attributes:
+        activity_id: The activity analysed.
+        v_base_ms: The session's own flat-ground reference pace.
+        cadence_available: Whether the stride/cadence terms could be used.
+        technical_m: Total metres flagged technical.
+        total_m: Total ground covered.
+        sections: The technical stretches, in ground order.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    activity_id: StrictInt
+    v_base_ms: StrictFloat
+    cadence_available: StrictBool
+    technical_m: StrictFloat
+    total_m: StrictFloat
+    sections: list[TrailSectionRead]
+
+
 class PowerFlagRead(BaseModel):
     """Serialized one session held out of the duration-intensity curve.
 

@@ -168,6 +168,22 @@
     "colContrast": "vs ședință",
     "rules": "Cum se detectează aici: pe plat un trakt contează ca interval doar dacă menține ≥{effortIf}·CP; un efort se deschide la {openW} W și se închide sub {closeW} W; minimum {minS} s (sub {shortS} s cere {shortBase} din mediana ședinței; fără recuperare reală —≤{recoveryW} W—, {strongBase}); pantă >{climbGrade}% cu IF<{climbIf} contează ca urcare."
   },
+  "trail": {
+    "title": "Porțiuni tehnice",
+    "experimental": "experimental",
+    "summary": "{technical}% din teren ({metres} m din {of} m) este citat ca tehnic.",
+    "hint": "Porțiuni unde ritmul rămâne sub ce explică panta, cu pași neregulați și frânări la coborâre. Pe hartă sunt desenate în chihlimbar. Acest detector se calibrează încă pe trasee reale.",
+    "colStart": "start",
+    "colLength": "lungime",
+    "colDirection": "direcție",
+    "colGrade": "pantă",
+    "colScore": "scor",
+    "directions": {
+      "descent": "coborâre",
+      "ascent": "urcare",
+      "flat": "plat"
+    }
+  },
   "sectionBest": "Timpi de referință",
   "bestTimes": {
     "title": "Timpi de referință",

@@ -274,6 +274,39 @@ class TestPowerDurationRoute:
         assert response.status_code == 422
 
 
+class TestTrailSectionsRoute:
+    def test_the_owner_reads_the_technical_sections(self):
+        client = TestClient(_build_app(MagicMock()))
+        read = analysis_schema.TrailSectionsRead(
+            activity_id=9,
+            v_base_ms=2.47,
+            cadence_available=True,
+            technical_m=5750.0,
+            total_m=18760.0,
+            sections=[
+                analysis_schema.TrailSectionRead(
+                    start_m=7675.0,
+                    length_m=1325.0,
+                    grade_pct=-14.7,
+                    avg_speed_ms=1.52,
+                    gap_deficit=0.67,
+                    cadence_jitter=0.32,
+                    brake_score=0.86,
+                    score=0.83,
+                    direction="descent",
+                    points=[analysis_schema.TrailPointRead(lat=42.47, lon=0.99)],
+                )
+            ],
+        )
+        with patch("modules.analysis.activity_router.analysis_service.get_trail_sections", return_value=read) as svc:
+            response = client.get("/activities/9/trail-sections")
+        assert response.status_code == 200
+        body = response.json()
+        assert svc.call_args.args[:2] == (9, 2)
+        assert body["sections"][0]["direction"] == "descent"
+        assert body["sections"][0]["points"][0]["lat"] == 42.47
+
+
 class TestPowerFlagsRoute:
     def test_the_owner_reads_the_held_out_sessions(self):
         client = TestClient(_build_app(MagicMock()))

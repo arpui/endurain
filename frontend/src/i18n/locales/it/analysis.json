@@ -168,6 +168,22 @@
     "colContrast": "vs sessione",
     "rules": "Rilevazione qui: in piano un tratto conta come intervallo solo se mantiene ≥{effortIf}·CP; uno sforzo si apre a {openW} W e si chiude sotto {closeW} W; minimo {minS} s (sotto {shortS} s serve {shortBase} la mediana della sessione; senza recupero reale —≤{recoveryW} W—, {strongBase}); con pendenza >{climbGrade}% e IF<{climbIf} conta come salita."
   },
+  "trail": {
+    "title": "Tratti tecnici",
+    "experimental": "sperimentale",
+    "summary": "Il {technical}% del terreno ({metres} m su {of} m) risulta tecnico.",
+    "hint": "Tratti in cui il ritmo resta sotto ciò che la pendenza spiega, con falcata irregolare e frenate in discesa. Sulla mappa sono tracciati in ambra. Questo rilevatore è ancora in calibrazione su percorsi reali.",
+    "colStart": "inizio",
+    "colLength": "lunghezza",
+    "colDirection": "direzione",
+    "colGrade": "pendenza",
+    "colScore": "punteggio",
+    "directions": {
+      "descent": "discesa",
+      "ascent": "salita",
+      "flat": "piatto"
+    }
+  },
   "sectionBest": "Tempi migliori",
   "bestTimes": {
     "title": "Tempi migliori",

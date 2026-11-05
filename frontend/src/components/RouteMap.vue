@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { LocateFixed } from '@lucide/vue'
 
-import type { GeoPoint, MapInstance } from '@/composables/useMapProvider'
+import type { GeoPoint, MapInstance, MapOverlay } from '@/composables/useMapProvider'
 
 import { useMapProvider } from '@/composables/useMapProvider'
 import { useRenderProvidersReady } from '@/providers'
@@ -11,6 +11,8 @@ const props = withDefaults(
   defineProps<{
     /** Ordered coordinates forming the route polyline. */
     points: GeoPoint[]
+    /** Extra polylines drawn above the track (e.g. analysed sections). */
+    overlays?: MapOverlay[]
     /** Whether the map responds to pan/zoom. */
     interactive?: boolean
     /** Accessible description of the drawn track (feature-specific wording). */
@@ -38,6 +40,7 @@ function mountMap(): void {
   const { provider } = useMapProvider()
   instance = provider.mount(container.value, {
     track: { points: props.points, ...endpoints(props.points) },
+    overlays: props.overlays,
     interactive: props.interactive,
   })
 }
@@ -50,14 +53,15 @@ function recenter(): void {
 onMounted(mountMap)
 watch(ready, mountMap)
 watch(
-  () => props.points,
-  (points) => {
+  () => [props.points, props.overlays],
+  ([points]) => {
     if (!instance) {
       mountMap()
       return
     }
     instance.update({
-      track: { points, ...endpoints(points) },
+      track: { points: points as GeoPoint[], ...endpoints(points as GeoPoint[]) },
+      overlays: props.overlays,
       interactive: props.interactive,
     })
   },

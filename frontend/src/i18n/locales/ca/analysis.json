@@ -168,6 +168,22 @@
     "colContrast": "vs sessió",
     "rules": "Com es detecta aquí: en pla un tros compta com a interval només si manté ≥{effortIf}·CP; se'n obre un a {openW} W i es tanca per sota de {closeW} W; mínim {minS} s (sota {shortS} s cal {shortBase} la mediana de la sessió; sense recuperació real —≤{recoveryW} W—, {strongBase}); amb pendent >{climbGrade}% i IF<{climbIf} compta com a pujada."
   },
+  "trail": {
+    "title": "Trams tècnics",
+    "experimental": "experimental",
+    "summary": "El {technical}% del terreny ({metres} m de {of} m) es llegeix com a tècnic.",
+    "hint": "Trams on el ritme queda per sota del que explica el pendent, amb passada irregular i frenades a les baixades. Al mapa es dibuixen en ambre. Aquest detector encara s'està calibrant amb rutes reals.",
+    "colStart": "inici",
+    "colLength": "longitud",
+    "colDirection": "direcció",
+    "colGrade": "pendent",
+    "colScore": "puntuació",
+    "directions": {
+      "descent": "baixada",
+      "ascent": "pujada",
+      "flat": "pla"
+    }
+  },
   "sectionBest": "Millors temps",
   "bestTimes": {
     "title": "Millors temps",

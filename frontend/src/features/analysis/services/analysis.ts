@@ -43,6 +43,9 @@ import type {
   ActivityLoadDto,
   ActivityLoadsSummary,
   ActivityLoadsSummaryDto,
+  TrailSection,
+  TrailSections,
+  TrailSectionsDto,
 } from '../types'
 import type { Schemas } from '@/types'
 
@@ -436,6 +439,44 @@ export function mapActivityIntervals(dto: ActivityIntervalsDto): ActivityInterva
       low: row.low ?? null,
     })),
     climbs: (dto.climbs ?? []).map(mapTerrainClimb),
+  }
+}
+
+/**
+ * Fetches which stretches of one trail run the server reads as technical.
+ *
+ * Experimental: the technicality index weights and threshold are still being
+ * calibrated against the athlete's own judgement of known routes.
+ *
+ * @param activityId - The activity to analyse.
+ * @param signal - Optional abort signal for TanStack Query cancellation.
+ * @returns The technical sections with their polylines, plus session context.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchTrailSections(
+  activityId: number,
+  signal?: AbortSignal,
+): Promise<TrailSections> {
+  const dto = await apiFetch<TrailSectionsDto>(`/activities/${activityId}/trail-sections`, {
+    signal,
+  })
+  return {
+    vBaseMs: dto.v_base_ms,
+    cadenceAvailable: dto.cadence_available,
+    technicalM: dto.technical_m,
+    totalM: dto.total_m,
+    sections: (dto.sections ?? []).map((section): TrailSection => ({
+      startM: section.start_m,
+      lengthM: section.length_m,
+      gradePct: section.grade_pct,
+      avgSpeedMs: section.avg_speed_ms,
+      gapDeficit: section.gap_deficit,
+      cadenceJitter: section.cadence_jitter,
+      brakeScore: section.brake_score,
+      score: section.score,
+      direction: section.direction as TrailSection['direction'],
+      points: (section.points ?? []).map((point) => ({ lat: point.lat, lng: point.lon })),
+    })),
   }
 }
 

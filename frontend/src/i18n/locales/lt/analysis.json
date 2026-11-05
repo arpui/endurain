@@ -168,6 +168,22 @@
     "colContrast": "vs sesija",
     "rules": "Kaip čia nustatoma: lygioje atkarpoje intervalu skaičiuojama tik laikantis ≥{effortIf}·CP; krūvis prasideda {openW} W ir baigiasi žemiau {closeW} W; minimumas {minS} s (trumpiau nei {shortS} s reikia {shortBase} seanso medianos; be tikro atsigavimo —≤{recoveryW} W—, {strongBase}); įkalnė >{climbGrade}% su IF<{climbIf} skaičiuojama kaip įkalnė."
   },
+  "trail": {
+    "title": "Techniniai ruožai",
+    "experimental": "eksperimentinė",
+    "summary": "{technical} % tereno ({metres} m iš {of} m) nustatytas kaip techninis.",
+    "hint": "Ruožai, kurių tempas lėtesnis, nei paaiškina nuolydis, su nelygiu žingsniu ir stabdymu nusileidimuose. Žemėlapyje pažymėti gintarine spalva. Detektorius dar kalibruojamas pagal tikrus maršrutus.",
+    "colStart": "pradžia",
+    "colLength": "ilgis",
+    "colDirection": "kryptis",
+    "colGrade": "nuolydis",
+    "colScore": "įvertinimas",
+    "directions": {
+      "descent": "nusileidimas",
+      "ascent": "kilimas",
+      "flat": "lygu"
+    }
+  },
   "sectionBest": "Geriausi laikai",
   "bestTimes": {
     "title": "Geriausi laikai",

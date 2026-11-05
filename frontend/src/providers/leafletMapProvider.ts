@@ -12,6 +12,7 @@ import 'leaflet/dist/leaflet.css'
 import type {
   GeoPoint,
   MapInstance,
+  MapOverlay,
   MapProvider,
   MapRenderOptions,
   MapTrack,
@@ -146,7 +147,7 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
         }
       }
 
-      const draw = (track: MapTrack): void => {
+      const draw = (track: MapTrack, extra: MapOverlay[] = []): void => {
         currentTrack = track
         for (const layer of overlays) {
           map.removeLayer(layer)
@@ -156,6 +157,18 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
         const linePoints = toLatLngs(track.points)
         if (linePoints.length > 0) {
           overlays.push(polyline(linePoints, { color: trackColor, weight: 4 }).addTo(map))
+        }
+        for (const overlay of extra) {
+          const points = toLatLngs(overlay.points)
+          if (points.length > 0) {
+            const line = polyline(points, { color: overlay.color, weight: 6, opacity: 0.85 }).addTo(
+              map,
+            )
+            if (overlay.name) {
+              line.bindTooltip(overlay.name)
+            }
+            overlays.push(line)
+          }
         }
         if (track.start) {
           overlays.push(emphasisMarker(track.start, START_MARKER_COLOR).addTo(map))
@@ -167,11 +180,11 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
         fit(track)
       }
 
-      draw(options.track)
+      draw(options.track, options.overlays)
 
       return {
         update(next: MapRenderOptions): void {
-          draw(next.track)
+          draw(next.track, next.overlays)
         },
         recenter(): void {
           fit(currentTrack)

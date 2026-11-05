@@ -168,6 +168,22 @@
     "colContrast": "vs séance",
     "rules": "Détection ici : sur le plat, un segment ne compte comme intervalle que s'il tient ≥{effortIf}·CP ; un effort s'ouvre à {openW} W et se ferme sous {closeW} W ; minimum {minS} s (sous {shortS} s, il faut {shortBase} la médiane de la séance ; sans récupération réelle —≤{recoveryW} W—, {strongBase}) ; une pente >{climbGrade}% avec IF<{climbIf} compte comme côte."
   },
+  "trail": {
+    "title": "Sections techniques",
+    "experimental": "expérimental",
+    "summary": "{technical}% du terrain ({metres} m sur {of} m) est lu comme technique.",
+    "hint": "Segments où l'allure reste en deçà de ce que la pente explique, avec des pas irréguliers et des freinages dans les descentes. Sur la carte, ils sont tracés en ambre. Ce détecteur est encore en cours d'étalonnage sur des itinéraires réels.",
+    "colStart": "départ",
+    "colLength": "longueur",
+    "colDirection": "direction",
+    "colGrade": "pente",
+    "colScore": "score",
+    "directions": {
+      "descent": "descente",
+      "ascent": "montée",
+      "flat": "plat"
+    }
+  },
   "sectionBest": "Meilleures perfs",
   "bestTimes": {
     "title": "Meilleures performances",

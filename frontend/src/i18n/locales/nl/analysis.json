@@ -168,6 +168,22 @@
     "colContrast": "vs sessie",
     "rules": "Detectie hier: op vlakke weg telt een stuk alleen als interval als het ≥{effortIf}·CP houdt; een inspanning opent bij {openW} W en sluit onder {closeW} W; minimaal {minS} s (onder {shortS} s is {shortBase} van het sessie-mediaan nodig; zonder echt herstel —≤{recoveryW} W—, {strongBase}); met stijging >{climbGrade}% en IF<{climbIf} telt het als klim."
   },
+  "trail": {
+    "title": "Technische stukken",
+    "experimental": "experimenteel",
+    "summary": "{technical}% van het terrein ({metres} m van {of} m) leest als technisch.",
+    "hint": "Stukken waar het tempo achterblijft bij wat de helling verklaart, met onregelmatige passen en remmen in afdalingen. Op de kaart zijn ze amberkleurig getekend. Deze detector wordt nog gekalibreerd op echte routes.",
+    "colStart": "start",
+    "colLength": "lengte",
+    "colDirection": "richting",
+    "colGrade": "helling",
+    "colScore": "score",
+    "directions": {
+      "descent": "afdaling",
+      "ascent": "stijging",
+      "flat": "vlak"
+    }
+  },
   "sectionBest": "Tijden",
   "bestTimes": {
     "title": "Persoonlijke tijden",

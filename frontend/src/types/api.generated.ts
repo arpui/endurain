@@ -712,6 +712,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/activities/{activity_id}/trail-sections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trail Sections
+         * @description Return the technical stretches of one trail run (experimental).
+         *
+         *     Spatial windows where the pace falls short of what the grade explains,
+         *     with stride mechanics changed, are read as technical terrain: the ground,
+         *     not the gradient, is what cost. Polylines included for the map.
+         */
+        get: operations["get_trail_sections_api_v1_activities__activity_id__trail_sections_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/activities/{activity_id}/intervals": {
         parameters: {
             query?: never;
@@ -11860,6 +11884,84 @@ export interface components {
             refresh_token_expires_in: number;
         };
         /**
+         * TrailPointRead
+         * @description Serialized one point of a technical section's polyline.
+         *
+         *     Attributes:
+         *         lat: Latitude in decimal degrees.
+         *         lon: Longitude in decimal degrees.
+         */
+        TrailPointRead: {
+            /** Lat */
+            lat: number;
+            /** Lon */
+            lon: number;
+        };
+        /**
+         * TrailSectionRead
+         * @description Serialized one technical stretch of a trail run.
+         *
+         *     Attributes:
+         *         start_m: Ground position where it starts, from the start of the data.
+         *         length_m: Ground covered by the stretch.
+         *         grade_pct: Mean grade, in percent.
+         *         avg_speed_ms: Mean ground speed through it.
+         *         gap_deficit: Shortfall against the pace the grade explains (0-1).
+         *         cadence_jitter: Cadence instability over it (0-1).
+         *         brake_score: Downhill braking share over it (0-1).
+         *         score: Peak smoothed technicality index inside it.
+         *         direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
+         *         points: The section's own polyline, for map overlays.
+         */
+        TrailSectionRead: {
+            /** Start M */
+            start_m: number;
+            /** Length M */
+            length_m: number;
+            /** Grade Pct */
+            grade_pct: number;
+            /** Avg Speed Ms */
+            avg_speed_ms: number;
+            /** Gap Deficit */
+            gap_deficit: number;
+            /** Cadence Jitter */
+            cadence_jitter: number;
+            /** Brake Score */
+            brake_score: number;
+            /** Score */
+            score: number;
+            /** Direction */
+            direction: string;
+            /** Points */
+            points: components["schemas"]["TrailPointRead"][];
+        };
+        /**
+         * TrailSectionsRead
+         * @description Serialized technical-terrain pass over one activity (experimental).
+         *
+         *     Attributes:
+         *         activity_id: The activity analysed.
+         *         v_base_ms: The session's own flat-ground reference pace.
+         *         cadence_available: Whether the stride/cadence terms could be used.
+         *         technical_m: Total metres flagged technical.
+         *         total_m: Total ground covered.
+         *         sections: The technical stretches, in ground order.
+         */
+        TrailSectionsRead: {
+            /** Activity Id */
+            activity_id: number;
+            /** V Base Ms */
+            v_base_ms: number;
+            /** Cadence Available */
+            cadence_available: boolean;
+            /** Technical M */
+            technical_m: number;
+            /** Total M */
+            total_m: number;
+            /** Sections */
+            sections: components["schemas"]["TrailSectionRead"][];
+        };
+        /**
          * TypeBreakdownItem
          * @description Summary metrics broken down by activity type.
          *
@@ -15160,6 +15262,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LapDynamicsRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_trail_sections_api_v1_activities__activity_id__trail_sections_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrailSectionsRead"];
                 };
             };
             /** @description Validation Error */
