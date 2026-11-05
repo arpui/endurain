@@ -694,7 +694,7 @@ class WayCrossing(Base, TimestampMixin):
         ForeignKey("analysis_osm_paths.way_id", ondelete="CASCADE"), primary_key=True, comment="OSM way crossed"
     )
     start_m: Mapped[float] = mapped_column(
-        Float, primary_key=True, comment="Offset along the way where the crossing starts, in drawn order"
+        Float, primary_key=True, comment="Smallest along-way offset that session reached on the way"
     )
     end_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Offset along the way where it ends")
     covered_m: Mapped[float] = mapped_column(

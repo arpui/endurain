@@ -2532,33 +2532,30 @@ def compute_way_crossings_for_activity(activity_id: int, db: Session) -> int:
     if activity is None or activity.user_id is None or sport_group(activity.activity_type) != "run":
         return 0
     track = [(lat, lon) for _stamp, lat, lon in _trail_track(activity_id, db)]
-    crossings: list[analysis_contracts.WayCrossingRecord] = []
-    run: analysis_contracts.WayCrossingRecord | None = None
+    merged: dict[int, analysis_contracts.WayCrossingRecord] = {}
     for chunk in analysis_trail_osm.chunk_polyline(track):
         match = _match_one_stretch(list(chunk), db)
         if match is None:
-            if run is not None:
-                crossings.append(run)
-                run = None
             continue
-        if run is not None and run.way_id == match.way_id:
-            run = analysis_contracts.WayCrossingRecord(
-                way_id=run.way_id,
-                start_m=min(run.start_m, match.start_m),
-                end_m=max(run.end_m, match.end_m),
-                covered_m=run.covered_m + match.covered_m,
+        # one row per (activity, way): an out-and-back over the same path is one
+        # crossing of it by that session, with the ground walked across passes summed
+        existing = merged.get(match.way_id)
+        merged[match.way_id] = (
+            analysis_contracts.WayCrossingRecord(
+                way_id=match.way_id,
+                start_m=min(existing.start_m, match.start_m),
+                end_m=max(existing.end_m, match.end_m),
+                covered_m=existing.covered_m + match.covered_m,
             )
-        else:
-            if run is not None:
-                crossings.append(run)
-            run = analysis_contracts.WayCrossingRecord(
+            if existing is not None
+            else analysis_contracts.WayCrossingRecord(
                 way_id=match.way_id,
                 start_m=match.start_m,
                 end_m=match.end_m,
                 covered_m=match.covered_m,
             )
-    if run is not None:
-        crossings.append(run)
+        )
+    crossings = list(merged.values())
     stored = analysis_crud.replace_way_crossings(activity.user_id, activity_id, cache_date, crossings, db)
     method = analysis_constants.trail_model_stamp()
     analysis_crud.set_trail_session_coverage_date(activity_id, method, cache_date, db)

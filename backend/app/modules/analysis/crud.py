@@ -855,7 +855,8 @@ def list_user_way_crossing_counts(user_id: int, db: Session) -> dict[int, int]:
         select(
             analysis_models.WayCrossing.way_id,
             func.count(distinct(analysis_models.WayCrossing.activity_id)),
-        ).where(analysis_models.WayCrossing.user_id == user_id)
+        )
+        .where(analysis_models.WayCrossing.user_id == user_id)
         .group_by(analysis_models.WayCrossing.way_id)
     ).all()
     return {int(way_id): int(count) for way_id, count in rows}
