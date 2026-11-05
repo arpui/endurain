@@ -7,7 +7,8 @@ flushes: the service owns the transaction.
 from collections.abc import Sequence
 from datetime import date
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, or_, select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 import modules.analysis.contracts as analysis_contracts
@@ -636,3 +637,176 @@ def activity_ids_with_trail_sessions(
             )
         )
     )
+
+
+def replace_osm_paths(
+    paths: Sequence[analysis_contracts.OsmPathRecord],
+    db: Session,
+) -> int:
+    """Store an imported OpenStreetMap extract, replacing what it re-describes.
+
+    Args:
+        paths: The ways the extract carries.
+        db: Database session.
+
+    Returns:
+        The number of ways written.
+    """
+    for path in paths:
+        db.execute(
+            pg_insert(analysis_models.OsmPath)
+            .values(
+                way_id=path.way_id,
+                name=path.name,
+                tags=path.tags,
+                geometry=[list(point) for point in path.geometry],
+                length_m=path.length_m,
+                min_lat=path.min_lat,
+                min_lng=path.min_lng,
+                max_lat=path.max_lat,
+                max_lng=path.max_lng,
+                cache_date=path.cache_date,
+            )
+            .on_conflict_do_update(
+                index_elements=[analysis_models.OsmPath.way_id],
+                set_={
+                    "name": path.name,
+                    "tags": path.tags,
+                    "geometry": [list(point) for point in path.geometry],
+                    "length_m": path.length_m,
+                    "min_lat": path.min_lat,
+                    "min_lng": path.min_lng,
+                    "max_lat": path.max_lat,
+                    "max_lng": path.max_lng,
+                    "cache_date": path.cache_date,
+                },
+            )
+        )
+    return len(paths)
+
+
+def get_osm_cache_date(db: Session) -> date | None:
+    """Return the day of the newest stored OpenStreetMap extract.
+
+    Args:
+        db: Database session.
+
+    Returns:
+        The extract date, or ``None`` when no cartography has been imported.
+    """
+    return db.execute(select(func.max(analysis_models.OsmPath.cache_date))).scalar()
+
+
+def list_osm_paths_in_box(
+    min_lat: float,
+    max_lat: float,
+    min_lng: float,
+    max_lng: float,
+    db: Session,
+) -> list[analysis_models.OsmPath]:
+    """Return the stored ways whose bounding box touches an area.
+
+    A bounding-box pre-filter only: the geometry question is answered by
+    :func:`modules.analysis.trail_osm.match_stretch`, not by this query.
+
+    Args:
+        min_lat: South edge of the area.
+        max_lat: North edge.
+        min_lng: West edge.
+        max_lng: East edge.
+        db: Database session.
+
+    Returns:
+        The candidate ways.
+    """
+    return list(
+        db.scalars(
+            select(analysis_models.OsmPath).where(
+                analysis_models.OsmPath.min_lat <= max_lat,
+                analysis_models.OsmPath.max_lat >= min_lat,
+                analysis_models.OsmPath.min_lng <= max_lng,
+                analysis_models.OsmPath.max_lng >= min_lng,
+            )
+        )
+    )
+
+
+def get_osm_paths_by_ids(
+    way_ids: Sequence[int],
+    db: Session,
+) -> dict[int, analysis_models.OsmPath]:
+    """Return stored ways by id, for answering a read.
+
+    Args:
+        way_ids: The ways asked about.
+        db: Database session.
+
+    Returns:
+        A mapping of way id to row; ids with no row are simply absent.
+    """
+    if not way_ids:
+        return {}
+    return {
+        path.way_id: path
+        for path in db.scalars(select(analysis_models.OsmPath).where(analysis_models.OsmPath.way_id.in_(way_ids)))
+    }
+
+
+def list_sections_needing_osm_match(
+    method: str,
+    cache_date: date,
+    db: Session,
+    *,
+    limit: int,
+) -> list[analysis_models.TrailSection]:
+    """Return measured stretches not yet matched against the current extract.
+
+    A stretch already matched - or honestly found to lie on no mapped way - carries
+    the date of the extract it was checked against, so an import of a newer one is
+    what reopens the question.
+
+    Args:
+        method: The detector parameters stamped on the observations.
+        cache_date: Day of the extract in store.
+        db: Database session.
+        limit: Maximum number of stretches to hand back.
+
+    Returns:
+        The stretches, oldest activity first.
+    """
+    return list(
+        db.scalars(
+            select(analysis_models.TrailSection)
+            .where(
+                analysis_models.TrailSection.method == method,
+                or_(
+                    analysis_models.TrailSection.osm_cache_date.is_(None),
+                    analysis_models.TrailSection.osm_cache_date < cache_date,
+                ),
+            )
+            .order_by(analysis_models.TrailSection.activity_id, analysis_models.TrailSection.start_m)
+            .limit(limit)
+        )
+    )
+
+
+def set_trail_section_osm_match(
+    section: analysis_models.TrailSection,
+    match: analysis_contracts.OsmMatchRecord | None,
+    cache_date: date,
+    db: Session,
+) -> None:
+    """Record what the cartography says about one stretch (including "nothing").
+
+    Args:
+        section: The stored stretch.
+        match: The way it lies on, or ``None`` when no mapped way explains it.
+        cache_date: Day of the extract the answer was measured against.
+        db: Database session.
+    """
+    section.osm_way_id = match.way_id if match else None
+    section.osm_start_m = match.start_m if match else None
+    section.osm_end_m = match.end_m if match else None
+    section.osm_covered_m = match.covered_m if match else None
+    section.osm_cache_date = cache_date
+    db.add(section)

@@ -568,3 +568,14 @@ def trail_model_stamp() -> str:
         f"trail:{TRAIL_THRESHOLD}/{TRAIL_W_SPEED}/{TRAIL_W_CADENCE}/{TRAIL_W_BRAKE}"
         f"/{TRAIL_WINDOW_M:.0f}/{TRAIL_MIN_LENGTH_M:.0f}"
     )
+
+
+#: Cartographic matching: how far a stretch may sit from a way and still be said
+#: to be on it, and how much of it must sit that close. Deliberately a metric
+#: tolerance, not a score: a stretch either lies on the way or it does not, and
+#: the map's own claim is kept separate from the measured one.
+OSM_MATCH_TOLERANCE_M = 25.0
+OSM_MATCH_MIN_COVERAGE = 0.6
+#: How many stretches one matching pass takes, so an import of a whole region is
+#: worked through in bounded transactions.
+OSM_MATCH_PAGE = 500

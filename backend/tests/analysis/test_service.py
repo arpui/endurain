@@ -1504,6 +1504,154 @@ class TestTrailObservations:
         assert [call.args[0] for call in measure.call_args_list] == [11]
 
 
+class TestTrailCartography:
+    """What the map says about a measured stretch, kept beside the measurement."""
+
+    @staticmethod
+    def _section_row():
+        return SimpleNamespace(
+            activity_id=9,
+            start_m=7675.0,
+            start_t=_T0_UTC + timedelta(seconds=4500),
+            end_t=_T0_UTC + timedelta(seconds=5700),
+            osm_way_id=None,
+            osm_start_m=None,
+            osm_end_m=None,
+            osm_covered_m=None,
+        )
+
+    def test_a_stored_match_is_reported_next_to_the_measured_one(self):
+        db = _db()
+        analysis = analysis_trail.TrailAnalysis(
+            sections=[
+                analysis_trail.TechnicalSection(
+                    start_m=7675.0,
+                    length_m=1225.0,
+                    grade_pct=-15.3,
+                    avg_speed_ms=1.51,
+                    gap_deficit=0.68,
+                    cadence_jitter=0.36,
+                    brake_score=0.81,
+                    score=0.83,
+                    direction="descent",
+                    start_index=0,
+                    end_index=3,
+                )
+            ],
+            v_base_ms=2.46,
+            cadence_available=True,
+            technical_m=1225.0,
+            total_m=18000.0,
+        )
+        stamps = tuple([_T0_UTC + timedelta(seconds=i) for i in range(6)])
+        stored_row = self._section_row()
+        stored_row.osm_way_id = 4242
+        stored_row.osm_start_m = 300.0
+        stored_row.osm_end_m = 1520.0
+        stored_row.osm_covered_m = 1220.0
+        path = SimpleNamespace(
+            way_id=4242,
+            name="Camí de la Teula",
+            cache_date=date(2026, 11, 1),
+            tags={"sac_scale": "T3", "surface": "rock", "trail_visibility": "no"},
+        )
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(
+                f"{_SVC}.activity_integration.get_activity_for_derivation",
+                return_value=_activity(9, activity_type=2),
+            ),
+            patch(f"{_SVC}._trail_observation", return_value=(analysis, stamps)),
+            patch(
+                f"{_SVC}._trail_track",
+                return_value=[(_T0_UTC + timedelta(seconds=i), 42.47, 0.99) for i in range(6)],
+            ),
+            patch(
+                f"{_SVC}.analysis_crud.list_trail_observation",
+                return_value=(SimpleNamespace(technical_m=1225.0), [stored_row]),
+            ),
+            patch(f"{_SVC}.analysis_crud.get_osm_paths_by_ids", return_value={4242: path}),
+        ):
+            read = analysis_service.get_trail_sections(9, 2, db)
+        osm = read.sections[0].osm
+        assert osm is not None
+        assert osm.way_id == 4242
+        assert (osm.sac_scale, osm.surface, osm.trail_visibility) == ("T3", "rock", "no")
+        assert osm.mtb_scale is None
+        assert osm.cache_date == "2026-11-01"
+        # the measured side is untouched by the cartographic one
+        assert read.sections[0].score == 0.83
+
+    def test_an_activity_with_no_stored_observation_answers_without_cartography(self):
+        db = _db()
+        analysis = analysis_trail.TrailAnalysis([], 2.4, True, 0.0, 12000.0)
+        stamps = tuple([_T0_UTC + timedelta(seconds=i) for i in range(6)])
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(
+                f"{_SVC}.activity_integration.get_activity_for_derivation",
+                return_value=_activity(9, activity_type=2),
+            ),
+            patch(f"{_SVC}._trail_observation", return_value=(analysis, stamps)),
+            patch(f"{_SVC}._trail_track", return_value=[]),
+            patch(f"{_SVC}.analysis_crud.list_trail_observation", return_value=None),
+        ):
+            read = analysis_service.get_trail_sections(9, 2, db)
+        assert read.sections == []
+
+    def test_matching_needs_an_imported_extract_before_it_can_say_anything(self):
+        db = _db()
+        with patch(f"{_SVC}.analysis_crud.get_osm_cache_date", return_value=None):
+            assert analysis_service.match_trail_sections_to_osm(db) == 0
+
+    def test_a_stretch_on_unmapped_ground_is_recorded_as_checked(self):
+        db = _db()
+        row = self._section_row()
+        with (
+            patch(f"{_SVC}.analysis_crud.get_osm_cache_date", return_value=date(2026, 11, 1)),
+            patch(
+                f"{_SVC}.analysis_crud.list_sections_needing_osm_match",
+                side_effect=[[row], []],
+            ),
+            patch(
+                f"{_SVC}._trail_track",
+                return_value=[(_T0_UTC + timedelta(seconds=4500 + i), 42.47, 0.99) for i in range(3)],
+            ),
+            patch(f"{_SVC}.analysis_crud.list_osm_paths_in_box", return_value=[]),
+            patch(f"{_SVC}.analysis_crud.set_trail_section_osm_match") as store,
+        ):
+            assert analysis_service.match_trail_sections_to_osm(db) == 0
+        assert store.call_args.args[1] is None
+        assert store.call_args.args[2] == date(2026, 11, 1)
+
+    def test_a_stretch_running_along_a_way_records_the_way_and_its_offsets(self):
+        db = _db()
+        row = self._section_row()
+        way = SimpleNamespace(
+            way_id=4242,
+            geometry=[(42.47 + i * 25.0 / 111195.0, 0.99) for i in range(60)],
+        )
+        with (
+            patch(f"{_SVC}.analysis_crud.get_osm_cache_date", return_value=date(2026, 11, 1)),
+            patch(
+                f"{_SVC}.analysis_crud.list_sections_needing_osm_match",
+                side_effect=[[row], []],
+            ),
+            patch(
+                f"{_SVC}._trail_track",
+                return_value=[
+                    (_T0_UTC + timedelta(seconds=4500 + i), 42.47 + i * 25.0 / 111195.0, 0.99) for i in range(50)
+                ],
+            ),
+            patch(f"{_SVC}.analysis_crud.list_osm_paths_in_box", return_value=[way]),
+            patch(f"{_SVC}.analysis_crud.set_trail_section_osm_match") as store,
+        ):
+            assert analysis_service.match_trail_sections_to_osm(db) == 1
+        match = store.call_args.args[1]
+        assert match.way_id == 4242
+        assert match.end_m > match.start_m
+
+
 class TestTerrainClimbsService:
     """The intervals route also answers with the climbs the route itself shows."""
 

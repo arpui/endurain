@@ -191,7 +191,10 @@
       "technical": "tehnisks",
       "veryTechnical": "ļoti tehnisks"
     },
-    "clickHint": "Izvēlies rindu, lai redzētu posmu kartē, vai klikšķini uz posma."
+    "clickHint": "Izvēlies rindu, lai redzētu posmu kartē, vai klikšķini uz posma.",
+    "colMap": "karte",
+    "mapMissing": "nav OSM datu",
+    "mapMissingHint": "nevi mapē celiļi neklāj šo posmu: trūkst eksporta vai reljefs nav OSM."
   },
   "sectionBest": "Labākie laiki",
   "bestTimes": {

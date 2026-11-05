@@ -191,7 +191,10 @@
       "technical": "技術性",
       "veryTechnical": "高難度"
     },
-    "clickHint": "選擇一行可在地圖上查看該路段，或直接點擊地圖上的路段。"
+    "clickHint": "選擇一行可在地圖上查看該路段，或直接點擊地圖上的路段。",
+    "colMap": "地圖",
+    "mapMissing": "無 OSM 資料",
+    "mapMissingHint": "沒有已繪製的路徑覆蓋該路段：缺少資料集，或該地面不在 OSM 中。"
   },
   "sectionBest": "最佳成績",
   "bestTimes": {

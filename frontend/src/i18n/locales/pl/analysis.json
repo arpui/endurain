@@ -191,7 +191,10 @@
       "technical": "techniczny",
       "veryTechnical": "bardzo techniczny"
     },
-    "clickHint": "Wybierz wiersz, aby zobaczyć odcinek na mapie, lub kliknij odcinek."
+    "clickHint": "Wybierz wiersz, aby zobaczyć odcinek na mapie, lub kliknij odcinek.",
+    "colMap": "mapa",
+    "mapMissing": "brak danych OSM",
+    "mapMissingHint": "żadna zinwentaryzowana ścieżka nie pokrywa tego odcinka: brakuje ekstrakcji lub teren nie jest w OSM."
   },
   "sectionBest": "Najlepsze czasy",
   "bestTimes": {

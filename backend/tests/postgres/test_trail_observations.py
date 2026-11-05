@@ -8,7 +8,8 @@ ground measured before. The composite foreign key from stretches to their sessio
 row is also only exercised by a real database.
 """
 
-from datetime import UTC, datetime
+from dataclasses import replace
+from datetime import UTC, date, datetime
 
 import modules.activities.activity.contracts as activity_contracts
 import modules.activities.activity.crud as activity_crud
@@ -209,3 +210,109 @@ class TestTrailObservations:
             measured_by_old = analysis_crud.activity_ids_with_trail_sessions([activity_id], old_method, db)
             assert measured_by_old == {activity_id}
             assert analysis_crud.activity_ids_with_trail_sessions([activity_id], _METHOD, db) == set()
+
+
+def _way(way_id: int = 4242, *, lat: float = 42.47) -> analysis_contracts.OsmPathRecord:
+    """Return one mapped way, running north, ready to persist."""
+    geometry = [(lat + index * 25.0 / 111195.0, 0.99) for index in range(40)]
+    return analysis_contracts.OsmPathRecord(
+        way_id=way_id,
+        name="Camí de la Teula",
+        tags={"highway": "path", "sac_scale": "T3", "surface": "rock"},
+        geometry=geometry,
+        length_m=1000.0,
+        min_lat=lat,
+        min_lng=0.99,
+        max_lat=lat + 1000.0 / 111195.0,
+        max_lng=0.99,
+        cache_date=date(2026, 11, 1),
+    )
+
+
+class TestOsmPaths:
+    def test_an_import_describes_the_same_way_twice_without_duplicating_it(self, pg_factory):
+        with pg_factory() as db:
+            analysis_crud.replace_osm_paths([_way()], db)
+            db.commit()
+            analysis_crud.replace_osm_paths(
+                [replace(_way(), tags={"highway": "path", "sac_scale": "T4", "surface": "scree"})],
+                db,
+            )
+            db.commit()
+
+            paths = analysis_crud.list_osm_paths_in_box(42.4, 42.5, 0.9, 1.0, db)
+            cache = analysis_crud.get_osm_cache_date(db)
+        assert len(paths) == 1
+        assert paths[0].tags["sac_scale"] == "T4"
+        assert cache == date(2026, 11, 1)
+
+    def test_a_way_far_from_the_area_is_not_offered_as_a_candidate(self, pg_factory):
+        with pg_factory() as db:
+            analysis_crud.replace_osm_paths([_way()], db)
+            db.commit()
+            nearby = analysis_crud.list_osm_paths_in_box(42.469, 42.471, 0.989, 0.991, db)
+            elsewhere = analysis_crud.list_osm_paths_in_box(41.30, 41.32, 1.90, 1.92, db)
+        assert [path.way_id for path in nearby] == [4242]
+        assert elsewhere == []
+
+    def test_a_stretch_matched_to_no_way_is_still_recorded_as_checked(self, pg_factory):
+        """An unmapped gully is a result: a newer extract is what reopens it."""
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            activity_id = _run_activity(db)
+            session, sections = _observation(sections=1)
+            analysis_crud.replace_trail_observation(
+                user_id=_USER_ID,
+                activity_id=activity_id,
+                method=_METHOD,
+                observation=session,
+                sections=sections,
+                db=db,
+            )
+            db.commit()
+
+            (row,) = analysis_crud.list_sections_needing_osm_match(_METHOD, date(2026, 11, 1), db, limit=10)
+            assert row.osm_cache_date is None
+            analysis_crud.set_trail_section_osm_match(row, None, date(2026, 11, 1), db)
+            db.commit()
+
+            still_open = analysis_crud.list_sections_needing_osm_match(_METHOD, date(2026, 11, 1), db, limit=10)
+            reopened = analysis_crud.list_sections_needing_osm_match(_METHOD, date(2026, 12, 1), db, limit=10)
+            stored = analysis_crud.list_trail_observation(activity_id, _METHOD, db)
+        assert still_open == []
+        assert [row.start_m for row in reopened] == [7675.0]
+        assert stored is not None
+        assert stored[1][0].osm_cache_date == date(2026, 11, 1)
+        assert stored[1][0].osm_way_id is None
+
+    def test_a_match_keeps_the_way_and_its_offsets(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            activity_id = _run_activity(db)
+            analysis_crud.replace_osm_paths([_way()], db)
+            session, sections = _observation(sections=1)
+            analysis_crud.replace_trail_observation(
+                user_id=_USER_ID,
+                activity_id=activity_id,
+                method=_METHOD,
+                observation=session,
+                sections=sections,
+                db=db,
+            )
+            db.commit()
+
+            (row,) = analysis_crud.list_sections_needing_osm_match(_METHOD, date(2026, 11, 1), db, limit=10)
+            analysis_crud.set_trail_section_osm_match(
+                row,
+                analysis_contracts.OsmMatchRecord(way_id=4242, start_m=300.0, end_m=1520.0, covered_m=1220.0),
+                date(2026, 11, 1),
+                db,
+            )
+            db.commit()
+
+            stored = analysis_crud.list_trail_observation(activity_id, _METHOD, db)
+            paths = analysis_crud.get_osm_paths_by_ids([4242, 999999], db)
+        assert stored is not None
+        assert stored[1][0].osm_way_id == 4242
+        assert stored[1][0].osm_end_m == 1520.0
+        assert list(paths) == [4242]

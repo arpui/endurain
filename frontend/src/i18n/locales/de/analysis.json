@@ -191,7 +191,10 @@
       "technical": "technisch",
       "veryTechnical": "sehr technisch"
     },
-    "clickHint": "Zeile wählen, um den Abschnitt auf der Karte zu sehen, oder auf einen Abschnitt klicken."
+    "clickHint": "Zeile wählen, um den Abschnitt auf der Karte zu sehen, oder auf einen Abschnitt klicken.",
+    "colMap": "Karte",
+    "mapMissing": "keine OSM-Daten",
+    "mapMissingHint": "Kein kartierter Weg deckt diesen Abschnitt ab: der Extrakt fehlt oder das Gelände ist nicht in OSM."
   },
   "sectionBest": "Bestzeiten",
   "bestTimes": {

@@ -205,3 +205,49 @@ class TrailSectionRecord:
     total_m: float
     start_t: datetime
     end_t: datetime
+
+
+@dataclass(frozen=True)
+class OsmPathRecord:
+    """One OpenStreetMap way, as an extract described it.
+
+    Attributes:
+        way_id: The OpenStreetMap way id.
+        name: Way name, when mapped.
+        tags: The cartographic attributes the way carries.
+        geometry: Ordered ``(lat, lng)`` pairs as the way is drawn.
+        length_m: Length along the stored geometry.
+        min_lat: South edge of the geometry bounding box.
+        min_lng: West edge of the geometry bounding box.
+        max_lat: North edge of the geometry bounding box.
+        max_lng: East edge of the geometry bounding box.
+        cache_date: Day the extract was taken.
+    """
+
+    way_id: int
+    name: str | None
+    tags: dict[str, str]
+    geometry: list[tuple[float, float]]
+    length_m: float
+    min_lat: float
+    min_lng: float
+    max_lat: float
+    max_lng: float
+    cache_date: date
+
+
+@dataclass(frozen=True)
+class OsmMatchRecord:
+    """Which mapped way a measured stretch lies on, and where along it.
+
+    Attributes:
+        way_id: The matched way.
+        start_m: Offset along the way of the stretch's first point.
+        end_m: Offset along the way of its last point.
+        covered_m: Ground of the stretch the way accounts for.
+    """
+
+    way_id: int
+    start_m: float
+    end_m: float
+    covered_m: float

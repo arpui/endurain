@@ -191,7 +191,10 @@
       "technical": "tehniline",
       "veryTechnical": "väga tehniline"
     },
-    "clickHint": "Vali rida, et näha lõiku kaardil, või klõpsa lõigule."
+    "clickHint": "Vali rida, et näha lõiku kaardil, või klõpsa lõigule.",
+    "colMap": "kaart",
+    "mapMissing": "OSM-andmed puuduvad",
+    "mapMissingHint": "ükski kaardistatud rada ei kata seda lõiku: extract puudub või maastik pole OSM-is."
   },
   "sectionBest": "Parimad ajad",
   "bestTimes": {

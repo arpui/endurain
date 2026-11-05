@@ -191,7 +191,10 @@
       "technical": "techninis",
       "veryTechnical": "labai techninis"
     },
-    "clickHint": "Pasirink eilutę, kad matytum ruožą žemėlapyje, arba spustelėk ruožą."
+    "clickHint": "Pasirink eilutę, kad matytum ruožą žemėlapyje, arba spustelėk ruožą.",
+    "colMap": "žemėlapis",
+    "mapMissing": "nėra OSM duomenų",
+    "mapMissingHint": "jokios nubrėžtos takas nedengia šio ruožo: trūksta ištraukos arba teritorija nėra OSM."
   },
   "sectionBest": "Geriausi laikai",
   "bestTimes": {

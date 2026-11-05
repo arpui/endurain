@@ -191,7 +191,10 @@
       "technical": "technical",
       "veryTechnical": "very technical"
     },
-    "clickHint": "Pick a row to see the stretch on the map, or click a stretch on the map."
+    "clickHint": "Pick a row to see the stretch on the map, or click a stretch on the map.",
+    "colMap": "map",
+    "mapMissing": "no OSM data",
+    "mapMissingHint": "No mapped way covers this stretch: the extract is missing or the ground is unmapped."
   },
   "sectionBest": "Best times",
   "bestTimes": {

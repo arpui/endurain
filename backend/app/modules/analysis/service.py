@@ -40,6 +40,7 @@ import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
 import modules.analysis.trail as analysis_trail
+import modules.analysis.trail_osm as analysis_trail_osm
 import modules.users.users.integration_service as users_integration
 
 logger = core_logger.get_logger(__name__)
@@ -2279,6 +2280,52 @@ def _empty_trail_sections(activity_id: int) -> analysis_schema.TrailSectionsRead
     )
 
 
+def _trail_cartography(activity_id: int, db: Session) -> dict[float, analysis_schema.TrailOsmRead]:
+    """Look up what the imported cartography says about each measured stretch.
+
+    The match itself is a separate, offline-bounded job (the extract is imported by
+    hand, not fetched per request); here the answer is simply joined back onto the
+    stretch it belongs to, by its ground position. A stretch with no row, or one
+    the map does not describe, answers without the field.
+
+    Args:
+        activity_id: The activity being read.
+        db: Database session.
+
+    Returns:
+        A mapping of stretch start position to the cartographic claim.
+    """
+    stored = analysis_crud.list_trail_observation(activity_id, analysis_constants.trail_model_stamp(), db)
+    if stored is None:
+        return {}
+    _, rows = stored
+    way_ids = [row.osm_way_id for row in rows if row.osm_way_id is not None]
+    paths = analysis_crud.get_osm_paths_by_ids(way_ids, db)
+    answers: dict[float, analysis_schema.TrailOsmRead] = {}
+    for row in rows:
+        path = paths.get(row.osm_way_id) if row.osm_way_id is not None else None
+        if path is None or row.osm_start_m is None or row.osm_end_m is None or row.osm_covered_m is None:
+            continue
+        tags = path.tags or {}
+        answers[round(row.start_m, 3)] = analysis_schema.TrailOsmRead(
+            way_id=path.way_id,
+            name=path.name,
+            sac_scale=tags.get("sac_scale"),
+            mtb_scale=tags.get("mtb:scale"),
+            surface=tags.get("surface"),
+            smoothness=tags.get("smoothness"),
+            tracktype=tags.get("tracktype"),
+            trail_visibility=tags.get("trail_visibility"),
+            width=tags.get("width"),
+            incline=tags.get("incline"),
+            start_m=row.osm_start_m,
+            end_m=row.osm_end_m,
+            covered_m=row.osm_covered_m,
+            cache_date=path.cache_date.isoformat(),
+        )
+    return answers
+
+
 def get_trail_sections(
     activity_id: int,
     requester_user_id: int,
@@ -2314,6 +2361,7 @@ def get_trail_sections(
         return _empty_trail_sections(activity_id)
     analysis, stamps = measured
     track = _trail_track(activity_id, db)
+    cartography = _trail_cartography(activity_id, db)
 
     sections: list[analysis_schema.TrailSectionRead] = []
     for section in analysis.sections:
@@ -2335,6 +2383,7 @@ def get_trail_sections(
                 score=section.score,
                 direction=section.direction,
                 points=[analysis_schema.TrailPointRead(lat=lat, lon=lon) for lat, lon in pts[::step]],
+                osm=cartography.get(round(section.start_m, 3)),
             )
         )
     return analysis_schema.TrailSectionsRead(
@@ -2535,5 +2584,102 @@ def get_best_times(
                 start_time=values[3].isoformat() if values[3] is not None else None,
             )
             for distance_m, values in sorted(best.items())
+        ],
+    )
+
+
+def match_trail_sections_to_osm(db: Session) -> int:
+    """Say which mapped way each measured stretch lies on, when one does.
+
+    Two independent answers only become useful together once they speak about the
+    same ground, and that correspondence is geometry: a way is one long polyline,
+    so proximity to its middle proves nothing. Each stretch is projected onto the
+    candidate ways around it and accepted only when most of it runs along one.
+
+    A stretch the map does not describe keeps a dated record of that too: an
+    unmapped gully is a finding, and it is what a newer extract re-checks.
+
+    Args:
+        db: Database session.
+
+    Returns:
+        The number of stretches matched to a way.
+    """
+    cache_date = analysis_crud.get_osm_cache_date(db)
+    if cache_date is None:
+        return 0
+    method = analysis_constants.trail_model_stamp()
+    matched = 0
+    while True:
+        rows = analysis_crud.list_sections_needing_osm_match(
+            method, cache_date, db, limit=analysis_constants.OSM_MATCH_PAGE
+        )
+        if not rows:
+            break
+        by_activity: dict[int, list] = {}
+        for row in rows:
+            by_activity.setdefault(row.activity_id, []).append(row)
+        for activity_id, activity_rows in by_activity.items():
+            track = _trail_track(activity_id, db)
+            for row in activity_rows:
+                if row.start_t is None or row.end_t is None:
+                    analysis_crud.set_trail_section_osm_match(row, None, cache_date, db)
+                    continue
+                stretch = [(lat, lon) for stamp, lat, lon in track if row.start_t <= stamp <= row.end_t]
+                match = _match_one_stretch(stretch, db)
+                analysis_crud.set_trail_section_osm_match(
+                    row,
+                    analysis_contracts.OsmMatchRecord(
+                        way_id=match.way_id,
+                        start_m=match.start_m,
+                        end_m=match.end_m,
+                        covered_m=match.covered_m,
+                    )
+                    if match
+                    else None,
+                    cache_date,
+                    db,
+                )
+                if match is not None:
+                    matched += 1
+        db.commit()
+    logger.info(
+        "Trail cartography matched", extra=core_logger.context(matched=matched, cache_date=cache_date.isoformat())
+    )
+    return matched
+
+
+def _match_one_stretch(
+    stretch: list[tuple[float, float]],
+    db: Session,
+) -> analysis_trail_osm.OsmMatch | None:
+    """Match one stretch's own polyline against the ways drawn around it.
+
+    Args:
+        stretch: Ordered ``(lat, lng)`` pairs of the stretch.
+        db: Database session.
+
+    Returns:
+        The way the stretch runs along, or ``None`` when none does.
+    """
+    if len(stretch) < 2:
+        return None
+    lats = [point[0] for point in stretch]
+    lngs = [point[1] for point in stretch]
+    # a margin wide enough that a way running alongside but drawn slightly off the
+    # recorded track is still offered as a candidate
+    margin = 200.0
+    candidates = analysis_crud.list_osm_paths_in_box(
+        min_lat=min(lats) - margin / 111195.0,
+        max_lat=max(lats) + margin / 111195.0,
+        min_lng=min(lngs) - margin / 111320.0,
+        max_lng=max(lngs) + margin / 111320.0,
+        db=db,
+    )
+    return analysis_trail_osm.match_stretch(
+        stretch,
+        [
+            analysis_trail_osm.CandidateWay(way_id=path.way_id, points=[tuple(p) for p in path.geometry])
+            for path in candidates
         ],
     )

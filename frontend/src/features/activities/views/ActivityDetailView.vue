@@ -122,7 +122,13 @@ const mapOverlays = computed(() =>
       color: themeColor(grade.colorToken),
       weight: isSelected ? grade.weight + 3 : grade.weight,
       opacity: isSelected ? 1 : grade.opacity,
-      name: `#${index + 1} · ${(section.startM / 1000).toFixed(2)} km`,
+      name: [
+        `#${index + 1}`,
+        `${(section.startM / 1000).toFixed(2)} km`,
+        section.osm?.sacScale ?? section.osm?.mtbScale ?? section.osm?.surface,
+      ]
+        .filter(Boolean)
+        .join(' · '),
       onSelect: () => {
         trailSelected.value = section.startM
       },

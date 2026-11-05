@@ -191,7 +191,10 @@
       "technical": "teknik",
       "veryTechnical": "çok teknik"
     },
-    "clickHint": "Bölümü haritada görmek için bir satır seç ya da haritada bir bölüme tıkla."
+    "clickHint": "Bölümü haritada görmek için bir satır seç ya da haritada bir bölüme tıkla.",
+    "colMap": "harita",
+    "mapMissing": "OSM verisi yok",
+    "mapMissingHint": "bu bölümü hiçbir haritalanmış patika kapsamıyor: döküm eksik ya da arazi OSM'de değil."
   },
   "sectionBest": "En iyi dereceler",
   "bestTimes": {

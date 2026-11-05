@@ -43,6 +43,17 @@ def reconcile_trail_sections() -> None:
         analysis_service.reconcile_trail_sections(db)
 
 
+def match_trail_cartography() -> None:
+    """Say which mapped way each measured technical stretch lies on.
+
+    Scheduler-invoked, so it opens its own session. It has nothing to do until an
+    extract has been imported (``devscripts/osm-trail-cache.py``), and afterwards it
+    only handles stretches not yet matched against that extract's date.
+    """
+    with core_database.SessionLocal() as db:
+        analysis_service.match_trail_sections_to_osm(db)
+
+
 def refresh_user_thresholds(user_id: int) -> None:
     """Re-derive one athlete's thresholds and refresh their duration peaks.
 
@@ -69,6 +80,11 @@ def recurring_jobs() -> tuple[core_scheduler.ScheduledJob, ...]:
             reconcile_trail_sections,
             3600,
             "observe run activities the trail detector has never measured",
+        ),
+        core_scheduler.ScheduledJob(
+            match_trail_cartography,
+            3600,
+            "match measured stretches to the imported OpenStreetMap extract",
         ),
     )
 

@@ -191,7 +191,10 @@
       "technical": "technický",
       "veryTechnical": "velmi technický"
     },
-    "clickHint": "Vyber řádek pro zobrazení úseku na mapě, nebo klikni na úsek v mapě."
+    "clickHint": "Vyber řádek pro zobrazení úseku na mapě, nebo klikni na úsek v mapě.",
+    "colMap": "mapa",
+    "mapMissing": "bez dat OSM",
+    "mapMissingHint": "Žádná mapovaná cesta nepokrývá tento úsek: chybí extrakt nebo terén není v OSM."
   },
   "sectionBest": "Nejlepší časy",
   "bestTimes": {

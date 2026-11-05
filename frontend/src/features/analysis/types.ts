@@ -474,10 +474,43 @@ export interface ActivityLoadsSummary {
 
 export type TrailSectionsDto = Schemas['TrailSectionsRead']
 export type TrailSectionDto = Schemas['TrailSectionRead']
+export type TrailOsmDto = Schemas['TrailOsmRead']
 export type TrailPointDto = Schemas['TrailPointRead']
 
 /** Which way the ground moved through a technical stretch. */
 export type TrailSectionDirection = 'descent' | 'ascent' | 'flat'
+
+/** What OpenStreetMap claims about the ground a stretch lies on, as it claims it. */
+export interface TrailOsm {
+  /** The OpenStreetMap way id. */
+  wayId: number
+  /** Way name, when mapped. */
+  name: string | null
+  /** Hiking difficulty (T0-T6), when mapped. */
+  sacScale: string | null
+  /** IMBA-style difficulty (0-5), when mapped. */
+  mtbScale: string | null
+  /** What the ground is made of, when mapped. */
+  surface: string | null
+  /** How rough the ride reads, when mapped. */
+  smoothness: string | null
+  /** How drivable the track is, when mapped. */
+  tracktype: string | null
+  /** Whether the path can be found, when mapped. */
+  trailVisibility: string | null
+  /** Way width, when mapped. */
+  width: string | null
+  /** How the way itself is signed to climb, when mapped. */
+  incline: string | null
+  /** Offset along the way where the stretch starts. */
+  startM: number
+  /** Offset along the way where it ends. */
+  endM: number
+  /** Ground of the stretch the way accounts for. */
+  coveredM: number
+  /** Day of the extract this was read from. */
+  cacheDate: string
+}
 
 /** One technical stretch of a trail run, with its own polyline for the map. */
 export interface TrailSection {
@@ -500,6 +533,8 @@ export interface TrailSection {
   direction: TrailSectionDirection
   /** The section's own polyline, for map overlays. */
   points: GeoPoint[]
+  /** What the cartography says about this ground, when it says anything. */
+  osm: TrailOsm | null
 }
 
 /** The technical-terrain pass over one activity (experimental). */
