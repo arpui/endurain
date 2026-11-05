@@ -196,7 +196,14 @@
     "colMap": "karta",
     "mapMissing": "nema OSM podataka",
     "mapMissingHint": "Nitrira mapa staza ne pokriva dionicu: nedostaje ekstrakt ili teren nije u OSM-u.",
-    "core": "jezgra {score} na {range}"
+    "core": "jezgra {score} na {range}",
+    "colMark": "presuda",
+    "mark": {
+      "agree": "tako je bilo",
+      "overstated": "tehnički, ali ne toliko",
+      "wrong": "uopće nije tehnički"
+    },
+    "markHint": "Ocijeni ako se sjećanje ne slaže: ocjene su osnova kalibracije metode i mogu se poništiti."
   },
   "sectionBest": "Najbolja vremena",
   "bestTimes": {

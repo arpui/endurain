@@ -424,6 +424,7 @@ describe('trail technical sections', () => {
       coreScore: 0.91,
       points: [{ lat: 42.47, lng: 0.99 }],
       osm: null,
+      mark: null,
     })
   })
 

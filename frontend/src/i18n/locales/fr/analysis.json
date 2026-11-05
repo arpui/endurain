@@ -196,7 +196,14 @@
     "colMap": "carte",
     "mapMissing": "pas de données OSM",
     "mapMissingHint": "Aucun chemin cartographié ne couvre ce segment : l'extrait manque ou le terrain n'est pas dans OSM.",
-    "core": "noyau {score} sur {range}"
+    "core": "noyau {score} sur {range}",
+    "colMark": "jugement",
+    "mark": {
+      "agree": "c'est ça",
+      "overstated": "technique, mais pas autant",
+      "wrong": "pas technique du tout"
+    },
+    "markHint": "Juge si ton souvenir diverge : les jugements servent à étalonner la méthode, et ils sont annulables."
   },
   "sectionBest": "Meilleures perfs",
   "bestTimes": {

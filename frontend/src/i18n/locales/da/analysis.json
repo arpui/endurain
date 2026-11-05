@@ -196,7 +196,14 @@
     "colMap": "kort",
     "mapMissing": "ingen OSM-data",
     "mapMissingHint": "Intet kortlagt spor dækker strækningen: extractet mangler, eller terrænet er ikke i OSM.",
-    "core": "kerne {score} ved {range}"
+    "core": "kerne {score} ved {range}",
+    "colMark": "dom",
+    "mark": {
+      "agree": "det var sådan, jeg husker det",
+      "overstated": "teknisk, men ikke så meget",
+      "wrong": "slet ikke teknisk"
+    },
+    "markHint": "Bedøm det, hvis hukommelsen er uenig: dommene er det, metoden kalibreres imod, og de kan fortrydes."
   },
   "sectionBest": "Bedste tider",
   "bestTimes": {

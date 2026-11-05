@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Check, Minus, X } from '@lucide/vue'
 
-import type { TrailSection, TrailSections } from '@/features/analysis/types'
+import type { TrailSection, TrailSections, TrailVerdict } from '@/features/analysis/types'
 import type { Units } from '@/features/activities/utils/format'
 
 import { Badge } from '@/components/ui/badge'
@@ -24,7 +25,16 @@ const props = defineProps<{
 const emit = defineEmits<{
   /** The viewer picked a row: the map should travel to that section. */
   select: [section: TrailSection]
+  /** The viewer judged a stretch; ``null`` takes the judgement back. */
+  mark: [startM: number, verdict: TrailVerdict | null]
 }>()
+
+/** The three verdicts, in the order they read fastest to tap. */
+const VERDICTS: { verdict: TrailVerdict; icon: typeof Check }[] = [
+  { verdict: 'agree', icon: Check },
+  { verdict: 'overstated', icon: Minus },
+  { verdict: 'wrong', icon: X },
+]
 
 const { t } = useI18n()
 
@@ -140,7 +150,8 @@ const rows = computed(() =>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colDirection') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colGrade') }}</th>
               <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colMap') }}</th>
-              <th class="py-2 font-medium">{{ t('analysis.trail.colScore') }}</th>
+              <th class="py-2 pe-3 font-medium">{{ t('analysis.trail.colScore') }}</th>
+              <th class="py-2 font-medium">{{ t('analysis.trail.colMark') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -178,7 +189,30 @@ const rows = computed(() =>
               <td class="py-2 pe-3 text-muted-foreground" :title="mapDetail(row.section.osm)">
                 {{ mapClaim(row.section.osm) }}
               </td>
-              <td class="py-2">{{ row.section.score.toFixed(2) }}</td>
+              <td class="py-2 pe-3">{{ row.section.score.toFixed(2) }}</td>
+              <td class="py-2">
+                <div class="flex items-center gap-1">
+                  <button
+                    v-for="option in VERDICTS"
+                    :key="option.verdict"
+                    type="button"
+                    class="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    :class="{ 'bg-muted text-foreground': row.section.mark === option.verdict }"
+                    :aria-pressed="row.section.mark === option.verdict"
+                    :aria-label="t(`analysis.trail.mark.${option.verdict}`)"
+                    :title="t(`analysis.trail.mark.${option.verdict}`)"
+                    @click.stop="
+                      emit(
+                        'mark',
+                        row.section.startM,
+                        row.section.mark === option.verdict ? null : option.verdict,
+                      )
+                    "
+                  >
+                    <component :is="option.icon" class="size-4" />
+                  </button>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -186,6 +220,7 @@ const rows = computed(() =>
 
       <p class="text-caption text-muted-foreground">
         {{ t('analysis.trail.hint') }} {{ t('analysis.trail.clickHint') }}
+        {{ t('analysis.trail.markHint') }}
       </p>
     </div>
   </Card>

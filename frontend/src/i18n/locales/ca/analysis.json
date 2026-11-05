@@ -196,7 +196,14 @@
     "colMap": "mapa",
     "mapMissing": "sense dades d'OSM",
     "mapMissingHint": "Cap camí cartografiat cobreix aquest tram: falta l'extract o el terra no és a OSM.",
-    "core": "nucli {score} a {range}"
+    "core": "nucli {score} a {range}",
+    "colMark": "judici",
+    "mark": {
+      "agree": "era així",
+      "overstated": "tècnic, però no tant",
+      "wrong": "no era tècnic"
+    },
+    "markHint": "Marca-ho si el record no coincideix: els judicis són el que calibra el mètode, i es poden desfer."
   },
   "sectionBest": "Millors temps",
   "bestTimes": {

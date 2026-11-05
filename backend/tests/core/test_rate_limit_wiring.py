@@ -34,6 +34,7 @@ import core.rate_limit as core_rate_limit
 import modules.activities.activity.router as activity_router
 import modules.activities.activity_ingestion.router as ingestion_router
 import modules.activities.activity_media.router as activity_media_router
+import modules.analysis.activity_router as analysis_activity_router
 import modules.analysis.router as analysis_router
 import modules.auth.identity_providers.public_router as idp_public_router
 import modules.auth.password_reset_tokens.router as password_reset_router
@@ -147,6 +148,16 @@ _TIERED_ENDPOINTS = [
     pytest.param(analysis_router.update_analysis_settings, core_rate_limit.WRITE, id="analysis-settings-update"),
     pytest.param(analysis_router.queue_threshold_refresh, core_rate_limit.WRITE, id="analysis-threshold-refresh"),
     pytest.param(analysis_router.queue_load_recompute, core_rate_limit.WRITE, id="analysis-recompute"),
+    pytest.param(
+        analysis_activity_router.post_trail_section_mark,
+        core_rate_limit.WRITE,
+        id="trail-section-mark-place",
+    ),
+    pytest.param(
+        analysis_activity_router.delete_trail_section_mark,
+        core_rate_limit.WRITE,
+        id="trail-section-mark-remove",
+    ),
     pytest.param(segments_router.import_segment, core_rate_limit.WRITE, id="segment-import"),
     pytest.param(segments_router.queue_backfill, core_rate_limit.WRITE, id="segment-backfill"),
     pytest.param(segments_router.delete_segment, core_rate_limit.WRITE, id="segment-delete"),

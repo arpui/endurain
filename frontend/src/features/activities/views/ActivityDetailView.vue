@@ -17,7 +17,7 @@ import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
 import { activityTypeIsRunning } from '@/features/activities/utils/activityType'
 import { gradeTrailSection, pointsWithin } from '@/features/analysis/utils/trailDegree'
 import type { MapOverlay } from '@/composables/useMapProvider'
-import type { TrailSection } from '@/features/analysis/types'
+import type { TrailSection, TrailVerdict } from '@/features/analysis/types'
 import { themeColor } from '@/lib/themeColor'
 import ActivityDetailHeader from '@/features/activities/components/ActivityDetailHeader.vue'
 import ActivityIntervalTable from '@/features/analysis/components/ActivityIntervalTable.vue'
@@ -27,6 +27,7 @@ import TrailSectionsCard from '@/features/analysis/components/TrailSectionsCard.
 import {
   useActivityIntervalsQuery,
   useLapDynamicsQuery,
+  useTrailSectionMarkMutation,
   useTrailSectionsQuery,
 } from '@/features/analysis/composables/useAnalysis'
 import ActivityGallery from '@/features/activities/components/ActivityGallery.vue'
@@ -171,6 +172,12 @@ const trailFocus = computed(() => {
   )
   return section ? section.points : []
 })
+const trailMarks = useTrailSectionMarkMutation(activityId)
+/** Judge a stretch: agreed, overstated, or never technical (``null`` takes it back). */
+function markTrailSection(startM: number, verdict: TrailVerdict | null): void {
+  trailMarks.mutate({ startM, verdict })
+}
+
 const galleryElement = ref<HTMLElement | null>(null)
 /** Table row click: select the section, move the map to it and bring it into view. */
 function selectTrailSection(section: TrailSection): void {
@@ -527,6 +534,7 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
         :units="units"
         :selected="trailSelected"
         @select="selectTrailSection"
+        @mark="markTrailSection"
       />
 
       <Card v-if="showSegments || isOwner" class="flex flex-col gap-3">

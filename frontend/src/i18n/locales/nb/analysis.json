@@ -196,7 +196,14 @@
     "colMap": "kart",
     "mapMissing": "ingen OSM-data",
     "mapMissingHint": "ingen kartlagt sti dekker dette partiet: uttrekket mangler eller terrenget er ikke i OSM.",
-    "core": "kjerne {score} ved {range}"
+    "core": "kjerne {score} ved {range}",
+    "colMark": "dom",
+    "mark": {
+      "agree": "slik husker jeg det",
+      "overstated": "teknisk, men ikke så mye",
+      "wrong": "ikke teknisk i det hele tatt"
+    },
+    "markHint": "Bedømminnen din er uenig: dommene er grunnlaget metoden kalibreres mot, og de kan angres."
   },
   "sectionBest": "Bestetider",
   "bestTimes": {

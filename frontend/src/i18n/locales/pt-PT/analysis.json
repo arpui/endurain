@@ -196,7 +196,14 @@
     "colMap": "mapa",
     "mapMissing": "sem dados OSM",
     "mapMissingHint": "nenhum caminho cartografado cobre este troço: falta o extrato ou o terreno não está no OSM.",
-    "core": "núcleo {score} em {range}"
+    "core": "núcleo {score} em {range}",
+    "colMark": "júízo",
+    "mark": {
+      "agree": "foi assim",
+      "overstated": "técnico, mas não tanto",
+      "wrong": "nada técnico"
+    },
+    "markHint": "Marca se a memória não coincidir: os juízos são o que calibra o método, e podem ser desfeitos."
   },
   "sectionBest": "Melhores tempos",
   "bestTimes": {

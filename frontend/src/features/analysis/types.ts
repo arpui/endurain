@@ -475,7 +475,11 @@ export interface ActivityLoadsSummary {
 export type TrailSectionsDto = Schemas['TrailSectionsRead']
 export type TrailSectionDto = Schemas['TrailSectionRead']
 export type TrailOsmDto = Schemas['TrailOsmRead']
+export type TrailMarkDto = Schemas['TrailMarkRead']
 export type TrailPointDto = Schemas['TrailPointRead']
+
+/** What the athlete says about a stretch the detector claimed. */
+export type TrailVerdict = 'agree' | 'overstated' | 'wrong'
 
 /** Which way the ground moved through a technical stretch. */
 export type TrailSectionDirection = 'descent' | 'ascent' | 'flat'
@@ -541,6 +545,8 @@ export interface TrailSection {
   points: GeoPoint[]
   /** What the cartography says about this ground, when it says anything. */
   osm: TrailOsm | null
+  /** The athlete's own verdict on it, when they have placed one. */
+  mark: TrailVerdict | null
 }
 
 /** The technical-terrain pass over one activity (experimental). */

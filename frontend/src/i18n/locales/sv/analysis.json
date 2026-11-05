@@ -196,7 +196,14 @@
     "colMap": "karta",
     "mapMissing": "inga OSM-data",
     "mapMissingHint": "ingen kartlagd stig täcker detta avsnitt: utdraget saknas eller terrängen finns inte i OSM.",
-    "core": "kärna {score} vid {range}"
+    "core": "kärna {score} vid {range}",
+    "colMark": "dom",
+    "mark": {
+      "agree": "så minns jag det",
+      "overstated": "teknisk, men inte så mycket",
+      "wrong": "inte teknisk alls"
+    },
+    "markHint": "Bedöm om minnet invänder: domarna är det metoden kalibreras mot, och de kan ångras."
   },
   "sectionBest": "Bästa tider",
   "bestTimes": {

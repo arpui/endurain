@@ -196,7 +196,14 @@
     "colMap": "mapa",
     "mapMissing": "sen datos de OSM",
     "mapMissingHint": "Ningún camiño cartografado cubre este tramo: falta o extracto ou o terreo non está en OSM.",
-    "core": "núcleo {score} en {range}"
+    "core": "núcleo {score} en {range}",
+    "colMark": "xuízo",
+    "mark": {
+      "agree": "así foi",
+      "overstated": "técnico, pero non tanto",
+      "wrong": "nada técnico"
+    },
+    "markHint": "Marca se o recordo non coincide: os xuízos son o que calibra o método, e pódense desfacer."
   },
   "sectionBest": "Mellores tempos",
   "bestTimes": {

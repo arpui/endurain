@@ -1588,6 +1588,51 @@ class TestTrailCartography:
         # the measured side is untouched by the cartographic one
         assert read.sections[0].score == 0.83
 
+    def test_the_athlete_s_own_verdict_comes_back_with_the_stretch(self):
+        db = _db()
+        analysis = analysis_trail.TrailAnalysis(
+            sections=[
+                analysis_trail.TechnicalSection(
+                    start_m=7675.0,
+                    length_m=1225.0,
+                    grade_pct=-15.3,
+                    avg_speed_ms=1.51,
+                    gap_deficit=0.68,
+                    cadence_jitter=0.36,
+                    brake_score=0.81,
+                    score=0.83,
+                    direction="descent",
+                    core_start_m=8100.0,
+                    core_end_m=8400.0,
+                    core_score=0.91,
+                    start_index=0,
+                    end_index=3,
+                )
+            ],
+            v_base_ms=2.46,
+            cadence_available=True,
+            technical_m=1225.0,
+            total_m=18000.0,
+        )
+        stamps = tuple([_T0_UTC + timedelta(seconds=i) for i in range(6)])
+        mark = SimpleNamespace(activity_id=9, start_m=7675.0, verdict="overstated", updated_at=_T0_UTC)
+        with (
+            patch(f"{_SVC}.activity_integration.owns_activity", return_value=True),
+            patch(
+                f"{_SVC}.activity_integration.get_activity_for_derivation",
+                return_value=_activity(9, activity_type=2),
+            ),
+            patch(f"{_SVC}._trail_observation", return_value=(analysis, stamps)),
+            patch(
+                f"{_SVC}._trail_track",
+                return_value=[(_T0_UTC + timedelta(seconds=i), 42.47, 0.99) for i in range(6)],
+            ),
+            patch(f"{_SVC}.analysis_crud.list_trail_observation", return_value=None),
+            patch(f"{_SVC}.analysis_crud.list_trail_marks", return_value=[mark]),
+        ):
+            read = analysis_service.get_trail_sections(9, 2, db)
+        assert read.sections[0].mark == "overstated"
+
     def test_an_activity_with_no_stored_observation_answers_without_cartography(self):
         db = _db()
         analysis = analysis_trail.TrailAnalysis([], 2.4, True, 0.0, 12000.0)

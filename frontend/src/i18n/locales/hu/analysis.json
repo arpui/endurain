@@ -196,7 +196,14 @@
     "colMap": "térkép",
     "mapMissing": "nincs OSM adat",
     "mapMissingHint": "egy térképezett ösvény sem fedi ezt a szakaszt: hiányzik a kivonat, vagy a terep nincs az OSM-ben.",
-    "core": "mag {score} itt: {range}"
+    "core": "mag {score} itt: {range}",
+    "colMark": "ítélet",
+    "mark": {
+      "agree": "úgy volt, ahogy látom",
+      "overstated": "technikai, de nem annyira",
+      "wrong": "egyáltalán nem technikai"
+    },
+    "markHint": "Jelöld, ha az emlékeid mást mondanak: az ítéletek a módszer kalibrálásának alapjai, és visszavonhatók."
   },
   "sectionBest": "Legjobb idők",
   "bestTimes": {

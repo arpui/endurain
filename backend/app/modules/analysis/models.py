@@ -484,6 +484,51 @@ class OsmPath(Base, TimestampMixin):
     cache_date: Mapped[date] = mapped_column(Date, nullable=False, comment="Day the extract was taken")
 
 
+class TrailMark(Base, TimestampMixin):
+    """What the athlete says about one stretch the detector claimed.
+
+    The index is a hypothesis about ground; the athlete's memory of the route is
+    the only ground truth there is. Keeping the verdict next to the stretch is what
+    lets a calibration be judged against labels: which stretches were really that
+    hard, which were technical but not as claimed, and which were never technical -
+    the tired-leg case, the marked path with knee-high grass.
+
+    Attributes:
+        user_id: The athlete judging.
+        activity_id: The session the judged stretch belongs to.
+        start_m: Ground position of the stretch, as the detector reported it.
+        verdict: ``agree`` / ``overstated`` / ``wrong``.
+    """
+
+    __tablename__ = "analysis_trail_marks"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Athlete judging the stretch",
+    )
+    activity_id: Mapped[int] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Session the judged stretch belongs to",
+    )
+    start_m: Mapped[float] = mapped_column(
+        Float,
+        primary_key=True,
+        comment="Ground position of the judged stretch, as the detector reported it",
+    )
+    verdict: Mapped[str] = mapped_column(String(length=16), nullable=False, comment="agree / overstated / wrong")
+
+    __table_args__ = (
+        CheckConstraint(
+            f"verdict IN ({analysis_constants.trail_verdict_sql_list()})",
+            name="ck_analysis_trail_marks_verdict",
+        ),
+        Index("ix_analysis_trail_marks_activity", "activity_id"),
+        Index("ix_analysis_trail_marks_user_verdict", "user_id", "verdict"),
+    )
+
+
 class TrailSection(Base, TimestampMixin):
     """One technical stretch the trail detector read in a session.
 

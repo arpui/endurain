@@ -2365,6 +2365,10 @@ def get_trail_sections(
     analysis, stamps = measured
     track = _trail_track(activity_id, db)
     cartography = _trail_cartography(activity_id, db)
+    marks = {
+        round(mark.start_m, 3): mark.verdict
+        for mark in analysis_crud.list_trail_marks(activity_id, requester_user_id, db)
+    }
 
     sections: list[analysis_schema.TrailSectionRead] = []
     for section in analysis.sections:
@@ -2390,6 +2394,7 @@ def get_trail_sections(
                 core_score=section.core_score,
                 points=[analysis_schema.TrailPointRead(lat=lat, lon=lon) for lat, lon in pts[::step]],
                 osm=cartography.get(round(section.start_m, 3)),
+                mark=marks.get(round(section.start_m, 3)),
             )
         )
     return analysis_schema.TrailSectionsRead(
@@ -2698,3 +2703,117 @@ def _match_one_stretch(
             for path in candidates
         ],
     )
+
+
+def get_trail_marks(
+    activity_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> list[analysis_schema.TrailMarkRead]:
+    """Return what the athlete has already said about one activity's stretches.
+
+    Args:
+        activity_id: The session judged.
+        requester_user_id: The athlete asking; only their own marks answer.
+        db: Database session.
+
+    Returns:
+        The marks, in ground order.
+
+    Raises:
+        NotFoundError: If the activity is not the requester's.
+    """
+    if not activity_integration.owns_activity(activity_id, requester_user_id, db):
+        raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
+    return [
+        analysis_schema.TrailMarkRead(
+            activity_id=mark.activity_id,
+            start_m=mark.start_m,
+            verdict=mark.verdict,
+            updated_at=mark.updated_at.isoformat() if mark.updated_at else "",
+        )
+        for mark in analysis_crud.list_trail_marks(activity_id, requester_user_id, db)
+    ]
+
+
+def save_trail_mark(
+    activity_id: int,
+    requester_user_id: int,
+    mark: analysis_schema.TrailMarkCreate,
+    db: Session,
+) -> analysis_schema.TrailMarkRead:
+    """Place the athlete's verdict on one measured stretch.
+
+    The verdict is calibration, not decoration: it is the label a future change to
+    the weights or the threshold is judged against, which is why "overstated" and
+    "wrong" are kept apart instead of collapsing into "no". A stretch is judged where
+    it was measured, so the mark is keyed to its ground position; re-marking replaces.
+
+    Args:
+        activity_id: The session the stretch belongs to.
+        requester_user_id: The athlete judging; only their own activity answers.
+        mark: The stretch position and the verdict.
+        db: Database session.
+
+    Returns:
+        The stored mark.
+
+    Raises:
+        NotFoundError: If the activity is not the requester's.
+    """
+    if not activity_integration.owns_activity(activity_id, requester_user_id, db):
+        raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
+    stored = analysis_crud.replace_trail_mark(
+        user_id=requester_user_id,
+        activity_id=activity_id,
+        start_m=mark.start_m,
+        verdict=mark.verdict,
+        db=db,
+    )
+    db.commit()
+    logger.info(
+        "Trail stretch judged",
+        extra=core_logger.context(activity_id=activity_id, start_m=mark.start_m, verdict=mark.verdict),
+    )
+    return analysis_schema.TrailMarkRead(
+        activity_id=stored.activity_id,
+        start_m=stored.start_m,
+        verdict=stored.verdict,
+        updated_at=stored.updated_at.isoformat() if stored.updated_at else "",
+    )
+
+
+def clear_trail_mark(
+    activity_id: int,
+    requester_user_id: int,
+    start_m: float,
+    db: Session,
+) -> bool:
+    """Take back a verdict, when the athlete changes their mind.
+
+    Args:
+        activity_id: The session judged.
+        requester_user_id: The athlete who judged.
+        start_m: Ground position of the stretch.
+        db: Database session.
+
+    Returns:
+        ``True`` when a mark was removed.
+
+    Raises:
+        NotFoundError: If the activity is not the requester's.
+    """
+    if not activity_integration.owns_activity(activity_id, requester_user_id, db):
+        raise core_exceptions.NotFoundError(f"Activity {activity_id} not found")
+    removed = analysis_crud.delete_trail_mark(
+        user_id=requester_user_id,
+        activity_id=activity_id,
+        start_m=start_m,
+        db=db,
+    )
+    db.commit()
+    logger.info(
+        "Trail judgement taken back",
+        extra=core_logger.context(activity_id=activity_id, start_m=start_m, removed=removed),
+    )
+    return removed

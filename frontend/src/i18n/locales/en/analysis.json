@@ -196,7 +196,14 @@
     "colMap": "map",
     "mapMissing": "no OSM data",
     "mapMissingHint": "No mapped way covers this stretch: the extract is missing or the ground is unmapped.",
-    "core": "core {score} at {range}"
+    "core": "core {score} at {range}",
+    "colMark": "verdict",
+    "mark": {
+      "agree": "that is what it was",
+      "overstated": "technical, but not that much",
+      "wrong": "not technical at all"
+    },
+    "markHint": "Judge it when your memory disagrees: the verdicts are what the method is calibrated against, and they can be undone."
   },
   "sectionBest": "Best times",
   "bestTimes": {

@@ -196,7 +196,14 @@
     "colMap": "地图",
     "mapMissing": "无 OSM 数据",
     "mapMissingHint": "没有已绘制的路径覆盖该路段：缺少数据集，或该地面不在 OSM 中。",
-    "core": "核心 {score} 位于 {range}"
+    "core": "核心 {score} 位于 {range}",
+    "colMark": "判断",
+    "mark": {
+      "agree": "就是那样",
+      "overstated": "技术性，但没那么强",
+      "wrong": "完全不技术性"
+    },
+    "markHint": "如果记忆与结果不符，请标记：这些判断是校准方法的依据，可以撤销。"
   },
   "sectionBest": "最佳成绩",
   "bestTimes": {

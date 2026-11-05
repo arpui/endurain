@@ -196,7 +196,14 @@
     "colMap": "kaart",
     "mapMissing": "OSM-andmed puuduvad",
     "mapMissingHint": "ükski kaardistatud rada ei kata seda lõiku: extract puudub või maastik pole OSM-is.",
-    "core": "tuumik {score} vahemikus {range}"
+    "core": "tuumik {score} vahemikus {range}",
+    "colMark": "hinnang",
+    "mark": {
+      "agree": "nii see oli",
+      "overstated": "tehniline, aga mitte nii väga",
+      "wrong": "mitte sugugi tehniline"
+    },
+    "markHint": "Hinda, kui mälu on teist meelt: hinnangud on meetodi kalibreerimise alus ja nende tühistamine on võimalik."
   },
   "sectionBest": "Parimad ajad",
   "bestTimes": {

@@ -196,7 +196,14 @@
     "colMap": "mappa",
     "mapMissing": "nessun dato OSM",
     "mapMissingHint": "Nessun percorso mappato copre questo tratto: manca l'estratto o il terreno non è in OSM.",
-    "core": "nucleo {score} su {range}"
+    "core": "nucleo {score} su {range}",
+    "colMark": "giudizio",
+    "mark": {
+      "agree": "è così",
+      "overstated": "tecnico, ma non tanto",
+      "wrong": "per nulla tecnico"
+    },
+    "markHint": "Segna se il ricordo non coincide: i giudizi sono ciò con cui si calibra il metodo, e si possono annullare."
   },
   "sectionBest": "Tempi migliori",
   "bestTimes": {

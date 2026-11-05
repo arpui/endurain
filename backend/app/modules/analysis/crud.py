@@ -813,3 +813,94 @@ def set_trail_section_osm_match(
     section.osm_covered_m = match.covered_m if match else None
     section.osm_cache_date = cache_date
     db.add(section)
+
+
+def replace_trail_mark(
+    user_id: int,
+    activity_id: int,
+    start_m: float,
+    verdict: str,
+    db: Session,
+) -> analysis_models.TrailMark:
+    """Place (or replace) the athlete's verdict on one measured stretch.
+
+    Args:
+        user_id: The athlete judging.
+        activity_id: The session the stretch belongs to.
+        start_m: Ground position of the stretch, as the detector reported it.
+        verdict: ``agree`` / ``overstated`` / ``wrong``.
+        db: Database session.
+
+    Returns:
+        The stored mark.
+    """
+    db.execute(
+        delete(analysis_models.TrailMark).where(
+            analysis_models.TrailMark.user_id == user_id,
+            analysis_models.TrailMark.activity_id == activity_id,
+            analysis_models.TrailMark.start_m == start_m,
+        )
+    )
+    mark = analysis_models.TrailMark(
+        user_id=user_id,
+        activity_id=activity_id,
+        start_m=start_m,
+        verdict=verdict,
+    )
+    db.add(mark)
+    db.flush()
+    return mark
+
+
+def delete_trail_mark(
+    user_id: int,
+    activity_id: int,
+    start_m: float,
+    db: Session,
+) -> bool:
+    """Take back the verdict on one stretch, when there was one.
+
+    Args:
+        user_id: The athlete judging.
+        activity_id: The session the stretch belongs to.
+        start_m: Ground position of the stretch.
+        db: Database session.
+
+    Returns:
+        ``True`` when a mark was removed.
+    """
+    result = db.execute(
+        delete(analysis_models.TrailMark).where(
+            analysis_models.TrailMark.user_id == user_id,
+            analysis_models.TrailMark.activity_id == activity_id,
+            analysis_models.TrailMark.start_m == start_m,
+        )
+    )
+    return bool(result.rowcount)
+
+
+def list_trail_marks(
+    activity_id: int,
+    user_id: int,
+    db: Session,
+) -> list[analysis_models.TrailMark]:
+    """Return the athlete's verdicts on one activity's stretches.
+
+    Args:
+        activity_id: The session judged.
+        user_id: The athlete who judged.
+        db: Database session.
+
+    Returns:
+        The marks, in ground order.
+    """
+    return list(
+        db.scalars(
+            select(analysis_models.TrailMark)
+            .where(
+                analysis_models.TrailMark.activity_id == activity_id,
+                analysis_models.TrailMark.user_id == user_id,
+            )
+            .order_by(analysis_models.TrailMark.start_m)
+        )
+    )

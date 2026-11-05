@@ -196,7 +196,14 @@
     "colMap": "zemljevid",
     "mapMissing": "ni podatkov OSM",
     "mapMissingHint": "nobena kartirana pot ne pokriva tega odseka: manjka izpisek ali teren ni v OSM.",
-    "core": "jedro {score} na {range}"
+    "core": "jedro {score} na {range}",
+    "colMark": "presoja",
+    "mark": {
+      "agree": "tako je bilo",
+      "overstated": "tehnično, a ne toliko",
+      "wrong": "sploh ne tehnično"
+    },
+    "markHint": "Oceni, če se spomin ne strinja: ocene so osnova za kalibracijo metode in jih lahko razveljaviš."
   },
   "sectionBest": "Najboljši časi",
   "bestTimes": {

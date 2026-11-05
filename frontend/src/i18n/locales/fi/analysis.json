@@ -196,7 +196,14 @@
     "colMap": "kartta",
     "mapMissing": "ei OSM-tietoja",
     "mapMissingHint": "kään kartioitu reitti ei kata tätä osuutta: aineisto puuttuu tai maasto ei ole OSM:ssä.",
-    "core": "ydin {score} välillä {range}"
+    "core": "ydin {score} välillä {range}",
+    "colMark": "arvio",
+    "mark": {
+      "agree": "noin muistan",
+      "overstated": "tekninen, mutta ei niin paljoa",
+      "wrong": "ei lainkaan tekninen"
+    },
+    "markHint": "Arvioi, jos muisti on eri mieltä: arviot ovat menetelmän kalibroinnin perusta, ja ne voi perua."
   },
   "sectionBest": "Parhaat ajat",
   "bestTimes": {

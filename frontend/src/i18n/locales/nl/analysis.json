@@ -196,7 +196,14 @@
     "colMap": "kaart",
     "mapMissing": "geen OSM-gegevens",
     "mapMissingHint": "geen in kaart gebracht pad dekt dit stuk: de extract ontbreekt of het terrein staat niet in OSM.",
-    "core": "kern {score} op {range}"
+    "core": "kern {score} op {range}",
+    "colMark": "oordeel",
+    "mark": {
+      "agree": "zo was het",
+      "overstated": "technisch, maar niet zozeer",
+      "wrong": "helemaal niet technisch"
+    },
+    "markHint": "Beoordeel als je herinnering afwijkt: de oordelen zijn waar de methode mee wordt gekalibreerd, en ze zijn ongedaan te maken."
   },
   "sectionBest": "Tijden",
   "bestTimes": {

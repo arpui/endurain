@@ -274,6 +274,58 @@ class TestPowerDurationRoute:
         assert response.status_code == 422
 
 
+class TestTrailSectionMarksRoute:
+    def test_the_owner_places_a_verdict_on_a_stretch(self):
+        client = TestClient(_build_app(MagicMock()))
+        read = analysis_schema.TrailMarkRead(
+            activity_id=9,
+            start_m=7675.0,
+            verdict="overstated",
+            updated_at="2026-11-05T10:00:00+00:00",
+        )
+        with patch("modules.analysis.activity_router.analysis_service.save_trail_mark", return_value=read) as svc:
+            response = client.post(
+                "/activities/9/trail-sections/marks",
+                json={"start_m": 7675.0, "verdict": "overstated"},
+            )
+        assert response.status_code == 201
+        assert svc.call_args.args[1] == 2
+        assert svc.call_args.args[2].start_m == 7675.0
+        assert response.json()["verdict"] == "overstated"
+
+    def test_an_unknown_verdict_is_rejected_before_it_reaches_the_service(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.activity_router.analysis_service.save_trail_mark") as svc:
+            response = client.post(
+                "/activities/9/trail-sections/marks",
+                json={"start_m": 7675.0, "verdict": "maybe"},
+            )
+        assert response.status_code == 422
+        svc.assert_not_called()
+
+    def test_the_owner_reads_back_their_verdicts(self):
+        client = TestClient(_build_app(MagicMock()))
+        marks = [
+            analysis_schema.TrailMarkRead(
+                activity_id=9,
+                start_m=7675.0,
+                verdict="agree",
+                updated_at="2026-11-05T10:00:00+00:00",
+            )
+        ]
+        with patch("modules.analysis.activity_router.analysis_service.get_trail_marks", return_value=marks):
+            response = client.get("/activities/9/trail-sections/marks")
+        assert response.status_code == 200
+        assert response.json()[0]["verdict"] == "agree"
+
+    def test_a_verdict_can_be_taken_back(self):
+        client = TestClient(_build_app(MagicMock()))
+        with patch("modules.analysis.activity_router.analysis_service.clear_trail_mark", return_value=True) as svc:
+            response = client.delete("/activities/9/trail-sections/marks", params={"start_m": 7675.0})
+        assert response.status_code == 204
+        assert svc.call_args.args[2] == 7675.0
+
+
 class TestTrailSectionsRoute:
     def test_the_owner_reads_the_technical_sections(self):
         client = TestClient(_build_app(MagicMock()))

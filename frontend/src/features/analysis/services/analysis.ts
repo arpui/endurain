@@ -43,9 +43,11 @@ import type {
   ActivityLoadDto,
   ActivityLoadsSummary,
   ActivityLoadsSummaryDto,
+  TrailMarkDto,
   TrailSection,
   TrailSections,
   TrailSectionsDto,
+  TrailVerdict,
 } from '../types'
 import type { Schemas } from '@/types'
 
@@ -483,6 +485,7 @@ export async function fetchTrailSections(
       coreScore: section.core_score ?? null,
       direction: section.direction as TrailSection['direction'],
       points: (section.points ?? []).map((point) => ({ lat: point.lat, lng: point.lon })),
+      mark: (section.mark ?? null) as TrailVerdict | null,
       osm: section.osm
         ? {
             wayId: section.osm.way_id,
@@ -655,4 +658,49 @@ export async function fetchActivityLoadsSummaries(
   const params = activityIds.map((id) => `activity_ids=${id}`).join('&')
   const dtos = await apiFetch<ActivityLoadsSummaryDto[]>(`/analysis/loads?${params}`, { signal })
   return new Map(dtos.map((dto) => [dto.activity_id, mapActivityLoadsSummary(dto)]))
+}
+
+/**
+ * Place the athlete's verdict on one measured stretch: agreed, overstated, or
+ * never technical.
+ *
+ * @param activityId - The session the stretch belongs to.
+ * @param startM - Ground position of the stretch, as the server reported it.
+ * @param verdict - The judgement.
+ * @param signal - Optional abort signal.
+ * @returns The stored mark.
+ * @throws {HttpError} When the request fails.
+ */
+export async function postTrailSectionMark(
+  activityId: number,
+  startM: number,
+  verdict: TrailVerdict,
+  signal?: AbortSignal,
+): Promise<void> {
+  await apiFetch<TrailMarkDto>(`/activities/${activityId}/trail-sections/marks`, {
+    method: 'POST',
+    signal,
+    body: JSON.stringify({ start_m: startM, verdict }),
+  })
+}
+
+/**
+ * Take back the verdict on one stretch.
+ *
+ * @param activityId - The session judged.
+ * @param startM - Ground position of the stretch.
+ * @param signal - Optional abort signal.
+ * @returns Nothing; the mark is gone.
+ * @throws {HttpError} When the request fails.
+ */
+export async function deleteTrailSectionMark(
+  activityId: number,
+  startM: number,
+  signal?: AbortSignal,
+): Promise<void> {
+  const query = new URLSearchParams({ start_m: String(startM) })
+  await apiFetch<void>(`/activities/${activityId}/trail-sections/marks?${query.toString()}`, {
+    method: 'DELETE',
+    signal,
+  })
 }

@@ -196,7 +196,14 @@
     "colMap": "Karte",
     "mapMissing": "keine OSM-Daten",
     "mapMissingHint": "Kein kartierter Weg deckt diesen Abschnitt ab: der Extrakt fehlt oder das Gelände ist nicht in OSM.",
-    "core": "Kern {score} bei {range}"
+    "core": "Kern {score} bei {range}",
+    "colMark": "Urteil",
+    "mark": {
+      "agree": "so war es",
+      "overstated": "technisch, aber nicht so sehr",
+      "wrong": "überhaupt nicht technisch"
+    },
+    "markHint": "Bewerte es, wenn deine Erinnerung abweicht: die Urteile sind die Kalibrierungsgrundlage der Methode und lassen sich zurücknehmen."
   },
   "sectionBest": "Bestzeiten",
   "bestTimes": {

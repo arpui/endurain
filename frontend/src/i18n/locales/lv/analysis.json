@@ -196,7 +196,14 @@
     "colMap": "karte",
     "mapMissing": "nav OSM datu",
     "mapMissingHint": "nevi mapē celiļi neklāj šo posmu: trūkst eksporta vai reljefs nav OSM.",
-    "core": "kodols {score} pie {range}"
+    "core": "kodols {score} pie {range}",
+    "colMark": "spriedums",
+    "mark": {
+      "agree": "tieši tā bija",
+      "overstated": "tehnisks, bet ne tik ļoti",
+      "wrong": "pavisam netehnisks"
+    },
+    "markHint": "Novērtē, ja atmiņa nepiekrīt: spriedumi ir metode kalibrēšanas pamats, un tos var atsaukt."
   },
   "sectionBest": "Labākie laiki",
   "bestTimes": {

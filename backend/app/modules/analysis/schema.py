@@ -2,6 +2,7 @@
 
 from collections.abc import Mapping
 from datetime import date as date_type
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 
@@ -420,6 +421,39 @@ class TrailOsmRead(BaseModel):
     cache_date: str
 
 
+class TrailMarkCreate(BaseModel):
+    """Serialized verdict an athlete is placing on one measured stretch.
+
+    Attributes:
+        start_m: Ground position of the stretch, exactly as the detector reported it.
+        verdict: ``agree`` (that is what it was), ``overstated`` (technical, but not
+            that much) or ``wrong`` (never technical: fatigue, grass, a wide track).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    start_m: StrictFloat
+    verdict: Literal["agree", "overstated", "wrong"]
+
+
+class TrailMarkRead(BaseModel):
+    """Serialized stored verdict for one stretch.
+
+    Attributes:
+        activity_id: The session judged.
+        start_m: Ground position of the stretch.
+        verdict: The verdict placed.
+        updated_at: When the verdict was last placed.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    activity_id: StrictInt
+    start_m: StrictFloat
+    verdict: Literal["agree", "overstated", "wrong"]
+    updated_at: str
+
+
 class TrailSectionRead(BaseModel):
     """Serialized one technical stretch of a trail run.
 
@@ -440,6 +474,7 @@ class TrailSectionRead(BaseModel):
         core_score: Peak index inside the hard block.
         points: The section's own polyline, for map overlays.
         osm: What the cartography says about this ground, when it says anything.
+        mark: The athlete's own verdict on this stretch, when they have placed one.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -458,6 +493,7 @@ class TrailSectionRead(BaseModel):
     core_score: StrictFloat | None = None
     points: list[TrailPointRead]
     osm: TrailOsmRead | None = None
+    mark: Literal["agree", "overstated", "wrong"] | None = None
 
 
 class TrailSectionsRead(BaseModel):

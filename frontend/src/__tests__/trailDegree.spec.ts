@@ -23,6 +23,7 @@ function section(overrides: Partial<TrailSection> = {}): TrailSection {
     direction: 'descent',
     points: [],
     osm: null,
+    mark: null,
     ...overrides,
   }
 }

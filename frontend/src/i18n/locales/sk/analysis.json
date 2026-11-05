@@ -196,7 +196,14 @@
     "colMap": "mapa",
     "mapMissing": "žiadne údaje OSM",
     "mapMissingHint": "žiadna mapovaná cesta nepokrýva tento úsek: chýba extrakt alebo terén nie je v OSM.",
-    "core": "jadro {score} v {range}"
+    "core": "jadro {score} v {range}",
+    "colMark": "posudok",
+    "mark": {
+      "agree": "presne tak to bolo",
+      "overstated": "technický, ale nie až tak",
+      "wrong": "vôbec nie technický"
+    },
+    "markHint": "Hodnoť, ak sa pamäť nezhoduje: hodnotenia sú základom kalibrácie metódy a dajú sa vrátiť späť."
   },
   "sectionBest": "Najlepšie časy",
   "bestTimes": {

@@ -712,6 +712,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/activities/{activity_id}/trail-sections/marks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trail Section Marks
+         * @description Return what the athlete has already said about this activity's stretches.
+         */
+        get: operations["get_trail_section_marks_api_v1_activities__activity_id__trail_sections_marks_get"];
+        put?: never;
+        /**
+         * Post Trail Section Mark
+         * @description Judge one measured stretch: agreed, overstated, or never technical.
+         *
+         *     These labels are the calibration: a weight or threshold change is accepted or
+         *     rejected against them, so the three verdicts stay apart rather than collapsing
+         *     into a yes/no.
+         */
+        post: operations["post_trail_section_mark_api_v1_activities__activity_id__trail_sections_marks_post"];
+        /**
+         * Delete Trail Section Mark
+         * @description Take back a verdict on one stretch.
+         */
+        delete: operations["delete_trail_section_mark_api_v1_activities__activity_id__trail_sections_marks_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/activities/{activity_id}/trail-sections": {
         parameters: {
             query?: never;
@@ -11884,6 +11916,47 @@ export interface components {
             refresh_token_expires_in: number;
         };
         /**
+         * TrailMarkCreate
+         * @description Serialized verdict an athlete is placing on one measured stretch.
+         *
+         *     Attributes:
+         *         start_m: Ground position of the stretch, exactly as the detector reported it.
+         *         verdict: ``agree`` (that is what it was), ``overstated`` (technical, but not
+         *             that much) or ``wrong`` (never technical: fatigue, grass, a wide track).
+         */
+        TrailMarkCreate: {
+            /** Start M */
+            start_m: number;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "agree" | "overstated" | "wrong";
+        };
+        /**
+         * TrailMarkRead
+         * @description Serialized stored verdict for one stretch.
+         *
+         *     Attributes:
+         *         activity_id: The session judged.
+         *         start_m: Ground position of the stretch.
+         *         verdict: The verdict placed.
+         *         updated_at: When the verdict was last placed.
+         */
+        TrailMarkRead: {
+            /** Activity Id */
+            activity_id: number;
+            /** Start M */
+            start_m: number;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "agree" | "overstated" | "wrong";
+            /** Updated At */
+            updated_at: string;
+        };
+        /**
          * TrailOsmRead
          * @description Serialized what OpenStreetMap claims about the ground a stretch lies on.
          *
@@ -11972,6 +12045,7 @@ export interface components {
          *         core_score: Peak index inside the hard block.
          *         points: The section's own polyline, for map overlays.
          *         osm: What the cartography says about this ground, when it says anything.
+         *         mark: The athlete's own verdict on this stretch, when they have placed one.
          */
         TrailSectionRead: {
             /** Start M */
@@ -12001,6 +12075,8 @@ export interface components {
             /** Points */
             points: components["schemas"]["TrailPointRead"][];
             osm?: components["schemas"]["TrailOsmRead"] | null;
+            /** Mark */
+            mark?: ("agree" | "overstated" | "wrong") | null;
         };
         /**
          * TrailSectionsRead
@@ -15345,6 +15421,131 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["LapDynamicsRead"][];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_trail_section_marks_api_v1_activities__activity_id__trail_sections_marks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrailMarkRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    post_trail_section_mark_api_v1_activities__activity_id__trail_sections_marks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrailMarkCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrailMarkRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_trail_section_mark_api_v1_activities__activity_id__trail_sections_marks_delete: {
+        parameters: {
+            query: {
+                /** @description Ground position of the judged stretch */
+                start_m: number;
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

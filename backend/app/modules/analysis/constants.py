@@ -521,6 +521,17 @@ PEAK_RUNAWAY_NEIGHBOR_SHARE = 0.7
 PEAK_RUNAWAY_STALL_V_MS = 1.0
 PEAK_RUNAWAY_GRADE_EXEMPT_PCT = 12.0
 
+#: What an athlete says about a stretch the detector claimed. Deliberately three
+#: words the athlete already uses, not a 1-5 rating: an invented scale has to be
+#: translated back into the model's terms before it means anything.
+TRAIL_VERDICTS = ("agree", "overstated", "wrong")
+
+
+def trail_verdict_sql_list() -> str:
+    """Return the quoted ``IN (...)`` list of :data:`TRAIL_VERDICTS`."""
+    return ", ".join(f"'{verdict}'" for verdict in TRAIL_VERDICTS)
+
+
 #: Which way the ground moved through a technical stretch.
 TRAIL_DIRECTIONS = ("descent", "ascent", "flat")
 

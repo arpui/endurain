@@ -196,7 +196,14 @@
     "colMap": "žemėlapis",
     "mapMissing": "nėra OSM duomenų",
     "mapMissingHint": "jokios nubrėžtos takas nedengia šio ruožo: trūksta ištraukos arba teritorija nėra OSM.",
-    "core": "branduolys {score} ties {range}"
+    "core": "branduolys {score} ties {range}",
+    "colMark": "nuosprendis",
+    "mark": {
+      "agree": "taip ir buvo",
+      "overstated": "techniška, bet ne tiek",
+      "wrong": "visiškai ne techniška"
+    },
+    "markHint": "Įvertink, jei atmintis nesutampa: nuosprendžiai – pagrindas metodui kalibruoti, ir juos galima atšaukti."
   },
   "sectionBest": "Geriausi laikai",
   "bestTimes": {

@@ -196,7 +196,14 @@
     "colMap": "mapa",
     "mapMissing": "brak danych OSM",
     "mapMissingHint": "żadna zinwentaryzowana ścieżka nie pokrywa tego odcinka: brakuje ekstrakcji lub teren nie jest w OSM.",
-    "core": "rdzeń {score} na {range}"
+    "core": "rdzeń {score} na {range}",
+    "colMark": "ocena",
+    "mark": {
+      "agree": "tak to było",
+      "overstated": "techniczny, ale nie aż tak",
+      "wrong": "wcale nie techniczny"
+    },
+    "markHint": "Oceń, jeśli pamięć się nie zgadza: oceny służą kalibracji metody i można je cofnąć."
   },
   "sectionBest": "Najlepsze czasy",
   "bestTimes": {

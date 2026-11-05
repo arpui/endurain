@@ -196,7 +196,14 @@
     "colMap": "harita",
     "mapMissing": "OSM verisi yok",
     "mapMissingHint": "bu bölümü hiçbir haritalanmış patika kapsamıyor: döküm eksik ya da arazi OSM'de değil.",
-    "core": "çekirdek {score}, {range}"
+    "core": "çekirdek {score}, {range}",
+    "colMark": "karar",
+    "mark": {
+      "agree": "öyleydi",
+      "overstated": "teknik ama o kadar değil",
+      "wrong": "hiç teknik değil"
+    },
+    "markHint": "Hafızan uyuşmuyorsa işaretle: kararlar yöntemi kalibre etmek içindir ve geri alınabilir."
   },
   "sectionBest": "En iyi dereceler",
   "bestTimes": {

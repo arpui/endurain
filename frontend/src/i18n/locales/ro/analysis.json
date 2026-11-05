@@ -196,7 +196,14 @@
     "colMap": "hartă",
     "mapMissing": "fără date OSM",
     "mapMissingHint": "nicio potecă cartografiată acoperă această porțiune: lipsește extrasul sau terenul nu este în OSM.",
-    "core": "nucleu {score} la {range}"
+    "core": "nucleu {score} la {range}",
+    "colMark": "verdict",
+    "mark": {
+      "agree": "așa a fost",
+      "overstated": "tehnic, dar nu chiar atât",
+      "wrong": "deloc tehnic"
+    },
+    "markHint": "Etichetează dacă amintirea contrazice: verdicturile stau la baza calibrării metodei și pot fi anulate."
   },
   "sectionBest": "Timpi de referință",
   "bestTimes": {

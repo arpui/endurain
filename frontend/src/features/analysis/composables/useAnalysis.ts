@@ -8,14 +8,16 @@ import { computed, type MaybeRefOrGetter, toValue } from 'vue'
 import { storeToRefs } from 'pinia'
 import { keepPreviousData, useQuery } from '@tanstack/vue-query'
 
-import type { AnalysisSettingsUpdateDto, FitnessQuery } from '../types'
+import type { AnalysisSettingsUpdateDto, FitnessQuery, TrailVerdict } from '../types'
 
 import { queryKeys } from '@/services/queryKeys'
 import { useInvalidatingMutation } from '@/composables/useInvalidatingMutation'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
+  deleteTrailSectionMark,
   fetchTrailSections,
+  postTrailSectionMark,
   fetchActivityLapDynamics,
   fetchActivityLoadsSummaries,
   fetchAnalysisSettings,
@@ -307,5 +309,34 @@ export function useLapDynamicsQuery(
     queryKey: computed(() => queryKeys.analysis.lapDynamics(id.value)),
     queryFn: ({ signal }) => fetchActivityLapDynamics(id.value, signal),
     enabled: computed(() => id.value > 0 && toValue(enabled) && isAuthenticated.value),
+  })
+}
+
+/**
+ * Place or take back a verdict on one measured stretch.
+ *
+ * The verdict is the calibration input: it is what a future weight or threshold
+ * change is judged against, so it has to be one tap and undoable or nobody places
+ * them. It is not guesswork the client can predict, so it follows the write-then-
+ * invalidate pattern; the sections query carries the mark back into the table.
+ *
+ * @param activityId - Reactive activity id.
+ * @returns The TanStack mutation, resolving once the verdict is stored.
+ */
+export function useTrailSectionMarkMutation(
+  activityId: MaybeRefOrGetter<number | null | undefined>,
+) {
+  const id = computed(() => {
+    const value = toValue(activityId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useInvalidatingMutation({
+    mutationKey: ['analysis', 'trail-section-mark'],
+    invalidateKey: ['analysis', 'trail-sections'],
+    mutationFn: ({ startM, verdict }: { startM: number; verdict: TrailVerdict | null }) =>
+      verdict === null
+        ? deleteTrailSectionMark(id.value, startM)
+        : postTrailSectionMark(id.value, startM, verdict),
   })
 }
