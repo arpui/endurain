@@ -2620,7 +2620,10 @@ def match_trail_sections_to_osm(db: Session) -> int:
         for row in rows:
             by_activity.setdefault(row.activity_id, []).append(row)
         for activity_id, activity_rows in by_activity.items():
-            track = _trail_track(activity_id, db)
+            # the stored stretch range is a UTC-aware instant; the stream's clock is
+            # whatever the device wrote, so both are read as UTC
+            track = [(stamp, lat, lon) for stamp, lat, lon in _trail_track(activity_id, db)]
+            track = [(stamp if stamp.tzinfo else stamp.replace(tzinfo=UTC), lat, lon) for stamp, lat, lon in track]
             for row in activity_rows:
                 if row.start_t is None or row.end_t is None:
                     analysis_crud.set_trail_section_osm_match(row, None, cache_date, db)
