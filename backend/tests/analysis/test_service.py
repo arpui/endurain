@@ -22,6 +22,7 @@ import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
 import modules.analysis.service as analysis_service
+import modules.analysis.trail as analysis_trail
 
 _SVC = "modules.analysis.service"
 _T0 = datetime(2026, 10, 15, 16, 0, 0)
@@ -1402,6 +1403,105 @@ class TestActivityIntervals:
             pytest.raises(core_exceptions.NotFoundError),
         ):
             analysis_service.get_activity_intervals(1, 7, db)
+
+
+class TestTrailObservations:
+    """The detector's evidence rows: what it weighed, under which parameters."""
+
+    @staticmethod
+    def _analysis():
+        return analysis_trail.TrailAnalysis(
+            sections=[
+                analysis_trail.TechnicalSection(
+                    start_m=7675.0,
+                    length_m=1225.0,
+                    grade_pct=-15.3,
+                    avg_speed_ms=1.51,
+                    gap_deficit=0.68,
+                    cadence_jitter=0.36,
+                    brake_score=0.81,
+                    score=0.83,
+                    direction="descent",
+                    start_index=600,
+                    end_index=1300,
+                )
+            ],
+            v_base_ms=2.46,
+            cadence_available=True,
+            technical_m=1225.0,
+            total_m=18693.8,
+        )
+
+    @staticmethod
+    def _stamps():
+        return tuple([_T0_UTC + timedelta(seconds=i) for i in range(2000)])
+
+    def test_a_non_run_activity_stores_nothing(self):
+        db = _db()
+        with (
+            patch(
+                f"{_SVC}.activity_integration.get_activity_for_derivation",
+                return_value=_activity(9, activity_type=4),
+            ),
+            patch(f"{_SVC}.analysis_crud.replace_trail_observation") as store,
+        ):
+            assert analysis_service.compute_trail_sections_for_activity(9, db) == 0
+        store.assert_not_called()
+
+    def test_an_observation_carries_the_components_and_the_parameters_used(self):
+        db = _db()
+        stamps = self._stamps()
+        with (
+            patch(
+                f"{_SVC}.activity_integration.get_activity_for_derivation",
+                return_value=_activity(9, activity_type=2),
+            ),
+            patch(
+                f"{_SVC}._trail_observation",
+                return_value=(self._analysis(), stamps),
+            ),
+            patch(f"{_SVC}.analysis_crud.replace_trail_observation", return_value=1) as store,
+        ):
+            assert analysis_service.compute_trail_sections_for_activity(9, db) == 1
+        kwargs = store.call_args.kwargs
+        assert kwargs["method"] == analysis_constants.trail_model_stamp()
+        assert kwargs["observation"].v_base_ms == 2.46
+        assert kwargs["observation"].technical_m == 1225.0
+        section = kwargs["sections"][0]
+        assert (section.gap_deficit, section.cadence_jitter, section.brake_score) == (0.68, 0.36, 0.81)
+        assert section.start_t == stamps[600] and section.end_t == stamps[1299]
+
+    def test_a_measured_activity_without_stretches_is_recorded_as_measured(self):
+        db = _db()
+        empty = analysis_trail.TrailAnalysis([], 2.4, False, 0.0, 12000.0)
+        with (
+            patch(
+                f"{_SVC}.activity_integration.get_activity_for_derivation",
+                return_value=_activity(9, activity_type=2),
+            ),
+            patch(f"{_SVC}._trail_observation", return_value=(empty, self._stamps())),
+            patch(f"{_SVC}.analysis_crud.replace_trail_observation", return_value=0) as store,
+        ):
+            assert analysis_service.compute_trail_sections_for_activity(9, db) == 0
+        assert store.call_args.kwargs["sections"] == []
+
+    def test_the_backfill_skips_what_the_current_model_already_measured(self):
+        db = _db()
+        pages = [[10, 11, 12], []]
+        with (
+            patch(f"{_SVC}.activity_integration.list_activity_ids_after", side_effect=pages),
+            patch(
+                f"{_SVC}.analysis_crud.activity_ids_with_trail_sessions",
+                return_value={10, 12},
+            ),
+            patch(
+                f"{_SVC}.compute_trail_sections_for_activity",
+                return_value=3,
+            ) as measure,
+        ):
+            written = analysis_service.reconcile_trail_sections(db)
+        assert written == 3
+        assert [call.args[0] for call in measure.call_args_list] == [11]
 
 
 class TestTerrainClimbsService:

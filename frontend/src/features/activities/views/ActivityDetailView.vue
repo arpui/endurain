@@ -136,9 +136,11 @@ const trailFocus = computed(() => {
   )
   return section ? section.points : []
 })
-/** Table row click: select the section and move the map to it. */
+const galleryElement = ref<HTMLElement | null>(null)
+/** Table row click: select the section, move the map to it and bring it into view. */
 function selectTrailSection(section: TrailSection): void {
   trailSelected.value = section.startM
+  galleryElement.value?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 // The analysis laps table replaces the plain one for the owner: same rows, plus
 // power, stride length, the lap's ascent-and-descent pair and its share of the aRSS.
@@ -390,13 +392,15 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
 
       <ActivityPrivacyAlerts :activity="activity" :current-user-id="currentUserId" />
 
-      <ActivityGallery
-        :points="showMap ? trackPoints : []"
-        :overlays="showTrailSections ? mapOverlays : []"
-        :focus-on="trailFocus"
-        :activity-id="activity.id"
-        :is-owner="isOwner"
-      />
+      <div ref="galleryElement">
+        <ActivityGallery
+          :points="showMap ? trackPoints : []"
+          :overlays="showTrailSections ? mapOverlays : []"
+          :focus-on="trailFocus"
+          :activity-id="activity.id"
+          :is-owner="isOwner"
+        />
+      </div>
 
       <ActivityGearCard v-if="isOwner" :activity="activity" />
 

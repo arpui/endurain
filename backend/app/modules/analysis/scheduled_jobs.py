@@ -31,6 +31,18 @@ def recompute_all_loads() -> None:
         analysis_service.recompute_all_loads(db)
 
 
+def reconcile_trail_sections() -> None:
+    """Snapshot the technical stretches of every run activity that has none.
+
+    Scheduler-invoked, so this entry point opens its own session. The trail
+    detector's answer is always re-measured when the UI reads it; these rows are
+    the evidence kept alongside it, and they are what lets a calibration be judged
+    afterwards against what the same ground measured before.
+    """
+    with core_database.SessionLocal() as db:
+        analysis_service.reconcile_trail_sections(db)
+
+
 def refresh_user_thresholds(user_id: int) -> None:
     """Re-derive one athlete's thresholds and refresh their duration peaks.
 
@@ -52,6 +64,11 @@ def recurring_jobs() -> tuple[core_scheduler.ScheduledJob, ...]:
             reconcile_missing_loads,
             60,
             "measure activities without stored loads",
+        ),
+        core_scheduler.ScheduledJob(
+            reconcile_trail_sections,
+            3600,
+            "observe run activities the trail detector has never measured",
         ),
     )
 

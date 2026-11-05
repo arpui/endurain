@@ -7,7 +7,7 @@ module receives one of these dataclasses through ``integration_service``.
 """
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 
 import modules.analysis.constants as analysis_constants
 
@@ -148,3 +148,60 @@ class ThresholdFitRecord:
     cv_pct: float = 0.0
     sustained: float = 0.0
     power_source: str | None = None
+
+
+@dataclass(frozen=True)
+class TrailSessionRecord:
+    """One run activity measured by the technical-terrain detector, once per model.
+
+    Attributes:
+        v_base_ms: The session's own flat-ground reference pace.
+        cadence_available: Whether the stride terms could be used at all.
+        total_m: Ground covered by the session.
+        technical_m: Ground flagged technical over it.
+    """
+
+    v_base_ms: float
+    cadence_available: bool
+    total_m: float
+    technical_m: float
+
+
+@dataclass(frozen=True)
+class TrailSectionRecord:
+    """One technical stretch the trail detector read in one session.
+
+    The three components are stored next to the index they produced so a later
+    calibration can be compared against what the same ground measured before it.
+
+    Attributes:
+        start_m: Ground position where the stretch starts, metres from the start.
+        length_m: Ground covered by the stretch.
+        grade_pct: Mean grade over it, percent.
+        avg_speed_ms: Mean ground speed through it.
+        gap_deficit: Shortfall against the pace the grade explains (0-1).
+        cadence_jitter: Cadence instability over it (0-1).
+        brake_score: Downhill braking share over it (0-1).
+        score: Peak smoothed technicality index inside it.
+        direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
+        v_base_ms: The session's own flat-ground reference pace.
+        cadence_available: Whether the stride terms could be used at all.
+        total_m: Ground covered by the session.
+        start_t: Timestamp of the stretch's first sample.
+        end_t: Timestamp of its last sample.
+    """
+
+    start_m: float
+    length_m: float
+    grade_pct: float
+    avg_speed_ms: float
+    gap_deficit: float
+    cadence_jitter: float
+    brake_score: float
+    score: float
+    direction: str
+    v_base_ms: float
+    cadence_available: bool
+    total_m: float
+    start_t: datetime
+    end_t: datetime
