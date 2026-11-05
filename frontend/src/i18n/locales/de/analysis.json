@@ -133,7 +133,8 @@
     "seriesBalance": "W′ verbleibend",
     "balanceTitle": "W′-Rest über die Zeit",
     "overlayName": "{months} Monate",
-    "overlayCp": "CP der recenten Fenster: {windows}"
+    "overlayCp": "CP der recenten Fenster: {windows}",
+    "flagsNotice": "{count} Einheiten wegen unplausibler Spitzen aus der Kurve gehalten"
   },
   "intervals": {
     "title": "Intervallanalyse",

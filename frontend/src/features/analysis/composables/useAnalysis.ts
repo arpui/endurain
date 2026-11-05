@@ -20,6 +20,7 @@ import {
   fetchAnalysisSettings,
   fetchBestTimes,
   fetchCpTrend,
+  fetchPowerFlags,
   fetchFitnessSeries,
   fetchPowerDuration,
   fetchWprimeBalance,
@@ -70,6 +71,22 @@ export function useFitnessSeriesQuery(query: MaybeRefOrGetter<FitnessQuery>) {
  * @param windowDays - Reactive days of history, `null` for all of it.
  * @returns The TanStack query result for the trend.
  */
+/**
+ * Query for the sessions the duration-intensity curve held out as implausible.
+ *
+ * @param sport - Reactive sport group to read.
+ * @returns The TanStack query result for the flags.
+ */
+export function usePowerFlagsQuery(sport: MaybeRefOrGetter<string>) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.powerFlags(toValue(sport))),
+    queryFn: ({ signal }) => fetchPowerFlags(toValue(sport), signal),
+    enabled: computed(() => isAuthenticated.value && toValue(sport) !== ''),
+  })
+}
+
 export function useCpTrendQuery(
   sport: MaybeRefOrGetter<string>,
   windowDays: MaybeRefOrGetter<number | null>,

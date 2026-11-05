@@ -133,7 +133,8 @@
     "seriesBalance": "W′ ostáva",
     "balanceTitle": "W′ zostávajúce v čase",
     "overlayName": "{months} mesiace",
-    "overlayCp": "CP posledných okien: {windows}"
+    "overlayCp": "CP posledných okien: {windows}",
+    "flagsNotice": "{count} aktivity vylúčené z krivky kvôli neuveriteľným špičkám"
   },
   "intervals": {
     "title": "Analýza intervalov",

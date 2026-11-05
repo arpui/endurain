@@ -364,6 +364,30 @@ class CpTrendPointRead(BaseModel):
     power_source: StrictStr | None
 
 
+class PowerFlagRead(BaseModel):
+    """Serialized one session held out of the duration-intensity curve.
+
+    Attributes:
+        activity_id: The refused session.
+        started_on: Day of the session.
+        duration_s: Duration of the strongest implausible average, in seconds.
+        value_w: The refused best average, in watts.
+        session_np_w: The session's own normalized power, in watts.
+        ratio: ``value_w / session_np_w``.
+        cap: The tier ratio the session exceeded.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    activity_id: StrictInt
+    started_on: date_type
+    duration_s: StrictInt
+    value_w: StrictFloat
+    session_np_w: StrictFloat
+    ratio: StrictFloat
+    cap: StrictFloat
+
+
 class CpTrendEnvelopeRead(BaseModel):
     """One sample of the evolving threshold line: decayed best evidence per day.
 

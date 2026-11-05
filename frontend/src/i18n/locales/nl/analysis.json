@@ -133,7 +133,8 @@
     "seriesBalance": "W′ over",
     "balanceTitle": "W′ over de tijd",
     "overlayName": "{months} maanden",
-    "overlayCp": "CP van recente vensters: {windows}"
+    "overlayCp": "CP van recente vensters: {windows}",
+    "flagsNotice": "{count} sessies uit de curve gehouden wegens onrealistische pieken"
   },
   "intervals": {
     "title": "Intervalanalyse",

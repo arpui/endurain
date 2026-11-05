@@ -133,7 +133,8 @@
     "seriesBalance": "W′ преостало",
     "balanceTitle": "W′ преостало кроз време",
     "overlayName": "{months} месеци",
-    "overlayCp": "CP скорих прозора: {windows}"
+    "overlayCp": "CP скорих прозора: {windows}",
+    "flagsNotice": "{count} тренинга искључено из криве због недоверљивих врхова"
   },
   "intervals": {
     "title": "Анализа интервала",

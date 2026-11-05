@@ -133,7 +133,8 @@
     "seriesBalance": "W′ tilbage",
     "balanceTitle": "W′ tilbage over tid",
     "overlayName": "{months} måneder",
-    "overlayCp": "CP for recente vinduer: {windows}"
+    "overlayCp": "CP for recente vinduer: {windows}",
+    "flagsNotice": "{count} økter er holdt uden for kurven på grund af utrolige topværdier"
   },
   "intervals": {
     "title": "Intervalanalyse",

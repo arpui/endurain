@@ -133,7 +133,8 @@
     "seriesBalance": "W′ kvar",
     "balanceTitle": "W′ kvar över tid",
     "overlayName": "{months} månader",
-    "overlayCp": "CP för recenta fönster: {windows}"
+    "overlayCp": "CP för recenta fönster: {windows}",
+    "flagsNotice": "{count} pass uteslutna från kurvan på grund av otroliga toppar"
   },
   "intervals": {
     "title": "Intervallanalys",

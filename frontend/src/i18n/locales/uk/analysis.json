@@ -133,7 +133,8 @@
     "seriesBalance": "W′ лишилось",
     "balanceTitle": "W′ лишок у часі",
     "overlayName": "{months} місяці",
-    "overlayCp": "CP нещодавніх періодів: {windows}"
+    "overlayCp": "CP нещодавніх періодів: {windows}",
+    "flagsNotice": "{count} тренувань виключено з кривої через неймовірні піки"
   },
   "intervals": {
     "title": "Аналіз інтервалів",

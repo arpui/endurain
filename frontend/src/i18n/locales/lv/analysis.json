@@ -133,7 +133,8 @@
     "seriesBalance": "W′ atlicis",
     "balanceTitle": "W′ atlikušais laikā",
     "overlayName": "{months} mēneši",
-    "overlayCp": "Jauno logu CP: {windows}"
+    "overlayCp": "Jauno logu CP: {windows}",
+    "flagsNotice": "{count} treniņi izslēgti no līknes neticamu pīķu dēļ"
   },
   "intervals": {
     "title": "Intervalu analīze",

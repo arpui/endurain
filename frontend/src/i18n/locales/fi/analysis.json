@@ -133,7 +133,8 @@
     "seriesBalance": "W′ jäljellä",
     "balanceTitle": "W′ jäljellä ajan mittaan",
     "overlayName": "{months} kuukautta",
-    "overlayCp": "Recenttien ikkunoiden CP: {windows}"
+    "overlayCp": "Recenttien ikkunoiden CP: {windows}",
+    "flagsNotice": "{count} harjoitukset jätetty käyrästä uskomattomien huippuarvojen vuoksi"
   },
   "intervals": {
     "title": "Intervallianalyysi",

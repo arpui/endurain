@@ -133,7 +133,8 @@
     "seriesBalance": "W′ remaining",
     "balanceTitle": "W′ remaining over time",
     "overlayName": "{months} months",
-    "overlayCp": "Recent windows' CP: {windows}"
+    "overlayCp": "Recent windows' CP: {windows}",
+    "flagsNotice": "{count} sessions held out of the curve for implausible peaks"
   },
   "intervals": {
     "title": "Interval analysis",

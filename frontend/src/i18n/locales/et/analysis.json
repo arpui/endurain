@@ -133,7 +133,8 @@
     "seriesBalance": "W′ alles",
     "balanceTitle": "W′ alles ajas",
     "overlayName": "{months} kuud",
-    "overlayCp": "Viimaste akende CP: {windows}"
+    "overlayCp": "Viimaste akende CP: {windows}",
+    "flagsNotice": "{count} treeningut jäid kõrvale ebatõenäoliste tippväärtuste tõttu"
   },
   "intervals": {
     "title": "Intervallide analüüs",

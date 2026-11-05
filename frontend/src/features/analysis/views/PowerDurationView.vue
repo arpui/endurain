@@ -14,6 +14,7 @@ import { Select } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   usePowerDurationQuery,
+  usePowerFlagsQuery,
   useWprimeBalanceQuery,
 } from '@/features/analysis/composables/useAnalysis'
 import { SPORT_GROUPS } from '@/features/analysis/constants'
@@ -35,6 +36,7 @@ const previewWindow = computed(() => ({
 }))
 
 const durationQuery = usePowerDurationQuery(sport, previewWindow)
+const flagsQuery = usePowerFlagsQuery(sport)
 
 const curve = computed(() => durationQuery.data.value ?? null)
 const hasCurve = computed(() => (curve.value?.points.length ?? 0) > 0)
@@ -157,7 +159,11 @@ const sessionOptions = computed(() =>
         </div>
       </Card>
 
-      <PowerDurationChart :points="curve.points" :overlays="curve.overlays" />
+      <PowerDurationChart
+        :points="curve.points"
+        :overlays="curve.overlays"
+        :flags="flagsQuery.data.value ?? []"
+      />
 
       <Card class="flex min-w-0 flex-col gap-3">
         <h3 class="text-card-heading">{{ t('analysis.power.balanceHeader') }}</h3>

@@ -304,6 +304,73 @@ def replace_duration_peaks(
     return len(records)
 
 
+def replace_peak_flags(
+    user_id: int,
+    sport: str,
+    records: Sequence[analysis_contracts.PeakFlagRecord],
+    db: Session,
+) -> int:
+    """Replace one athlete's peak-plausibility flags for one sport.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group the flags were raised for.
+        records: The refused sessions.
+        db: Database session.
+
+    Returns:
+        The number of rows written.
+    """
+    db.execute(
+        delete(analysis_models.PeakFlag).where(
+            analysis_models.PeakFlag.user_id == user_id,
+            analysis_models.PeakFlag.sport == sport,
+        )
+    )
+    for record in records:
+        db.add(
+            analysis_models.PeakFlag(
+                user_id=user_id,
+                sport=sport,
+                activity_id=record.activity_id,
+                started_on=record.started_on,
+                duration_s=record.duration_s,
+                value_w=record.value_w,
+                session_np_w=record.session_np_w,
+                ratio=record.ratio,
+                cap=record.cap,
+            )
+        )
+    return len(records)
+
+
+def list_peak_flags(
+    user_id: int,
+    sport: str,
+    db: Session,
+) -> list[analysis_models.PeakFlag]:
+    """Return one athlete's peak-plausibility flags for one sport, oldest session first.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group to read.
+        db: Database session.
+
+    Returns:
+        The flag rows.
+    """
+    return list(
+        db.scalars(
+            select(analysis_models.PeakFlag)
+            .where(
+                analysis_models.PeakFlag.user_id == user_id,
+                analysis_models.PeakFlag.sport == sport,
+            )
+            .order_by(analysis_models.PeakFlag.started_on)
+        ).all()
+    )
+
+
 def list_duration_peaks(
     user_id: int,
     sport: str,

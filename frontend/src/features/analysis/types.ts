@@ -20,6 +20,8 @@ export type PowerDurationSessionDto = Schemas['PowerDurationSessionRead']
 export type WprimeBalanceDto = Schemas['WprimeBalanceRead']
 export type WprimePointDto = Schemas['WprimePointRead']
 export type CpTrendDto = Schemas['CpTrendRead']
+export type PowerFlagDto = Schemas['PowerFlagRead']
+
 export type CpTrendPointDto = Schemas['CpTrendPointRead']
 
 /** Load formula keys, mirroring the backend `LoadMethod` enum. */
@@ -217,6 +219,24 @@ export interface CpTrendPoint {
   cvPct: number
   /** Where the session's watts came from, when tagged (`stryd`, ...). */
   powerSource: string | null
+}
+
+/** One session the duration-intensity curve held out, with the numbers. */
+export interface PowerFlag {
+  /** Session held out of the curve. */
+  activityId: number
+  /** Server day of the session. */
+  startedOn: string
+  /** Duration of the strongest implausible average, in seconds. */
+  durationS: number
+  /** The refused best average, in watts. */
+  valueW: number
+  /** The session's own normalized power, in watts. */
+  sessionNpW: number
+  /** ``valueW / sessionNpW``. */
+  ratio: number
+  /** The tier ratio the session exceeded. */
+  cap: number
 }
 
 /** One sample of the evolving threshold line, on a day the trend shows. */

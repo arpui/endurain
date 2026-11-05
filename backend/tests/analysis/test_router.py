@@ -274,6 +274,30 @@ class TestPowerDurationRoute:
         assert response.status_code == 422
 
 
+class TestPowerFlagsRoute:
+    def test_the_owner_reads_the_held_out_sessions(self):
+        client = TestClient(_build_app(MagicMock()))
+        flags = [
+            analysis_schema.PowerFlagRead(
+                activity_id=1059,
+                started_on=date(2023, 6, 25),
+                duration_s=60,
+                value_w=1044.0,
+                session_np_w=345.0,
+                ratio=3.03,
+                cap=1.9,
+            )
+        ]
+        with patch("modules.analysis.router.analysis_service.get_power_flags", return_value=flags) as svc:
+            response = client.get("/analysis/power-flags", params={"sport": "run"})
+        assert response.status_code == 200
+        body = response.json()
+        assert svc.call_args.args[:2] == (2, "run")
+        assert body[0]["activity_id"] == 1059
+        assert body[0]["value_w"] == 1044.0
+        assert body[0]["started_on"] == "2023-06-25"
+
+
 class TestCpTrendRoute:
     def _read(self) -> analysis_schema.CpTrendRead:
         return analysis_schema.CpTrendRead(

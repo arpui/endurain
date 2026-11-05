@@ -133,7 +133,8 @@
     "seriesBalance": "W′ restant",
     "balanceTitle": "W′ restant en el temps",
     "overlayName": "{months} mesos",
-    "overlayCp": "CP de les finestres recents: {windows}"
+    "overlayCp": "CP de les finestres recents: {windows}",
+    "flagsNotice": "{count} sessions excloses de la corba perquè els seus pics no són credibles"
   },
   "intervals": {
     "title": "Anàlisi d'intervals",

@@ -670,6 +670,7 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
     speed_peaks_by_sport: dict[str, dict[int, float]] = {}
     speed_activities_by_sport: dict[str, int] = {}
     paired_stats_by_sport: dict[str, list] = {}
+    flags_by_sport: dict[str, list[analysis_contracts.PeakFlagRecord]] = {}
     best_hr = 0.0
 
     for activity in activities:
@@ -685,11 +686,48 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
         )
         if power_w:
             activities_by_sport[sport] = activities_by_sport.get(sport, 0) + 1
-            merged = peaks_by_sport.setdefault(sport, {})
-            for duration, value in analysis_maths.best_means(power_w, period_s).items():
-                if value >= merged.get(duration, 0.0):
-                    merged[duration] = value
-                    holder_by_peak[(sport, duration)] = activity.id
+            means = analysis_maths.best_means(power_w, period_s)
+            floor_w = analysis_constants.PEAK_OUTLIER_FLOOR_W.get(
+                sport,
+                analysis_constants.PEAK_OUTLIER_FLOOR_W_DEFAULT,
+            )
+            session_np_w = analysis_maths.normalized_power(power_w, period_s)
+            violation = analysis_maths.peak_violation(means, session_np_w, floor_w) if activity.start_time else None
+            if violation is not None:
+                # The session's stream carries a peak no athlete holds for that
+                # long (a sensor runaway: a kilowatt at walking speed). Skip it
+                # whole - the same corrupt stretch bends every duration near it
+                # - and record why, instead of silently out-ranking honest data.
+                duration_s, value_w, ratio, cap = violation
+                logger.warning(
+                    "Held session out of the duration-intensity curve: implausible peak",
+                    extra=core_logger.context(
+                        user_id=user_id,
+                        activity_id=activity.id,
+                        duration_s=duration_s,
+                        value_w=round(value_w),
+                        session_np_w=round(session_np_w),
+                        ratio=round(ratio, 2),
+                        cap=cap,
+                    ),
+                )
+                flags_by_sport.setdefault(sport, []).append(
+                    analysis_contracts.PeakFlagRecord(
+                        activity_id=activity.id,
+                        started_on=activity.start_time.date(),
+                        duration_s=duration_s,
+                        value_w=round(value_w, 1),
+                        session_np_w=round(session_np_w, 1),
+                        ratio=round(ratio, 2),
+                        cap=cap,
+                    )
+                )
+            else:
+                merged = peaks_by_sport.setdefault(sport, {})
+                for duration, value in means.items():
+                    if value >= merged.get(duration, 0.0):
+                        merged[duration] = value
+                        holder_by_peak[(sport, duration)] = activity.id
         hr_period_s, hr_values, _ = _stream_samples(
             activity.id,
             activity_streams_constants.STREAM_TYPE_HR,
@@ -776,6 +814,9 @@ def refresh_thresholds(user_id: int, db: Session) -> analysis_schema.AnalysisSet
             ],
             db,
         )
+    for sport in set(peaks_by_sport) | set(flags_by_sport):
+        # Replaced even when empty: a session repaired later must not stay excluded.
+        analysis_crud.replace_peak_flags(user_id, sport, flags_by_sport.get(sport, []), db)
 
     derived = 0
     fit_from_s, fit_to_s = _effective_fit_window(settings)
@@ -1283,6 +1324,40 @@ def get_power_duration(
         sessions=sessions,
         overlays=overlays,
     )
+
+
+def get_power_flags(
+    user_id: int,
+    sport: str,
+    db: Session,
+) -> list[analysis_schema.PowerFlagRead]:
+    """Return the sessions the duration-intensity curve held out, and why.
+
+    The peak builder refuses sessions whose best average for a duration is
+    implausible against the session's own normalized power and an absolute
+    floor. The refusals are recorded so the athlete can see which sessions the
+    curve does not trust rather than wonder where a peak went.
+
+    Args:
+        user_id: The athlete.
+        sport: Sport group to read.
+        db: Database session.
+
+    Returns:
+        The flags, oldest session first.
+    """
+    return [
+        analysis_schema.PowerFlagRead(
+            activity_id=flag.activity_id,
+            started_on=flag.started_on,
+            duration_s=flag.duration_s,
+            value_w=flag.value_w,
+            session_np_w=flag.session_np_w,
+            ratio=flag.ratio,
+            cap=flag.cap,
+        )
+        for flag in analysis_crud.list_peak_flags(user_id, sport, db)
+    ]
 
 
 def get_cp_trend(

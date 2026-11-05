@@ -133,7 +133,8 @@
     "seriesBalance": "W′ оставащо",
     "balanceTitle": "W′ оставащо с времето",
     "overlayName": "{months} месеца",
-    "overlayCp": "CP на скорошните прозорци: {windows}"
+    "overlayCp": "CP на скорошните прозорци: {windows}",
+    "flagsNotice": "От кривата са извадени {count} тренировки заради недоверими пикове"
   },
   "intervals": {
     "title": "Анализ на интервалите",

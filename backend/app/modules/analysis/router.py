@@ -126,6 +126,25 @@ def get_power_duration(
 
 
 @router.get(
+    "/power-flags",
+    response_model=list[analysis_schema.PowerFlagRead],
+)
+def get_power_flags(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+    sport: Annotated[str, Query(max_length=32)],
+) -> list[analysis_schema.PowerFlagRead]:
+    """Return the caller's sessions the duration-intensity curve held out.
+
+    A session is held out when its best average for a duration is implausible
+    against its own normalized power and an absolute floor; the curve stops
+    trusting it and this says so, with the numbers.
+    """
+    return analysis_service.get_power_flags(token_user_id, sport, db)
+
+
+@router.get(
     "/cp-trend",
     response_model=analysis_schema.CpTrendRead,
 )

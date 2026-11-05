@@ -7,6 +7,7 @@ module receives one of these dataclasses through ``integration_service``.
 """
 
 from dataclasses import dataclass
+from datetime import date
 
 import modules.analysis.constants as analysis_constants
 
@@ -105,3 +106,26 @@ class WindowStats:
     rss_per_min: float | None = None
     source_scores: dict[str, float] | None = None
     rap_ms: float | None = None
+
+
+@dataclass(frozen=True)
+class PeakFlagRecord:
+    """One session the peak builder held out of the curve, and why.
+
+    Attributes:
+        activity_id: The refused session.
+        started_on: Day of the session, kept for the notice.
+        duration_s: Duration of the strongest violation, in seconds.
+        value_w: The refused best average, in watts.
+        session_np_w: The session's own normalized power, in watts.
+        ratio: ``value_w / session_np_w``.
+        cap: The tier ratio the session exceeded.
+    """
+
+    activity_id: int
+    started_on: date
+    duration_s: int
+    value_w: float
+    session_np_w: float
+    ratio: float
+    cap: float

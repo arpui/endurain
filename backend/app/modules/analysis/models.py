@@ -228,3 +228,75 @@ class DurationPeak(Base, TimestampMixin):
         nullable=True,
         comment="Activity holding this best average",
     )
+
+
+class PeakFlag(Base, TimestampMixin):
+    """One session the peak builder refused, with the numbers behind the refusal.
+
+    The duration-intensity cache is a maximum over every session's samples, so one
+    corrupt stream (a sensor runaway: a thousand watts at walking speed) would
+    otherwise define the athlete's record forever. When a session's peak is
+    implausible the builder skips it and records one of these rows: the session is
+    never deleted or edited - its data stands as imported - but the curve and the
+    derived thresholds stop trusting it, and the athlete can see which sessions
+    were held out and why.
+
+    Attributes:
+        user_id: The athlete the flag belongs to.
+        sport: Sport group the refused peak was fitted for.
+        activity_id: The session held out of the curve.
+        started_on: Day of the session, kept so the notice survives the activity.
+        duration_s: Duration of the strongest violation, in seconds.
+        value_w: The refused best average, in watts.
+        session_np_w: The session's own normalized power, in watts.
+        ratio: ``value_w / session_np_w``.
+        cap: The tier ratio the session exceeded.
+    """
+
+    __tablename__ = "analysis_peak_flags"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Athlete this flag belongs to",
+    )
+    sport: Mapped[str] = mapped_column(
+        String(length=32),
+        primary_key=True,
+        comment="Sport group the refused peak was fitted for",
+    )
+    activity_id: Mapped[int] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Session held out of the curve",
+    )
+    started_on: Mapped[date] = mapped_column(
+        Date,
+        nullable=False,
+        comment="Day of the session, kept so the notice survives the activity",
+    )
+    duration_s: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        comment="Duration of the strongest violation, in seconds",
+    )
+    value_w: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        comment="The refused best average, in watts",
+    )
+    session_np_w: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        comment="The session's own normalized power, in watts",
+    )
+    ratio: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        comment="Refused value over the session's normalized power",
+    )
+    cap: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        comment="The tier ratio the session exceeded",
+    )

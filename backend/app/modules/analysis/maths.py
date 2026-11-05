@@ -518,3 +518,42 @@ def temporal_threshold(
         if best is None or support > best:
             best = support
     return best if seen >= min_fits else None
+
+
+def peak_violation(
+    means: Mapping[int, float],
+    session_np_w: float,
+    floor_w: float,
+    *,
+    min_s: float = analysis_constants.PEAK_OUTLIER_MIN_S,
+    tiers: Sequence[tuple[float, float]] = analysis_constants.PEAK_OUTLIER_TIERS,
+) -> tuple[int, float, float, float] | None:
+    """Return the most implausible peak of one session's duration-intensity curve.
+
+    A peak is implausible when it exceeds BOTH its tier's multiple of the
+    session's own normalized power AND an absolute floor: the ratio alone would
+    flag every surge on a walk day, the floor alone would flag an honest max on
+    an easy day. Returns ``(duration_s, value_w, ratio, cap)`` for the strongest
+    violation, or ``None`` when the session's curve is plausible end to end.
+
+    Args:
+        means: Best average power per duration for the session, in watts.
+        session_np_w: The session's own normalized power, in watts.
+        floor_w: Absolute watt floor under which nothing is flagged.
+        min_s: Durations below this (sprints) are never judged.
+        tiers: ``(max_duration_s, ratio_cap)`` steps, ascending.
+
+    Returns:
+        The strongest violation, or ``None``.
+    """
+    if session_np_w <= 0:
+        return None
+    worst: tuple[int, float, float, float] | None = None
+    for duration, value in means.items():
+        if duration < min_s or value < floor_w:
+            continue
+        cap = next((tier_cap for tier_max, tier_cap in tiers if duration <= tier_max), tiers[-1][1])
+        ratio = value / session_np_w
+        if ratio > cap and (worst is None or ratio > worst[2]):
+            worst = (int(duration), float(value), ratio, cap)
+    return worst
