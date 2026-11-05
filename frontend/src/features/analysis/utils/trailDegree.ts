@@ -18,7 +18,7 @@
  * there is vegetation, navigation or fatigue, not the kind of ground that throws a
  * runner.
  */
-import type { TrailSection } from '@/features/analysis/types'
+import type { TrailClaim, TrailSection } from '@/features/analysis/types'
 import type { ThemeColorToken } from '@/lib/themeColor'
 
 /** The four grades a section can carry. */
@@ -164,4 +164,58 @@ function groundDistanceM(a: { lat: number; lng: number }, b: { lat: number; lng:
   const latM = (b.lat - a.lat) * 111195
   const lngM = (b.lng - a.lng) * 111320 * Math.cos(((a.lat + b.lat) / 2) * (Math.PI / 180))
   return Math.hypot(latM, lngM)
+}
+
+/** How one way of the network reads: colour, stroke and word for its claim. */
+export interface TrailWayGrade {
+  /** Design token to resolve for canvas/SVG drawing. */
+  colorToken: ThemeColorToken
+  /** Stroke width in pixels: the assertiveness of the claim. */
+  weight: number
+  /** Stroke opacity in [0, 1]. */
+  opacity: number
+  /** i18n key of the claim's word. */
+  labelKey: string
+}
+
+/**
+ * A way earns its colour from the median of its descents, never from a single
+ * crossing: one tired day is not a property of the ground. Below the minimum
+ * descents it stays grey, whatever the numbers say.
+ */
+const CLAIM_GRADES: Record<TrailClaim, TrailWayGrade> = {
+  hard: {
+    colorToken: '--color-hr',
+    weight: 6,
+    opacity: 0.9,
+    labelKey: 'analysis.trailNetwork.claim.hard',
+  },
+  technical: {
+    colorToken: '--color-effort',
+    weight: 5,
+    opacity: 0.8,
+    labelKey: 'analysis.trailNetwork.claim.technical',
+  },
+  mild: {
+    colorToken: '--color-brand',
+    weight: 4,
+    opacity: 0.6,
+    labelKey: 'analysis.trailNetwork.claim.mild',
+  },
+  thin: {
+    colorToken: '--color-muted-foreground',
+    weight: 3,
+    opacity: 0.45,
+    labelKey: 'analysis.trailNetwork.claim.thin',
+  },
+}
+
+/**
+ * Grade one network way by the claim its descents support.
+ *
+ * @param claim - The server's verdict for the way.
+ * @returns The grade, in the network's own ramp.
+ */
+export function gradeTrailWay(claim: TrailClaim): TrailWayGrade {
+  return CLAIM_GRADES[claim]
 }

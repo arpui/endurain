@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Omrežje poti",
+  "trailNetwork": {
+    "title": "Omrežje poti",
+    "subtitle": "Vse označene poti, po katerih si hodil, ocenjene samo po spustih",
+    "mapLabel": "Omrežje spustov",
+    "colWay": "Pot",
+    "colClaim": "Stopnja",
+    "colDescents": "Spusti",
+    "colMedian": "Mediana",
+    "colSpread": "Razpršenost",
+    "colGrade": "Naklon",
+    "claim": {
+      "hard": "težko",
+      "technical": "tehnično",
+      "mild": "blago",
+      "thin": "še premalo"
+    },
+    "hint": "Zemljevid riše eno črto na pot, obarvano po tem, kar spusti podpirajo. Pot potrebuje vsaj {min} spustov, preden se karkoli trdi; razpršenost pokaže, ali prehodi soglašajo.",
+    "empty": {
+      "title": "Še ni prehojenih poti",
+      "description": "Potrebnih je nekaj spustov po isti poti, da ta pogled sploh ima dokaze."
+    }
   }
 }

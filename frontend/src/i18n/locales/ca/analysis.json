@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Xarxa de camins",
+  "trailNetwork": {
+    "title": "Xarxa de camins",
+    "subtitle": "Tots els camins mapats que has travessat, jutjats només pels teus descensos: la pujada no diu res.",
+    "mapLabel": "Xarxa de descensos",
+    "colWay": "Camí",
+    "colClaim": "Grau",
+    "colDescents": "Descensos",
+    "colMedian": "Mediana",
+    "colSpread": "Dispersió",
+    "colGrade": "Pendent",
+    "claim": {
+      "hard": "dur",
+      "technical": "tècnic",
+      "mild": "suau",
+      "thin": "encara no prou"
+    },
+    "hint": "El mapa dibuixa una línia per camí, acolorida segons el que afirmen els seus descensos. Un camí necessita com a mínim {min} descensos abans d'afirmar-ne res; la dispersió mostra si les travessades coincideixen.",
+    "empty": {
+      "title": "Encara no hi ha camins travessats",
+      "description": "Falten uns quants descensos del mateix camí perquè aquesta vista tingui evidència per dir res."
+    }
   }
 }

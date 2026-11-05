@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Rețea de poteci",
+  "trailNetwork": {
+    "title": "Rețea de poteci",
+    "subtitle": "Toate potecile cartografiate pe care le-ai străbătut, judecate doar după coborârile tale",
+    "mapLabel": "Rețea de coborâri",
+    "colWay": "Potecă",
+    "colClaim": "Grad",
+    "colDescents": "Coborâri",
+    "colMedian": "Mediană",
+    "colSpread": "Împrăștiere",
+    "colGrade": "Pantă",
+    "claim": {
+      "hard": "dur",
+      "technical": "tehnic",
+      "mild": "ușor",
+      "thin": "încă puține"
+    },
+    "hint": "Harta desenează o linie per potecă, colorată după ce susțin coborârile. O potecă are nevoie de cel puțin {min} coborâri înainte de a afirma ceva; împrăștierea arată cât de mult se potrivesc trecerile.",
+    "empty": {
+      "title": "Încă nicio potecă străbătută",
+      "description": "Sunt necesare câteva coborâri pe aceeași potecă pentru ca această vedere să aibă dovezi."
+    }
   }
 }

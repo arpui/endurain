@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Sieć ścieżek",
+  "trailNetwork": {
+    "title": "Sieć ścieżek",
+    "subtitle": "Wszystkie zmapowane ścieżki, które pokonałeś, oceniane tylko po zjazdach — podbieg nic nie mówi",
+    "mapLabel": "Sieć zjazdów",
+    "colWay": "Ścieżka",
+    "colClaim": "Stopień",
+    "colDescents": "Zjazdy",
+    "colMedian": "Mediana",
+    "colSpread": "Rozrzut",
+    "colGrade": "Nachylenie",
+    "claim": {
+      "hard": "trudna",
+      "technical": "techniczna",
+      "mild": "łagodna",
+      "thin": "jeszcze za mało"
+    },
+    "hint": "Mapa rysuje jedną linię na ścieżkę, kolorowaną tym, co potwierdzają zjazdy. Ścieżka wymaga co najmniej {min} zjazdów, zanim cokolwiek się twierdzi; rozrzut pokazuje, czy przejścia są zgodne.",
+    "empty": {
+      "title": "Brak pokonanych ścieżek",
+      "description": "Potrzeba kilku zjazdów tą samą ścieżką, aby ten widok miał dowody."
+    }
   }
 }

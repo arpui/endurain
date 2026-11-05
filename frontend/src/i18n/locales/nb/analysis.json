@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Stinettverk",
+  "trailNetwork": {
+    "title": "Stinettverk",
+    "subtitle": "Alle kartlagte stier du har krysset, bedømt kun ut fra nedstigningene dine",
+    "mapLabel": "Nedstigningsnett",
+    "colWay": "Sti",
+    "colClaim": "Grad",
+    "colDescents": "Nedstigninger",
+    "colMedian": "Median",
+    "colSpread": "Spredning",
+    "colGrade": "Stigning",
+    "claim": {
+      "hard": "hard",
+      "technical": "teknisk",
+      "mild": "lett",
+      "thin": "ikke nok enda"
+    },
+    "hint": "Kartet tegner én linje per sti, farget etter hva nedstigningene støtter. En sti trenger minst {min} nedstigninger før noe påstås; spredningen viser om gjennomgangene er enige.",
+    "empty": {
+      "title": "Ingen krysste stier ennå",
+      "description": "Et par nedstigninger samme sti må til før denne visningen har bevis."
+    }
   }
 }

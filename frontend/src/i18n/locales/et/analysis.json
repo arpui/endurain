@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Radade võrk",
+  "trailNetwork": {
+    "title": "Radade võrk",
+    "subtitle": "Kõik kaardistatud rajad, mida oled läbinud, hinnatud ainult laskumiste järgi",
+    "mapLabel": "Laskumiste võrk",
+    "colWay": "Rada",
+    "colClaim": "Astme",
+    "colDescents": "Laskumisi",
+    "colMedian": "Mediaan",
+    "colSpread": "Hajuvus",
+    "colGrade": "Kalle",
+    "claim": {
+      "hard": "karm",
+      "technical": "tehniline",
+      "mild": "pehme",
+      "thin": "viel liiga vähe"
+    },
+    "hint": "Kaart joonistab iga raja kohta ühe joone, värvitud sellest, mida laskumised toetavad. Raja kohta vajatakse vähemalt {min} laskumist, enne midagi väidetakse; hajuvus näitab, kas ületused on ühel meelel.",
+    "empty": {
+      "title": "Ületatud radu veel pole",
+      "description": "Sama raja mõned laskumised on vajalikud, et see vaade saaks tõendusmaterjali."
+    }
   }
 }

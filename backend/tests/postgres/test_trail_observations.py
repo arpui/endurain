@@ -269,6 +269,41 @@ def _way(way_id: int = 4242, *, lat: float = 42.47) -> analysis_contracts.OsmPat
     )
 
 
+class TestTrailWayEvidence:
+    def test_the_network_query_pairs_sections_with_their_way_inside_a_viewport(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            activity_id = _run_activity(db)
+            analysis_crud.replace_osm_paths([_way(way_id=4242, lat=42.47)], db)
+            analysis_crud.replace_osm_paths([_way(way_id=99, lat=45.5)], db)
+            session_row, sections = _observation(sections=2)
+            analysis_crud.replace_trail_observation(
+                user_id=_USER_ID,
+                activity_id=activity_id,
+                method=_METHOD,
+                observation=session_row,
+                sections=sections,
+                db=db,
+            )
+            db.commit()
+            stored_sections = analysis_crud.list_trail_observation(activity_id, _METHOD, db)[1]
+            for index, section in enumerate(stored_sections):
+                way_id = 4242 if index == 0 else 99
+                analysis_crud.set_trail_section_osm_match(
+                    section,
+                    analysis_contracts.OsmMatchRecord(way_id=way_id, start_m=10.0, end_m=20.0, covered_m=10.0),
+                    date(2026, 11, 1),
+                    db,
+                )
+            db.commit()
+
+            pairs = analysis_crud.list_trail_way_evidence(_USER_ID, _METHOD, db)
+            near = analysis_crud.list_trail_way_evidence(_USER_ID, _METHOD, db, bbox=(42.4, 0.9, 42.5, 1.0))
+        assert {pair[0].way_id for pair in pairs} == {4242, 99}
+        assert {pair[0].way_id for pair in near} == {4242}
+        assert {pair[1].start_m for pair in near} == {7675.0}
+
+
 class TestOsmPaths:
     def test_an_import_describes_the_same_way_twice_without_duplicating_it(self, pg_factory):
         with pg_factory() as db:

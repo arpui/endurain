@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Rete di sentieri",
+  "trailNetwork": {
+    "title": "Rete di sentieri",
+    "subtitle": "Tutti i sentieri mappati che hai attraversato, giudicati solo dalle tue discese — salire non dice nulla.",
+    "mapLabel": "Rete di discese",
+    "colWay": "Sentiero",
+    "colClaim": "Grado",
+    "colDescents": "Discese",
+    "colMedian": "Mediana",
+    "colSpread": "Dispersione",
+    "colGrade": "Pendenza",
+    "claim": {
+      "hard": "duro",
+      "technical": "tecnico",
+      "mild": "leggero",
+      "thin": "ancora troppo poche"
+    },
+    "hint": "La mappa disegna una linea per sentiero, colorata in base a ciò che le discese confermano. Un sentiero richiede almeno {min} discese prima di affermare qualcosa; la dispersione mostra quanto gli attraversamenti concordano.",
+    "empty": {
+      "title": "Ancora nessun sentiero attraversato",
+      "description": "Servono alcune discese sullo stesso sentiero perché questa vista abbia evidenze."
+    }
   }
 }

@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Takų tinklas",
+  "trailNetwork": {
+    "title": "Takų tinklas",
+    "subtitle": "Visi žemėlapyje pažymėti takai, vertinami tik pagal jūsų nusileidimus",
+    "mapLabel": "Nusileidimų tinklas",
+    "colWay": "Takas",
+    "colClaim": "Laipsnis",
+    "colDescents": "Nusileidimai",
+    "colMedian": "Mediana",
+    "colSpread": "Sklaida",
+    "colGrade": "Nuolydis",
+    "claim": {
+      "hard": "sunkus",
+      "technical": "techniškas",
+      "mild": "lengvas",
+      "thin": "kol kas nepakanka"
+    },
+    "hint": "Žemėlapis brėžia po liniją kiekvienam takui, nuspalvintą pagal tai, ką patvirtina nusileidimai. Takui reikia bent {min} nusileidimų, kol kas nors teigiama; sklaida rodo, ar pravažiai sutaria.",
+    "empty": {
+      "title": "Dar nėra pereitų takų",
+      "description": "Reikia kelių nusileidimų tuo pačiu taku, kad šis vaizdas turėtų įrodymų."
+    }
   }
 }

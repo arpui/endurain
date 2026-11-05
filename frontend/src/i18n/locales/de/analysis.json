@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Wegnetzwerk",
+  "trailNetwork": {
+    "title": "Wegnetzwerk",
+    "subtitle": "Alle kartierten Wege, die du gekreuzt hast – nur nach deinen Abfahrten beurteilt",
+    "mapLabel": "Abfahrtsnetzwerk",
+    "colWay": "Weg",
+    "colClaim": "Stufe",
+    "colDescents": "Abfahrten",
+    "colMedian": "Median",
+    "colSpread": "Spannweite",
+    "colGrade": "Gefälle",
+    "claim": {
+      "hard": "hart",
+      "technical": "technisch",
+      "mild": "leicht",
+      "thin": "noch zu wenig"
+    },
+    "hint": "Die Karte zeichnet je eine Linie pro Weg, eingefärbt nach dem, was die Abfahrten hergeben. Ein Weg braucht mindestens {min} Abfahrten, bevor etwas behauptet wird; die Spannweite zeigt, wie sehr die Querungen übereinstimmen.",
+    "empty": {
+      "title": "Noch keine gekreuzten Wege",
+      "description": "Einige Abfahrten auf demselben Weg müssen sich ansammeln, damit diese Ansicht Belege hat."
+    }
   }
 }

@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Sieť ciest",
+  "trailNetwork": {
+    "title": "Sieť ciest",
+    "subtitle": "Všetky zakreslené cesty, ktorými si prešiel, posudzované iba zostupmi",
+    "mapLabel": "Sieť zostupov",
+    "colWay": "Cesta",
+    "colClaim": "Stupeň",
+    "colDescents": "Zostupy",
+    "colMedian": "Medián",
+    "colSpread": "Rozptyl",
+    "colGrade": "Sklon",
+    "claim": {
+      "hard": "náročné",
+      "technical": "technické",
+      "mild": "mierne",
+      "thin": "zatím málo"
+    },
+    "hint": "Mapa kreslí jednu čiaru na cestu, farebnú podľa toho, čo zostupy podporujú. Cesta potrebuje aspoň {min} zostupov, kým sa niečo tvrdí; rozptyl ukazuje, či sa prechody zhodujú.",
+    "empty": {
+      "title": "Zatiaľ žiadne prejdené cesty",
+      "description": "Je potrebných niekoľko zostupov tou istou cestou, aby tento pohľad mal dôkazy."
+    }
   }
 }

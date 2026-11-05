@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Rede de caminhos",
+  "trailNetwork": {
+    "title": "Rede de caminhos",
+    "subtitle": "Todos os caminhos cartografados que atravessaste, julgados apenas pelas tuas descidas — subir não diz nada.",
+    "mapLabel": "Rede de descidas",
+    "colWay": "Caminho",
+    "colClaim": "Grau",
+    "colDescents": "Descidas",
+    "colMedian": "Mediana",
+    "colSpread": "Dispersão",
+    "colGrade": "Declive",
+    "claim": {
+      "hard": "duro",
+      "technical": "técnico",
+      "mild": "suave",
+      "thin": "ainda não basta"
+    },
+    "hint": "O mapa desenha uma linha por caminho, colorida pelo que as descidas confirmam. Um caminho precisa de pelo menos {min} descidas antes de afirmar seja o que for; a dispersão mostra se as travessias concordam.",
+    "empty": {
+      "title": "Ainda sem caminhos atravessados",
+      "description": "Faltam algumas descidas pelo mesmo caminho para esta vista ter evidências."
+    }
   }
 }

@@ -2510,6 +2510,101 @@ def reconcile_trail_sections(db: Session, *, only_missing: bool = True) -> int:
     return written
 
 
+def get_trail_network(
+    user_id: int,
+    db: Session,
+    *,
+    bbox: tuple[float, float, float, float] | None = None,
+    limit: int = analysis_constants.TRAIL_NETWORK_MAX_WAYS,
+) -> analysis_schema.TrailNetworkRead:
+    """Aggregate the mapped ways the athlete has crossed, judged on descents alone.
+
+    One crossing is not a property of the ground: a tired day or a bad season can
+    produce it. Each descent contributes exactly one number - the harshest index
+    it reached on that way - and a way is claimed by the median across its
+    descents, with the quartiles shown because the spread decides whether the
+    median means anything. Ways below the minimum descents are reported thin
+    rather than claimed. Ascents only corroborate: a broken path can be climbed
+    fast, so the way down is the measurement.
+
+    Args:
+        user_id: The requester.
+        db: Database session.
+        bbox: Optional ``(south, west, north, east)`` viewport.
+        limit: Maximum number of ways handed back.
+
+    Returns:
+        The network payload, best claim first.
+    """
+    method = analysis_constants.trail_model_stamp()
+    threshold = analysis_constants.TRAIL_THRESHOLD
+    hard_cut = threshold * analysis_constants.TRAIL_HARD_RATIO
+    technical_cut = threshold * analysis_constants.TRAIL_TECHNICAL_RATIO
+    per_way: dict[int, dict] = {}
+    for path, section in analysis_crud.list_trail_way_evidence(user_id, method, db, bbox=bbox):
+        entry = per_way.setdefault(
+            path.way_id,
+            {"path": path, "descents": {}, "ascents": set(), "hard": set(), "grades": {}},
+        )
+        if section.direction != "descent":
+            entry["ascents"].add(section.activity_id)
+            continue
+        worst = entry["descents"].get(section.activity_id, 0.0)
+        entry["descents"][section.activity_id] = max(worst, section.score)
+        if section.core_score is not None:
+            entry["hard"].add(section.activity_id)
+        entry["grades"].setdefault(section.activity_id, []).append(section.grade_pct)
+
+    ways: list[analysis_schema.TrailNetworkWayRead] = []
+    for way_id, entry in per_way.items():
+        scores = sorted(entry["descents"].values())
+        if not scores:
+            continue
+        med = float(statistics.median(scores))
+        q1, _, q3 = statistics.quantiles(scores, n=4) if len(scores) >= 2 else (med, med, med)
+        if len(scores) < analysis_constants.TRAIL_NETWORK_MIN_DESCENTS:
+            claim = "thin"
+        elif med >= hard_cut:
+            claim = "hard"
+        elif med >= technical_cut:
+            claim = "technical"
+        else:
+            claim = "mild"
+        path = entry["path"]
+        ways.append(
+            analysis_schema.TrailNetworkWayRead(
+                way_id=way_id,
+                name=path.name,
+                claim=claim,
+                descent_crossings=len(scores),
+                ascent_crossings=len(entry["ascents"]),
+                hard_crossings=len(entry["hard"]),
+                med_score=med,
+                q1=float(q1),
+                q3=float(q3),
+                min_score=min(scores),
+                max_score=max(scores),
+                med_grade_pct=float(statistics.median([statistics.median(v) for v in entry["grades"].values()])),
+                length_m=path.length_m,
+                geometry=path.geometry,
+                sac_scale=path.tags.get("sac_scale"),
+                mtb_scale=path.tags.get("mtb:scale"),
+                surface=path.tags.get("surface"),
+                tracktype=path.tags.get("tracktype"),
+            )
+        )
+    rank = {"hard": 0, "technical": 1, "mild": 2, "thin": 3}
+    ways.sort(key=lambda way: (rank[way.claim], -way.med_score))
+    return analysis_schema.TrailNetworkRead(
+        method=method,
+        threshold=threshold,
+        technical_ratio=analysis_constants.TRAIL_TECHNICAL_RATIO,
+        hard_ratio=analysis_constants.TRAIL_HARD_RATIO,
+        min_descents=analysis_constants.TRAIL_NETWORK_MIN_DESCENTS,
+        ways=ways[:limit],
+    )
+
+
 def get_best_times(
     user_id: int,
     sport: str,

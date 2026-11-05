@@ -431,6 +431,7 @@ export const queryKeys = {
      * @returns A technical-sections query key for one activity.
      */
     trailSections: (id: number) => ['analysis', 'trail-sections', id] as const,
+    trailNetwork: () => ['analysis', 'trail-network'] as const,
     /**
      * @param months - Window in months back from today, `null` for all history.
      * @returns A best-splits query key for one window.

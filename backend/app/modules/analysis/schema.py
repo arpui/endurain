@@ -529,6 +529,82 @@ class TrailSectionsRead(BaseModel):
     sections: list[TrailSectionRead]
 
 
+class TrailNetworkWayRead(BaseModel):
+    """One mapped way with the claim the athlete's own crossings support.
+
+    Attributes:
+        way_id: The OSM way this is.
+        name: The way's mapped name, when it carries one.
+        claim: What its descents back: ``hard`` or ``technical`` once enough
+            crossings put its median index over that band, ``mild`` when the
+            crossings are enough but the ground is ordinary, and ``thin`` when
+            they are not enough to claim anything yet.
+        descent_crossings: Distinct sessions that went down it: the measurement.
+        ascent_crossings: Distinct sessions that crossed it the other way, shown
+            as corroboration only: a broken path can be climbed fast.
+        hard_crossings: Descent crossings that contained a hard core.
+        med_score: Median, across descents, of the worst index each descent reached.
+        q1: First quartile of that distribution; the spread is part of the answer.
+        q3: Third quartile of it.
+        min_score: The gentlest descent of it.
+        max_score: The harshest descent of it.
+        med_grade_pct: Median grade of the descent crossings, percent.
+        length_m: The way's length as drawn.
+        geometry: The ordered ``[[lat, lng], ...]`` polyline as stored. The map
+            draws it and a route generator would join tracks from it, so the
+            endpoints where it meets its neighbours need no second query.
+        sac_scale: The way's mapped hiking difficulty, when mapped.
+        mtb_scale: The way's mapped MTB difficulty, when mapped.
+        surface: The way's mapped surface, when mapped.
+        tracktype: The way's mapped track grade, when mapped.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    way_id: StrictInt
+    name: StrictStr | None
+    claim: Literal["hard", "technical", "mild", "thin"]
+    descent_crossings: StrictInt
+    ascent_crossings: StrictInt
+    hard_crossings: StrictInt
+    med_score: StrictFloat
+    q1: StrictFloat
+    q3: StrictFloat
+    min_score: StrictFloat
+    max_score: StrictFloat
+    med_grade_pct: StrictFloat
+    length_m: StrictFloat
+    geometry: list[list[float]]
+    sac_scale: StrictStr | None
+    mtb_scale: StrictStr | None
+    surface: StrictStr | None
+    tracktype: StrictStr | None
+
+
+class TrailNetworkRead(BaseModel):
+    """The network of mapped ways the athlete has crossed (experimental).
+
+    Attributes:
+        method: The detector stamp the underlying observations carry.
+        threshold: The index cut the detector used, so bands travel with older
+            payloads and stay interpretable after a recalibration.
+        technical_ratio: Multiple of the cut a way's median must reach to read
+            as firmly technical.
+        hard_ratio: Multiple of the cut for a hard claim.
+        min_descents: Descents a way needs before anything is claimed for it.
+        ways: The ways with measured descents, best claim first.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    method: StrictStr
+    threshold: StrictFloat
+    technical_ratio: StrictFloat
+    hard_ratio: StrictFloat
+    min_descents: StrictInt
+    ways: list[TrailNetworkWayRead]
+
+
 class PowerFlagRead(BaseModel):
     """Serialized one session held out of the duration-intensity curve.
 

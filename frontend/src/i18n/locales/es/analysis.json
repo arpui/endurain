@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "Red de caminos",
+  "trailNetwork": {
+    "title": "Red de caminos",
+    "subtitle": "Todos los caminos cartografiados que has cruzado, juzgados solo por tus descensos — subir no dice nada.",
+    "mapLabel": "Red de descensos",
+    "colWay": "Camino",
+    "colClaim": "Grado",
+    "colDescents": "Descensos",
+    "colMedian": "Mediana",
+    "colSpread": "Dispersión",
+    "colGrade": "Pendiente",
+    "claim": {
+      "hard": "duro",
+      "technical": "técnico",
+      "mild": "suave",
+      "thin": "aún no suficiente"
+    },
+    "hint": "El mapa dibuja una línea por camino, coloreada según lo que afirman sus descensos. Un camino necesita al menos {min} descensos antes de afirmar nada; la dispersión muestra si las travesías coinciden.",
+    "empty": {
+      "title": "Aún no hay caminos cruzados",
+      "description": "Faltan algunos descensos por el mismo camino para que esta vista tenga evidencia en la que apoyarse."
+    }
   }
 }

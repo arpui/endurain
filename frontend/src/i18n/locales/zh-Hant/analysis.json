@@ -263,5 +263,28 @@
     "daniels": "Daniels",
     "trimp": "TRIMP",
     "tss": "TSS"
+  },
+  "sectionTrailNetwork": "路徑網絡",
+  "trailNetwork": {
+    "title": "路徑網絡",
+    "subtitle": "所有你走過並已繪製的路徑，只以下坡表現評判——上坡說明不了什麼",
+    "mapLabel": "下坡網絡",
+    "colWay": "路徑",
+    "colClaim": "等級",
+    "colDescents": "下坡次數",
+    "colMedian": "中位數",
+    "colSpread": "離散度",
+    "colGrade": "坡度",
+    "claim": {
+      "hard": "難",
+      "technical": "技術性",
+      "mild": "平緩",
+      "thin": "尚不足"
+    },
+    "hint": "地圖每條路徑畫一條線，按下坡證據著色。一條路徑至少需要 {min} 次下坡才會被斷言；離散度顯示各次穿越是否一致。",
+    "empty": {
+      "title": "尚無穿越過的路徑",
+      "description": "同一條路徑上還需幾次下坡，此檢視才有依據。"
+    }
   }
 }

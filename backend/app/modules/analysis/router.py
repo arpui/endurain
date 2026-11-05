@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Query, Request, Security
 from sqlalchemy.orm import Session
 
 import core.database as core_database
+import core.exceptions as core_exceptions
 import core.rate_limit as core_rate_limit
 import modules.analysis.constants as analysis_constants
 import modules.analysis.scheduled_jobs as analysis_scheduled_jobs
@@ -182,6 +183,39 @@ def get_best_times(
     what the athlete actually ran rather than what gravity lent them.
     """
     return analysis_service.get_best_times(token_user_id, sport, db, months=months)
+
+
+@router.get(
+    "/trail-network",
+    response_model=analysis_schema.TrailNetworkRead,
+)
+def get_trail_network(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+    south: Annotated[float | None, Query(ge=-90, le=90)] = None,
+    west: Annotated[float | None, Query(ge=-180, le=180)] = None,
+    north: Annotated[float | None, Query(ge=-90, le=90)] = None,
+    east: Annotated[float | None, Query(ge=-180, le=180)] = None,
+    limit: Annotated[int, Query(ge=1, le=1000)] = analysis_constants.TRAIL_NETWORK_MAX_WAYS,
+) -> analysis_schema.TrailNetworkRead:
+    """Return the caller's crossed ways as a network, each judged by its own descents.
+
+    Experimental, and deliberately descent-first: an ascent over a broken path
+    says little, so ascents only corroborate. The geometry of every claimed way
+    travels with its numbers so the same payload can later seed a route built by
+    joining ways, without a second query.
+    """
+    edges = (south, west, north, east)
+    if any(edge is None for edge in edges):
+        if any(edge is not None for edge in edges):
+            raise core_exceptions.InvalidInputError("A viewport needs south, west, north and east together")
+        bbox = None
+    else:
+        bbox = (south, west, north, east)
+        if north <= south or east <= west:
+            raise core_exceptions.InvalidInputError("A viewport needs north above south and east beyond west")
+    return analysis_service.get_trail_network(token_user_id, db, bbox=bbox, limit=limit)
 
 
 @router.post(
