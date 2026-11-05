@@ -521,6 +521,15 @@ PEAK_RUNAWAY_NEIGHBOR_SHARE = 0.7
 PEAK_RUNAWAY_STALL_V_MS = 1.0
 PEAK_RUNAWAY_GRADE_EXEMPT_PCT = 12.0
 
+#: Which way the ground moved through a technical stretch.
+TRAIL_DIRECTIONS = ("descent", "ascent", "flat")
+
+
+def trail_direction_sql_list() -> str:
+    """Return the quoted ``IN (...)`` list of :data:`TRAIL_DIRECTIONS`."""
+    return ", ".join(f"'{direction}'" for direction in TRAIL_DIRECTIONS)
+
+
 #: Technical-terrain detection for trail runs (experimental, calibration open):
 #: spatial windows of WINDOW_M metres; a window is technical when the GAP
 #: (Minetti) speed deficit, the cadence jitter and the downhill braking share
@@ -543,3 +552,19 @@ TRAIL_BRAKE_STRIDE_M = 1.05
 TRAIL_BRAKE_SPAN_M = 0.45
 #: A window needs at least this many moving samples to be judged at all.
 TRAIL_MIN_SAMPLES = 8
+
+
+def trail_model_stamp() -> str:
+    """Return the parameters the trail detector runs with, as a short stamp.
+
+    A stored observation is only meaningful next to the model that measured it:
+    the weights and threshold are being calibrated, so a row written under other
+    parameters must stay readable as what it was, not be taken for the new answer.
+
+    Returns:
+        A compact id: threshold, weights, window and minimum length.
+    """
+    return (
+        f"trail:{TRAIL_THRESHOLD}/{TRAIL_W_SPEED}/{TRAIL_W_CADENCE}/{TRAIL_W_BRAKE}"
+        f"/{TRAIL_WINDOW_M:.0f}/{TRAIL_MIN_LENGTH_M:.0f}"
+    )

@@ -497,3 +497,142 @@ def list_duration_peaks(
         analysis_contracts.PeakRecord(duration_s=int(duration), value=float(value), activity_id=activity_id)
         for duration, value, activity_id in db.execute(stmt).all()
     ]
+
+
+def replace_trail_observation(
+    user_id: int,
+    activity_id: int,
+    method: str,
+    observation: analysis_contracts.TrailSessionRecord,
+    sections: Sequence[analysis_contracts.TrailSectionRecord],
+    db: Session,
+) -> int:
+    """Replace one activity's stored technical observation for one detector model.
+
+    Args:
+        user_id: The athlete the observation belongs to.
+        activity_id: The session measured.
+        method: The detector parameters stamped on the rows.
+        observation: The session-level context, always written: measuring and
+            finding nothing technical is a result.
+        sections: The technical stretches found in it.
+        db: Database session.
+
+    Returns:
+        The number of stretch rows written.
+    """
+    db.execute(
+        delete(analysis_models.TrailSection).where(
+            analysis_models.TrailSection.user_id == user_id,
+            analysis_models.TrailSection.activity_id == activity_id,
+            analysis_models.TrailSection.method == method,
+        )
+    )
+    db.execute(
+        delete(analysis_models.TrailSession).where(
+            analysis_models.TrailSession.user_id == user_id,
+            analysis_models.TrailSession.activity_id == activity_id,
+            analysis_models.TrailSession.method == method,
+        )
+    )
+    db.add(
+        analysis_models.TrailSession(
+            user_id=user_id,
+            activity_id=activity_id,
+            method=method,
+            v_base_ms=observation.v_base_ms,
+            cadence_available=observation.cadence_available,
+            total_m=observation.total_m,
+            technical_m=observation.technical_m,
+        )
+    )
+    # the stretches point at their session row by a composite key the mappers do
+    # not know about, so the parent must be in the database before they are added
+    db.flush()
+    for section in sections:
+        db.add(
+            analysis_models.TrailSection(
+                user_id=user_id,
+                activity_id=activity_id,
+                method=method,
+                start_m=section.start_m,
+                length_m=section.length_m,
+                grade_pct=section.grade_pct,
+                avg_speed_ms=section.avg_speed_ms,
+                gap_deficit=section.gap_deficit,
+                cadence_jitter=section.cadence_jitter,
+                brake_score=section.brake_score,
+                score=section.score,
+                direction=section.direction,
+                v_base_ms=section.v_base_ms,
+                cadence_available=section.cadence_available,
+                total_m=section.total_m,
+                start_t=section.start_t,
+                end_t=section.end_t,
+            )
+        )
+    return len(sections)
+
+
+def list_trail_observation(
+    activity_id: int,
+    method: str,
+    db: Session,
+) -> tuple[analysis_models.TrailSession, list[analysis_models.TrailSection]] | None:
+    """Return one activity's stored technical observation for one detector model.
+
+    Args:
+        activity_id: The session asked about.
+        method: The detector parameters stamped on the rows.
+        db: Database session.
+
+    Returns:
+        The session row and its stretches in ground order, or ``None`` when the
+        activity was never measured under those parameters.
+    """
+    session_row = db.scalars(
+        select(analysis_models.TrailSession).where(
+            analysis_models.TrailSession.activity_id == activity_id,
+            analysis_models.TrailSession.method == method,
+        )
+    ).first()
+    if session_row is None:
+        return None
+    sections = list(
+        db.scalars(
+            select(analysis_models.TrailSection)
+            .where(
+                analysis_models.TrailSection.activity_id == activity_id,
+                analysis_models.TrailSection.method == method,
+            )
+            .order_by(analysis_models.TrailSection.start_m)
+        )
+    )
+    return session_row, sections
+
+
+def activity_ids_with_trail_sessions(
+    activity_ids: Sequence[int],
+    method: str,
+    db: Session,
+) -> set[int]:
+    """Return which of these activities already carry a technical observation.
+
+    Args:
+        activity_ids: The activities to check.
+        method: The detector parameters stamped on the rows.
+        db: Database session.
+
+    Returns:
+        The ids already measured under those parameters.
+    """
+    if not activity_ids:
+        return set()
+    return set(
+        db.scalars(
+            select(analysis_models.TrailSession.activity_id).where(
+                analysis_models.TrailSession.activity_id.in_(activity_ids),
+                analysis_models.TrailSession.method == method,
+            )
+        )
+    )

@@ -1,8 +1,20 @@
 """SQLAlchemy ORM models for training load, thresholds and duration peaks."""
 
-from datetime import date
+from datetime import date, datetime
 
-from sqlalchemy import JSON, CheckConstraint, Date, Float, ForeignKey, Index, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    JSON,
+    CheckConstraint,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    ForeignKeyConstraint,
+    Index,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 import modules.analysis.constants as analysis_constants
@@ -375,4 +387,154 @@ class PeakFlag(Base, TimestampMixin):
         Float,
         nullable=False,
         comment="The tier ratio the session exceeded",
+    )
+
+
+class TrailSession(Base, TimestampMixin):
+    """One run activity as the technical-terrain detector measured it, once per model.
+
+    A session row exists whether or not the detector found anything technical in it:
+    "measured, nothing technical" is a result, and without it every backfill pass
+    would walk the same unremarkable runs again. It also carries the session-level
+    context the stretches are ratios of - the athlete's own reference pace for that
+    day - so a stored stretch can be read without reopening the streams.
+
+    Attributes:
+        user_id: The athlete the observation belongs to.
+        activity_id: The session measured.
+        method: The detector parameters that produced the row, stamped.
+        v_base_ms: The session's own flat-ground reference pace.
+        cadence_available: Whether the stride terms could be used at all.
+        total_m: Ground covered by the session.
+        technical_m: Ground flagged technical over it.
+    """
+
+    __tablename__ = "analysis_trail_sessions"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Athlete the observation belongs to",
+    )
+    activity_id: Mapped[int] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Session measured",
+    )
+    method: Mapped[str] = mapped_column(
+        String(length=64),
+        primary_key=True,
+        comment="Detector parameters that produced the row, stamped",
+    )
+    v_base_ms: Mapped[float] = mapped_column(
+        Float, nullable=False, default=0.0, comment="The session's own flat-ground reference pace"
+    )
+    cadence_available: Mapped[bool] = mapped_column(
+        nullable=False, default=True, comment="Whether the stride terms could be used at all"
+    )
+    total_m: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Ground covered by the session")
+    technical_m: Mapped[float] = mapped_column(
+        Float, nullable=False, default=0.0, comment="Ground flagged technical over it"
+    )
+
+
+class TrailSection(Base, TimestampMixin):
+    """One technical stretch the trail detector read in a session.
+
+    The detector answers "was the *ground* costing here, or only the gradient?" and
+    its weights are still being calibrated against what the athlete remembers of
+    specific routes. So each row keeps the three components it weighed (pace short
+    of what the grade explains, cadence instability, braking in descent) next to the
+    index they produced, the session's own reference pace, and the parameters that
+    produced them. Recalibrating then measures the same ground again: rows written
+    by an older model stay readable and comparable instead of being silently
+    rewritten, which is what makes a weight change reviewable after the fact.
+
+    Attributes:
+        user_id: The athlete the observation belongs to.
+        activity_id: The session the stretch comes from.
+        method: The detector parameters that produced the row, stamped.
+        start_m: Ground position where the stretch starts, metres from the start.
+        grade_pct: Mean grade over it, percent.
+        length_m: Ground covered by the stretch.
+        avg_speed_ms: Mean ground speed through it.
+        gap_deficit: Shortfall against the pace the grade explains (0-1).
+        cadence_jitter: Cadence instability over it (0-1).
+        brake_score: Downhill braking share over it (0-1).
+        score: Peak smoothed technicality index inside it.
+        direction: ``descent`` / ``ascent`` / ``flat`` by mean grade.
+        v_base_ms: The session's own flat-ground reference pace.
+        cadence_available: Whether the stride terms could be used at all.
+        total_m: Ground covered by the session.
+        start_t: Timestamp of the stretch's first sample (map polyline).
+        end_t: Timestamp of its last sample.
+    """
+
+    __tablename__ = "analysis_trail_sections"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Athlete the observation belongs to",
+    )
+    activity_id: Mapped[int] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="Session the stretch comes from",
+    )
+    method: Mapped[str] = mapped_column(
+        String(length=64),
+        primary_key=True,
+        comment="Detector parameters that produced the row, stamped",
+    )
+    start_m: Mapped[float] = mapped_column(
+        Float,
+        primary_key=True,
+        comment="Ground position where the stretch starts, metres from the start",
+    )
+    length_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Ground covered by the stretch")
+    grade_pct: Mapped[float] = mapped_column(Float, nullable=False, comment="Mean grade over it, percent")
+    avg_speed_ms: Mapped[float] = mapped_column(Float, nullable=False, comment="Mean ground speed through it")
+    gap_deficit: Mapped[float] = mapped_column(
+        Float, nullable=False, comment="Shortfall against the pace the grade explains (0-1)"
+    )
+    cadence_jitter: Mapped[float] = mapped_column(Float, nullable=False, comment="Cadence instability over it (0-1)")
+    brake_score: Mapped[float] = mapped_column(Float, nullable=False, comment="Downhill braking share over it (0-1)")
+    score: Mapped[float] = mapped_column(Float, nullable=False, comment="Peak smoothed technicality index inside it")
+    direction: Mapped[str] = mapped_column(
+        String(length=8),
+        nullable=False,
+        comment="descent / ascent / flat by mean grade",
+    )
+    v_base_ms: Mapped[float] = mapped_column(
+        Float, nullable=False, comment="The session's own flat-ground reference pace"
+    )
+    cadence_available: Mapped[bool] = mapped_column(
+        nullable=False, default=True, comment="Whether the stride terms could be used at all"
+    )
+    total_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Ground covered by the session")
+    start_t: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        comment="Timestamp of the stretch's first sample, to draw its polyline",
+    )
+    end_t: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, comment="Timestamp of the stretch's last sample"
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            f"direction IN ({analysis_constants.trail_direction_sql_list()})",
+            name="ck_analysis_trail_sections_direction",
+        ),
+        ForeignKeyConstraint(
+            ["user_id", "activity_id", "method"],
+            [
+                "analysis_trail_sessions.user_id",
+                "analysis_trail_sessions.activity_id",
+                "analysis_trail_sessions.method",
+            ],
+            ondelete="CASCADE",
+        ),
+        Index("ix_analysis_trail_sections_user_method", "user_id", "method"),
     )
