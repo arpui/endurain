@@ -1635,9 +1635,10 @@ class TestWayCoverage:
             patch(f"{_SVC}.analysis_crud.set_trail_session_coverage_date") as marker_set,
         ):
             analysis_service.compute_way_crossings_for_activity(9, db)
-        records = store.call_args.args[3]  # way 7 run, way 9, then way 7 again
-        assert [r.way_id for r in records] == [7, 9, 7]
-        assert records[0].covered_m == 280.0
+        records = {r.way_id: r for r in store.call_args.args[3]}  # way 7 twice, way 9 once
+        assert sorted(records) == [7, 9]
+        assert records[7].covered_m == 420.0  # both passes of the out-and-back counted
+        assert records[9].covered_m == 140.0
         assert marker_set.call_args.args[1] == analysis_constants.trail_model_stamp()
 
     def test_the_coverage_pass_commits_and_skips_what_the_extract_already_covers(self):
