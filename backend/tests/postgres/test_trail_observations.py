@@ -16,6 +16,7 @@ import modules.activities.activity.crud as activity_crud
 import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
 import modules.analysis.crud as analysis_crud
+import modules.analysis.service as analysis_service
 from tests._helpers.db import ensure_user
 
 _USER_ID = 2
@@ -171,6 +172,39 @@ class TestTrailObservations:
         assert stored is not None
         assert len(stored[1]) == 1
         assert measured == {activity_id}
+
+    def test_the_reconcile_pass_lands_what_it_measured(self, pg_factory, monkeypatch):
+        """The scheduled pass must commit, not just measure.
+
+        Its session outlives any request, so rows left uncommitted when it closes
+        are rolled back and the next hour measures the same activities in vain.
+        An in-memory test sees uncommitted rows inside the same session; only a
+        real database can catch the missing commit.
+        """
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            activity_id = _run_activity(db)
+            db.commit()
+            session_row, one_section = _observation(sections=1)
+
+            def _measure(measured_activity_id: int, inner_db) -> int:
+                analysis_crud.replace_trail_observation(
+                    user_id=_USER_ID,
+                    activity_id=measured_activity_id,
+                    method=_METHOD,
+                    observation=session_row,
+                    sections=one_section,
+                    db=inner_db,
+                )
+                return len(one_section)
+
+            monkeypatch.setattr(analysis_service, "compute_trail_sections_for_activity", _measure)
+            written = analysis_service.reconcile_trail_sections(db)
+        assert written == 1
+        with pg_factory() as db:
+            stored = analysis_crud.list_trail_observation(activity_id, _METHOD, db)
+        assert stored is not None
+        assert len(stored[1]) == 1
 
     def test_an_unremarkable_run_is_still_recorded_as_measured(self, pg_factory):
         """A session with no stretches keeps its row, so backfills skip it."""
