@@ -11993,7 +11993,7 @@ export interface components {
          *             as firmly technical.
          *         hard_ratio: Multiple of the cut for a hard claim.
          *         min_descents: Descents a way needs before anything is claimed for it.
-         *         ways: The ways with measured descents, best claim first.
+         *         ways: The ways the athlete ran over - technical evidence or not - best claim first.
          */
         TrailNetworkRead: {
             /** Method */
@@ -12016,10 +12016,12 @@ export interface components {
          *     Attributes:
          *         way_id: The OSM way this is.
          *         name: The way's mapped name, when it carries one.
+         *         crossings_total: Distinct sessions whose track ran over it, technical or not.
          *         claim: What its descents back: ``hard`` or ``technical`` once enough
          *             crossings put its median index over that band, ``mild`` when the
-         *             crossings are enough but the ground is ordinary, and ``thin`` when
-         *             they are not enough to claim anything yet.
+         *             crossings are enough but the ground is ordinary, ``thin`` when they
+         *             are not enough to claim anything yet, and ``plain`` when the
+         *             activity's whole track ran over it but no technical stretch did.
          *         descent_crossings: Distinct sessions that went down it: the measurement.
          *         ascent_crossings: Distinct sessions that crossed it the other way, shown
          *             as corroboration only: a broken path can be climbed fast.
@@ -12048,7 +12050,9 @@ export interface components {
              * Claim
              * @enum {string}
              */
-            claim: "hard" | "technical" | "mild" | "thin";
+            claim: "hard" | "technical" | "mild" | "thin" | "plain";
+            /** Crossings Total */
+            crossings_total: number;
             /** Descent Crossings */
             descent_crossings: number;
             /** Ascent Crossings */
@@ -12056,17 +12060,17 @@ export interface components {
             /** Hard Crossings */
             hard_crossings: number;
             /** Med Score */
-            med_score: number;
+            med_score: number | null;
             /** Q1 */
-            q1: number;
+            q1: number | null;
             /** Q3 */
-            q3: number;
+            q3: number | null;
             /** Min Score */
-            min_score: number;
+            min_score: number | null;
             /** Max Score */
-            max_score: number;
+            max_score: number | null;
             /** Med Grade Pct */
-            med_grade_pct: number;
+            med_grade_pct: number | null;
             /** Length M */
             length_m: number;
             /** Geometry */

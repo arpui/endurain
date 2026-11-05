@@ -279,12 +279,14 @@
       "hard": "zwaar",
       "technical": "technisch",
       "mild": "licht",
-      "thin": "nog te weinig"
+      "thin": "nog te weinig",
+      "plain": "Gekruist, niets beweerd"
     },
     "hint": "De kaart tekent per pad één lijn, gekleurd naar wat de afdalingen ondersteunen. Een pad heeft minstens {min} afdalingen nodig voordat er iets wordt beweerd; de spreiding laat zien of de doorgangen het eens zijn.",
     "empty": {
       "title": "Nog geen gekruiste paden",
       "description": "Enkele afdalingen over hetzelfde pad zijn nodig voordat dit overzicht bewijs heeft."
-    }
+    },
+    "colCrossings": "Doorgangen"
   }
 }

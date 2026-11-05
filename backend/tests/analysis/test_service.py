@@ -24,9 +24,11 @@ import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
 import modules.analysis.service as analysis_service
 import modules.analysis.trail as analysis_trail
+import modules.analysis.trail_osm as analysis_trail_osm
 
 _SVC = "modules.analysis.service"
 _T0 = datetime(2026, 10, 15, 16, 0, 0)
+_DATE = date(2026, 11, 1)
 _T0_UTC = _T0.replace(tzinfo=UTC)
 
 
@@ -1559,12 +1561,19 @@ class TestTrailNetwork:
         assert out.ways[0].claim == "thin"
         assert out.min_descents == analysis_constants.TRAIL_NETWORK_MIN_DESCENTS
 
-    def test_a_way_only_walked_upwards_is_not_part_of_the_network(self):
+    def test_a_way_only_walked_upwards_enters_the_network_without_claim(self):
         db = _db()
         rows = [(self._path(), self._section(1, "ascent", 0.9))]
-        with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=rows):
+        with (
+            patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=rows),
+            patch(f"{_SVC}.analysis_crud.list_user_way_crossing_counts", return_value={4242: 3}),
+        ):
             out = analysis_service.get_trail_network(2, db)
-        assert out.ways == []
+        way = out.ways[0]
+        assert way.claim == "plain"
+        assert way.crossings_total == 3
+        assert way.med_score is None
+        assert way.descent_crossings == 0
 
     def test_hard_ways_sort_before_technical_ones(self):
         db = _db()
@@ -1586,6 +1595,66 @@ class TestTrailNetwork:
         with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=[]) as read:
             analysis_service.get_trail_network(2, db, bbox=(42.0, 1.0, 43.0, 2.0))
         assert read.call_args.kwargs["bbox"] == (42.0, 1.0, 43.0, 2.0)
+
+
+class TestWayCoverage:
+    """Whole-track matching: the network is every crossed way, not only the hard ones."""
+
+    def test_track_chunks_cover_the_ground_and_overlap_at_the_boundaries(self):
+        step_m = 25.0
+        lat0 = 42.0
+        step = step_m / 111195.0
+        points = [(lat0 + index * step, 1.0) for index in range(13)]  # ~300 m
+        chunks = analysis_trail_osm.chunk_polyline(points, chunk_m=150.0)
+        assert len(chunks) == 2
+        assert chunks[0][0] == points[0]
+        assert chunks[0][-1] == chunks[1][0]
+        assert chunks[1][-1] == points[-1]
+
+    @staticmethod
+    def _match(way_id: int):
+        return analysis_trail_osm.OsmMatch(
+            way_id=way_id, start_m=0.0, end_m=140.0, covered_m=140.0, mean_offset_m=3.0, reverse=False
+        )
+
+    def test_consecutive_chunks_on_one_way_merge_into_one_crossing(self):
+        db = _db()
+        stamps = [_T0_UTC + timedelta(seconds=2 * i) for i in range(40)]
+        track = [(stamp, 42.0 + i * 0.0001, 1.0) for i, stamp in enumerate(stamps)]
+        matches = [self._match(7), self._match(7), self._match(9), None, self._match(7)]
+        with (
+            patch(
+                f"{_SVC}.activity_integration.get_activity_for_derivation",
+                return_value=_activity(9, activity_type=2),
+            ),
+            patch(f"{_SVC}.analysis_crud.get_osm_cache_date", return_value=_DATE),
+            patch(f"{_SVC}._trail_track", return_value=track),
+            patch(f"{_SVC}.analysis_trail_osm.chunk_polyline", return_value=[[(0.0, 0.0), (0.0, 1.0)]] * 5),
+            patch(f"{_SVC}._match_one_stretch", side_effect=matches),
+            patch(f"{_SVC}.analysis_crud.replace_way_crossings", return_value=0) as store,
+            patch(f"{_SVC}.analysis_crud.set_trail_session_coverage_date") as marker_set,
+        ):
+            analysis_service.compute_way_crossings_for_activity(9, db)
+        records = store.call_args.args[3]  # way 7 run, way 9, then way 7 again
+        assert [r.way_id for r in records] == [7, 9, 7]
+        assert records[0].covered_m == 280.0
+        assert marker_set.call_args.args[1] == analysis_constants.trail_model_stamp()
+
+    def test_the_coverage_pass_commits_and_skips_what_the_extract_already_covers(self):
+        db = _db()
+        pages = [[10, 11, 12], []]
+        with (
+            patch(f"{_SVC}.analysis_crud.get_osm_cache_date", return_value=_DATE),
+            patch(f"{_SVC}.activity_integration.list_activity_ids_after", side_effect=pages),
+            patch(
+                f"{_SVC}.analysis_crud.activity_ids_needing_coverage",
+                return_value={10, 12},
+            ),
+            patch(f"{_SVC}.compute_way_crossings_for_activity", return_value=2) as cover,
+        ):
+            written = analysis_service.reconcile_way_crossings(db)
+        assert written == 4
+        assert [call.args[0] for call in cover.call_args_list] == [10, 12]
 
 
 class TestTrailCartography:

@@ -28,12 +28,18 @@ const numberFormat = computed(
   () => new Intl.NumberFormat(locale.value, { maximumFractionDigits: 2 }),
 )
 
-function score(value: number): string {
-  return numberFormat.value.format(value)
+function score(value: number | null): string {
+  return value === null ? '--' : numberFormat.value.format(value)
 }
 
-function spread(way: { q1: number; q3: number }): string {
-  return `${numberFormat.value.format(way.q1)}–${numberFormat.value.format(way.q3)}`
+function spread(way: { q1: number | null; q3: number | null }): string {
+  return way.q1 === null || way.q3 === null
+    ? '--'
+    : `${numberFormat.value.format(way.q1)}–${numberFormat.value.format(way.q3)}`
+}
+
+function grade(value: number | null): string {
+  return value === null ? '--' : `${value.toFixed(1)}%`
 }
 </script>
 
@@ -108,10 +114,11 @@ function spread(way: { q1: number; q3: number }): string {
                 </span>
               </td>
               <td class="py-2">{{ t(gradeTrailWay(way.claim).labelKey) }}</td>
+              <td class="py-2 pe-3 text-right">{{ way.crossingsTotal }}</td>
               <td class="py-2 pe-3 text-right">{{ way.descentCrossings }}</td>
               <td class="py-2 pe-3 text-right">{{ score(way.medScore) }}</td>
               <td class="py-2 pe-3 text-right text-muted-foreground">{{ spread(way) }}</td>
-              <td class="py-2 pe-3 text-right">{{ way.medGradePct.toFixed(1) }}%</td>
+              <td class="py-2 pe-3 text-right">{{ grade(way.medGradePct) }}</td>
             </tr>
           </tbody>
         </table>

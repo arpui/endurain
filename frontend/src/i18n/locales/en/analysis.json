@@ -279,12 +279,14 @@
       "hard": "hard",
       "technical": "technical",
       "mild": "mild",
-      "thin": "not enough yet"
+      "thin": "not enough yet",
+      "plain": "Crossed, nothing claimed"
     },
     "hint": "The map draws one line per way, coloured by the claim its descents support. One way needs at least {min} descents before anything is claimed for it; the spread shows how much the crossings agree.",
     "empty": {
       "title": "No crossed ways yet",
       "description": "A few descents of the same path accumulate the evidence this view needs."
-    }
+    },
+    "colCrossings": "Traversed"
   }
 }

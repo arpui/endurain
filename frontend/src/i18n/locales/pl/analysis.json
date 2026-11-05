@@ -279,12 +279,14 @@
       "hard": "trudna",
       "technical": "techniczna",
       "mild": "łagodna",
-      "thin": "jeszcze za mało"
+      "thin": "jeszcze za mało",
+      "plain": "Przebyte, bez twierdzenia"
     },
     "hint": "Mapa rysuje jedną linię na ścieżkę, kolorowaną tym, co potwierdzają zjazdy. Ścieżka wymaga co najmniej {min} zjazdów, zanim cokolwiek się twierdzi; rozrzut pokazuje, czy przejścia są zgodne.",
     "empty": {
       "title": "Brak pokonanych ścieżek",
       "description": "Potrzeba kilku zjazdów tą samą ścieżką, aby ten widok miał dowody."
-    }
+    },
+    "colCrossings": "Przejścia"
   }
 }

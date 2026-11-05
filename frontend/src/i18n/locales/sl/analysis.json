@@ -279,12 +279,14 @@
       "hard": "težko",
       "technical": "tehnično",
       "mild": "blago",
-      "thin": "še premalo"
+      "thin": "še premalo",
+      "plain": "Prehojeno, brez trditve"
     },
     "hint": "Zemljevid riše eno črto na pot, obarvano po tem, kar spusti podpirajo. Pot potrebuje vsaj {min} spustov, preden se karkoli trdi; razpršenost pokaže, ali prehodi soglašajo.",
     "empty": {
       "title": "Še ni prehojenih poti",
       "description": "Potrebnih je nekaj spustov po isti poti, da ta pogled sploh ima dokaze."
-    }
+    },
+    "colCrossings": "Prehodi"
   }
 }

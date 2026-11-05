@@ -279,12 +279,14 @@
       "hard": "duro",
       "technical": "tecnico",
       "mild": "leggero",
-      "thin": "ancora troppo poche"
+      "thin": "ancora troppo poche",
+      "plain": "Attraversato, nulla rivendicato"
     },
     "hint": "La mappa disegna una linea per sentiero, colorata in base a ciò che le discese confermano. Un sentiero richiede almeno {min} discese prima di affermare qualcosa; la dispersione mostra quanto gli attraversamenti concordano.",
     "empty": {
       "title": "Ancora nessun sentiero attraversato",
       "description": "Servono alcune discese sullo stesso sentiero perché questa vista abbia evidenze."
-    }
+    },
+    "colCrossings": "Attraversamenti"
   }
 }

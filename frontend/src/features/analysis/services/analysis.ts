@@ -728,6 +728,7 @@ export async function fetchTrailNetwork(signal?: AbortSignal): Promise<TrailNetw
       wayId: way.way_id,
       name: way.name ?? null,
       claim: way.claim as TrailNetworkWay['claim'],
+      crossingsTotal: way.crossings_total,
       descentCrossings: way.descent_crossings,
       ascentCrossings: way.ascent_crossings,
       hardCrossings: way.hard_crossings,

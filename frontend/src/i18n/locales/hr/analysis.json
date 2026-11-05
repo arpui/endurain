@@ -279,12 +279,14 @@
       "hard": "težak",
       "technical": "tehnički",
       "mild": "blag",
-      "thin": "još premalo"
+      "thin": "još premalo",
+      "plain": "Prešlo, bez tvrdnje"
     },
     "hint": "Karta crta jednu liniju po stazi, obojanu prema onome što silasci potvrđuju. Stazi treba barem {min} silazaka prije bilo kakve tvrdnje; raspršenje pokazuje prelaze li se putovanja.",
     "empty": {
       "title": "Još nema pređenih staza",
       "description": "Treba nekoliko silazaka istom stazi da ovaj prikaz ima dokaze."
-    }
+    },
+    "colCrossings": "Prolasci"
   }
 }

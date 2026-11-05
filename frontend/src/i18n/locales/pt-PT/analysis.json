@@ -279,12 +279,14 @@
       "hard": "duro",
       "technical": "técnico",
       "mild": "suave",
-      "thin": "ainda não basta"
+      "thin": "ainda não basta",
+      "plain": "Atravessado, sem alegação"
     },
     "hint": "O mapa desenha uma linha por caminho, colorida pelo que as descidas confirmam. Um caminho precisa de pelo menos {min} descidas antes de afirmar seja o que for; a dispersão mostra se as travessias concordam.",
     "empty": {
       "title": "Ainda sem caminhos atravessados",
       "description": "Faltam algumas descidas pelo mesmo caminho para esta vista ter evidências."
-    }
+    },
+    "colCrossings": "Travessias"
   }
 }

@@ -279,12 +279,14 @@
       "hard": "tuff",
       "technical": "teknisk",
       "mild": "måttlig",
-      "thin": "inte tillräckligt än"
+      "thin": "inte tillräckligt än",
+      "plain": "Korsad, inget påstått"
     },
     "hint": "Kartan ritar en linje per stig, färgad efter vad nedstigningarna stöder. En stig behöver minst {min} nedstigningar innan något påstås; spridningen visar hur väl passagerna överensstämmer.",
     "empty": {
       "title": "Inga korsade stigar ännu",
       "description": "Några nedstigningar samma stig krävs innan den här vyn har evidens."
-    }
+    },
+    "colCrossings": "Passager"
   }
 }

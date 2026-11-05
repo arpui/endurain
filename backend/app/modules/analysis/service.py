@@ -2510,6 +2510,95 @@ def reconcile_trail_sections(db: Session, *, only_missing: bool = True) -> int:
     return written
 
 
+def compute_way_crossings_for_activity(activity_id: int, db: Session) -> int:
+    """Match an activity's whole track against the mapped ways, not just its hard ground.
+
+    The technical observation answers where the ground was remarkable; coverage
+    answers where the athlete actually ran. The two together are what makes the
+    network a network: the ordinary paths between the hard ones are the ground a
+    future route is assembled from.
+
+    Args:
+        activity_id: The activity to cover.
+        db: Database session.
+
+    Returns:
+        The number of along-way crossings stored.
+    """
+    cache_date = analysis_crud.get_osm_cache_date(db)
+    if cache_date is None:
+        return 0
+    activity = activity_integration.get_activity_for_derivation(activity_id, db)
+    if activity is None or activity.user_id is None or sport_group(activity.activity_type) != "run":
+        return 0
+    track = [(lat, lon) for _stamp, lat, lon in _trail_track(activity_id, db)]
+    crossings: list[analysis_contracts.WayCrossingRecord] = []
+    run: analysis_contracts.WayCrossingRecord | None = None
+    for chunk in analysis_trail_osm.chunk_polyline(track):
+        match = _match_one_stretch(list(chunk), db)
+        if match is None:
+            if run is not None:
+                crossings.append(run)
+                run = None
+            continue
+        if run is not None and run.way_id == match.way_id:
+            run = analysis_contracts.WayCrossingRecord(
+                way_id=run.way_id,
+                start_m=min(run.start_m, match.start_m),
+                end_m=max(run.end_m, match.end_m),
+                covered_m=run.covered_m + match.covered_m,
+            )
+        else:
+            if run is not None:
+                crossings.append(run)
+            run = analysis_contracts.WayCrossingRecord(
+                way_id=match.way_id,
+                start_m=match.start_m,
+                end_m=match.end_m,
+                covered_m=match.covered_m,
+            )
+    if run is not None:
+        crossings.append(run)
+    stored = analysis_crud.replace_way_crossings(activity.user_id, activity_id, cache_date, crossings, db)
+    method = analysis_constants.trail_model_stamp()
+    analysis_crud.set_trail_session_coverage_date(activity_id, method, cache_date, db)
+    logger.info(
+        "Way coverage measured",
+        extra=core_logger.context(activity_id=activity_id, crossings=stored, cache_date=cache_date.isoformat()),
+    )
+    return stored
+
+
+def reconcile_way_crossings(db: Session, *, only_missing: bool = True) -> int:
+    """Cover every run activity whose whole track has not been matched to ways yet.
+
+    Args:
+        db: Database session.
+        only_missing: Skip activities already covered against the current extract.
+
+    Returns:
+        The number of crossings written.
+    """
+    cache_date = analysis_crud.get_osm_cache_date(db)
+    if cache_date is None:
+        return 0
+    method = analysis_constants.trail_model_stamp()
+    written = 0
+    after_id = 0
+    while True:
+        activity_ids = activity_integration.list_activity_ids_after(db, after_id=after_id)
+        if not activity_ids:
+            break
+        after_id = max(activity_ids)
+        if only_missing:
+            activity_ids = sorted(analysis_crud.activity_ids_needing_coverage(activity_ids, method, cache_date, db))
+        for activity_id in activity_ids:
+            written += compute_way_crossings_for_activity(activity_id, db)
+        db.commit()
+    logger.info("Way coverage pass finished", extra=core_logger.context(only_missing=only_missing, crossings=written))
+    return written
+
+
 def get_trail_network(
     user_id: int,
     db: Session,
@@ -2517,15 +2606,16 @@ def get_trail_network(
     bbox: tuple[float, float, float, float] | None = None,
     limit: int = analysis_constants.TRAIL_NETWORK_MAX_WAYS,
 ) -> analysis_schema.TrailNetworkRead:
-    """Aggregate the mapped ways the athlete has crossed, judged on descents alone.
+    """Aggregate every mapped way the athlete ran over, claimed on descents alone.
 
     One crossing is not a property of the ground: a tired day or a bad season can
-    produce it. Each descent contributes exactly one number - the harshest index
-    it reached on that way - and a way is claimed by the median across its
-    descents, with the quartiles shown because the spread decides whether the
+    produce it. Each technical descent contributes exactly one number - the
+    harshest index it reached on that way - and a way is claimed by the median
+    across its descents, quartiles shown because the spread decides whether the
     median means anything. Ways below the minimum descents are reported thin
-    rather than claimed. Ascents only corroborate: a broken path can be climbed
-    fast, so the way down is the measurement.
+    rather than claimed; ascents only corroborate, since a broken path can be
+    climbed fast. Ways the full-track coverage found but no technical stretch
+    touched are plain: real network, no claim on it.
 
     Args:
         user_id: The requester.
@@ -2540,11 +2630,14 @@ def get_trail_network(
     threshold = analysis_constants.TRAIL_THRESHOLD
     hard_cut = threshold * analysis_constants.TRAIL_HARD_RATIO
     technical_cut = threshold * analysis_constants.TRAIL_TECHNICAL_RATIO
+    totals = analysis_crud.list_user_way_crossing_counts(user_id, db)
     per_way: dict[int, dict] = {}
+    path_by_id: dict[int, object] = {}
     for path, section in analysis_crud.list_trail_way_evidence(user_id, method, db, bbox=bbox):
+        path_by_id[path.way_id] = path
         entry = per_way.setdefault(
             path.way_id,
-            {"path": path, "descents": {}, "ascents": set(), "hard": set(), "grades": {}},
+            {"descents": {}, "ascents": set(), "hard": set(), "grades": {}},
         )
         if section.direction != "descent":
             entry["ascents"].add(section.activity_id)
@@ -2555,36 +2648,45 @@ def get_trail_network(
             entry["hard"].add(section.activity_id)
         entry["grades"].setdefault(section.activity_id, []).append(section.grade_pct)
 
+    path_by_id.update(analysis_crud.get_osm_paths_by_ids([w for w in totals if w not in path_by_id], db))
+
     ways: list[analysis_schema.TrailNetworkWayRead] = []
-    for way_id, entry in per_way.items():
-        scores = sorted(entry["descents"].values())
-        if not scores:
+    for way_id in set(per_way) | set(totals):
+        path = path_by_id.get(way_id)
+        if path is None:
             continue
-        med = float(statistics.median(scores))
-        q1, _, q3 = statistics.quantiles(scores, n=4) if len(scores) >= 2 else (med, med, med)
-        if len(scores) < analysis_constants.TRAIL_NETWORK_MIN_DESCENTS:
-            claim = "thin"
-        elif med >= hard_cut:
-            claim = "hard"
-        elif med >= technical_cut:
-            claim = "technical"
+        entry = per_way.get(way_id, {"descents": {}, "ascents": set(), "hard": set(), "grades": {}})
+        scores = sorted(entry["descents"].values())
+        if scores:
+            med = float(statistics.median(scores))
+            q1, _, q3 = statistics.quantiles(scores, n=4) if len(scores) >= 2 else (med, med, med)
+            grade_med: float | None = float(statistics.median([statistics.median(v) for v in entry["grades"].values()]))
+            if len(scores) < analysis_constants.TRAIL_NETWORK_MIN_DESCENTS:
+                claim = "thin"
+            elif med >= hard_cut:
+                claim = "hard"
+            elif med >= technical_cut:
+                claim = "technical"
+            else:
+                claim = "mild"
         else:
-            claim = "mild"
-        path = entry["path"]
+            med = q1 = q3 = grade_med = None
+            claim = "plain"
         ways.append(
             analysis_schema.TrailNetworkWayRead(
                 way_id=way_id,
                 name=path.name,
                 claim=claim,
+                crossings_total=totals.get(way_id, len(scores)),
                 descent_crossings=len(scores),
                 ascent_crossings=len(entry["ascents"]),
                 hard_crossings=len(entry["hard"]),
                 med_score=med,
-                q1=float(q1),
-                q3=float(q3),
-                min_score=min(scores),
-                max_score=max(scores),
-                med_grade_pct=float(statistics.median([statistics.median(v) for v in entry["grades"].values()])),
+                q1=q1,
+                q3=q3,
+                min_score=min(scores) if scores else None,
+                max_score=max(scores) if scores else None,
+                med_grade_pct=grade_med,
                 length_m=path.length_m,
                 geometry=path.geometry,
                 sac_scale=path.tags.get("sac_scale"),
@@ -2593,8 +2695,8 @@ def get_trail_network(
                 tracktype=path.tags.get("tracktype"),
             )
         )
-    rank = {"hard": 0, "technical": 1, "mild": 2, "thin": 3}
-    ways.sort(key=lambda way: (rank[way.claim], -way.med_score))
+    rank = {"hard": 0, "technical": 1, "mild": 2, "thin": 3, "plain": 4}
+    ways.sort(key=lambda way: (rank[way.claim], -(way.med_score if way.med_score is not None else 0.0)))
     return analysis_schema.TrailNetworkRead(
         method=method,
         threshold=threshold,

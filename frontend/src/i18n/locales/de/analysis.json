@@ -279,12 +279,14 @@
       "hard": "hart",
       "technical": "technisch",
       "mild": "leicht",
-      "thin": "noch zu wenig"
+      "thin": "noch zu wenig",
+      "plain": "Passiert, ohne Anspruch"
     },
     "hint": "Die Karte zeichnet je eine Linie pro Weg, eingefärbt nach dem, was die Abfahrten hergeben. Ein Weg braucht mindestens {min} Abfahrten, bevor etwas behauptet wird; die Spannweite zeigt, wie sehr die Querungen übereinstimmen.",
     "empty": {
       "title": "Noch keine gekreuzten Wege",
       "description": "Einige Abfahrten auf demselben Weg müssen sich ansammeln, damit diese Ansicht Belege hat."
-    }
+    },
+    "colCrossings": "Querungen"
   }
 }

@@ -279,12 +279,14 @@
       "hard": "dur",
       "technical": "tècnic",
       "mild": "suau",
-      "thin": "encara no prou"
+      "thin": "encara no prou",
+      "plain": "Travessat, sense claim"
     },
     "hint": "El mapa dibuixa una línia per camí, acolorida segons el que afirmen els seus descensos. Un camí necessita com a mínim {min} descensos abans d'afirmar-ne res; la dispersió mostra si les travessades coincideixen.",
     "empty": {
       "title": "Encara no hi ha camins travessats",
       "description": "Falten uns quants descensos del mateix camí perquè aquesta vista tingui evidència per dir res."
-    }
+    },
+    "colCrossings": "Travessades"
   }
 }
