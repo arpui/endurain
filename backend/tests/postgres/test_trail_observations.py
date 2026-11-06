@@ -379,6 +379,51 @@ class TestDesignedRoutes:
             assert analysis_service.list_routes(_USER_ID, db) == []
 
 
+class TestRouteEditing:
+    def test_editing_remeasures_and_a_foreign_route_is_not_there(self, pg_factory):
+        import math
+
+        ensure_user(pg_factory, _USER_ID)
+        ref_lat = analysis_constants.TRAIL_GRAPH_REF_LAT
+        ref_lng = analysis_constants.TRAIL_GRAPH_REF_LNG
+        cell_m = analysis_constants.TRAIL_GRAPH_CELL_M
+        step_lng = cell_m / (111320.0 * math.cos(math.radians(ref_lat)))
+        ele = [100.0, 110.0, 105.0, 120.0]
+        nodes = [
+            {"x": k, "y": 0, "lat": ref_lat, "lng": ref_lng + k * step_lng, "ele": ele[k], "visits": 1, "grade": ""}
+            for k in range(4)
+        ]
+        pts = [[ref_lat, ref_lng + k * step_lng] for k in range(4)]
+        with pg_factory() as db:
+            analysis_crud.replace_user_graph(_USER_ID, nodes, [], db)
+            db.commit()
+            created = analysis_service.create_route(
+                _USER_ID, analysis_schema.RouteCreate(name="pujada", geometry=pts), db
+            )
+            assert created.gain_m == 25.0  # 100→110 (+10) and 105→120 (+15)
+            assert created.distance_m > 40.0
+
+            shorter = pts[:2] + pts[3:]
+            edited = analysis_service.update_route(
+                created.id,
+                _USER_ID,
+                analysis_schema.RouteUpdate(name="rebaixada", geometry=shorter, notes="editada"),
+                db,
+            )
+            assert edited is not None
+            assert edited.name == "rebaixada" and edited.notes == "editada"
+            assert edited.gain_m == 20.0  # 100→110 (+10) and 110→120 (+10)
+            assert len(edited.geometry) == 3 and edited.distance_m == created.distance_m
+
+            # another athlete's eyes: the route is simply not there
+            assert (
+                analysis_service.update_route(
+                    created.id, _USER_ID + 77, analysis_schema.RouteUpdate(name="x", geometry=shorter), db
+                )
+                is None
+            )
+
+
 class TestWayCrossings:
     def test_crossings_replace_round_trip_and_the_marker_gates_the_pass(self, pg_factory):
         ensure_user(pg_factory, _USER_ID)

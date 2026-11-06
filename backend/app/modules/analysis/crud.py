@@ -1266,6 +1266,29 @@ def _route_belongs(route_id: int, user_id: int, db: Session) -> bool:
     return found is not None
 
 
+def update_route(
+    route_id: int,
+    user_id: int,
+    name: str,
+    geometry: list,
+    distance_m: float,
+    gain_m: float,
+    notes: str | None,
+    db: Session,
+) -> analysis_models.Route | None:
+    """Replace the content of one saved route of the caller, when it exists."""
+    route = db.get(analysis_models.Route, route_id) if _route_belongs(route_id, user_id, db) else None
+    if route is None:
+        return None
+    route.name = name
+    route.geometry = geometry
+    route.distance_m = distance_m
+    route.gain_m = gain_m
+    route.notes = notes
+    db.flush()
+    return route
+
+
 def delete_route(route_id: int, user_id: int, db: Session) -> bool:
     """Delete one saved route of the caller; ``True`` when it existed."""
     result = db.execute(

@@ -1077,3 +1077,19 @@ class RouteCreate(BaseModel):
     name: StrictStr = Field(min_length=1, max_length=128)
     geometry: list[list[float]] = Field(min_length=2)
     notes: StrictStr | None = None
+
+
+class RouteUpdate(BaseModel):
+    """Payload to edit a saved route.
+
+    Attributes:
+        name: Route name.
+        geometry: Ordered ``[lat, lng]`` polyline as edited.
+        notes: Optional remarks.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: StrictStr = Field(min_length=1, max_length=128)
+    geometry: list[list[float]] = Field(min_length=2)
+    notes: StrictStr | None = None
