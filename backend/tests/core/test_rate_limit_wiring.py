@@ -153,6 +153,10 @@ _TIERED_ENDPOINTS = [
         core_rate_limit.WRITE,
         id="trail-section-mark-place",
     ),
+    pytest.param(analysis_activity_router.post_variant_mark, core_rate_limit.WRITE, id="variant-mark-place"),
+    pytest.param(analysis_activity_router.delete_variant_mark, core_rate_limit.WRITE, id="variant-mark-remove"),
+    pytest.param(analysis_router.create_route, core_rate_limit.WRITE, id="route-create"),
+    pytest.param(analysis_router.delete_route, core_rate_limit.WRITE, id="route-delete"),
     pytest.param(
         analysis_activity_router.delete_trail_section_mark,
         core_rate_limit.WRITE,

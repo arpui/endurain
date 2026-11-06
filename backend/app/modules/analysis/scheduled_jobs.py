@@ -5,6 +5,7 @@ import functools
 import core.database as core_database
 import core.logger as core_logger
 import core.scheduler as core_scheduler
+import modules.analysis.crud as analysis_crud
 import modules.analysis.service as analysis_service
 
 logger = core_logger.get_logger(__name__)
@@ -41,6 +42,18 @@ def reconcile_trail_sections() -> None:
     """
     with core_database.SessionLocal() as db:
         analysis_service.reconcile_trail_sections(db)
+
+
+def rebuild_personal_graphs() -> None:
+    """Rebuild the personal ground graphs of every athlete with run activities.
+
+    The graph is what variant search and route design walk on: it must follow
+    new tracks, so it is re-derived from scratch per athlete on a daily cycle.
+    Scheduler-invoked, so this entry point opens its own session.
+    """
+    with core_database.SessionLocal() as db:
+        for user_id in analysis_crud.list_user_ids_with_trail_sessions(db):
+            analysis_service.build_personal_graph(user_id, db)
 
 
 def reconcile_way_crossings() -> None:
@@ -101,6 +114,11 @@ def recurring_jobs() -> tuple[core_scheduler.ScheduledJob, ...]:
             reconcile_way_crossings,
             3600,
             "cover run activities' full tracks against the mapped ways",
+        ),
+        core_scheduler.ScheduledJob(
+            rebuild_personal_graphs,
+            86400,
+            "re-derive the personal ground graphs from the stored tracks",
         ),
     )
 

@@ -4,10 +4,11 @@ from collections.abc import Callable
 from datetime import date
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Request, Security
+from fastapi import APIRouter, Depends, Query, Request, Security, status
 from sqlalchemy.orm import Session
 
 import core.database as core_database
+import core.dependencies as core_dependencies
 import core.exceptions as core_exceptions
 import core.rate_limit as core_rate_limit
 import modules.analysis.constants as analysis_constants
@@ -216,6 +217,53 @@ def get_trail_network(
         if north <= south or east <= west:
             raise core_exceptions.InvalidInputError("A viewport needs north above south and east beyond west")
     return analysis_service.get_trail_network(token_user_id, db, bbox=bbox, limit=limit)
+
+
+@router.get(
+    "/routes",
+    response_model=list[analysis_schema.RouteRead],
+)
+def list_routes(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> list[analysis_schema.RouteRead]:
+    """The caller's saved designed routes."""
+    return analysis_service.list_routes(token_user_id, db)
+
+
+@router.post(
+    "/routes",
+    response_model=analysis_schema.RouteRead,
+    status_code=201,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def create_route(
+    request: Request,
+    payload: analysis_schema.RouteCreate,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:write"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.RouteRead:
+    """Save a drawn route; its distance is measured here, not trusted from the client."""
+    return analysis_service.create_route(token_user_id, payload, db)
+
+
+@router.delete(
+    "/routes/{route_id}",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def delete_route(
+    request: Request,
+    route_id: core_dependencies.PositiveId,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:write"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> None:
+    """Delete one saved route."""
+    analysis_service.delete_route(route_id, token_user_id, db)
 
 
 @router.post(

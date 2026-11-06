@@ -14,6 +14,7 @@ from sqlalchemy import (
     Index,
     Integer,
     String,
+    Text,
     UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -708,3 +709,157 @@ class WayCrossing(Base, TimestampMixin):
         Index("ix_analysis_way_crossings_activity", "activity_id"),
         Index("ix_analysis_way_crossings_user_way", "user_id", "way_id"),
     )
+
+
+class GraphNode(Base, TimestampMixin):
+    """One grid cell of an athlete's personal ground graph.
+
+    The graph records the ground their own GPS has physically crossed - cell by
+    cell, in a fixed local metric frame - including paths no cartography draws.
+    It is rebuilt periodically from the stored tracks; it is the substrate the
+    variant search and the route designer walk on.
+
+    Attributes:
+        user_id: The athlete whose tracks produced the cell.
+        x: Grid column of the cell (metres / cell size).
+        y: Grid row of the cell.
+        lat: Latitude of the cell centroid.
+        lng: Longitude of the cell centroid.
+        ele: Mean elevation of the cell centroid.
+        visits: Sample points that landed in the cell.
+        grade: Technical claim of the cell: ``hard`` / ``tech`` / empty.
+    """
+
+    __tablename__ = "analysis_graph_nodes"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, comment="Athlete whose tracks crossed the cell"
+    )
+    x: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Grid column of the cell")
+    y: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Grid row of the cell")
+    lat: Mapped[float] = mapped_column(Float, nullable=False, comment="Centroid latitude")
+    lng: Mapped[float] = mapped_column(Float, nullable=False, comment="Centroid longitude")
+    ele: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Mean elevation of the cell")
+    visits: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, comment="Track samples that landed in the cell"
+    )
+    grade: Mapped[str] = mapped_column(String(length=8), nullable=False, default="", comment="hard / tech / ''")
+
+    __table_args__ = (
+        CheckConstraint("grade IN ('', 'tech', 'hard')", name="ck_analysis_graph_nodes_grade"),
+        Index("ix_analysis_graph_nodes_user_cell", "user_id", "x", "y"),
+    )
+
+
+class GraphEdge(Base, TimestampMixin):
+    """One directed cell-to-cell transition observed in the athlete's tracks.
+
+    An edge exists only where a track actually moved between the two cells; the
+    worst raw step that produced it (step_max) and how often a cartographic way
+    ran parallel under it (on_path) are what keep variants from being drawn
+    over ground nobody walked.
+
+    Attributes:
+        user_id: The athlete whose tracks produced the transition.
+        ax: Grid column of the origin cell.
+        ay: Grid row of the origin cell.
+        bx: Grid column of the destination cell.
+        by: Grid row of the destination cell.
+        length: Accumulated ground length of the traversals.
+        gain: Accumulated elevation gain of the traversals.
+        loss: Accumulated elevation loss of the traversals.
+        passes: Traversals of this transition.
+        step_max: Worst fix-to-fix step that produced it, metres.
+        on_path: Traversals whose step ran parallel to a matched mapped way.
+    """
+
+    __tablename__ = "analysis_graph_edges"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, comment="Athlete whose tracks crossed the edge"
+    )
+    ax: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Origin grid column")
+    ay: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Origin grid row")
+    bx: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Destination grid column")
+    by: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Destination grid row")
+    length: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Accumulated ground length")
+    gain: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Accumulated elevation gain")
+    loss: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Accumulated elevation loss")
+    passes: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="Times traversed")
+    step_max: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Worst raw step producing it")
+    on_path: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, comment="Cartographically parallel traversals"
+    )
+
+    __table_args__ = (Index("ix_analysis_graph_edges_user_origin", "user_id", "ax", "ay"),)
+
+
+class VariantMark(Base, TimestampMixin):
+    """The athlete's verdict on one variant suggested for one planned route.
+
+    A variant is a hypothesis from the personal graph; whether the ground is
+    really there, and worth offering, is known only by whoever walked it. The
+    mark is the durable answer: ``falsa`` buries the suggestion for good,
+    ``real`` records it as usable ground.
+
+    Attributes:
+        user_id: The athlete judging.
+        activity_id: The planned route the variant was suggested on.
+        split_m: Ground position of the junction, metres from the route start.
+        verdict: ``real`` / ``falsa``.
+        note: Optional free-text remark.
+    """
+
+    __tablename__ = "analysis_variant_marks"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, comment="Athlete judging"
+    )
+    activity_id: Mapped[int] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"), primary_key=True, comment="Planned route judged"
+    )
+    split_m: Mapped[float] = mapped_column(
+        Float, primary_key=True, comment="Junction position along the route the variant was judged at"
+    )
+    verdict: Mapped[str] = mapped_column(String(length=8), nullable=False, comment="real / falsa")
+    note: Mapped[str | None] = mapped_column(String(length=256), nullable=True, comment="Optional remark")
+
+    __table_args__ = (
+        CheckConstraint(
+            f"verdict IN ({', '.join(repr(v) for v in analysis_constants.TRAIL_VARIANT_VERDICTS)})",
+            name="ck_analysis_variant_marks_verdict",
+        ),
+        Index("ix_analysis_variant_marks_activity", "activity_id"),
+    )
+
+
+class Route(Base):
+    """A route the athlete designed over their own network.
+
+    It stores the drawn polyline and its totals: the substrate for exporting a
+    navigable course and for running the variant search against a plan that was
+    never walked.
+
+    Attributes:
+        id: Surrogate id.
+        user_id: The athlete who designed it.
+        name: Route name.
+        geometry: Ordered ``[[lat, lng], ...]`` polyline.
+        distance_m: Ground covered along it.
+        gain_m: Elevation gain along it.
+        notes: Free-text remarks.
+    """
+
+    __tablename__ = "analysis_routes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, comment="Route id")
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, comment="Athlete who designed it"
+    )
+    name: Mapped[str] = mapped_column(String(length=128), nullable=False, comment="Route name")
+    geometry: Mapped[list] = mapped_column(JSONB, nullable=False, comment="Ordered [lat, lng] polyline")
+    distance_m: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Ground covered")
+    gain_m: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Elevation gain")
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Free-text remarks")
+
+    __table_args__ = (Index("ix_analysis_routes_user", "user_id"),)

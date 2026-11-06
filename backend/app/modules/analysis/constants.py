@@ -623,3 +623,27 @@ OSM_COVER_CHUNK_M = 150.0
 TRAIL_NETWORK_MIN_DESCENTS = 3
 #: Ways handed back by one network read, best-claimed first.
 TRAIL_NETWORK_MAX_WAYS = 5000
+
+#: The personal graph: grid cell size and the guards that decide when a track
+#: transition is ground underfoot rather than a GPS interpolation. Steps longer
+#: than TRAIL_GRAPH_MAX_STEP_M never form part of a suggested variant; steps
+#: longer than TRAIL_GRAPH_MAX_JUMP_M are the sensor and break the chain.
+TRAIL_GRAPH_CELL_M = 15.0
+TRAIL_GRAPH_MAX_JUMP_M = 150.0
+TRAIL_GRAPH_MAX_STEP_M = 60.0
+#: Reference of the local metric frame: good across the whole region at <0.1% error.
+TRAIL_GRAPH_REF_LAT = 42.3
+TRAIL_GRAPH_REF_LNG = 1.5
+#: Variant search bounds (metres and ratios), judged against the athlete's verdicts.
+TRAIL_VARIANT_REJOIN_MIN_M = 400.0
+TRAIL_VARIANT_REJOIN_MAX_M = 5000.0
+TRAIL_VARIANT_MIN_LEN_M = 150.0
+TRAIL_VARIANT_MAX_DETOUR_RATIO = 2.0
+TRAIL_VARIANT_MIN_SPAN_RATIO = 0.5
+TRAIL_VARIANT_MIN_LEN_RATIO = 0.5
+TRAIL_VARIANT_ALERT_SPACING_M = 300.0
+TRAIL_VARIANT_CONFIRM_SHARE = 0.6
+#: A cartographic way shapes a variant's drawn line only when the athlete's own
+#: crossings certify that way in that stretch; tolerance of the certification.
+TRAIL_VARIANT_WAY_CERT_TOL_M = 25.0
+TRAIL_VARIANT_VERDICTS = ("real", "falsa")

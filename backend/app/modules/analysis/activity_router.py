@@ -122,6 +122,70 @@ def post_trail_section_mark(
     return analysis_service.save_trail_mark(activity_id, token_user_id, mark, db)
 
 
+@router.get(
+    "/trail-variants",
+    response_model=analysis_schema.TrailVariantsRead,
+)
+def get_trail_variants(
+    activity_id: activity_dependencies.ActivityId,
+    _check_scopes: Annotated[
+        Callable,
+        Security(auth_dependencies.check_scopes, scopes=["analysis:read"]),
+    ],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.TrailVariantsRead:
+    """Suggest reconnection variants along this activity's own track.
+
+    The suggestions can only come from ground the athlete has physically crossed
+    (the personal graph), and each carries how firmly it is evidenced; what to
+    do with them is decided by the verdict placed below.
+    """
+    return analysis_service.get_activity_variants(activity_id, token_user_id, db)
+
+
+@router.post(
+    "/trail-variants/marks",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def post_variant_mark(
+    request: Request,
+    activity_id: activity_dependencies.ActivityId,
+    mark: analysis_schema.VariantMarkCreate,
+    _check_scopes: Annotated[
+        Callable,
+        Security(auth_dependencies.check_scopes, scopes=["analysis:write"]),
+    ],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> None:
+    """Judge one suggested variant: real ground, or a suggestion to bury."""
+    analysis_service.save_variant_mark(activity_id, token_user_id, mark, db)
+
+
+@router.delete(
+    "/trail-variants/marks",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def delete_variant_mark(
+    request: Request,
+    activity_id: activity_dependencies.ActivityId,
+    split_m: Annotated[float, Query(ge=0)],
+    _check_scopes: Annotated[
+        Callable,
+        Security(auth_dependencies.check_scopes, scopes=["analysis:write"]),
+    ],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> None:
+    """Take back the verdict on one variant."""
+    analysis_service.clear_variant_mark(activity_id, token_user_id, split_m, db)
+
+
 @router.delete(
     "/trail-sections/marks",
     response_model=None,
