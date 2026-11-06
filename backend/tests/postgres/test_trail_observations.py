@@ -349,6 +349,20 @@ class TestPersonalGraph:
             _, again = analysis_crud.list_user_graph_in_bbox(_USER_ID, -100000, 100000, -100000, 100000, db)
             assert again == []
 
+    def test_a_graph_beyond_one_statement_of_parameters_still_lands(self, pg_factory):
+        # psycopg caps a statement at 65.535 parameters: a real graph (hundreds of
+        # thousands of cells) only fits by inserting in chunks.
+        ensure_user(pg_factory, _USER_ID)
+        many = [
+            {"x": k, "y": 0, "lat": 42.0, "lng": 1.5 + k * 1e-6, "ele": 10.0, "visits": 1, "grade": ""}
+            for k in range(4500)
+        ]
+        with pg_factory() as db:
+            assert analysis_crud.replace_user_graph(_USER_ID, many, [], db) == (4500, 0)
+            db.commit()
+            got_nodes, _ = analysis_crud.list_user_graph_in_bbox(_USER_ID, -10, 5000, -10, 10, db)
+            assert len(got_nodes) == 4500
+
 
 class TestWayCrossings:
     def test_crossings_replace_round_trip_and_the_marker_gates_the_pass(self, pg_factory):
