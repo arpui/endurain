@@ -337,6 +337,14 @@
     "empty": {
       "title": "Još nema spremljenih staza",
       "description": "Otvori trčanje i pritisni „Spremi kao stazu” da počneš dizajnirati nad svojim terenom."
-    }
+    },
+    "new": "Nova staza",
+    "edit": "Uredi stazu",
+    "save": "Spremi stazu",
+    "namePlaceholder": "Naziv staze",
+    "points": "{n} točaka",
+    "undo": "Ukloni zadnju",
+    "cancelEdit": "Odustani",
+    "drawHint": "Kliknite na kartu da dodate točke staze. Kliknite na točku da je uklonite."
   }
 }

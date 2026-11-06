@@ -337,6 +337,14 @@
     "empty": {
       "title": "Salvestatud marssruute veel pole",
       "description": "Ava jooksutreening ja vajuta „Salvesta marssruudina”, et hakata joonistama oma maastiku peale."
-    }
+    },
+    "new": "Uus marssruut",
+    "edit": "Muuda marssruuti",
+    "save": "Salvesta marssruut",
+    "namePlaceholder": "Marssruudi nimi",
+    "points": "{n} punkti",
+    "undo": "Eemalda viimane",
+    "cancelEdit": "Loobu",
+    "drawHint": "Klõpsa kaardile marssruudi punktide lisamiseks. Klõpsa punktile selle eemaldamiseks."
   }
 }

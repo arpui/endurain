@@ -42,6 +42,10 @@ export interface MapOverlay {
   opacity?: number
   /** Called when the viewer picks the overlay on the map. */
   onSelect?: () => void
+  /** Editable handles drawn along the overlay (route designers). */
+  vertices?: GeoPoint[]
+  /** Called with the handle's index when the viewer picks one. */
+  onVertexClick?: (index: number) => void
 }
 
 /** Options controlling a single map render. */
@@ -52,6 +56,8 @@ export interface MapRenderOptions {
   overlays?: MapOverlay[]
   /** Whether the map responds to pan/zoom. Defaults to provider preference. */
   interactive?: boolean
+  /** Called with the clicked position when the viewer taps empty map. */
+  onMapClick?: (point: GeoPoint) => void
 }
 
 /** Imperative handle to a mounted map, returned by {@link MapProvider.mount}. */

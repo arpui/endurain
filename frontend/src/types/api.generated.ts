@@ -3963,7 +3963,14 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
+        /**
+         * Update Route
+         * @description Edit one saved route: name, redrawn polyline, notes.
+         *
+         *     Unknown or foreign ids answer 404: the route is simply not there for this
+         *     athlete. The totals are measured again from the new geometry.
+         */
+        put: operations["update_route_api_v1_analysis_routes__route_id__put"];
         post?: never;
         /**
          * Delete Route
@@ -10990,6 +10997,23 @@ export interface components {
             notes: string | null;
             /** Created At */
             created_at: string;
+        };
+        /**
+         * RouteUpdate
+         * @description Payload to edit a saved route.
+         *
+         *     Attributes:
+         *         name: Route name.
+         *         geometry: Ordered ``[lat, lng]`` polyline as edited.
+         *         notes: Optional remarks.
+         */
+        RouteUpdate: {
+            /** Name */
+            name: string;
+            /** Geometry */
+            geometry: number[][];
+            /** Notes */
+            notes?: string | null;
         };
         /**
          * RssSourceTotalsRead
@@ -20317,6 +20341,50 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RouteRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    update_route_api_v1_analysis_routes__route_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                route_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RouteUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

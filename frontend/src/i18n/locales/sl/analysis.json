@@ -337,6 +337,14 @@
     "empty": {
       "title": "Še ni shranjenih prog",
       "description": "Odpri tek in pritisni „Shrani kot progo”, da začneš risati nad svojim terenom."
-    }
+    },
+    "new": "Nova proga",
+    "edit": "Uredi progo",
+    "save": "Shrani progo",
+    "namePlaceholder": "Ime proge",
+    "points": "{n} točk",
+    "undo": "Odstrani zadnjo",
+    "cancelEdit": "Prekliči",
+    "drawHint": "Kliknite na zemljevid za dodajanje točk proge. Kliknite točko, da jo odstranite."
   }
 }

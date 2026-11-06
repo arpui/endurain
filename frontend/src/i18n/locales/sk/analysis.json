@@ -337,6 +337,14 @@
     "empty": {
       "title": "Zatiaľ žiadne uložené trasy",
       "description": "Otvor beh a stlač „Uložiť ako trasu“ a začni navrhovať nad svojím terénom."
-    }
+    },
+    "new": "Nová trať",
+    "edit": "Upraviť trasu",
+    "save": "Uložiť trasu",
+    "namePlaceholder": "Názov trasy",
+    "points": "{n} bodov",
+    "undo": "Odstrániť posledný",
+    "cancelEdit": "Zrušiť",
+    "drawHint": "Kliknutím na mapu pridáte body trasy. Kliknutím na bod ho odstránite."
   }
 }

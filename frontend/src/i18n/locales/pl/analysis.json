@@ -337,6 +337,14 @@
     "empty": {
       "title": "Brak zapisanych tras",
       "description": "Otwórz bieg i naciśnij „Zapisz jako trasę”, aby projektować na swoim terenie."
-    }
+    },
+    "new": "Nowa trasa",
+    "edit": "Edytuj trasę",
+    "save": "Zapisz trasę",
+    "namePlaceholder": "Nazwa trasy",
+    "points": "{n} punktów",
+    "undo": "Usuń ostatni",
+    "cancelEdit": "Anuluj",
+    "drawHint": "Kliknij mapę, aby dodać punkty trasy. Kliknij punkt, aby go usunąć."
   }
 }

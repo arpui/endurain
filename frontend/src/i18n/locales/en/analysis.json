@@ -337,6 +337,14 @@
     "empty": {
       "title": "No saved routes yet",
       "description": "Open a run and press \"Save as route\" to start designing over your own ground."
-    }
+    },
+    "new": "New route",
+    "edit": "Edit route",
+    "save": "Save route",
+    "namePlaceholder": "Route name",
+    "points": "{n} points",
+    "undo": "Undo last",
+    "cancelEdit": "Cancel",
+    "drawHint": "Click the map to add route points. Click a point to remove it."
   }
 }

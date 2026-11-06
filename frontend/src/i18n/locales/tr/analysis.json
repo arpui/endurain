@@ -337,6 +337,14 @@
     "empty": {
       "title": "Henüz kayıtlı rota yok",
       "description": "Bir koşuyu aç ve “Rota olarak kaydet”e basarak kendi arazinde tasarlamaya başla."
-    }
+    },
+    "new": "Yeni rota",
+    "edit": "Rotayı düzenle",
+    "save": "Rotayı kaydet",
+    "namePlaceholder": "Rota adı",
+    "points": "{n} nokta",
+    "undo": "Sonuncuyu kaldır",
+    "cancelEdit": "İptal",
+    "drawHint": "Rotaya nokta eklemek için haritaya tıklayın. Bir noktayı kaldırmak için üzerine tıklayın."
   }
 }

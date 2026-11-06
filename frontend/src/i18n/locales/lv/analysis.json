@@ -337,6 +337,14 @@
     "empty": {
       "title": "Vēl nav saglabātu maršrutu",
       "description": "Atver skrējienu un nospied „Saglabāt kā maršrutu”, lai sāktu projektēt pār savu zemi."
-    }
+    },
+    "new": "Jauns maršruts",
+    "edit": "Rediģēt maršrutu",
+    "save": "Saglabāt maršrutu",
+    "namePlaceholder": "Maršruta nosaukums",
+    "points": "{n} punkti",
+    "undo": "Noņemt pēdējo",
+    "cancelEdit": "Atcelt",
+    "drawHint": "Klikšķiniet kartē, lai pievienotu maršruta punktus. Klikšķiniet uz punkta, lai noņemtu to."
   }
 }

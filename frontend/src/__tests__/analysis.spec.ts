@@ -25,6 +25,7 @@ import {
   fetchTrailSections,
   fetchTrailVariants,
   postVariantMark,
+  updateRoute,
   updateAnalysisSettings,
 } from '@/features/analysis/services/analysis'
 
@@ -817,5 +818,28 @@ describe('designed routes', () => {
       method: 'DELETE',
       signal: undefined,
     })
+  })
+
+  it('edits a saved route in place with PUT', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      id: 9,
+      name: 'rebaixada',
+      geometry: [
+        [42.47, 1.5],
+        [42.48, 1.51],
+      ],
+      distance_m: 1200,
+      gain_m: 40,
+      notes: null,
+      created_at: '2026-11-06T20:00:00+00:00',
+    } satisfies Schemas['RouteRead'])
+    const edited = await updateRoute(9, 'rebaixada', [
+      { lat: 42.47, lng: 1.5 },
+      { lat: 42.48, lng: 1.51 },
+    ])
+    const [path, init] = vi.mocked(apiFetch).mock.calls[0] ?? []
+    expect(path).toBe('/analysis/routes/9')
+    expect(init).toMatchObject({ method: 'PUT' })
+    expect(edited).toMatchObject({ id: 9, name: 'rebaixada', gainM: 40 })
   })
 })

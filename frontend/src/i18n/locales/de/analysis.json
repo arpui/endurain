@@ -337,6 +337,14 @@
     "empty": {
       "title": "Noch keine gespeicherten Routen",
       "description": "Öffne einen Lauf und tippe auf „Als Route speichern“, um über deinem eigenen Boden zu entwerfen."
-    }
+    },
+    "new": "Neue Route",
+    "edit": "Route bearbeiten",
+    "save": "Route speichern",
+    "namePlaceholder": "Routenname",
+    "points": "{n} Punkte",
+    "undo": "Letzten entfernen",
+    "cancelEdit": "Abbrechen",
+    "drawHint": "Auf die Karte klicken, um Routenpunkte hinzuzufügen. Auf einen Punkt klicken, um ihn zu entfernen."
   }
 }

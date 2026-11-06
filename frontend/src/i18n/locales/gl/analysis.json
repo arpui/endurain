@@ -337,6 +337,14 @@
     "empty": {
       "title": "Aínda non gardaches ningunha ruta",
       "description": "Abre unha saída a correr e preme «Gardar como ruta» para comezar a deseñar sobre o teu terreo."
-    }
+    },
+    "new": "Nova ruta",
+    "edit": "Editar ruta",
+    "save": "Gardar ruta",
+    "namePlaceholder": "Nome da ruta",
+    "points": "{n} puntos",
+    "undo": "Desfacer o último",
+    "cancelEdit": "Cancelar",
+    "drawHint": "Fai clic no mapa para engadir puntos da ruta. Fai clic nun punto para telo."
   }
 }

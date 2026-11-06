@@ -337,6 +337,14 @@
     "empty": {
       "title": "Nessun percorso salvato",
       "description": "Apri un'uscita di corsa e premi «Salva come percorso» per iniziare a progettare sul tuo terreno."
-    }
+    },
+    "new": "Nuovo percorso",
+    "edit": "Modifica percorso",
+    "save": "Salva percorso",
+    "namePlaceholder": "Nome del percorso",
+    "points": "{n} punti",
+    "undo": "Rimuovi l'ultimo",
+    "cancelEdit": "Annulla",
+    "drawHint": "Clicca sulla mappa per aggiungere punti. Clicca su un punto per rimuoverlo."
   }
 }

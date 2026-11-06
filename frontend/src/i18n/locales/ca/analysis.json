@@ -337,6 +337,14 @@
     "empty": {
       "title": "Encara no has desat cap ruta",
       "description": "Obre una sortida de córrer i prem «Desa com a ruta» per començar a dissenyar sobre el teu terreny."
-    }
+    },
+    "new": "Nova ruta",
+    "edit": "Edita la ruta",
+    "save": "Desa la ruta",
+    "namePlaceholder": "Nom de la ruta",
+    "points": "{n} punts",
+    "undo": "Desfés l’últim",
+    "cancelEdit": "Cancel·la",
+    "drawHint": "Fes clic al mapa per afegir punts a la ruta. Fes clic sobre un punt per treure’l."
   }
 }

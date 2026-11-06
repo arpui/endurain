@@ -337,6 +337,14 @@
     "empty": {
       "title": "Nog geen opgeslagen routes",
       "description": "Open een run en druk op „Opslaan als route” om te ontwerpen over je eigen terrein."
-    }
+    },
+    "new": "Nieuwe route",
+    "edit": "Route bewerken",
+    "save": "Route opslaan",
+    "namePlaceholder": "Routenaam",
+    "points": "{n} punten",
+    "undo": "Laatste verwijderen",
+    "cancelEdit": "Annuleren",
+    "drawHint": "Klik op de kaart om routepunten toe te voegen. Klik op een punt om het te verwijderen."
   }
 }
