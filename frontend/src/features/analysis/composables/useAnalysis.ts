@@ -9,6 +9,7 @@ import { storeToRefs } from 'pinia'
 import { keepPreviousData, useQuery } from '@tanstack/vue-query'
 
 import type { AnalysisSettingsUpdateDto, FitnessQuery, TrailVerdict } from '../types'
+import type { GeoPoint } from '@/composables/useMapProvider'
 
 import { queryKeys } from '@/services/queryKeys'
 import { useInvalidatingMutation } from '@/composables/useInvalidatingMutation'
@@ -16,8 +17,13 @@ import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
   deleteTrailSectionMark,
+  fetchRoutes,
   fetchTrailNetwork,
+  createRoute,
+  deleteRoute,
   fetchTrailSections,
+  fetchTrailVariants,
+  postVariantMark,
   postTrailSectionMark,
   fetchActivityLapDynamics,
   fetchActivityLoadsSummaries,
@@ -359,5 +365,91 @@ export function useTrailNetworkQuery(limit: MaybeRefOrGetter<number> = 5000) {
     queryKey: queryKeys.analysis.trailNetwork(value.value),
     queryFn: ({ signal }) => fetchTrailNetwork(value.value, signal),
     enabled: isAuthenticated,
+  })
+}
+
+/**
+ * Reconnection variants suggested along one recorded route (experimental).
+ *
+ * @param activityId - Reactive activity id whose track is the plan.
+ * @returns The TanStack query for the variant analysis.
+ */
+export function useTrailVariantsQuery(
+  activityId: MaybeRefOrGetter<number | null | undefined>,
+  enabled: MaybeRefOrGetter<boolean> = true,
+) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => {
+    const value = toValue(activityId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.trailVariants(id.value)),
+    queryFn: ({ signal }) => fetchTrailVariants(id.value, signal),
+    enabled: computed(() => id.value > 0 && toValue(enabled) && isAuthenticated.value),
+  })
+}
+
+/**
+ * Judge one suggested variant: real ground or a suggestion to bury.
+ *
+ * The verdict is durable: a ``falsa`` never resurfaces as a suggestion, which is
+ * how the engine learns the difference between ground and GPS artifacts.
+ *
+ * @param activityId - Reactive activity id of the planned route.
+ * @returns The mutation; ``verdict: null`` takes the judgement back.
+ */
+export function useVariantMarkMutation(activityId: MaybeRefOrGetter<number | null | undefined>) {
+  const id = computed(() => {
+    const value = toValue(activityId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+  return useInvalidatingMutation({
+    mutationKey: ['analysis', 'variant-mark'],
+    invalidateKey: ['analysis', 'trail-variants'],
+    mutationFn: ({ splitM, verdict }: { splitM: number; verdict: 'real' | 'falsa' | null }) =>
+      postVariantMark(id.value, splitM, verdict),
+  })
+}
+
+/**
+ * The athlete's saved designed routes.
+ *
+ * @returns The TanStack query for the route list.
+ */
+export function useRoutesQuery() {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  return useQuery({
+    queryKey: queryKeys.analysis.routes(),
+    queryFn: ({ signal }) => fetchRoutes(signal),
+    enabled: isAuthenticated,
+  })
+}
+
+/**
+ * Save a route drawn over the network; totals are measured by the server.
+ *
+ * @returns The mutation to call with name, polyline and optional notes.
+ */
+export function useCreateRouteMutation() {
+  return useInvalidatingMutation({
+    mutationKey: ['analysis', 'route-create'],
+    invalidateKey: queryKeys.analysis.all(),
+    mutationFn: ({ name, points, notes }: { name: string; points: GeoPoint[]; notes?: string }) =>
+      createRoute(name, points, notes),
+  })
+}
+
+/**
+ * Delete one saved route.
+ *
+ * @returns The mutation to call with the route id.
+ */
+export function useDeleteRouteMutation() {
+  return useInvalidatingMutation({
+    mutationKey: ['analysis', 'route-delete'],
+    invalidateKey: queryKeys.analysis.all(),
+    mutationFn: (routeId: number) => deleteRoute(routeId),
   })
 }

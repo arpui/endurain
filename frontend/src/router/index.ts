@@ -127,6 +127,13 @@ const router = createRouter({
       meta: { requiresAuth: true, cardless: true },
     },
     {
+      path: '/analysis/routes',
+      name: 'analysis-routes',
+      component: () => import('@/features/analysis/views/RoutesView.vue'),
+      // Cardless: the view supplies its own map/card surfaces.
+      meta: { requiresAuth: true, cardless: true },
+    },
+    {
       path: '/analysis/best-times',
       name: 'analysis-best-times',
       component: () => import('@/features/analysis/views/BestTimesView.vue'),

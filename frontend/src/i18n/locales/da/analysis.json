@@ -289,5 +289,54 @@
     },
     "colCrossings": "Gennemgange",
     "showPlain": "Vis også krydsede stier uden hævdelse"
+  },
+  "sectionRoutes": "Ruter",
+  "variants": {
+    "title": "Rutevarianter",
+    "saveAsRoute": "Gem som rute",
+    "none": "Intet genbindingsalternativ blev fundet over grund, du selv har løbet på.",
+    "hint": "Hver variant kommer fra grund, du selv har kors: markér den som reel, hvis du har set, at grunden er der, falsk hvis det er en GPS-artefakt. Afviste varianter kommer aldrig tilbage.",
+    "colJunction": "Udgang → Tilbagevenden",
+    "colSide": "Side",
+    "colDelta": "Omvej",
+    "colGain": "Højdeforskel",
+    "colStatus": "Bevis",
+    "colMark": "Dom",
+    "side": {
+      "left": "Venstre",
+      "right": "Højre",
+      "straight": "Ligefrem"
+    },
+    "status": {
+      "confirmada": "Bekræftet",
+      "provisional": "Foreløbig"
+    },
+    "grade": {
+      "hard": "Meget teknisk",
+      "tech": "Teknisk"
+    },
+    "mark": {
+      "real": "Virkelig grund",
+      "falsa": "Falsk"
+    }
+  },
+  "routes": {
+    "title": "Dine ruter",
+    "subtitle": "Ruter designet over din egen gåede grund. Gem et løb som rute for at søge varianter og senere eksportere det som en navigerbar rute.",
+    "mapLabel": "Kort over gemte ruter",
+    "colName": "Navn",
+    "colDistance": "Distance",
+    "colGain": "Højde+",
+    "colCreated": "Oprettet",
+    "colActions": "Handlinger",
+    "delete": "Slet rute",
+    "deleteTitle": "Slet denne rute?",
+    "deleteBody": "\"{name}\" og dens variantdomme forsvinder. Dette kan ikke fortrydes.",
+    "cancel": "Annuller",
+    "close": "Luk",
+    "empty": {
+      "title": "Ingen gemte ruter endnu",
+      "description": "Åbn et løb og tryk \"Gem som rute\" for at begynde at designe over din egen grund."
+    }
   }
 }

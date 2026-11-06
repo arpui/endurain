@@ -18,8 +18,13 @@ import {
   mapSettings,
   queueLoadRecompute,
   queueThresholdRefresh,
+  createRoute,
+  deleteRoute,
+  fetchRoutes,
   fetchTrailNetwork,
   fetchTrailSections,
+  fetchTrailVariants,
+  postVariantMark,
   updateAnalysisSettings,
 } from '@/features/analysis/services/analysis'
 
@@ -692,5 +697,125 @@ describe('trail network', () => {
     ])
     expect(network.ways[0]?.sacScale).toBe('demanding_mountain_hiking')
     expect(network.ways[0]?.tracktype).toBeNull()
+  })
+})
+
+describe('trail variant analysis', () => {
+  beforeEach(() => {
+    vi.mocked(apiFetch).mockReset()
+  })
+
+  it('maps the wire payload to junction-keyed variants', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      activity_id: 2044,
+      cell_m: 15,
+      variants: [
+        {
+          split_m: 4200,
+          rejoin_m: 5300,
+          side: 'left',
+          variant_m: 1180,
+          main_m: 1100,
+          delta_m: 80,
+          delta_gain_m: -15,
+          status: 'confirmada',
+          grade: 'tech',
+          path_latlng: [
+            [42.47, 0.99],
+            [42.471, 0.991],
+          ],
+          mark: 'falsa',
+        },
+      ],
+    } satisfies Schemas['TrailVariantsRead'])
+    const variants = await fetchTrailVariants(2044)
+    expect(String(vi.mocked(apiFetch).mock.calls[0]?.[0])).toContain(
+      '/activities/2044/trail-variants',
+    )
+    expect(variants.cellM).toBe(15)
+    expect(variants.variants[0]).toMatchObject({
+      splitM: 4200,
+      rejoinM: 5300,
+      side: 'left',
+      status: 'confirmada',
+      mark: 'falsa',
+    })
+    expect(variants.variants[0]?.points).toEqual([
+      { lat: 42.47, lng: 0.99 },
+      { lat: 42.471, lng: 0.991 },
+    ])
+  })
+
+  it('judges a variant by junction, and takes it back with a delete', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(undefined)
+    await postVariantMark(2044, 4200, 'real')
+    expect(apiFetch).toHaveBeenCalledWith('/activities/2044/trail-variants/marks', {
+      method: 'POST',
+      signal: undefined,
+      body: JSON.stringify({ split_m: 4200, verdict: 'real' }),
+    })
+    await postVariantMark(2044, 4200, null)
+    const lastCall = vi.mocked(apiFetch).mock.calls[vi.mocked(apiFetch).mock.calls.length - 1]
+    expect(String(lastCall?.[0])).toContain('/activities/2044/trail-variants/marks?split_m=4200')
+    expect(lastCall?.[1]).toMatchObject({ method: 'DELETE' })
+  })
+})
+
+describe('designed routes', () => {
+  beforeEach(() => {
+    vi.mocked(apiFetch).mockReset()
+  })
+
+  it('maps saved routes from the wire geometry pairs', async () => {
+    vi.mocked(apiFetch).mockResolvedValue([
+      {
+        id: 7,
+        name: 'Casa → coll',
+        geometry: [
+          [42.47, 1.5],
+          [42.48, 1.51],
+        ],
+        distance_m: 3120.5,
+        gain_m: 210,
+        notes: 'experimental',
+        created_at: '2026-11-06T20:00:00+00:00',
+      },
+    ] satisfies Schemas['RouteRead'][])
+    const routes = await fetchRoutes()
+    expect(routes[0]).toMatchObject({ id: 7, name: 'Casa → coll', distanceM: 3120.5, gainM: 210 })
+    expect(routes[0]?.points[1]).toEqual({ lat: 42.48, lng: 1.51 })
+  })
+
+  it('posts the polyline as [lat, lng] pairs and deletes by id', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      id: 8,
+      name: 'vora',
+      geometry: [
+        [42.47, 1.5],
+        [42.48, 1.51],
+      ],
+      distance_m: 1400,
+      gain_m: 60,
+      notes: null,
+      created_at: '2026-11-06T20:00:00+00:00',
+    } satisfies Schemas['RouteRead'])
+    await createRoute('vora', [
+      { lat: 42.47, lng: 1.5 },
+      { lat: 42.48, lng: 1.51 },
+    ])
+    const [, init] = vi.mocked(apiFetch).mock.calls[0] ?? []
+    expect(init).toMatchObject({ method: 'POST' })
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      name: 'vora',
+      geometry: [
+        [42.47, 1.5],
+        [42.48, 1.51],
+      ],
+    })
+    await deleteRoute(8)
+    expect(apiFetch).toHaveBeenCalledWith('/analysis/routes/8', {
+      method: 'DELETE',
+      signal: undefined,
+    })
   })
 })

@@ -289,5 +289,54 @@
     },
     "colCrossings": "Traversed",
     "showPlain": "Also draw crossed ways that carry no claim"
+  },
+  "sectionRoutes": "Routes",
+  "variants": {
+    "title": "Route variants",
+    "saveAsRoute": "Save as route",
+    "none": "No reconnection alternative was found over ground you have already crossed.",
+    "hint": "Every variant comes from ground you have physically crossed yourself: mark it real when you have seen the ground is there, false when it is a GPS artifact. Denied variants never come back.",
+    "colJunction": "Leave → Rejoin",
+    "colSide": "Side",
+    "colDelta": "Detour",
+    "colGain": "Gain",
+    "colStatus": "Evidence",
+    "colMark": "Verdict",
+    "side": {
+      "left": "Left",
+      "right": "Right",
+      "straight": "Straight on"
+    },
+    "status": {
+      "confirmada": "Confirmed",
+      "provisional": "Provisional"
+    },
+    "grade": {
+      "hard": "Very technical",
+      "tech": "Technical"
+    },
+    "mark": {
+      "real": "Real ground",
+      "falsa": "False"
+    }
+  },
+  "routes": {
+    "title": "Your routes",
+    "subtitle": "Routes designed over your own crossed ground. Save a run as a route to search its variants and, later, export it as a navigable course.",
+    "mapLabel": "Map of the saved routes",
+    "colName": "Name",
+    "colDistance": "Distance",
+    "colGain": "Gain",
+    "colCreated": "Created",
+    "colActions": "Actions",
+    "delete": "Delete route",
+    "deleteTitle": "Delete this route?",
+    "deleteBody": "\"{name}\" and its variant verdicts will be gone. This cannot be undone.",
+    "cancel": "Cancel",
+    "close": "Close",
+    "empty": {
+      "title": "No saved routes yet",
+      "description": "Open a run and press \"Save as route\" to start designing over your own ground."
+    }
   }
 }

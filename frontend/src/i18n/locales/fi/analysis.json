@@ -289,5 +289,54 @@
     },
     "colCrossings": "Kulennukset",
     "showPlain": "Näytä myös kuljetut polut ilman väitteitä"
+  },
+  "sectionRoutes": "Reitit",
+  "variants": {
+    "title": "Reittivariaatiot",
+    "saveAsRoute": "Tallenna reitiksi",
+    "none": "Yhteysvaihtoehtoa ei löytynyt maaston yli, jota olet jo kulkenut.",
+    "hint": "Jokainen variaatio perustuu maastoon, jota olet itse kulkenut: merkitse se todelliseksi, jos näit maaston olevan siellä, ja epätodeksi, jos se on GPS-virhe. Hylätyt variaatiot eivät palaa koskaan takaisin.",
+    "colJunction": "Poistuma → Paluu",
+    "colSide": "Puoli",
+    "colDelta": "Kiertotie",
+    "colGain": "Nousu",
+    "colStatus": "Näyttö",
+    "colMark": "Tuomio",
+    "side": {
+      "left": "Vasen",
+      "right": "Oikea",
+      "straight": "Suoraan"
+    },
+    "status": {
+      "confirmada": "Vahvistettu",
+      "provisional": "Alustava"
+    },
+    "grade": {
+      "hard": "Erittäin tekninen",
+      "tech": "Tekninen"
+    },
+    "mark": {
+      "real": "Todellinen maa",
+      "falsa": "Epätosi"
+    }
+  },
+  "routes": {
+    "title": "Retkesi",
+    "subtitle": "Reitit piirretty maaston yli, jota olet itse kulkenut. Tallenna lenkki reitiksi hakeaksesi variaatioita ja viedäksesi sen myöhemmin navigoitavana reittinä.",
+    "mapLabel": "Kartta tallennetuista reiteistä",
+    "colName": "Nimi",
+    "colDistance": "Matka",
+    "colGain": "Nousu+",
+    "colCreated": "Luotu",
+    "colActions": "Toiminnot",
+    "delete": "Poista reitti",
+    "deleteTitle": "Poistetaanko tämä reitti?",
+    "deleteBody": "\"{name}\" ja sen variaatiotuomiot katoavat. Tätä ei voi perua.",
+    "cancel": "Peruuta",
+    "close": "Sulje",
+    "empty": {
+      "title": "Ei tallennettuja reittejä vielä",
+      "description": "Avaa lenkki ja paina \"Tallenna reitiksi\" alkaaksesi piirtää oman maastosi yli."
+    }
   }
 }

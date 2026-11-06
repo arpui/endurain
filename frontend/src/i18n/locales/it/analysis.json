@@ -289,5 +289,54 @@
     },
     "colCrossings": "Attraversamenti",
     "showPlain": "Mostra anche i sentieri attraversati senza rivendita"
+  },
+  "sectionRoutes": "Percorsi",
+  "variants": {
+    "title": "Varianti di percorso",
+    "saveAsRoute": "Salva come percorso",
+    "none": "Nessuna alternativa di riconnessione trovata su terreno che hai già percorso.",
+    "hint": "Ogni variante parte dal terreno che hai calpestato tu stesso: segnalala come reale se hai visto che il suolo c'è, falsa se è un artefatto del GPS. Le varianti rifiutate non tornano mai.",
+    "colJunction": "Uscita → Ritorno",
+    "colSide": "Lato",
+    "colDelta": "Deviazione",
+    "colGain": "Dislivello",
+    "colStatus": "Evidenza",
+    "colMark": "Giudizio",
+    "side": {
+      "left": "Sinistra",
+      "right": "Destra",
+      "straight": "In linea"
+    },
+    "status": {
+      "confirmada": "Confermata",
+      "provisional": "Provvisoria"
+    },
+    "grade": {
+      "hard": "Molto tecnico",
+      "tech": "Tecnico"
+    },
+    "mark": {
+      "real": "Terreno reale",
+      "falsa": "Falso"
+    }
+  },
+  "routes": {
+    "title": "I tuoi percorsi",
+    "subtitle": "Percorsi disegnati sul tuo terreno realmente percorso. Salva un'uscita come percorso per cercarne le varianti e, più avanti, esportarla come traccia navigabile.",
+    "mapLabel": "Mappa dei percorsi salvati",
+    "colName": "Nome",
+    "colDistance": "Distanza",
+    "colGain": "Dislivello+",
+    "colCreated": "Creazione",
+    "colActions": "Azioni",
+    "delete": "Elimina percorso",
+    "deleteTitle": "Eliminare questo percorso?",
+    "deleteBody": "«{name}» e i suoi giudizi sulle varianti spariranno. L'azione non può essere annullata.",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "empty": {
+      "title": "Nessun percorso salvato",
+      "description": "Apri un'uscita di corsa e premi «Salva come percorso» per iniziare a progettare sul tuo terreno."
+    }
   }
 }

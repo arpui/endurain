@@ -289,5 +289,54 @@
     },
     "colCrossings": "Travessias",
     "showPlain": "Mostrar também os caminhos atravessados sem alegação"
+  },
+  "sectionRoutes": "Percurso",
+  "variants": {
+    "title": "Variantes do percurso",
+    "saveAsRoute": "Guardar como percurso",
+    "none": "Nenhuma alternativa de reconexão encontrada sobre terreno que já pisaste.",
+    "hint": "Cada variante parte do terreno que tu próprio cruzaste: marca-a como real se viste que o chão está lá, falsa se for um artefacto do GPS. As variantes recusadas nunca regressam.",
+    "colJunction": "Saída → Regresso",
+    "colSide": "Lado",
+    "colDelta": "Desvio",
+    "colGain": "Desnível",
+    "colStatus": "Evidência",
+    "colMark": "Veredicto",
+    "side": {
+      "left": "Esquerda",
+      "right": "Direita",
+      "straight": "Em linha"
+    },
+    "status": {
+      "confirmada": "Confirmada",
+      "provisional": "Provisória"
+    },
+    "grade": {
+      "hard": "Muito técnico",
+      "tech": "Técnico"
+    },
+    "mark": {
+      "real": "Chão real",
+      "falsa": "Falsa"
+    }
+  },
+  "routes": {
+    "title": "Os teus percursos",
+    "subtitle": "Percursos desenhados sobre o teu terreno percorrido. Guarda uma saída como percurso para procurar variantes e, mais tarde, exportá-la como trajeto navegável.",
+    "mapLabel": "Mapa dos percursos guardados",
+    "colName": "Nome",
+    "colDistance": "Distância",
+    "colGain": "Desnível+",
+    "colCreated": "Criação",
+    "colActions": "Ações",
+    "delete": "Eliminar percurso",
+    "deleteTitle": "Eliminar este percurso?",
+    "deleteBody": "«{name}» e os seus veredictos de variantes desaparecerão. Esta ação não pode ser anulada.",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "empty": {
+      "title": "Ainda não guardaste nenhum percurso",
+      "description": "Abre uma corrida e carrega em «Guardar como percurso» para começar a desenhar sobre o teu terreno."
+    }
   }
 }

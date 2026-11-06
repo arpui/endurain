@@ -289,5 +289,54 @@
     },
     "colCrossings": "Ületused",
     "showPlain": "Näita ka ületatud radu ilma väiteita"
+  },
+  "sectionRoutes": "Marssruudid",
+  "variants": {
+    "title": "Marssruudi variandid",
+    "saveAsRoute": "Salvesta marssruudina",
+    "none": "Ei leidnud ühendusalternatiivi maastiku kohal, kus sa juba ise oled liikunud.",
+    "hint": "Iga variand tuleb maastikust, mille oled ise läbinud: märgi see tõeliseks, kui nägid, et maapind on seal, ja valeks, kui see on GPS-i vigur. Tagasilükatud variandid ei tule kunagi tagasi.",
+    "colJunction": "Hargnemine → Tagasiliitumine",
+    "colSide": "Külg",
+    "colDelta": "Ümbersõit",
+    "colGain": "Kõrguste vahe",
+    "colStatus": "Tõendus",
+    "colMark": "Otsus",
+    "side": {
+      "left": "Vasak",
+      "right": "Parem",
+      "straight": "Otse"
+    },
+    "status": {
+      "confirmada": "Kinnitatud",
+      "provisional": "Esialgne"
+    },
+    "grade": {
+      "hard": "Väga tehniline",
+      "tech": "Tehniline"
+    },
+    "mark": {
+      "real": "Tõeline maapind",
+      "falsa": "Vale"
+    }
+  },
+  "routes": {
+    "title": "Su marssruudid",
+    "subtitle": "Marssruudid, mis on joonistatud sinu enda läbitud maastiku peale. Salvesta treening marssruudina, et otsida variante ja hiljem eksportida selle navigeeritavaks rajaks.",
+    "mapLabel": "Salvestatud marssruutide kaart",
+    "colName": "Nimi",
+    "colDistance": "Pikkus",
+    "colGain": "D+",
+    "colCreated": "Loodud",
+    "colActions": "Tegevused",
+    "delete": "Kustuta marssruut",
+    "deleteTitle": "Kustutada see marssruut?",
+    "deleteBody": "„{name}” ja selle variantide otsused kaovad. Seda tegu ei saa tagasi võtta.",
+    "cancel": "Loobu",
+    "close": "Sulge",
+    "empty": {
+      "title": "Salvestatud marssruute veel pole",
+      "description": "Ava jooksutreening ja vajuta „Salvesta marssruudina”, et hakata joonistama oma maastiku peale."
+    }
   }
 }

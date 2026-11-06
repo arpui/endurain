@@ -289,5 +289,54 @@
     },
     "colCrossings": "Áthaladások",
     "showPlain": "Az igény nélküli bejárt ösvények mutatása"
+  },
+  "sectionRoutes": "Útvonalak",
+  "variants": {
+    "title": "Útvonal-variánsok",
+    "saveAsRoute": "Mentés útvonalként",
+    "none": "Nem található újracsatlakozási alternatíva olyan terepen, amelyet már megtettél.",
+    "hint": "Minden variáns olyan terepből származik, amelyet te magad jártál be: jelöld valódira, ha láttad, hogy a talaj ott van, és hamisra, ha GPS-műtermék. Az elutasított variánsok soha nem térnek vissza.",
+    "colJunction": "Leágazás → Visszatérés",
+    "colSide": "Oldal",
+    "colDelta": "Kerülő",
+    "colGain": "Szintkülönbség",
+    "colStatus": "Bizonyíték",
+    "colMark": "Ítélet",
+    "side": {
+      "left": "Balra",
+      "right": "Jobbra",
+      "straight": "Egyenesen"
+    },
+    "status": {
+      "confirmada": "Megerősített",
+      "provisional": "Előzetes"
+    },
+    "grade": {
+      "hard": "Nagyon technikai",
+      "tech": "Technikai"
+    },
+    "mark": {
+      "real": "Valódi talaj",
+      "falsa": "Hamis"
+    }
+  },
+  "routes": {
+    "title": "Saját útvonalaid",
+    "subtitle": "A saját bejárt terepedre tervezett útvonalak. Mentsd tevékenységed útvonalként a variánsok kereséséhez és későbbi, navigálható útvonalként exportálásához.",
+    "mapLabel": "Mentett útvonalak térképe",
+    "colName": "Név",
+    "colDistance": "Távolság",
+    "colGain": "D+",
+    "colCreated": "Létrehozva",
+    "colActions": "Műveletek",
+    "delete": "Útvonal törlése",
+    "deleteTitle": "Törlöd ezt az útvonalat?",
+    "deleteBody": "„{name}” és a variáns-ítéletei eltűnnek. Ez a művelet nem vonható vissza.",
+    "cancel": "Mégse",
+    "close": "Bezárás",
+    "empty": {
+      "title": "Még nincs mentett útvonal",
+      "description": "Nyiss meg egy futást és nyomd a „Mentés útvonalként” gombot, hogy a saját terepeden tervezhess."
+    }
   }
 }

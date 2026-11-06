@@ -289,5 +289,54 @@
     },
     "colCrossings": "Przejścia",
     "showPlain": "Pokaż też przebyte bez twierdzenia"
+  },
+  "sectionRoutes": "Trasy",
+  "variants": {
+    "title": "Warianty trasy",
+    "saveAsRoute": "Zapisz jako trasę",
+    "none": "Nie znaleziono alternatywy połączenia nad terenem, który już przebyłeś.",
+    "hint": "Każdy wariant pochodzi z terenu, który sam przebyłeś: oznacz go jako prawdziwy, jeśli widziałeś, że grunt tam jest, jako fałszywy, jeśli to artefakt GPS. Odrzucone warianty nigdy nie wracają.",
+    "colJunction": "Zejście → Powrót",
+    "colSide": "Strona",
+    "colDelta": "Obejście",
+    "colGain": "Przewyższenie",
+    "colStatus": "Dowód",
+    "colMark": "Werdykt",
+    "side": {
+      "left": "Lewa",
+      "right": "Prawa",
+      "straight": "Prosto"
+    },
+    "status": {
+      "confirmada": "Potwierdzony",
+      "provisional": "Wstępny"
+    },
+    "grade": {
+      "hard": "Bardzo techniczny",
+      "tech": "Techniczny"
+    },
+    "mark": {
+      "real": "Prawdziwy grunt",
+      "falsa": "Fałszywy"
+    }
+  },
+  "routes": {
+    "title": "Twoje trasy",
+    "subtitle": "Trasy zaprojektowane na terenie, który sam przebyłeś. Zapisz bieg jako trasę, aby szukać wariantów i później wyeksportować ją jako nawigowalny kurs.",
+    "mapLabel": "Mapa zapisanych tras",
+    "colName": "Nazwa",
+    "colDistance": "Dystans",
+    "colGain": "Przewyższenie+",
+    "colCreated": "Utworzono",
+    "colActions": "Akcje",
+    "delete": "Usuń trasę",
+    "deleteTitle": "Usunąć tę trasę?",
+    "deleteBody": "„{name}” i jej werdykty wariantów znikną. Tej operacji nie można cofnąć.",
+    "cancel": "Anuluj",
+    "close": "Zamknij",
+    "empty": {
+      "title": "Brak zapisanych tras",
+      "description": "Otwórz bieg i naciśnij „Zapisz jako trasę”, aby projektować na swoim terenie."
+    }
   }
 }

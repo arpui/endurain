@@ -43,15 +43,21 @@ import type {
   ActivityLoadDto,
   ActivityLoadsSummary,
   ActivityLoadsSummaryDto,
+  RouteDto,
   TrailMarkDto,
   TrailNetworkDto,
+  TrailVariantsDto,
   TrailNetworkWay,
   TrailSection,
+  DesignRoute,
+  TrailNetwork,
+  TrailVariant,
+  TrailVariants,
   TrailSections,
   TrailSectionsDto,
-  TrailNetwork,
   TrailVerdict,
 } from '../types'
+import type { GeoPoint } from '@/composables/useMapProvider'
 import type { Schemas } from '@/types'
 
 import { apiFetch } from '@/services/http'
@@ -752,4 +758,143 @@ export async function fetchTrailNetwork(limit = 5000, signal?: AbortSignal): Pro
       tracktype: way.tracktype ?? null,
     })),
   }
+}
+
+/**
+ * Read the reconnection variants suggested along one recorded route.
+ *
+ * @param activityId - The activity whose track is the plan.
+ * @param signal - Optional abort signal.
+ * @returns The variant analysis (experimental).
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchTrailVariants(
+  activityId: number,
+  signal?: AbortSignal,
+): Promise<TrailVariants> {
+  const dto = await apiFetch<TrailVariantsDto>(`/activities/${activityId}/trail-variants`, {
+    signal,
+  })
+  return {
+    activityId: dto.activity_id,
+    cellM: dto.cell_m,
+    variants: (dto.variants ?? []).map((v): TrailVariant => ({
+      splitM: v.split_m,
+      rejoinM: v.rejoin_m,
+      side: v.side as TrailVariant['side'],
+      variantM: v.variant_m,
+      mainM: v.main_m,
+      deltaM: v.delta_m,
+      deltaGainM: v.delta_gain_m,
+      status: v.status as TrailVariant['status'],
+      grade: v.grade,
+      points: (v.path_latlng ?? []).flatMap(([lat, lng]) =>
+        lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+      ),
+      mark: (v.mark ?? null) as TrailVariant['mark'],
+    })),
+  }
+}
+
+/**
+ * Judge one suggested variant: real ground, or a suggestion to bury.
+ *
+ * @param activityId - The planned route judged.
+ * @param splitM - Junction position, as the server reported it.
+ * @param verdict - The verdict, or ``null`` to take it back.
+ * @param signal - Optional abort signal.
+ * @returns Nothing.
+ * @throws {HttpError} When the request fails.
+ */
+export async function postVariantMark(
+  activityId: number,
+  splitM: number,
+  verdict: 'real' | 'falsa' | null,
+  signal?: AbortSignal,
+): Promise<void> {
+  if (verdict === null) {
+    const query = new URLSearchParams({ split_m: String(splitM) })
+    await apiFetch<void>(`/activities/${activityId}/trail-variants/marks?${query.toString()}`, {
+      method: 'DELETE',
+      signal,
+    })
+    return
+  }
+  await apiFetch<void>(`/activities/${activityId}/trail-variants/marks`, {
+    method: 'POST',
+    signal,
+    body: JSON.stringify({ split_m: splitM, verdict }),
+  })
+}
+
+/**
+ * List the athlete's saved designed routes.
+ *
+ * @param signal - Optional abort signal.
+ * @returns The routes, newest first.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchRoutes(signal?: AbortSignal): Promise<DesignRoute[]> {
+  const dtos = await apiFetch<RouteDto[]>('/analysis/routes', { signal })
+  return (dtos ?? []).map((r): DesignRoute => ({
+    id: r.id,
+    name: r.name,
+    points: (r.geometry ?? []).flatMap(([lat, lng]) =>
+      lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+    ),
+    distanceM: r.distance_m,
+    gainM: r.gain_m,
+    notes: r.notes ?? null,
+    createdAt: r.created_at,
+  }))
+}
+
+/**
+ * Save a designed route. The server measures the totals.
+ *
+ * @param name - Route name.
+ * @param points - The drawn polyline.
+ * @param notes - Optional remarks.
+ * @param signal - Optional abort signal.
+ * @returns The stored route.
+ * @throws {HttpError} When the request fails.
+ */
+export async function createRoute(
+  name: string,
+  points: GeoPoint[],
+  notes?: string,
+  signal?: AbortSignal,
+): Promise<DesignRoute> {
+  const dto = await apiFetch<RouteDto>('/analysis/routes', {
+    method: 'POST',
+    signal,
+    body: JSON.stringify({
+      name,
+      geometry: points.map((p) => [p.lat, p.lng]),
+      notes: notes ?? null,
+    }),
+  })
+  return {
+    id: dto.id,
+    name: dto.name,
+    points: (dto.geometry ?? []).flatMap(([lat, lng]) =>
+      lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+    ),
+    distanceM: dto.distance_m,
+    gainM: dto.gain_m,
+    notes: dto.notes ?? null,
+    createdAt: dto.created_at,
+  }
+}
+
+/**
+ * Delete one saved route.
+ *
+ * @param routeId - The route to delete.
+ * @param signal - Optional abort signal.
+ * @returns Nothing.
+ * @throws {HttpError} When the request fails.
+ */
+export async function deleteRoute(routeId: number, signal?: AbortSignal): Promise<void> {
+  await apiFetch<void>(`/analysis/routes/${routeId}`, { method: 'DELETE', signal })
 }

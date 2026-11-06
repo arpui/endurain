@@ -289,5 +289,54 @@
     },
     "colCrossings": "Doorgangen",
     "showPlain": "Ook gekruiste paden zonder bewering tonen"
+  },
+  "sectionRoutes": "Routes",
+  "variants": {
+    "title": "Routevarianten",
+    "saveAsRoute": "Opslaan als route",
+    "none": "Geen herverbindingsalternatief gevonden over terrein dat je zelf al hebt gelopen.",
+    "hint": "Elke variant komt van terrein dat je zelf hebt betreden: markeer hem als echt als je hebt gezien dat de grond er is, als onwaar als het een GPS-artefact is. Geweigerde varianten komen nooit terug.",
+    "colJunction": "Afslag → Terugkeer",
+    "colSide": "Zijde",
+    "colDelta": "Omweg",
+    "colGain": "Hoogte",
+    "colStatus": "Bewijs",
+    "colMark": "Oordeel",
+    "side": {
+      "left": "Links",
+      "right": "Rechts",
+      "straight": "Rechtdoor"
+    },
+    "status": {
+      "confirmada": "Bevestigd",
+      "provisional": "Voorlopig"
+    },
+    "grade": {
+      "hard": "Zeer technisch",
+      "tech": "Technisch"
+    },
+    "mark": {
+      "real": "Echte grond",
+      "falsa": "Onwaar"
+    }
+  },
+  "routes": {
+    "title": "Je routes",
+    "subtitle": "Routes ontworpen over je eigen gelopen terrein. Sla een run op als route om varianten te zoeken en later te exporteren als navigeerbare course.",
+    "mapLabel": "Kaart van de opgeslagen routes",
+    "colName": "Naam",
+    "colDistance": "Afstand",
+    "colGain": "Hoogte+",
+    "colCreated": "Aangemaakt",
+    "colActions": "Acties",
+    "delete": "Route verwijderen",
+    "deleteTitle": "Deze route verwijderen?",
+    "deleteBody": "„{name}” en de variantoordelen verdwijnen. Dit kan niet ongedaan worden gemaakt.",
+    "cancel": "Annuleren",
+    "close": "Sluiten",
+    "empty": {
+      "title": "Nog geen opgeslagen routes",
+      "description": "Open een run en druk op „Opslaan als route” om te ontwerpen over je eigen terrein."
+    }
   }
 }

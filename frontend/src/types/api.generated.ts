@@ -744,6 +744,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/activities/{activity_id}/trail-variants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trail Variants
+         * @description Suggest reconnection variants along this activity's own track.
+         *
+         *     The suggestions can only come from ground the athlete has physically crossed
+         *     (the personal graph), and each carries how firmly it is evidenced; what to
+         *     do with them is decided by the verdict placed below.
+         */
+        get: operations["get_trail_variants_api_v1_activities__activity_id__trail_variants_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/{activity_id}/trail-variants/marks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Variant Mark
+         * @description Judge one suggested variant: real ground, or a suggestion to bury.
+         */
+        post: operations["post_variant_mark_api_v1_activities__activity_id__trail_variants_marks_post"];
+        /**
+         * Delete Variant Mark
+         * @description Take back the verdict on one variant.
+         */
+        delete: operations["delete_variant_mark_api_v1_activities__activity_id__trail_variants_marks_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/activities/{activity_id}/trail-sections": {
         parameters: {
             query?: never;
@@ -3878,6 +3926,50 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/routes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Routes
+         * @description The caller's saved designed routes.
+         */
+        get: operations["list_routes_api_v1_analysis_routes_get"];
+        put?: never;
+        /**
+         * Create Route
+         * @description Save a drawn route; its distance is measured here, not trusted from the client.
+         */
+        post: operations["create_route_api_v1_analysis_routes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/routes/{route_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Route
+         * @description Delete one saved route.
+         */
+        delete: operations["delete_route_api_v1_analysis_routes__route_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -10854,6 +10946,52 @@ export interface components {
             incoming?: components["schemas"]["FollowRelationshipRead"] | null;
         };
         /**
+         * RouteCreate
+         * @description Payload to save a designed route.
+         *
+         *     Attributes:
+         *         name: Route name.
+         *         geometry: Ordered ``[lat, lng]`` polyline as drawn.
+         *         notes: Optional remarks.
+         */
+        RouteCreate: {
+            /** Name */
+            name: string;
+            /** Geometry */
+            geometry: number[][];
+            /** Notes */
+            notes?: string | null;
+        };
+        /**
+         * RouteRead
+         * @description One saved designed route.
+         *
+         *     Attributes:
+         *         id: Route id.
+         *         name: Route name.
+         *         geometry: Ordered ``[lat, lng]`` polyline.
+         *         distance_m: Ground covered.
+         *         gain_m: Elevation gain.
+         *         notes: Free-text remarks.
+         *         created_at: Creation instant, ISO.
+         */
+        RouteRead: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Geometry */
+            geometry: number[][];
+            /** Distance M */
+            distance_m: number;
+            /** Gain M */
+            gain_m: number;
+            /** Notes */
+            notes: string | null;
+            /** Created At */
+            created_at: string;
+        };
+        /**
          * RssSourceTotalsRead
          * @description One signal's band scores over a whole activity (the source benchmark).
          *
@@ -12246,6 +12384,70 @@ export interface components {
             total_m: number;
             /** Sections */
             sections: components["schemas"]["TrailSectionRead"][];
+        };
+        /**
+         * TrailVariantRead
+         * @description One reconnection variant suggested for a planned route.
+         *
+         *     Attributes:
+         *         split_m: Ground position of the junction along the route.
+         *         rejoin_m: Ground position where the variant joins back.
+         *         side: ``left`` / ``right`` / ``straight`` at the junction.
+         *         variant_m: Ground the variant covers.
+         *         main_m: Ground of the stretch it replaces.
+         *         delta_m: Variant minus main, metres.
+         *         delta_gain_m: Variant minus main elevation gain, metres.
+         *         status: ``confirmada`` (evidence-backed) or ``provisional``.
+         *         grade: Hardest technical claim found along the variant.
+         *         path_latlng: The drawn polyline, shaped by certified ways where real.
+         *         mark: The athlete's verdict on it, when placed.
+         */
+        TrailVariantRead: {
+            /** Split M */
+            split_m: number;
+            /** Rejoin M */
+            rejoin_m: number;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "left" | "right" | "straight";
+            /** Variant M */
+            variant_m: number;
+            /** Main M */
+            main_m: number;
+            /** Delta M */
+            delta_m: number;
+            /** Delta Gain M */
+            delta_gain_m: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "confirmada" | "provisional";
+            /** Grade */
+            grade: string;
+            /** Path Latlng */
+            path_latlng: number[][];
+            /** Mark */
+            mark: ("real" | "falsa") | null;
+        };
+        /**
+         * TrailVariantsRead
+         * @description The variant analysis of one planned route (experimental).
+         *
+         *     Attributes:
+         *         activity_id: The route the variants were searched along.
+         *         cell_m: Graph grid size the search walked on.
+         *         variants: The suggestions, junction order.
+         */
+        TrailVariantsRead: {
+            /** Activity Id */
+            activity_id: number;
+            /** Cell M */
+            cell_m: number;
+            /** Variants */
+            variants: components["schemas"]["TrailVariantRead"][];
         };
         /**
          * TypeBreakdownItem
@@ -13772,6 +13974,26 @@ export interface components {
              * @description User's password
              */
             password: string;
+        };
+        /**
+         * VariantMarkCreate
+         * @description Payload for judging one variant.
+         *
+         *     Attributes:
+         *         split_m: Junction position of the judged variant, as reported.
+         *         verdict: ``real`` or ``falsa``.
+         *         note: Optional remark.
+         */
+        VariantMarkCreate: {
+            /** Split M */
+            split_m: number;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "real" | "falsa";
+            /** Note */
+            note?: string | null;
         };
         /**
          * VisibilityUpdateRead
@@ -15659,6 +15881,128 @@ export interface operations {
             query: {
                 /** @description Ground position of the judged stretch */
                 start_m: number;
+            };
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_trail_variants_api_v1_activities__activity_id__trail_variants_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrailVariantsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    post_variant_mark_api_v1_activities__activity_id__trail_variants_marks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VariantMarkCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_variant_mark_api_v1_activities__activity_id__trail_variants_marks_delete: {
+        parameters: {
+            query: {
+                split_m: number;
             };
             header?: never;
             path: {
@@ -19908,6 +20252,115 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["TrailNetworkRead"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    list_routes_api_v1_analysis_routes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RouteRead"][];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    create_route_api_v1_analysis_routes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RouteCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RouteRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_route_api_v1_analysis_routes__route_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                route_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

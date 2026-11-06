@@ -289,5 +289,54 @@
     },
     "colCrossings": "穿越次數",
     "showPlain": "顯示未作斷言的已穿越路徑"
+  },
+  "sectionRoutes": "路線",
+  "variants": {
+    "title": "路線變體",
+    "saveAsRoute": "儲存為路線",
+    "none": "在你已經走過的地面上沒有找到重新連接的替代路線。",
+    "hint": "每條變體都來自你親自跨越的地面：如果你確認那裡确有實地，就標記為真實；如果是 GPS 偽影，就標記為虛假。被否決的變體不會再出現。",
+    "colJunction": "分歧 → 回歸",
+    "colSide": "側向",
+    "colDelta": "繞行",
+    "colGain": "高低差",
+    "colStatus": "證據",
+    "colMark": "裁定",
+    "side": {
+      "left": "左側",
+      "right": "右側",
+      "straight": "直線"
+    },
+    "status": {
+      "confirmada": "已確認",
+      "provisional": "暫定"
+    },
+    "grade": {
+      "hard": "非常技術性",
+      "tech": "技術性"
+    },
+    "mark": {
+      "real": "實地存在",
+      "falsa": "虛假"
+    }
+  },
+  "routes": {
+    "title": "你的路線",
+    "subtitle": "在你自己走過的地面上設計的路線。將一次活動儲存為路線，即可搜尋其變體，並在之後匯出為可導航的 course。",
+    "mapLabel": "已儲存路線的地圖",
+    "colName": "名稱",
+    "colDistance": "距離",
+    "colGain": "爬升+",
+    "colCreated": "建立時間",
+    "colActions": "操作",
+    "delete": "刪除路線",
+    "deleteTitle": "刪除這條路線？",
+    "deleteBody": "「{name}」及其變體裁定將會消失。此操作無法復原。",
+    "cancel": "取消",
+    "close": "關閉",
+    "empty": {
+      "title": "尚未儲存任何路線",
+      "description": "開啟一次跑步活動並按「儲存為路線」，開始在你自己的地面上設計。"
+    }
   }
 }

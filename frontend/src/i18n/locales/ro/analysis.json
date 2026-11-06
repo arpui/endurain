@@ -289,5 +289,54 @@
     },
     "colCrossings": "Treceri",
     "showPlain": "Arată și potecile străbătute fără pretenții"
+  },
+  "sectionRoutes": "Trasee",
+  "variants": {
+    "title": "Variante de traseu",
+    "saveAsRoute": "Salvare ca traseu",
+    "none": "Nu a fost găsită nicio alternativă de reconectare deasupra terenului pe care l-ai parcurs deja.",
+    "hint": "Fiecare variantă provine din terenul pe care l-ai străbătut tu însuți: marcheaz-o ca reală dacă ai văzut că pământul este acolo, falsă dacă este un artefact GPS. Variantele respinse nu se mai întorc niciodată.",
+    "colJunction": "Divergență → Reîntregire",
+    "colSide": "Parte",
+    "colDelta": "Deviație",
+    "colGain": "Diferență de nivel",
+    "colStatus": "Dovadă",
+    "colMark": "Verdict",
+    "side": {
+      "left": "Stânga",
+      "right": "Dreapta",
+      "straight": "În linie"
+    },
+    "status": {
+      "confirmada": "Confirmată",
+      "provisional": "Provizorie"
+    },
+    "grade": {
+      "hard": "Foarte tehnic",
+      "tech": "Tehnic"
+    },
+    "mark": {
+      "real": "Pământ real",
+      "falsa": "Falsă"
+    }
+  },
+  "routes": {
+    "title": "Traseele tale",
+    "subtitle": "Trasee proiectate pe terenul pe care l-ai parcurs tu însuți. Salvează o activitate ca traseu pentru a căuta variante și, mai târziu, pentru a o exporta ca traseu navigabil.",
+    "mapLabel": "Harta traseelor salvate",
+    "colName": "Nume",
+    "colDistance": "Distanță",
+    "colGain": "D+",
+    "colCreated": "Creat",
+    "colActions": "Acțiuni",
+    "delete": "Șterge traseul",
+    "deleteTitle": "Ștergi acest traseu?",
+    "deleteBody": "„{name}” și verdicturile sale de variante vor dispărea. Această acțiune nu poate fi anulată.",
+    "cancel": "Anulare",
+    "close": "Închide",
+    "empty": {
+      "title": "Încă nu ai trasee salvate",
+      "description": "Deschide o alergare și apasă „Salvare ca traseu” pentru a începe să proiectezi pe terenul tău."
+    }
   }
 }

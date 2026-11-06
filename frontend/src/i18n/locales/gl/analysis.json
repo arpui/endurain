@@ -289,5 +289,54 @@
     },
     "colCrossings": "Travesías",
     "showPlain": "Debuxar tamén os camiños cruzados sen reclamo"
+  },
+  "sectionRoutes": "Rutas",
+  "variants": {
+    "title": "Variantes da ruta",
+    "saveAsRoute": "Gardar como ruta",
+    "none": "Non se atopou ningunha alternativa de reconexión sobre terreo que xa pisaches.",
+    "hint": "Cada variante sae do terreo que ti mesmo cruzaches: márcaa como real se víches que o chan está alí, falsa se é un artefacto do GPS. As variantes rexeitadas non volven nunca.",
+    "colJunction": "Saída → Regreso",
+    "colSide": "Lado",
+    "colDelta": "Desvío",
+    "colGain": "Desnivel",
+    "colStatus": "Evidencia",
+    "colMark": "Veredicto",
+    "side": {
+      "left": "Esquerda",
+      "right": "Dereita",
+      "straight": "En liña"
+    },
+    "status": {
+      "confirmada": "Confirmada",
+      "provisional": "Provisional"
+    },
+    "grade": {
+      "hard": "Moi técnico",
+      "tech": "Técnico"
+    },
+    "mark": {
+      "real": "Chan real",
+      "falsa": "Falsa"
+    }
+  },
+  "routes": {
+    "title": "As túas rutas",
+    "subtitle": "Rutas deseñadas sobre o teu terreo percorrido. Garda unha saída como ruta para buscar as súas variantes e, máis adiante, exportala como percorrido navegable.",
+    "mapLabel": "Mapa das rutas gardadas",
+    "colName": "Nome",
+    "colDistance": "Distancia",
+    "colGain": "Desnivel+",
+    "colCreated": "Creación",
+    "colActions": "Accións",
+    "delete": "Eliminar ruta",
+    "deleteTitle": "Eliminar esta ruta?",
+    "deleteBody": "«{name}» e os seus veredictos de variantes desaparecerán. Esta acción non se pode desfacer.",
+    "cancel": "Cancelar",
+    "close": "Pechar",
+    "empty": {
+      "title": "Aínda non gardaches ningunha ruta",
+      "description": "Abre unha saída a correr e preme «Gardar como ruta» para comezar a deseñar sobre o teu terreo."
+    }
   }
 }

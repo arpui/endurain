@@ -289,5 +289,54 @@
     },
     "colCrossings": "Šķērsojumi",
     "showPlain": "Rādīt arī šķērsotos bez apgalvojuma"
+  },
+  "sectionRoutes": "Maršruti",
+  "variants": {
+    "title": "Maršruta varianti",
+    "saveAsRoute": "Saglabāt kā maršrutu",
+    "none": "Nav atrasts savienojuma alternatīvs maršruts virs zemes, kuru pats jau esi veicis.",
+    "hint": "Katrs variants nāk no zemes, kuru pats šķērsoji: atzīmē to kā īstu, ja esi redzējis, ka zeme tur ir, un kā viltotu, ja tas ir GPS artefakts. Noraidītie varianti nekad neatgriežas.",
+    "colJunction": "Atzarīšana → Atgriešanās",
+    "colSide": "Puse",
+    "colDelta": "Apeja",
+    "colGain": "Augstumu starpība",
+    "colStatus": "Pierādījums",
+    "colMark": "Spriedums",
+    "side": {
+      "left": "Pa kreisi",
+      "right": "Pa labi",
+      "straight": "Taisni"
+    },
+    "status": {
+      "confirmada": "Apstiprināts",
+      "provisional": "Pagaidu"
+    },
+    "grade": {
+      "hard": "Ļoti tehnisks",
+      "tech": "Tehnisks"
+    },
+    "mark": {
+      "real": "Īsta zeme",
+      "falsa": "Viltots"
+    }
+  },
+  "routes": {
+    "title": "Tavi maršruti",
+    "subtitle": "Maršruti, kas projektēti pār tavu paša izstaigāto zemi. Saglabā aktivitāti kā maršrutu, lai meklētu variantus un vēlāk eksportētu kā navigējamu maršrutu.",
+    "mapLabel": "Saglabāto maršrutu karte",
+    "colName": "Nosaukums",
+    "colDistance": "Attālums",
+    "colGain": "D+",
+    "colCreated": "Izveidots",
+    "colActions": "Darbības",
+    "delete": "Dzēst maršrutu",
+    "deleteTitle": "Dzēst šo maršrutu?",
+    "deleteBody": "„{name}” un tā variantu spriedumi pazudīs. Šo darbību nevar atsaukt.",
+    "cancel": "Atcelt",
+    "close": "Aizvērt",
+    "empty": {
+      "title": "Vēl nav saglabātu maršrutu",
+      "description": "Atver skrējienu un nospied „Saglabāt kā maršrutu”, lai sāktu projektēt pār savu zemi."
+    }
   }
 }
