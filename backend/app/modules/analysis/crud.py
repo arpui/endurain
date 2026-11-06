@@ -1111,16 +1111,19 @@ def replace_user_graph(
     """
     db.execute(delete(analysis_models.GraphNode).where(analysis_models.GraphNode.user_id == user_id))
     db.execute(delete(analysis_models.GraphEdge).where(analysis_models.GraphEdge.user_id == user_id))
-    if nodes:
+    # PostgreSQL caps the parameters of one statement (psycopg: at most 65.535);
+    # a full graph is far past that, so the insert walks the rows in chunks.
+    chunk = 2000
+    for start in range(0, len(nodes), chunk):
         db.execute(
             pg_insert(analysis_models.GraphNode)
-            .values([{**row, "user_id": user_id} for row in nodes])
+            .values([{**row, "user_id": user_id} for row in nodes[start : start + chunk]])
             .on_conflict_do_nothing(index_elements=["user_id", "x", "y"])
         )
-    if edges:
+    for start in range(0, len(edges), chunk):
         db.execute(
             pg_insert(analysis_models.GraphEdge)
-            .values([{**row, "user_id": user_id} for row in edges])
+            .values([{**row, "user_id": user_id} for row in edges[start : start + chunk]])
             .on_conflict_do_nothing(index_elements=["user_id", "ax", "ay", "bx", "by"])
         )
     return len(nodes), len(edges)
