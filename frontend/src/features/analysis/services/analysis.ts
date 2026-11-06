@@ -888,6 +888,46 @@ export async function createRoute(
 }
 
 /**
+ * Edit a saved route: rename, redraw, re-note. The server measures the new totals.
+ *
+ * @param routeId - The route to edit.
+ * @param name - Route name.
+ * @param points - The edited polyline.
+ * @param notes - Optional remarks.
+ * @param signal - Optional abort signal.
+ * @returns The stored route.
+ * @throws {HttpError} When the request fails.
+ */
+export async function updateRoute(
+  routeId: number,
+  name: string,
+  points: GeoPoint[],
+  notes?: string,
+  signal?: AbortSignal,
+): Promise<DesignRoute> {
+  const dto = await apiFetch<RouteDto>(`/analysis/routes/${routeId}`, {
+    method: 'PUT',
+    signal,
+    body: JSON.stringify({
+      name,
+      geometry: points.map((pt) => [pt.lat, pt.lng]),
+      notes: notes ?? null,
+    }),
+  })
+  return {
+    id: dto.id,
+    name: dto.name,
+    points: (dto.geometry ?? []).flatMap(([lat, lng]) =>
+      lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+    ),
+    distanceM: dto.distance_m,
+    gainM: dto.gain_m,
+    notes: dto.notes ?? null,
+    createdAt: dto.created_at,
+  }
+}
+
+/**
  * Delete one saved route.
  *
  * @param routeId - The route to delete.

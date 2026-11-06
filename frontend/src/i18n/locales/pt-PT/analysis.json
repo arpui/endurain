@@ -337,6 +337,14 @@
     "empty": {
       "title": "Ainda não guardaste nenhum percurso",
       "description": "Abre uma corrida e carrega em «Guardar como percurso» para começar a desenhar sobre o teu terreno."
-    }
+    },
+    "new": "Novo percurso",
+    "edit": "Editar percurso",
+    "save": "Guardar percurso",
+    "namePlaceholder": "Nome do percurso",
+    "points": "{n} pontos",
+    "undo": "Remover o último",
+    "cancelEdit": "Cancelar",
+    "drawHint": "Clica no mapa para adicionar pontos ao percurso. Clica num ponto para o remover."
   }
 }

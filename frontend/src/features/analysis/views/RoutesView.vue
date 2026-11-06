@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Trash2 } from '@lucide/vue'
+import { Pencil, Plus, Trash2, X } from '@lucide/vue'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
+import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import AnalysisSectionsNav from '@/features/analysis/components/AnalysisSectionsNav.vue'
 import RoutesMap from '@/features/analysis/components/RoutesMap.vue'
-import { useDeleteRouteMutation, useRoutesQuery } from '@/features/analysis/composables/useAnalysis'
+import {
+  useCreateRouteMutation,
+  useDeleteRouteMutation,
+  useRoutesQuery,
+  useUpdateRouteMutation,
+} from '@/features/analysis/composables/useAnalysis'
 import type { DesignRoute } from '@/features/analysis/types'
+import type { GeoPoint } from '@/composables/useMapProvider'
 
 const { t, locale } = useI18n()
 
@@ -34,6 +41,68 @@ function km(metres: number): string {
   return `${numberFormat.value.format(metres / 1000)} km`
 }
 
+// --- the editor: a draft polyline on the map ---
+// null draft means nobody is designing; a draft of points is created by map
+// taps and thinned by picking its handles. Saving measures totals server-side.
+const draft = ref<GeoPoint[] | null>(null)
+/** null draft id: a brand-new route; otherwise the saved route being redrawn. */
+const editingId = ref<number | null>(null)
+const draftName = ref('')
+const draftNotes = ref<string | undefined>(undefined)
+
+const createMutation = useCreateRouteMutation()
+const updateMutation = useUpdateRouteMutation()
+const saving = computed(() => createMutation.isPending.value || updateMutation.isPending.value)
+const canSave = computed(() => draftName.value.trim().length > 0 && (draft.value?.length ?? 0) >= 2)
+
+function startNew(): void {
+  draft.value = []
+  editingId.value = null
+  draftName.value = ''
+  draftNotes.value = undefined
+}
+
+function startEdit(route: DesignRoute): void {
+  draft.value = [...route.points]
+  editingId.value = route.id
+  draftName.value = route.name
+  draftNotes.value = route.notes ?? undefined
+}
+
+function cancelEdit(): void {
+  draft.value = null
+  editingId.value = null
+}
+
+function addPoint(point: GeoPoint): void {
+  if (draft.value) {
+    draft.value.push(point)
+  }
+}
+
+function removeVertex(index: number): void {
+  draft.value?.splice(index, 1)
+}
+
+function undoLast(): void {
+  draft.value?.pop()
+}
+
+function saveDraft(): void {
+  if (!canSave.value || !draft.value) {
+    return
+  }
+  const points = [...draft.value]
+  const name = draftName.value.trim()
+  const done = { onSuccess: () => cancelEdit() }
+  if (editingId.value === null) {
+    createMutation.mutate({ name, points, notes: draftNotes.value }, done)
+  } else {
+    updateMutation.mutate({ routeId: editingId.value, name, points, notes: draftNotes.value }, done)
+  }
+}
+
+// --- deletion ---
 const deleteMutation = useDeleteRouteMutation()
 const routeToDelete = ref<DesignRoute | null>(null)
 const isDeleteOpen = ref(false)
@@ -72,19 +141,60 @@ function confirmDelete(): void {
     <Skeleton v-else-if="routesQuery.isPending.value" class="h-64 w-full" />
 
     <template v-else>
-      <Card v-if="routes.length === 0" class="p-3">
+      <Card v-if="routes.length === 0 && draft === null" class="p-3">
         <EmptyState
           :title="t('analysis.routes.empty.title')"
           :description="t('analysis.routes.empty.description')"
-        />
+        >
+          <template #action>
+            <Button size="sm" @click="startNew">
+              <Plus class="me-1 size-4" />
+              {{ t('analysis.routes.new') }}
+            </Button>
+          </template>
+        </EmptyState>
       </Card>
-      <Card v-else class="p-3">
+
+      <Card v-else class="flex flex-col gap-2 p-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <template v-if="draft !== null">
+            <Input
+              v-model="draftName"
+              :placeholder="t('analysis.routes.namePlaceholder')"
+              class="w-48"
+            />
+            <span class="text-caption text-muted-foreground">
+              {{ t('analysis.routes.points', { n: draft.length }) }}
+            </span>
+            <Button size="sm" variant="outline" :disabled="draft.length === 0" @click="undoLast">
+              {{ t('analysis.routes.undo') }}
+            </Button>
+            <Button size="sm" :disabled="!canSave || saving" @click="saveDraft">
+              {{ t('analysis.routes.save') }}
+            </Button>
+            <Button size="sm" variant="ghost" @click="cancelEdit">
+              <X class="me-1 size-4" />
+              {{ t('analysis.routes.cancelEdit') }}
+            </Button>
+          </template>
+          <Button v-else size="sm" variant="outline" class="ms-auto" @click="startNew">
+            <Plus class="me-1 size-4" />
+            {{ t('analysis.routes.new') }}
+          </Button>
+        </div>
         <RoutesMap
           :routes="routes"
           :selected="selected"
           :label="t('analysis.routes.mapLabel')"
+          :draft="draft"
+          :editing-id="editingId"
           @select="pick"
+          @add-point="addPoint"
+          @remove-vertex="removeVertex"
         />
+        <p v-if="draft !== null" class="text-caption text-muted-foreground">
+          {{ t('analysis.routes.drawHint') }}
+        </p>
       </Card>
 
       <Card v-if="routes.length > 0" class="overflow-x-auto p-3">
@@ -122,14 +232,24 @@ function confirmDelete(): void {
                 {{ new Date(route.createdAt).toLocaleDateString(locale) }}
               </td>
               <td class="py-2 text-right">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  :aria-label="t('analysis.routes.delete')"
-                  @click.stop="askDelete(route)"
-                >
-                  <Trash2 class="size-4" />
-                </Button>
+                <div class="flex items-center justify-end gap-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    :aria-label="t('analysis.routes.edit')"
+                    @click.stop="startEdit(route)"
+                  >
+                    <Pencil class="size-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    :aria-label="t('analysis.routes.delete')"
+                    @click.stop="askDelete(route)"
+                  >
+                    <Trash2 class="size-4" />
+                  </Button>
+                </div>
               </td>
             </tr>
           </tbody>

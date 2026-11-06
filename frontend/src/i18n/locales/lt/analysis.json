@@ -337,6 +337,14 @@
     "empty": {
       "title": "Dar nėra išsaugotų maršrutų",
       "description": "Atidaryk bėgimą ir paspausk „Išsaugoti kaip maršrutą“, kad pradėtum braižyti ant savo žemės."
-    }
+    },
+    "new": "Naujas maršrutas",
+    "edit": "Redaguoti maršrutą",
+    "save": "Išsaugoti maršrutą",
+    "namePlaceholder": "Maršruto pavadinimas",
+    "points": "{n} taškai",
+    "undo": "Pašalinti paskutinį",
+    "cancelEdit": "Atšaukti",
+    "drawHint": "Spustelėkite žemėlapyje, kad pridėtumėte taškų. Spustelėkite tašką, kad jį pašalintumėte."
   }
 }

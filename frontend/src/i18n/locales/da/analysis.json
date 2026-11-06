@@ -337,6 +337,14 @@
     "empty": {
       "title": "Ingen gemte ruter endnu",
       "description": "Åbn et løb og tryk \"Gem som rute\" for at begynde at designe over din egen grund."
-    }
+    },
+    "new": "Ny rute",
+    "edit": "Rediger rute",
+    "save": "Gem rute",
+    "namePlaceholder": "Rutens navn",
+    "points": "{n} punkter",
+    "undo": "Fortryd sidste",
+    "cancelEdit": "Annuller",
+    "drawHint": "Kort på kortet for at tilføje rutepunkter. Klik på et punkt for at fjerne det."
   }
 }

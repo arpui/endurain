@@ -337,6 +337,14 @@
     "empty": {
       "title": "Ingen lagrede ruter ennå",
       "description": "Åpne en løpeøkt og trykk \"Lagre som rute\" for å begynne å designe over din egen grunn."
-    }
+    },
+    "new": "Ny rute",
+    "edit": "Rediger rute",
+    "save": "Lagre rute",
+    "namePlaceholder": "Rutens navn",
+    "points": "{n} punkt",
+    "undo": "Fjern siste",
+    "cancelEdit": "Avbryt",
+    "drawHint": "Klikk på kartet for å legge til rutepunkt. Klikk på et punkt for å fjerne det."
   }
 }

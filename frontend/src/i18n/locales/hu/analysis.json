@@ -337,6 +337,14 @@
     "empty": {
       "title": "Még nincs mentett útvonal",
       "description": "Nyiss meg egy futást és nyomd a „Mentés útvonalként” gombot, hogy a saját terepeden tervezhess."
-    }
+    },
+    "new": "Új útvonal",
+    "edit": "Útvonal szerkesztése",
+    "save": "Útvonal mentése",
+    "namePlaceholder": "Útvonal neve",
+    "points": "{n} pont",
+    "undo": "Utolsó törlése",
+    "cancelEdit": "Mégse",
+    "drawHint": "Kattints a térképre útvonalpontok hozzáadásához. Kattints egy pontra az eltávolításához."
   }
 }

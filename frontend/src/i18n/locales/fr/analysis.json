@@ -337,6 +337,14 @@
     "empty": {
       "title": "Aucun itinéraire enregistré",
       "description": "Ouvrez une sortie course à pied et appuyez sur « Enregistrer comme itinéraire » pour commencer à concevoir sur votre terrain."
-    }
+    },
+    "new": "Nouvel itinéraire",
+    "edit": "Modifier l'itinéraire",
+    "save": "Enregistrer l'itinéraire",
+    "namePlaceholder": "Nom de l'itinéraire",
+    "points": "{n} points",
+    "undo": "Annuler le dernier",
+    "cancelEdit": "Annuler",
+    "drawHint": "Cliquez sur la carte pour ajouter des points. Cliquez sur un point pour le retirer."
   }
 }

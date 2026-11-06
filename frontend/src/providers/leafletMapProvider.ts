@@ -6,7 +6,14 @@
  * The pure {@link toLatLngs} and {@link boundsOf} helpers are exported so the
  * seam → Leaflet data translation can be unit-tested without a real map.
  */
-import { circleMarker, map as createMap, polyline, tileLayer, type Layer } from 'leaflet'
+import {
+  circleMarker,
+  map as createMap,
+  polyline,
+  tileLayer,
+  type Layer,
+  type LeafletMouseEvent,
+} from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import type {
@@ -136,6 +143,11 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
 
       let overlays: Layer[] = []
       let currentTrack: MapTrack = options.track
+      // one registered handler, always delegating to the latest render's callback
+      let onMapClick = options.onMapClick
+      map.on('click', (event: LeafletMouseEvent) => {
+        onMapClick?.({ lat: event.latlng.lat, lng: event.latlng.lng })
+      })
 
       /** Re-fits the viewport to a track's bounds (or the world when empty). */
       const fit = (track: MapTrack): void => {
@@ -174,6 +186,19 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
             }
             overlays.push(line)
           }
+          if (overlay.vertices && overlay.onVertexClick) {
+            overlay.vertices.forEach((vertex, index) => {
+              const handle = circleMarker([vertex.lat, vertex.lng], {
+                radius: 5,
+                color: overlay.color,
+                weight: 2,
+                fillColor: '#ffffff',
+                fillOpacity: 1,
+              }).addTo(map)
+              handle.on('click', () => overlay.onVertexClick?.(index))
+              overlays.push(handle)
+            })
+          }
         }
         if (track.start) {
           overlays.push(emphasisMarker(track.start, START_MARKER_COLOR).addTo(map))
@@ -189,6 +214,7 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
 
       return {
         update(next: MapRenderOptions): void {
+          onMapClick = next.onMapClick
           draw(next.track, next.overlays)
         },
         recenter(): void {

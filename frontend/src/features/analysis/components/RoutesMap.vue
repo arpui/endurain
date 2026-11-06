@@ -2,7 +2,12 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import type { DesignRoute } from '@/features/analysis/types'
-import type { GeoPoint, MapInstance, MapOverlay } from '@/composables/useMapProvider'
+import type {
+  GeoPoint,
+  MapInstance,
+  MapOverlay,
+  MapRenderOptions,
+} from '@/composables/useMapProvider'
 
 import { useMapProvider } from '@/composables/useMapProvider'
 import { themeColor } from '@/lib/themeColor'
@@ -15,56 +20,85 @@ const props = defineProps<{
   selected: number | null
   /** Accessible description of the drawn routes. */
   label: string
+  /** When set, the route being drawn/edited: handles on each point, map taps add. */
+  draft?: GeoPoint[] | null
+  /** The saved route the draft came from; its stored line is hidden while editing. */
+  editingId?: number | null
 }>()
 
 const emit = defineEmits<{
   /** The viewer clicked a route on the map. */
   select: [routeId: number]
+  /** The viewer tapped empty map while a draft is open: add that point. */
+  addPoint: [point: GeoPoint]
+  /** The viewer picked a draft handle: remove that point. */
+  removeVertex: [index: number]
 }>()
 
 const ready = useRenderProvidersReady()
 const container = ref<HTMLElement | null>(null)
 let instance: MapInstance | null = null
 
-/** One coloured polyline per route; the picked one rides at full weight. */
+/** Stored routes plus, while editing, the draft with its clickable handles. */
 function overlays(): MapOverlay[] {
-  return props.routes.map((route, index) => ({
-    points: route.points,
-    // the designer's own routes carry no technical claim: the brand family
-    // distinguishes them from the analysed ground underneath
-    color: themeColor(index % 2 === 0 ? '--color-brand' : '--color-effort'),
-    weight: route.id === props.selected ? 6 : 4,
-    opacity: route.id === props.selected ? 1 : 0.75,
-    name: route.name,
-    onSelect: () => emit('select', route.id),
-  }))
+  const list: MapOverlay[] = props.routes
+    .filter((route) => route.id !== (props.editingId ?? -1))
+    .map((route, index) => ({
+      points: route.points,
+      // the designer's own routes carry no technical claim: the brand family
+      // distinguishes them from the analysed ground underneath
+      color: themeColor(index % 2 === 0 ? '--color-brand' : '--color-effort'),
+      weight: route.id === props.selected ? 6 : 4,
+      opacity: route.id === props.selected ? 1 : 0.75,
+      name: route.name,
+      onSelect: () => emit('select', route.id),
+    }))
+  if (props.draft && props.draft.length > 0) {
+    list.push({
+      points: props.draft,
+      color: themeColor('--color-effort'),
+      weight: 5,
+      opacity: 0.95,
+      vertices: props.draft,
+      onVertexClick: (index) => emit('removeVertex', index),
+    })
+  }
+  return list
 }
 
-/** Mounts the map once the provider is ready and there are routes to draw. */
+function renderOptions(): MapRenderOptions {
+  return {
+    // no single base track: every route is an overlay, so the empty track is honest
+    track: { points: [] },
+    overlays: overlays(),
+    onMapClick: props.draft ? (point) => emit('addPoint', point) : undefined,
+  }
+}
+
+/** Mounts the map once the provider is ready and there is anything to draw. */
 function mountMap(): void {
-  if (instance || !container.value || !ready.value || props.routes.length === 0) {
+  if (instance || !container.value || !ready.value || (props.routes.length === 0 && !props.draft)) {
     return
   }
   const { provider } = useMapProvider()
-  // no single base track: every route is an overlay, so the empty track is honest
-  instance = provider.mount(container.value, { track: { points: [] }, overlays: overlays() })
+  instance = provider.mount(container.value, renderOptions())
   instance.focus(allPoints())
 }
 
 function allPoints(): GeoPoint[] {
-  return props.routes.flatMap((route) => route.points)
+  return [...props.routes.flatMap((route) => route.points), ...(props.draft ?? [])]
 }
 
 onMounted(mountMap)
 watch(ready, mountMap)
 watch(
-  () => [props.routes, props.selected],
+  () => [props.routes, props.selected, props.draft, props.editingId],
   () => {
     if (!instance) {
       mountMap()
       return
     }
-    instance.update({ track: { points: [] }, overlays: overlays() })
+    instance.update(renderOptions())
   },
 )
 watch(

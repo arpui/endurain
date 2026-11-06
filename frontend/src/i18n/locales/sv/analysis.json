@@ -337,6 +337,14 @@
     "empty": {
       "title": "Inga sparade rutter ännu",
       "description": "Öppna ett löppass och tryck \"Spara som rutt\" för att börja rita över din egen mark."
-    }
+    },
+    "new": "Ny rutt",
+    "edit": "Redigera rutt",
+    "save": "Spara rutt",
+    "namePlaceholder": "Ruttens namn",
+    "points": "{n} punkter",
+    "undo": "Ta bort sista",
+    "cancelEdit": "Avbryt",
+    "drawHint": "Klicka på kartan för att lägga till ruttpunkter. Klicka på en punkt för att ta bort den."
   }
 }

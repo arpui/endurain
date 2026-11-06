@@ -23,6 +23,7 @@ import {
   deleteRoute,
   fetchTrailSections,
   fetchTrailVariants,
+  updateRoute,
   postVariantMark,
   postTrailSectionMark,
   fetchActivityLapDynamics,
@@ -438,6 +439,29 @@ export function useCreateRouteMutation() {
     invalidateKey: queryKeys.analysis.all(),
     mutationFn: ({ name, points, notes }: { name: string; points: GeoPoint[]; notes?: string }) =>
       createRoute(name, points, notes),
+  })
+}
+
+/**
+ * Edit a saved route; the server measures the new totals again.
+ *
+ * @returns The mutation to call with id, name, polyline and optional notes.
+ */
+export function useUpdateRouteMutation() {
+  return useInvalidatingMutation({
+    mutationKey: ['analysis', 'route-update'],
+    invalidateKey: queryKeys.analysis.all(),
+    mutationFn: ({
+      routeId,
+      name,
+      points,
+      notes,
+    }: {
+      routeId: number
+      name: string
+      points: GeoPoint[]
+      notes?: string
+    }) => updateRoute(routeId, name, points, notes),
   })
 }
 

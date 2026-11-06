@@ -337,6 +337,14 @@
     "empty": {
       "title": "Ei tallennettuja reittejä vielä",
       "description": "Avaa lenkki ja paina \"Tallenna reitiksi\" alkaaksesi piirtää oman maastosi yli."
-    }
+    },
+    "new": "Uusi reitti",
+    "edit": "Muokkaa reittiä",
+    "save": "Tallenna reitti",
+    "namePlaceholder": "Reitin nimi",
+    "points": "{n} pistettä",
+    "undo": "Poista viimeinen",
+    "cancelEdit": "Peruuta",
+    "drawHint": "Lisää reittipisteitä napsauttamassa karttaa. Poista piste napsauttamassa sitä."
   }
 }
