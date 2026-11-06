@@ -302,7 +302,12 @@ def merge_activity_into_graph(
 
 
 def graph_from_rows(nodes, edges) -> tuple[dict, dict]:
-    """Rebuild adjacency dictionaries from stored graph rows (crud hands them over)."""
+    """Rebuild adjacency dictionaries from stored graph rows (crud hands them over).
+
+    An edge can leave the bounding box its origin was loaded by: its destination
+    cell then gets its position from the grid itself, which is exact by
+    construction, and carries no claim of its own.
+    """
     node_map = {(n.x, n.y): {"lat": n.lat, "lng": n.lng, "ele": n.ele, "grade": n.grade} for n in nodes}
     adjacency: dict[tuple[int, int], list[dict]] = {}
     for e in edges:
@@ -317,4 +322,9 @@ def graph_from_rows(nodes, edges) -> tuple[dict, dict]:
                 "on_path": e.on_path,
             }
         )
+    for e in edges:
+        for cell in ((e.ax, e.ay), (e.bx, e.by)):
+            if cell not in node_map:
+                lat, lng = to_latlng(cell[0] * CELL_M, cell[1] * CELL_M)
+                node_map[cell] = {"lat": lat, "lng": lng, "ele": 0.0, "grade": ""}
     return node_map, adjacency

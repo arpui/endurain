@@ -19,6 +19,7 @@ import core.exceptions as core_exceptions
 import modules.activities.activity_streams.constants as activity_streams_constants
 import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
+import modules.analysis.graph as analysis_graph
 import modules.analysis.intervals as analysis_intervals
 import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
@@ -1597,6 +1598,31 @@ class TestTrailNetwork:
         with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=[]) as read:
             analysis_service.get_trail_network(2, db, bbox=(42.0, 1.0, 43.0, 2.0))
         assert read.call_args.kwargs["bbox"] == (42.0, 1.0, 43.0, 2.0)
+
+
+class TestGraphRowLoading:
+    """Rows loaded by box still describe a walkable graph."""
+
+    def test_an_edge_leaving_the_box_gets_its_destination_position(self):
+        node = SimpleNamespace(x=0, y=0, lat=42.0, lng=1.5, ele=10.0, grade="hard")
+        edge = SimpleNamespace(
+            ax=0, ay=0, bx=999, by=999, passes=1, length=15.0, gain=0.0, loss=0.0, step_max=4.0, on_path=0
+        )
+        node_map, adjacency = analysis_graph.graph_from_rows([node], [edge])
+        assert node_map[(999, 999)]["lat"] != 42.0
+        assert (
+            abs(
+                node_map[(999, 999)]["lng"]
+                - (
+                    analysis_constants.TRAIL_GRAPH_REF_LNG
+                    + 999
+                    * analysis_constants.TRAIL_GRAPH_CELL_M
+                    / (111320.0 * math.cos(math.radians(analysis_constants.TRAIL_GRAPH_REF_LAT)))
+                )
+            )
+            < 1e-9
+        )
+        assert adjacency[(0, 0)][0]["to"] == (999, 999)
 
 
 class TestPersonalGraphAndVariants:
