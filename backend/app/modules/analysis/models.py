@@ -833,7 +833,7 @@ class VariantMark(Base, TimestampMixin):
     )
 
 
-class Route(Base):
+class Route(Base, TimestampMixin):
     """A route the athlete designed over their own network.
 
     It stores the drawn polyline and its totals: the substrate for exporting a
