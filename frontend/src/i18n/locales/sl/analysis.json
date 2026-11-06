@@ -289,5 +289,54 @@
     },
     "colCrossings": "Prehodi",
     "showPlain": "Pokaži tudi prehojene poti brez trditve"
+  },
+  "sectionRoutes": "Proge",
+  "variants": {
+    "title": "Različice proge",
+    "saveAsRoute": "Shrani kot progo",
+    "none": "Ni bilo najdene alternative ponovne povezave nad terenom, ki si ga že prehodil.",
+    "hint": "Vsaka različica izhaja iz terena, ki si ga sam prečkal: označi jo kot resnično, če si videl, da tla so tam, kot lažno, če je GPS artefakt. Zavrnjene različice se nikoli ne vrnejo.",
+    "colJunction": "Izhod → Vrnitev",
+    "colSide": "Stran",
+    "colDelta": "Obvoz",
+    "colGain": "Višinska razlika",
+    "colStatus": "Dokaz",
+    "colMark": "Sodba",
+    "side": {
+      "left": "Levo",
+      "right": "Desno",
+      "straight": "Naravnost"
+    },
+    "status": {
+      "confirmada": "Potrjena",
+      "provisional": "Začasna"
+    },
+    "grade": {
+      "hard": "Zelo tehnično",
+      "tech": "Tehnično"
+    },
+    "mark": {
+      "real": "Resna tla",
+      "falsa": "Lažna"
+    }
+  },
+  "routes": {
+    "title": "Tvoje proge",
+    "subtitle": "Proge, zasnovane na terenu, ki si ga sam prehodil. Shrani aktivnost kot progo za iskanje različic in poznejši izvoz kot navigabilen seznam.",
+    "mapLabel": "Zemljevid shranjenih prog",
+    "colName": "Ime",
+    "colDistance": "Razdalja",
+    "colGain": "D+",
+    "colCreated": "Ustvarjeno",
+    "colActions": "Dejanja",
+    "delete": "Izbriši progo",
+    "deleteTitle": "Izbriši to progo?",
+    "deleteBody": "„{name}” in njene sodbe različic bodo izginile. Tega dejanja ni mogoče razveljaviti.",
+    "cancel": "Prekliči",
+    "close": "Zapri",
+    "empty": {
+      "title": "Še ni shranjenih prog",
+      "description": "Odpri tek in pritisni „Shrani kot progo”, da začneš risati nad svojim terenom."
+    }
   }
 }

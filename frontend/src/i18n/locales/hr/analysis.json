@@ -289,5 +289,54 @@
     },
     "colCrossings": "Prolasci",
     "showPlain": "Prikaži i pređene staze bez tvrdnje"
+  },
+  "sectionRoutes": "Staze",
+  "variants": {
+    "title": "Varijante staze",
+    "saveAsRoute": "Spremi kao stazu",
+    "none": "Nije pronađena alternativa ponovnog spajanja nad terenom koji si već prehodao.",
+    "hint": "Svaka varijanta dolazi iz terena koji si sam prešao: označi je stvarnom ako si vidio da tlo jest tamo, lažnom ako je artefakt GPS-a. Odbijene varijante se nikada ne vraćaju.",
+    "colJunction": "Otklon → Povratak",
+    "colSide": "Strana",
+    "colDelta": "Zaobilaznica",
+    "colGain": "Visinska razlika",
+    "colStatus": "Dokaz",
+    "colMark": "Presuda",
+    "side": {
+      "left": "Lijevo",
+      "right": "Desno",
+      "straight": "Pravocrveno"
+    },
+    "status": {
+      "confirmada": "Potvrđena",
+      "provisional": "Preliminarna"
+    },
+    "grade": {
+      "hard": "Vrlo tehničko",
+      "tech": "Tehničko"
+    },
+    "mark": {
+      "real": "Stvarno tlo",
+      "falsa": "Lažna"
+    }
+  },
+  "routes": {
+    "title": "Tvoje staze",
+    "subtitle": "Staze dizajnirane nad terenom koji si sam prehodao. Spremi aktivnost kao stazu za traženje varijanti i kasniji izvoz kao navigabilnu rutu.",
+    "mapLabel": "Karta spremljenih staza",
+    "colName": "Naziv",
+    "colDistance": "Udaljenost",
+    "colGain": "D+",
+    "colCreated": "Stvoreno",
+    "colActions": "Radnje",
+    "delete": "Obriši stazu",
+    "deleteTitle": "Obrisati ovu stazu?",
+    "deleteBody": "„{name}” i njezine presude varijanti nestat će. Ovu radnju nije moguće poništiti.",
+    "cancel": "Odustani",
+    "close": "Zatvori",
+    "empty": {
+      "title": "Još nema spremljenih staza",
+      "description": "Otvori trčanje i pritisni „Spremi kao stazu” da počneš dizajnirati nad svojim terenom."
+    }
   }
 }

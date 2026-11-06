@@ -289,5 +289,54 @@
     },
     "colCrossings": "Travessades",
     "showPlain": "Dibuixa també els camins travessats sense claim"
+  },
+  "sectionRoutes": "Rutes",
+  "variants": {
+    "title": "Variants de recorregut",
+    "saveAsRoute": "Desa com a ruta",
+    "none": "No s'ha trobat cap alternativa de connexió sobre el terreny que ja has trepitjat.",
+    "hint": "Cada variant surt del terreny que tu mateix has creuat: marca-la real si has vist que el terra hi és, falsa si és un artefacte del GPS. Les variants refusades no tornen mai més.",
+    "colJunction": "Sortida → Retorn",
+    "colSide": "Costat",
+    "colDelta": "Desviament",
+    "colGain": "Desnivell",
+    "colStatus": "Evidència",
+    "colMark": "Veredicte",
+    "side": {
+      "left": "Esquerra",
+      "right": "Dreta",
+      "straight": "En línia"
+    },
+    "status": {
+      "confirmada": "Confirmada",
+      "provisional": "Provisional"
+    },
+    "grade": {
+      "hard": "Molt tècnic",
+      "tech": "Tècnic"
+    },
+    "mark": {
+      "real": "Terra real",
+      "falsa": "Falsa"
+    }
+  },
+  "routes": {
+    "title": "Les teves rutes",
+    "subtitle": "Rutes dissenyades sobre el teu terreny recorregut. Desa un trajecte com a ruta per cercar-hi variants i, més endavant, exportar-lo com a curs navegable.",
+    "mapLabel": "Mapa de les rutes desades",
+    "colName": "Nom",
+    "colDistance": "Distància",
+    "colGain": "Desnivell+",
+    "colCreated": "Creació",
+    "colActions": "Accions",
+    "delete": "Elimina la ruta",
+    "deleteTitle": "Vols eliminar la ruta?",
+    "deleteBody": "«{name}» i els seus verdicts de variants desapareixeran. Aquesta acció no es pot desfer.",
+    "cancel": "Cancel·la",
+    "close": "Tanca",
+    "empty": {
+      "title": "Encara no has desat cap ruta",
+      "description": "Obre una sortida de córrer i prem «Desa com a ruta» per començar a dissenyar sobre el teu terreny."
+    }
   }
 }

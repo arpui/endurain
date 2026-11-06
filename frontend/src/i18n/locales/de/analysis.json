@@ -289,5 +289,54 @@
     },
     "colCrossings": "Querungen",
     "showPlain": "Auch passierte Wege ohne Anspruch zeigen"
+  },
+  "sectionRoutes": "Routen",
+  "variants": {
+    "title": "Routenvarianten",
+    "saveAsRoute": "Als Route speichern",
+    "none": "Keine Wiederverbindungs-Alternative über Boden gefunden, den du selbst gelaufen bist.",
+    "hint": "Jede Variante stammt von Boden, den du selbst gelaufen bist: markiere sie als real, wenn du gesehen hast, dass der Boden dort ist, als falsch, wenn es ein GPS-Artefakt ist. Abgelehnte Varianten kommen nie zurück.",
+    "colJunction": "Abzweig → Rückkehr",
+    "colSide": "Seite",
+    "colDelta": "Umweg",
+    "colGain": "Höhendifferenz",
+    "colStatus": "Beleg",
+    "colMark": "Urteil",
+    "side": {
+      "left": "Links",
+      "right": "Rechts",
+      "straight": "Geradeaus"
+    },
+    "status": {
+      "confirmada": "Bestätigt",
+      "provisional": "Vorläufig"
+    },
+    "grade": {
+      "hard": "Sehr technisch",
+      "tech": "Technisch"
+    },
+    "mark": {
+      "real": "Echter Boden",
+      "falsa": "Falsch"
+    }
+  },
+  "routes": {
+    "title": "Deine Routen",
+    "subtitle": "Routen, entworfen über deinem eigenen gelaufenen Boden. Speichere einen Lauf als Route, um Varianten zu suchen und sie später als navigierbaren Kurs zu exportieren.",
+    "mapLabel": "Karte der gespeicherten Routen",
+    "colName": "Name",
+    "colDistance": "Distanz",
+    "colGain": "Höhenmeter+",
+    "colCreated": "Erstellt",
+    "colActions": "Aktionen",
+    "delete": "Route löschen",
+    "deleteTitle": "Diese Route löschen?",
+    "deleteBody": "„{name}“ und ihre Varianten-Urteile werden gelöscht. Das kann nicht rückgängig gemacht werden.",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "empty": {
+      "title": "Noch keine gespeicherten Routen",
+      "description": "Öffne einen Lauf und tippe auf „Als Route speichern“, um über deinem eigenen Boden zu entwerfen."
+    }
   }
 }

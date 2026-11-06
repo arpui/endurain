@@ -289,5 +289,54 @@
     },
     "colCrossings": "Geçisler",
     "showPlain": "İddiasız geçilen patikaları da göster"
+  },
+  "sectionRoutes": "Rotalar",
+  "variants": {
+    "title": "Rota varyantları",
+    "saveAsRoute": "Rota olarak kaydet",
+    "none": "Daha önce geçtiğin arazi üzerinde bir yeniden bağlanma alternatifi bulunamadı.",
+    "hint": "Her varyant senin bizzat geçtiğin araziden gelir: zeminin orada olduğunu gördüysen gerçek, bir GPS artığıysa sahte olarak işaretle. Reddedilen varyantlar bir daha asla geri gelmez.",
+    "colJunction": "Ayrılma → Yeniden katılma",
+    "colSide": "Taraf",
+    "colDelta": "Sapma",
+    "colGain": "İrtifa farkı",
+    "colStatus": "Kanıt",
+    "colMark": "Karar",
+    "side": {
+      "left": "Sol",
+      "right": "Sağ",
+      "straight": "Düz"
+    },
+    "status": {
+      "confirmada": "Onaylı",
+      "provisional": "Geçici"
+    },
+    "grade": {
+      "hard": "Çok teknik",
+      "tech": "Teknik"
+    },
+    "mark": {
+      "real": "Gerçek zemin",
+      "falsa": "Sahte"
+    }
+  },
+  "routes": {
+    "title": "Rotaların",
+    "subtitle": "Kendi geçtiğin arazi üzerinde tasarlanan rotalar. Bir koşuyu rota olarak kaydet, varyantlarını ara ve ileride gezilebilir bir parkur olarak dışa aktar.",
+    "mapLabel": "Kaydedilen rotaların haritası",
+    "colName": "Ad",
+    "colDistance": "Mesafe",
+    "colGain": "D+",
+    "colCreated": "Oluşturulma",
+    "colActions": "İşlemler",
+    "delete": "Rotayı sil",
+    "deleteTitle": "Bu rota silinsin mi?",
+    "deleteBody": "“{name}” ve varyant kararları kaybolacak. Bu işlem geri alınamaz.",
+    "cancel": "İptal",
+    "close": "Kapat",
+    "empty": {
+      "title": "Henüz kayıtlı rota yok",
+      "description": "Bir koşuyu aç ve “Rota olarak kaydet”e basarak kendi arazinde tasarlamaya başla."
+    }
   }
 }

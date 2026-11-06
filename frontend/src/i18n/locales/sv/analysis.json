@@ -289,5 +289,54 @@
     },
     "colCrossings": "Passager",
     "showPlain": "Vis även korsade stigar utan påstående"
+  },
+  "sectionRoutes": "Rutter",
+  "variants": {
+    "title": "Ruttvarianter",
+    "saveAsRoute": "Spara som rutt",
+    "none": "Inget återanslutningsalternativ hittades över mark du redan sprungit på.",
+    "hint": "Varje variant kommer från mark du själv har korsat: markera den som verklig om du har sett att marken finns där, falsk om det är en GPS-artefakt. Avvisade varianter kommer aldrig tillbaka.",
+    "colJunction": "Avtag → Återkomst",
+    "colSide": "Sida",
+    "colDelta": "Omväg",
+    "colGain": "Höjd",
+    "colStatus": "Belägg",
+    "colMark": "Bedömning",
+    "side": {
+      "left": "Vänster",
+      "right": "Höger",
+      "straight": "Rakt fram"
+    },
+    "status": {
+      "confirmada": "Bekräftad",
+      "provisional": "Tillfällig"
+    },
+    "grade": {
+      "hard": "Mycket teknisk",
+      "tech": "Teknisk"
+    },
+    "mark": {
+      "real": "Verklig mark",
+      "falsa": "Falsk"
+    }
+  },
+  "routes": {
+    "title": "Dina rutter",
+    "subtitle": "Rutter ritade över din egen gångna mark. Spara ett pass som rutt för att söka varianter och sen exportera det som en navigerbar slinga.",
+    "mapLabel": "Karta över sparade rutter",
+    "colName": "Namn",
+    "colDistance": "Distans",
+    "colGain": "Höjd+",
+    "colCreated": "Skapad",
+    "colActions": "Åtgärder",
+    "delete": "Ta bort rutt",
+    "deleteTitle": "Ta bort denna rutt?",
+    "deleteBody": "\"{name}\" och dess variantbedömningar försvinner. Detta kan inte ångras.",
+    "cancel": "Avbryt",
+    "close": "Stäng",
+    "empty": {
+      "title": "Inga sparade rutter ännu",
+      "description": "Öppna ett löppass och tryck \"Spara som rutt\" för att börja rita över din egen mark."
+    }
   }
 }

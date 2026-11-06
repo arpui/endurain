@@ -289,5 +289,54 @@
     },
     "colCrossings": "穿越次数",
     "showPlain": "显示未作断言的已穿越路径"
+  },
+  "sectionRoutes": "路线",
+  "variants": {
+    "title": "路线变体",
+    "saveAsRoute": "保存为路线",
+    "none": "在你已经走过的地面上没有找到重新连接的替代路线。",
+    "hint": "每条变体都来自你亲自跨越的地面：如果你确认那里确有实地，就标记为真实；如果是 GPS 伪影，就标记为虚假。被否决的变体不会再出现。",
+    "colJunction": "分歧 → 回归",
+    "colSide": "侧向",
+    "colDelta": "绕行",
+    "colGain": "高差",
+    "colStatus": "证据",
+    "colMark": "裁定",
+    "side": {
+      "left": "左侧",
+      "right": "右侧",
+      "straight": "直行"
+    },
+    "status": {
+      "confirmada": "已确认",
+      "provisional": "暂定"
+    },
+    "grade": {
+      "hard": "非常技术性",
+      "tech": "技术性"
+    },
+    "mark": {
+      "real": "实地存在",
+      "falsa": "虚假"
+    }
+  },
+  "routes": {
+    "title": "你的路线",
+    "subtitle": "在你自己走过的地面上设计的路线。将一次活动保存为路线，即可搜索其变体，并在之后导出为可导航的 course。",
+    "mapLabel": "已保存路线的地图",
+    "colName": "名称",
+    "colDistance": "距离",
+    "colGain": "爬升+",
+    "colCreated": "创建时间",
+    "colActions": "操作",
+    "delete": "删除路线",
+    "deleteTitle": "删除这条路线？",
+    "deleteBody": "“{name}”及其变体裁定将会消失。此操作无法撤销。",
+    "cancel": "取消",
+    "close": "关闭",
+    "empty": {
+      "title": "尚未保存任何路线",
+      "description": "打开一次跑步活动并按“保存为路线”，开始在你自己的地面上设计。"
+    }
   }
 }

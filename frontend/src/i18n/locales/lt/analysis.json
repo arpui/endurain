@@ -289,5 +289,54 @@
     },
     "colCrossings": "Pravažimai",
     "showPlain": "Rodyti ir pereitas be įvertinimo takus"
+  },
+  "sectionRoutes": "Maršrutai",
+  "variants": {
+    "title": "Maršruto variantai",
+    "saveAsRoute": "Išsaugoti kaip maršrutą",
+    "none": "Nerasta jungties alternatyvos virš žemės, kurios jau esi pats nuėjęs.",
+    "hint": "Kiekvienas variantas kilęs iš žemės, kurią pats perkirtai: pažymėk tikru, jei matei, kad žemė ten yra, klaidingu, jei tai GPS artefaktas. Atmesti variantai niekada negrįžta.",
+    "colJunction": "Atšaka → Grįžimas",
+    "colSide": "Pusė",
+    "colDelta": "Aplinkkelis",
+    "colGain": "Aukščio skirtumas",
+    "colStatus": "Įrodymas",
+    "colMark": "Nuosprendis",
+    "side": {
+      "left": "Kairė",
+      "right": "Dešinė",
+      "straight": "Tiesiai"
+    },
+    "status": {
+      "confirmada": "Patvirtintas",
+      "provisional": "Laikinas"
+    },
+    "grade": {
+      "hard": "Labai techniška",
+      "tech": "Techniška"
+    },
+    "mark": {
+      "real": "Tikra žemė",
+      "falsa": "Klaidinga"
+    }
+  },
+  "routes": {
+    "title": "Tavo maršrutai",
+    "subtitle": "Maršrutai, suplanuoti ant tavo pat nueitos žemės. Išsaugok veiklą kaip maršrutą, kad ieškotum variantų ir vėliau eksportuotum kaip naviguojamą maršrutą.",
+    "mapLabel": "Išsaugotų maršrutų žemėlapis",
+    "colName": "Pavadinimas",
+    "colDistance": "Nuotolis",
+    "colGain": "D+",
+    "colCreated": "Sukurta",
+    "colActions": "Veiksmai",
+    "delete": "Ištrinti maršrutą",
+    "deleteTitle": "Ištrinti šį maršrutą?",
+    "deleteBody": "„{name}“ ir jos variantų nuosprendžiai dings. Šio veiksmo negalima atšaukti.",
+    "cancel": "Atšaukti",
+    "close": "Uždaryti",
+    "empty": {
+      "title": "Dar nėra išsaugotų maršrutų",
+      "description": "Atidaryk bėgimą ir paspausk „Išsaugoti kaip maršrutą“, kad pradėtum braižyti ant savo žemės."
+    }
   }
 }

@@ -289,5 +289,54 @@
     },
     "colCrossings": "Passages",
     "showPlain": "Afficher aussi les sentiers traversés sans affirmation"
+  },
+  "sectionRoutes": "Itinéraires",
+  "variants": {
+    "title": "Variantes de parcours",
+    "saveAsRoute": "Enregistrer comme itinéraire",
+    "none": "Aucune alternative de reconnexion trouvée sur du terrain que vous avez déjà parcouru.",
+    "hint": "Chaque variante part du terrain que vous avez vous-même foulé : marquez-la réelle si le sol est bien là, fausse si c'est un artefact du GPS. Les variantes refusées ne reviennent jamais.",
+    "colJunction": "Départ → Retour",
+    "colSide": "Côté",
+    "colDelta": "Détour",
+    "colGain": "Dénivelé",
+    "colStatus": "Preuve",
+    "colMark": "Verdict",
+    "side": {
+      "left": "Gauche",
+      "right": "Droite",
+      "straight": "En ligne"
+    },
+    "status": {
+      "confirmada": "Confirmée",
+      "provisional": "Provisoire"
+    },
+    "grade": {
+      "hard": "Très technique",
+      "tech": "Technique"
+    },
+    "mark": {
+      "real": "Sol réel",
+      "falsa": "Fausse"
+    }
+  },
+  "routes": {
+    "title": "Vos itinéraires",
+    "subtitle": "Itinéraires dessinés sur le terrain que vous avez réellement parcouru. Enregistrez une sortie comme itinéraire pour y chercher des variantes et, plus tard, l'exporter en parcours navigable.",
+    "mapLabel": "Carte des itinéraires enregistrés",
+    "colName": "Nom",
+    "colDistance": "Distance",
+    "colGain": "Dénivelé+",
+    "colCreated": "Création",
+    "colActions": "Actions",
+    "delete": "Supprimer l'itinéraire",
+    "deleteTitle": "Supprimer cet itinéraire ?",
+    "deleteBody": "« {name} » et ses verdicts de variantes disparaîtront. Cette action est irréversible.",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "empty": {
+      "title": "Aucun itinéraire enregistré",
+      "description": "Ouvrez une sortie course à pied et appuyez sur « Enregistrer comme itinéraire » pour commencer à concevoir sur votre terrain."
+    }
   }
 }

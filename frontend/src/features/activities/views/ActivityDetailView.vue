@@ -17,18 +17,22 @@ import { useCurrentUser } from '@/features/auth/composables/useCurrentUser'
 import { activityTypeIsRunning } from '@/features/activities/utils/activityType'
 import { gradeTrailSection, pointsWithin } from '@/features/analysis/utils/trailDegree'
 import type { MapOverlay } from '@/composables/useMapProvider'
-import type { TrailSection, TrailVerdict } from '@/features/analysis/types'
+import type { TrailSection, TrailVerdict, TrailVariant } from '@/features/analysis/types'
 import { themeColor } from '@/lib/themeColor'
 import ActivityDetailHeader from '@/features/activities/components/ActivityDetailHeader.vue'
 import ActivityIntervalTable from '@/features/analysis/components/ActivityIntervalTable.vue'
 import ActivityLoadScores from '@/features/analysis/components/ActivityLoadScores.vue'
 import LapDynamicsTable from '@/features/analysis/components/LapDynamicsTable.vue'
 import TrailSectionsCard from '@/features/analysis/components/TrailSectionsCard.vue'
+import TrailVariantsCard from '@/features/analysis/components/TrailVariantsCard.vue'
 import {
   useActivityIntervalsQuery,
+  useCreateRouteMutation,
   useLapDynamicsQuery,
   useTrailSectionMarkMutation,
   useTrailSectionsQuery,
+  useTrailVariantsQuery,
+  useVariantMarkMutation,
 } from '@/features/analysis/composables/useAnalysis'
 import ActivityGallery from '@/features/activities/components/ActivityGallery.vue'
 import ActivityGearCard from '@/features/activities/components/ActivityGearCard.vue'
@@ -183,6 +187,75 @@ const galleryElement = ref<HTMLElement | null>(null)
 function selectTrailSection(section: TrailSection): void {
   trailSelected.value = section.startM
   galleryElement.value?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+// Reconnection alternatives along this route's own ground (experimental): they
+// only come from the athlete's personal graph, so they speak even where no
+// cartography does. Owners only, same gate as the sections.
+const { data: trailVariants } = useTrailVariantsQuery(
+  activityId,
+  computed(() => activityLoaded.value && isOwner.value && isRunActivity.value),
+)
+// The variant both surfaces point at: chosen from the table or from the map.
+const variantSelected = ref<number | null>(null)
+// The selected variant drawn over the track: solid when the graph evidences it
+// firmly, thinner when it is provisional - the honesty the athlete judges.
+const variantOverlay = computed<MapOverlay[]>(() => {
+  const variant = (trailVariants.value?.variants ?? []).find(
+    (candidate) => candidate.splitM === variantSelected.value,
+  )
+  if (!variant) {
+    return []
+  }
+  return [
+    {
+      points: variant.points,
+      color: themeColor(variant.status === 'confirmada' ? '--color-goal' : '--color-info'),
+      weight: 5,
+      opacity: 0.9,
+      name: `${t(`analysis.variants.status.${variant.status}`)} · ${variant.variantM} m · ${variant.deltaM > 0 ? '+' : ''}${variant.deltaM} m`,
+      onSelect: () => {
+        variantSelected.value = variant.splitM
+      },
+    },
+  ]
+})
+// Where the map should travel when a variant row is picked.
+const variantFocus = computed(() => {
+  const variant = (trailVariants.value?.variants ?? []).find(
+    (candidate) => candidate.splitM === variantSelected.value,
+  )
+  return variant ? variant.points : []
+})
+// What the map carries on top of the track: section grades and, when picked,
+// the variant's drawn line.
+const galleryOverlays = computed(() => [
+  ...(showTrailSections.value ? mapOverlays.value : []),
+  ...variantOverlay.value,
+])
+// Where the map travels on a row click, from either table.
+const galleryFocus = computed(() => [...trailFocus.value, ...variantFocus.value])
+const variantMarks = useVariantMarkMutation(activityId)
+/** Judge a variant: real ground, or a suggestion to bury (``null`` takes it back). */
+function markVariant(splitM: number, verdict: 'real' | 'falsa' | null): void {
+  variantMarks.mutate({ splitM, verdict })
+}
+
+/** Table row click: select the variant, move the map to it and bring it into view. */
+function selectVariant(variant: TrailVariant): void {
+  variantSelected.value = variant.splitM
+  galleryElement.value?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+// Saving this activity's track as a designed route is how the variant engine
+// gets a plan to reason about: the route is stored, then variants are searched
+// along it on the activity view itself.
+const routeSaver = useCreateRouteMutation()
+function saveActivityAsRoute(): void {
+  if (!activity.value || trackPoints.value.length < 2) {
+    return
+  }
+  routeSaver.mutate({ name: activity.value.name, points: trackPoints.value })
 }
 // The analysis laps table replaces the plain one for the owner: same rows, plus
 // power, stride length, the lap's ascent-and-descent pair and its share of the aRSS.
@@ -437,8 +510,8 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
       <div ref="galleryElement">
         <ActivityGallery
           :points="showMap ? trackPoints : []"
-          :overlays="showTrailSections ? mapOverlays : []"
-          :focus-on="trailFocus"
+          :overlays="galleryOverlays"
+          :focus-on="galleryFocus"
           :activity-id="activity.id"
           :is-owner="isOwner"
         />
@@ -535,6 +608,17 @@ const notFound = computed(() => !isPending.value && !isError.value && activity.v
         :selected="trailSelected"
         @select="selectTrailSection"
         @mark="markTrailSection"
+      />
+
+      <!-- Reconnection alternatives along this route's own ground: experimental
+           pass over the personal graph, owners only, shown when it finds any. -->
+      <TrailVariantsCard
+        v-if="isOwner && isRunActivity"
+        :variants="trailVariants?.variants ?? []"
+        :selected="variantSelected"
+        @select="selectVariant"
+        @mark="markVariant"
+        @save-route="saveActivityAsRoute"
       />
 
       <Card v-if="showSegments || isOwner" class="flex flex-col gap-3">

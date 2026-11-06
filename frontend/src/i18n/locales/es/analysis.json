@@ -289,5 +289,54 @@
     },
     "colCrossings": "Travesías",
     "showPlain": "Dibuja también los caminos cruzados sin reclamo"
+  },
+  "sectionRoutes": "Rutas",
+  "variants": {
+    "title": "Variantes de recorrido",
+    "saveAsRoute": "Guardar como ruta",
+    "none": "No se encontró ninguna alternativa de reconexión sobre terreno que ya hayas pisado.",
+    "hint": "Cada variante sale del terreno que tú mismo cruzaste: márcala como real si has visto que el suelo está ahí, falsa si es un artefacto del GPS. Las variantes rechazadas no vuelven nunca.",
+    "colJunction": "Salida → Regreso",
+    "colSide": "Lado",
+    "colDelta": "Desvío",
+    "colGain": "Desnivel",
+    "colStatus": "Evidencia",
+    "colMark": "Veredicto",
+    "side": {
+      "left": "Izquierda",
+      "right": "Derecha",
+      "straight": "En línea"
+    },
+    "status": {
+      "confirmada": "Confirmada",
+      "provisional": "Provisional"
+    },
+    "grade": {
+      "hard": "Muy técnico",
+      "tech": "Técnico"
+    },
+    "mark": {
+      "real": "Suelo real",
+      "falsa": "Falsa"
+    }
+  },
+  "routes": {
+    "title": "Tus rutas",
+    "subtitle": "Rutas diseñadas sobre tu terreno recorrido. Guarda una salida como ruta para buscar sus variantes y, más adelante, exportarla como recorrido navegable.",
+    "mapLabel": "Mapa de las rutas guardadas",
+    "colName": "Nombre",
+    "colDistance": "Distancia",
+    "colGain": "Desnivel+",
+    "colCreated": "Creación",
+    "colActions": "Acciones",
+    "delete": "Eliminar ruta",
+    "deleteTitle": "¿Eliminar esta ruta?",
+    "deleteBody": "«{name}» y sus veredictos de variantes desaparecerán. Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "empty": {
+      "title": "Aún no has guardado ninguna ruta",
+      "description": "Abre una salida a correr y pulsa «Guardar como ruta» para empezar a diseñar sobre tu terreno."
+    }
   }
 }

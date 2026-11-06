@@ -478,6 +478,8 @@ export type TrailOsmDto = Schemas['TrailOsmRead']
 export type TrailMarkDto = Schemas['TrailMarkRead']
 export type TrailNetworkDto = Schemas['TrailNetworkRead']
 export type TrailNetworkWayDto = Schemas['TrailNetworkWayRead']
+export type TrailVariantsDto = Schemas['TrailVariantsRead']
+export type RouteDto = Schemas['RouteRead']
 export type TrailPointDto = Schemas['TrailPointRead']
 
 /** What the athlete says about a stretch the detector claimed. */
@@ -632,4 +634,61 @@ export interface TrailNetwork {
   minDescents: number
   /** The ways, best claim first. */
   ways: TrailNetworkWay[]
+}
+
+/** The athlete's verdict on one suggested variant. */
+export type VariantVerdict = 'real' | 'falsa'
+
+/** One reconnection variant suggested along a planned route. */
+export interface TrailVariant {
+  /** Ground position of the junction, metres from the route start. */
+  splitM: number
+  /** Ground position where the variant joins back. */
+  rejoinM: number
+  /** Which side it leaves the route at the junction. */
+  side: 'left' | 'right' | 'straight'
+  /** Ground the variant covers, metres. */
+  variantM: number
+  /** Ground of the stretch it replaces, metres. */
+  mainM: number
+  /** Variant minus main. */
+  deltaM: number
+  /** Variant minus main elevation gain, metres. */
+  deltaGainM: number
+  /** How firmly the personal graph evidences it. */
+  status: 'confirmada' | 'provisional'
+  /** Hardest technical claim found along it. */
+  grade: string
+  /** The drawn polyline, shaped by certified ways where real. */
+  points: GeoPoint[]
+  /** The athlete's verdict on it, when placed. */
+  mark: VariantVerdict | null
+}
+
+/** The variant analysis of one planned route. */
+export interface TrailVariants {
+  /** Activity the variants were searched along. */
+  activityId: number
+  /** Grid size the search walked on, metres. */
+  cellM: number
+  /** The suggestions, junction order. */
+  variants: TrailVariant[]
+}
+
+/** A route the athlete designed over their own network. */
+export interface DesignRoute {
+  /** Route id. */
+  id: number
+  /** Route name. */
+  name: string
+  /** Ordered polyline as saved. */
+  points: GeoPoint[]
+  /** Ground covered, metres. */
+  distanceM: number
+  /** Elevation gain, metres. */
+  gainM: number
+  /** Free-text remarks. */
+  notes: string | null
+  /** Creation instant, ISO. */
+  createdAt: string
 }

@@ -289,5 +289,54 @@
     },
     "colCrossings": "Průchody",
     "showPlain": "Zobrazit také prošlé cesty bez tvrzení"
+  },
+  "sectionRoutes": "Trasy",
+  "variants": {
+    "title": "Varianty trasy",
+    "saveAsRoute": "Uložit jako trasu",
+    "none": "Žádná alternativa spojení nebyla nalezena nad terénem, který už jsi proběhl.",
+    "hint": "Každá varianta vychází z terénu, který jsi sám prošel: označ ji jako reálnou, pokud jsi viděl, že tam země je, a falešnou, pokud je to artefakt GPS. Odmítnuté varianty se už nikdy nevrátí.",
+    "colJunction": "Odbočení → Návrat",
+    "colSide": "Strana",
+    "colDelta": "Zákrut",
+    "colGain": "Převýšení",
+    "colStatus": "Důkaz",
+    "colMark": "Verdikt",
+    "side": {
+      "left": "Vlevo",
+      "right": "Vpravo",
+      "straight": "Rovně"
+    },
+    "status": {
+      "confirmada": "Potvrzena",
+      "provisional": "Předběžná"
+    },
+    "grade": {
+      "hard": "Velmi technické",
+      "tech": "Technické"
+    },
+    "mark": {
+      "real": "Reálná země",
+      "falsa": "Falešná"
+    }
+  },
+  "routes": {
+    "title": "Tvoje trasy",
+    "subtitle": "Trasy navržené nad tvým vlastním proběhnutým terénem. Ulož běh jako trasu pro hledání variant a pozdější export jako navigovatelný kurz.",
+    "mapLabel": "Mapa uložených tras",
+    "colName": "Název",
+    "colDistance": "Vzdálenost",
+    "colGain": "Převýšení+",
+    "colCreated": "Vytvořeno",
+    "colActions": "Akce",
+    "delete": "Smazat trasu",
+    "deleteTitle": "Smazat tuto trasu?",
+    "deleteBody": "„{name}“ a její verdikty variant zmizí. Tuto akci nelze vrátit.",
+    "cancel": "Zrušit",
+    "close": "Zavřít",
+    "empty": {
+      "title": "Zatím žádné uložené trasy",
+      "description": "Otevři běh a stiskni „Uložit jako trasu“ a začni navrhovat nad svým terénem."
+    }
   }
 }
