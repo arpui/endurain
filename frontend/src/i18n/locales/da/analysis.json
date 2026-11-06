@@ -287,6 +287,7 @@
       "title": "Ingen passerede stier endnu",
       "description": "Et par nedstigninger ad samme sti skal til, før denne visning har evidens nedstigningsnetværk"
     },
-    "colCrossings": "Gennemgange"
+    "colCrossings": "Gennemgange",
+    "showPlain": "Vis også krydsede stier uden hævdelse"
   }
 }

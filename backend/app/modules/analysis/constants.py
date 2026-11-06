@@ -622,4 +622,4 @@ OSM_COVER_CHUNK_M = 150.0
 #: be the whole signal.
 TRAIL_NETWORK_MIN_DESCENTS = 3
 #: Ways handed back by one network read, best-claimed first.
-TRAIL_NETWORK_MAX_WAYS = 800
+TRAIL_NETWORK_MAX_WAYS = 5000

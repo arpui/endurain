@@ -287,6 +287,7 @@
       "title": "No crossed ways yet",
       "description": "A few descents of the same path accumulate the evidence this view needs."
     },
-    "colCrossings": "Traversed"
+    "colCrossings": "Traversed",
+    "showPlain": "Also draw crossed ways that carry no claim"
   }
 }

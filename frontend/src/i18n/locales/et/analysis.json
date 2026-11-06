@@ -287,6 +287,7 @@
       "title": "Ületatud radu veel pole",
       "description": "Sama raja mõned laskumised on vajalikud, et see vaade saaks tõendusmaterjali."
     },
-    "colCrossings": "Ületused"
+    "colCrossings": "Ületused",
+    "showPlain": "Näita ka ületatud radu ilma väiteita"
   }
 }

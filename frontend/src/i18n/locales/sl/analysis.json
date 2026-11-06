@@ -287,6 +287,7 @@
       "title": "Še ni prehojenih poti",
       "description": "Potrebnih je nekaj spustov po isti poti, da ta pogled sploh ima dokaze."
     },
-    "colCrossings": "Prehodi"
+    "colCrossings": "Prehodi",
+    "showPlain": "Pokaži tudi prehojene poti brez trditve"
   }
 }

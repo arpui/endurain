@@ -287,6 +287,7 @@
       "title": "Ancora nessun sentiero attraversato",
       "description": "Servono alcune discese sullo stesso sentiero perché questa vista abbia evidenze."
     },
-    "colCrossings": "Attraversamenti"
+    "colCrossings": "Attraversamenti",
+    "showPlain": "Mostra anche i sentieri attraversati senza rivendita"
   }
 }

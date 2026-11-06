@@ -287,6 +287,7 @@
       "title": "Aún no hay caminos cruzados",
       "description": "Faltan algunos descensos por el mismo camino para que esta vista tenga evidencia en la que apoyarse."
     },
-    "colCrossings": "Travesías"
+    "colCrossings": "Travesías",
+    "showPlain": "Dibuja también los caminos cruzados sin reclamo"
   }
 }

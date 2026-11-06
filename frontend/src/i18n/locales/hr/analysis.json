@@ -287,6 +287,7 @@
       "title": "Još nema pređenih staza",
       "description": "Treba nekoliko silazaka istom stazi da ovaj prikaz ima dokaze."
     },
-    "colCrossings": "Prolasci"
+    "colCrossings": "Prolasci",
+    "showPlain": "Prikaži i pređene staze bez tvrdnje"
   }
 }

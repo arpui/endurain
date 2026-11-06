@@ -287,6 +287,7 @@
       "title": "Még nincs bejárt ösvény",
       "description": "Néhány ugyanazon ösvényen megtett lefelé haladás kell, hogy ez a nézet bizonyítékokra támaszkodhasson."
     },
-    "colCrossings": "Áthaladások"
+    "colCrossings": "Áthaladások",
+    "showPlain": "Az igény nélküli bejárt ösvények mutatása"
   }
 }

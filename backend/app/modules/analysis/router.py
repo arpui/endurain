@@ -197,7 +197,7 @@ def get_trail_network(
     west: Annotated[float | None, Query(ge=-180, le=180)] = None,
     north: Annotated[float | None, Query(ge=-90, le=90)] = None,
     east: Annotated[float | None, Query(ge=-180, le=180)] = None,
-    limit: Annotated[int, Query(ge=1, le=1000)] = analysis_constants.TRAIL_NETWORK_MAX_WAYS,
+    limit: Annotated[int, Query(ge=1, le=5000)] = analysis_constants.TRAIL_NETWORK_MAX_WAYS,
 ) -> analysis_schema.TrailNetworkRead:
     """Return the caller's crossed ways as a network, each judged by its own descents.
 

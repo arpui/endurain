@@ -712,12 +712,16 @@ export async function deleteTrailSectionMark(
  * Read the network of mapped ways the athlete has crossed, each judged by its
  * own descents.
  *
+ * @param limit - Maximum ways to serve; the whole crossed network wants a high one.
  * @param signal - Optional abort signal.
  * @returns The crossed ways, best claim first.
  * @throws {HttpError} When the request fails.
  */
-export async function fetchTrailNetwork(signal?: AbortSignal): Promise<TrailNetwork> {
-  const dto = await apiFetch<TrailNetworkDto>('/analysis/trail-network', { signal })
+export async function fetchTrailNetwork(limit = 5000, signal?: AbortSignal): Promise<TrailNetwork> {
+  const query = new URLSearchParams({ limit: String(limit) })
+  const dto = await apiFetch<TrailNetworkDto>(`/analysis/trail-network?${query.toString()}`, {
+    signal,
+  })
   return {
     method: dto.method,
     threshold: dto.threshold,

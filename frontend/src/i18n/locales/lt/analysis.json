@@ -287,6 +287,7 @@
       "title": "Dar nėra pereitų takų",
       "description": "Reikia kelių nusileidimų tuo pačiu taku, kad šis vaizdas turėtų įrodymų."
     },
-    "colCrossings": "Pravažimai"
+    "colCrossings": "Pravažimai",
+    "showPlain": "Rodyti ir pereitas be įvertinimo takus"
   }
 }

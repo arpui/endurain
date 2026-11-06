@@ -287,6 +287,7 @@
       "title": "Nog geen gekruiste paden",
       "description": "Enkele afdalingen over hetzelfde pad zijn nodig voordat dit overzicht bewijs heeft."
     },
-    "colCrossings": "Doorgangen"
+    "colCrossings": "Doorgangen",
+    "showPlain": "Ook gekruiste paden zonder bewering tonen"
   }
 }
