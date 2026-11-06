@@ -675,7 +675,9 @@ describe('trail network', () => {
       ],
     })
     const network = await fetchTrailNetwork()
-    expect(apiFetch).toHaveBeenCalledWith('/analysis/trail-network', expect.anything())
+    expect(String(vi.mocked(apiFetch).mock.calls[0]?.[0])).toContain(
+      '/analysis/trail-network?limit=5000',
+    )
     expect(network.minDescents).toBe(3)
     expect(network.hardRatio).toBe(2.0)
     expect(network.ways[0]).toMatchObject({

@@ -287,6 +287,7 @@
       "title": "Inga korsade stigar ännu",
       "description": "Några nedstigningar samma stig krävs innan den här vyn har evidens."
     },
-    "colCrossings": "Passager"
+    "colCrossings": "Passager",
+    "showPlain": "Vis även korsade stigar utan påstående"
   }
 }

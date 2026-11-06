@@ -348,11 +348,16 @@ export function useTrailSectionMarkMutation(
  *
  * @returns The TanStack query for the network payload.
  */
-export function useTrailNetworkQuery() {
+/**
+ * @param limit - Ways to serve; defaults high so the whole crossed network arrives.
+ * @returns The TanStack query for the network payload.
+ */
+export function useTrailNetworkQuery(limit: MaybeRefOrGetter<number> = 5000) {
   const { isAuthenticated } = storeToRefs(useAuthStore())
+  const value = computed(() => toValue(limit))
   return useQuery({
-    queryKey: queryKeys.analysis.trailNetwork(),
-    queryFn: ({ signal }) => fetchTrailNetwork(signal),
+    queryKey: queryKeys.analysis.trailNetwork(value.value),
+    queryFn: ({ signal }) => fetchTrailNetwork(value.value, signal),
     enabled: isAuthenticated,
   })
 }

@@ -287,6 +287,7 @@
       "title": "Encara no hi ha camins travessats",
       "description": "Falten uns quants descensos del mateix camí perquè aquesta vista tingui evidència per dir res."
     },
-    "colCrossings": "Travessades"
+    "colCrossings": "Travessades",
+    "showPlain": "Dibuixa també els camins travessats sense claim"
   }
 }

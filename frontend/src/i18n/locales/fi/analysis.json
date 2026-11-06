@@ -287,6 +287,7 @@
       "title": "Ei vielä kuljettuja polkuja",
       "description": "Muutama laskeutuma samaa polkua pitkin tarvitaan, jolla näkymällä on näyttöä."
     },
-    "colCrossings": "Kulennukset"
+    "colCrossings": "Kulennukset",
+    "showPlain": "Näytä myös kuljetut polut ilman väitteitä"
   }
 }

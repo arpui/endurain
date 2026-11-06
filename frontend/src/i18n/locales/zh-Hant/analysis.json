@@ -287,6 +287,7 @@
       "title": "尚無穿越過的路徑",
       "description": "同一條路徑上還需幾次下坡，此檢視才有依據。"
     },
-    "colCrossings": "穿越次數"
+    "colCrossings": "穿越次數",
+    "showPlain": "顯示未作斷言的已穿越路徑"
   }
 }

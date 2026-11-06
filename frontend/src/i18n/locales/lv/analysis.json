@@ -287,6 +287,7 @@
       "title": "Vēl nav šķērsotu celiņu",
       "description": "Vajadzīgas dažas nolaišanās pa to pašu celiņu, lai šim skatam būtu pierādījumu."
     },
-    "colCrossings": "Šķērsojumi"
+    "colCrossings": "Šķērsojumi",
+    "showPlain": "Rādīt arī šķērsotos bez apgalvojuma"
   }
 }

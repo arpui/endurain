@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { Switch } from '@/components/ui/switch'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -14,7 +15,10 @@ import { themeColor } from '@/lib/themeColor'
 
 const { t, locale } = useI18n()
 
-const networkQuery = useTrailNetworkQuery()
+/** Whether the map also draws crossed ways that carry no claim. */
+const showPlain = ref(true)
+const limit = computed(() => (showPlain.value ? 5000 : 1500))
+const networkQuery = useTrailNetworkQuery(limit)
 const network = computed(() => networkQuery.data.value ?? null)
 
 /** The way the viewer picked, on the map or in the table. */
@@ -54,6 +58,11 @@ function grade(value: number | null): string {
     </header>
 
     <AnalysisSectionsNav />
+
+    <label class="flex items-center gap-2 text-caption text-muted-foreground">
+      <Switch v-model="showPlain" />
+      {{ t('analysis.trailNetwork.showPlain') }}
+    </label>
 
     <ErrorState v-if="networkQuery.isError.value" :title="t('analysis.loadFailed')" />
 
