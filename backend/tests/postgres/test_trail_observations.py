@@ -19,6 +19,7 @@ import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
 import modules.analysis.crud as analysis_crud
 import modules.analysis.models as analysis_models
+import modules.analysis.schema as analysis_schema
 import modules.analysis.service as analysis_service
 from tests._helpers.db import ensure_user
 
@@ -362,6 +363,20 @@ class TestPersonalGraph:
             db.commit()
             got_nodes, _ = analysis_crud.list_user_graph_in_bbox(_USER_ID, -10, 5000, -10, 10, db)
             assert len(got_nodes) == 4500
+
+
+class TestDesignedRoutes:
+    def test_a_saved_route_carries_its_timestamp_and_totals(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        payload = analysis_schema.RouteCreate(name="vora del riu", geometry=[[42.0, 1.5], [42.0, 1.501]])
+        with pg_factory() as db:
+            created = analysis_service.create_route(_USER_ID, payload, db)
+            assert created.id is not None and created.created_at
+            assert created.distance_m > 0
+            listed = analysis_service.list_routes(_USER_ID, db)
+            assert [route.id for route in listed] == [created.id]
+            assert analysis_service.delete_route(created.id, _USER_ID, db) is True
+            assert analysis_service.list_routes(_USER_ID, db) == []
 
 
 class TestWayCrossings:
