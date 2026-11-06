@@ -6,6 +6,7 @@ the athlete typed is never overwritten, and who may read a stored load. The
 formulas themselves are tested in ``test_methods.py``.
 """
 
+import math
 import statistics
 from datetime import UTC, date, datetime, timedelta
 from types import SimpleNamespace
@@ -25,6 +26,7 @@ import modules.analysis.schema as analysis_schema
 import modules.analysis.service as analysis_service
 import modules.analysis.trail as analysis_trail
 import modules.analysis.trail_osm as analysis_trail_osm
+import modules.analysis.variants as analysis_variants
 
 _SVC = "modules.analysis.service"
 _T0 = datetime(2026, 10, 15, 16, 0, 0)
@@ -1595,6 +1597,71 @@ class TestTrailNetwork:
         with patch(f"{_SVC}.analysis_crud.list_trail_way_evidence", return_value=[]) as read:
             analysis_service.get_trail_network(2, db, bbox=(42.0, 1.0, 43.0, 2.0))
         assert read.call_args.kwargs["bbox"] == (42.0, 1.0, 43.0, 2.0)
+
+
+class TestPersonalGraphAndVariants:
+    """The stored graph feeds the variant engine; the verdicts gate what surfaces."""
+
+    CELL = 15.0
+    N = 42  # route of 42 adjacent cells: 630 m of ground
+
+    @classmethod
+    def _latlng(cls, x: int, y: int) -> tuple[float, float]:
+        lat = 42.0 + y * cls.CELL / 111195.0
+        lng = 1.5 + x * cls.CELL / (111320.0 * math.cos(math.radians(42.3)))
+        return lat, lng
+
+    @classmethod
+    def _fixture(cls, step_max_alt: float = 5.0, on_path_alt: int = 1) -> tuple[list, list, dict, dict]:
+        cells = [(k, 0) for k in range(cls.N)]
+        cum = [k * cls.CELL for k in range(cls.N)]
+        alt = [(k, 1) for k in range(cls.N - 1)]
+        node_map = {
+            c: {"lat": cls._latlng(*c)[0], "lng": cls._latlng(*c)[1], "ele": 0.0, "grade": ""} for c in cells + alt
+        }
+        adjacency: dict[tuple[int, int], list[dict]] = {}
+
+        def add(a, b, passes, step_max, on_path):
+            adjacency.setdefault(a, []).append(
+                {
+                    "to": b,
+                    "len": cls.CELL,
+                    "gain": 0.0,
+                    "loss": 0.0,
+                    "passes": passes,
+                    "step_max": step_max,
+                    "on_path": on_path,
+                }
+            )
+
+        for k in range(cls.N - 1):
+            add((k, 0), (k + 1, 0), 3, 5.0, 1)
+        for k in range(cls.N - 2):
+            add((k, 1), (k + 1, 1), 2, step_max_alt, on_path_alt)
+        add((2, 0), (2, 1), 2, step_max_alt, on_path_alt)  # leave the route at km-cell 2
+        add((cls.N - 2, 1), (cls.N - 1, 0), 2, 5.0, 1)  # and rejoin near the end
+        return cells, cum, node_map, adjacency
+
+    def test_a_reconnecting_alternative_is_found_between_route_cells(self):
+        cells, cum, node_map, adjacency = self._fixture()
+        found = analysis_variants.find_variants(cells, cum, node_map, adjacency, {})
+        assert len(found) == 1
+        variant = found[0]
+        assert variant["side"] == "left"
+        assert variant["status"] == "confirmada"
+        main = cum[-1] - cum[2]
+        assert 0.5 * main <= variant["variant_m"] <= 2.0 * main
+
+    def test_a_denied_variant_is_never_resurfaced(self):
+        cells, cum, node_map, adjacency = self._fixture()
+        marks = {round(cum[2], 1): "falsa"}
+        found = analysis_variants.find_variants(cells, cum, node_map, adjacency, marks)
+        assert found == []
+
+    def test_an_edge_born_of_a_long_gps_step_never_forms_a_variant(self):
+        cells, cum, node_map, adjacency = self._fixture(step_max_alt=90.0, on_path_alt=0)
+        found = analysis_variants.find_variants(cells, cum, node_map, adjacency, {})
+        assert found == []
 
 
 class TestWayCoverage:

@@ -973,3 +973,107 @@ class RecomputeQueued(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     queued: bool
+
+
+class TrailVariantRead(BaseModel):
+    """One reconnection variant suggested for a planned route.
+
+    Attributes:
+        split_m: Ground position of the junction along the route.
+        rejoin_m: Ground position where the variant joins back.
+        side: ``left`` / ``right`` / ``straight`` at the junction.
+        variant_m: Ground the variant covers.
+        main_m: Ground of the stretch it replaces.
+        delta_m: Variant minus main, metres.
+        delta_gain_m: Variant minus main elevation gain, metres.
+        status: ``confirmada`` (evidence-backed) or ``provisional``.
+        grade: Hardest technical claim found along the variant.
+        path_latlng: The drawn polyline, shaped by certified ways where real.
+        mark: The athlete's verdict on it, when placed.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    split_m: StrictFloat
+    rejoin_m: StrictFloat
+    side: Literal["left", "right", "straight"]
+    variant_m: StrictInt
+    main_m: StrictInt
+    delta_m: StrictInt
+    delta_gain_m: StrictInt
+    status: Literal["confirmada", "provisional"]
+    grade: StrictStr
+    path_latlng: list[list[float]]
+    mark: Literal["real", "falsa"] | None
+
+
+class TrailVariantsRead(BaseModel):
+    """The variant analysis of one planned route (experimental).
+
+    Attributes:
+        activity_id: The route the variants were searched along.
+        cell_m: Graph grid size the search walked on.
+        variants: The suggestions, junction order.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    activity_id: StrictInt
+    cell_m: StrictFloat
+    variants: list[TrailVariantRead]
+
+
+class VariantMarkCreate(BaseModel):
+    """Payload for judging one variant.
+
+    Attributes:
+        split_m: Junction position of the judged variant, as reported.
+        verdict: ``real`` or ``falsa``.
+        note: Optional remark.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    split_m: StrictFloat
+    verdict: Literal["real", "falsa"]
+    note: StrictStr | None = None
+
+
+class RouteRead(BaseModel):
+    """One saved designed route.
+
+    Attributes:
+        id: Route id.
+        name: Route name.
+        geometry: Ordered ``[lat, lng]`` polyline.
+        distance_m: Ground covered.
+        gain_m: Elevation gain.
+        notes: Free-text remarks.
+        created_at: Creation instant, ISO.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: StrictInt
+    name: StrictStr
+    geometry: list[list[float]]
+    distance_m: StrictFloat
+    gain_m: StrictFloat
+    notes: StrictStr | None
+    created_at: str
+
+
+class RouteCreate(BaseModel):
+    """Payload to save a designed route.
+
+    Attributes:
+        name: Route name.
+        geometry: Ordered ``[lat, lng]`` polyline as drawn.
+        notes: Optional remarks.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: StrictStr = Field(min_length=1, max_length=128)
+    geometry: list[list[float]] = Field(min_length=2)
+    notes: StrictStr | None = None

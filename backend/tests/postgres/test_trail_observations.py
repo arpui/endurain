@@ -307,6 +307,49 @@ class TestTrailWayEvidence:
         assert {pair[1].start_m for pair in near} == {7675.0}
 
 
+class TestPersonalGraph:
+    def test_the_graph_replaces_wholesale_and_reads_back_by_box(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        nodes = [{"x": 0, "y": 0, "lat": 42.0, "lng": 1.5, "ele": 10.0, "visits": 3, "grade": "hard"}]
+        edges = [
+            {
+                "ax": 0,
+                "ay": 0,
+                "bx": 1,
+                "by": 0,
+                "length": 15.0,
+                "gain": 1.0,
+                "loss": 0.0,
+                "passes": 2,
+                "step_max": 4.0,
+                "on_path": 1,
+            },
+            {
+                "ax": 500,
+                "ay": 500,
+                "bx": 501,
+                "by": 500,
+                "length": 15.0,
+                "gain": 0.0,
+                "loss": 0.0,
+                "passes": 1,
+                "step_max": 4.0,
+                "on_path": 0,
+            },
+        ]
+        with pg_factory() as db:
+            assert analysis_crud.replace_user_graph(_USER_ID, nodes, edges, db) == (1, 2)
+            db.commit()
+            got_nodes, got_edges = analysis_crud.list_user_graph_in_bbox(_USER_ID, -10, 10, -10, 10, db)
+            assert len(got_nodes) == 1 and len(got_edges) == 1 and got_edges[0].on_path == 1
+
+            # a rebuild replaces: no double counting
+            assert analysis_crud.replace_user_graph(_USER_ID, nodes, [], db) == (1, 0)
+            db.commit()
+            _, again = analysis_crud.list_user_graph_in_bbox(_USER_ID, -100000, 100000, -100000, 100000, db)
+            assert again == []
+
+
 class TestWayCrossings:
     def test_crossings_replace_round_trip_and_the_marker_gates_the_pass(self, pg_factory):
         ensure_user(pg_factory, _USER_ID)

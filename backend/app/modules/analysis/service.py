@@ -13,6 +13,7 @@ one, and every stored load records the threshold it was divided by.
 """
 
 import calendar
+import math
 import statistics
 from bisect import bisect_left
 from collections.abc import Mapping, Sequence
@@ -35,12 +36,14 @@ import modules.activities.activity_streams.integration_service as activity_strea
 import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
 import modules.analysis.crud as analysis_crud
+import modules.analysis.graph as analysis_graph
 import modules.analysis.intervals as analysis_intervals
 import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
 import modules.analysis.trail as analysis_trail
 import modules.analysis.trail_osm as analysis_trail_osm
+import modules.analysis.variants as analysis_variants
 import modules.users.users.integration_service as users_integration
 
 logger = core_logger.get_logger(__name__)
@@ -2701,6 +2704,192 @@ def get_trail_network(
         hard_ratio=analysis_constants.TRAIL_HARD_RATIO,
         min_descents=analysis_constants.TRAIL_NETWORK_MIN_DESCENTS,
         ways=ways[:limit],
+    )
+
+
+def build_personal_graph(user_id: int, db: Session) -> tuple[int, int]:
+    """Rebuild one athlete's ground graph from every stored track, wholesale.
+
+    The graph is derived data: a full rebuild is what keeps traversals and claims
+    from being counted twice, and it is only expensive on the database, not on
+    the cartography. Nodes and edges replace the previous ones atomically.
+
+    Args:
+        user_id: The athlete whose tracks form the graph.
+        db: Database session.
+
+    Returns:
+        ``(nodes_written, edges_written)``.
+    """
+    graph_nodes: dict[tuple[int, int], dict] = {}
+    graph_edges: dict[tuple[tuple[int, int], tuple[int, int]], dict] = {}
+    after_id = 0
+    while True:
+        activity_ids = activity_integration.list_activity_ids_after(db, after_id=after_id)
+        if not activity_ids:
+            break
+        after_id = max(activity_ids)
+        for activity_id in activity_ids:
+            activity = activity_integration.get_activity_for_derivation(activity_id, db)
+            if activity is None or activity.user_id != user_id or sport_group(activity.activity_type) != "run":
+                continue
+            node_rows, edge_rows, _grades = analysis_graph.activity_graph_rows(activity_id, user_id, db)
+            analysis_graph.merge_activity_into_graph(graph_nodes, graph_edges, node_rows, edge_rows)
+
+    node_rows = [
+        {
+            "x": c[0],
+            "y": c[1],
+            "lat": v["lat_sum"] / v["visits"],
+            "lng": v["lng_sum"] / v["visits"],
+            "ele": v["ele_sum"] / v["visits"],
+            "visits": v["visits"],
+            "grade": v["grade"],
+        }
+        for c, v in graph_nodes.items()
+    ]
+    edge_rows = [{"ax": a[0], "ay": a[1], "bx": b[0], "by": b[1], **e} for (a, b), e in graph_edges.items()]
+    written = analysis_crud.replace_user_graph(user_id, node_rows, edge_rows, db)
+    db.commit()
+    logger.info(
+        "Personal graph rebuilt", extra=core_logger.context(user_id=user_id, nodes=written[0], edges=written[1])
+    )
+    return written
+
+
+def get_activity_variants(
+    activity_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> analysis_schema.TrailVariantsRead:
+    """Search reconnection variants along one of the caller's recorded routes.
+
+    The plan is the activity's own track; the ground the variants may use is the
+    athlete's stored personal graph. Verdicts already placed by the athlete are
+    carried along, and ``falsa`` ones are not repeated.
+    """
+    track = _trail_track(activity_id, db)
+    if len(track) < 10:
+        return analysis_schema.TrailVariantsRead(
+            activity_id=activity_id, cell_m=analysis_constants.TRAIL_GRAPH_CELL_M, variants=[]
+        )
+    cells, cum = analysis_variants.route_cells(track, analysis_constants.TRAIL_GRAPH_CELL_M)
+    if not cells:
+        return analysis_schema.TrailVariantsRead(
+            activity_id=activity_id, cell_m=analysis_constants.TRAIL_GRAPH_CELL_M, variants=[]
+        )
+    xs = [c[0] for c in cells]
+    ys = [c[1] for c in cells]
+    pad = int(analysis_constants.TRAIL_VARIANT_REJOIN_MAX_M / analysis_constants.TRAIL_GRAPH_CELL_M) + 10
+    nodes, edges = analysis_crud.list_user_graph_in_bbox(
+        requester_user_id, min(xs) - pad, max(xs) + pad, min(ys) - pad, max(ys) + pad, db
+    )
+    if not edges:
+        return analysis_schema.TrailVariantsRead(
+            activity_id=activity_id, cell_m=analysis_constants.TRAIL_GRAPH_CELL_M, variants=[]
+        )
+    node_map, adjacency = analysis_graph.graph_from_rows(nodes, edges)
+    marks = {
+        round(m.split_m, 1): m.verdict for m in analysis_crud.list_variant_marks(requester_user_id, activity_id, db)
+    }
+    found = analysis_variants.find_variants(cells, cum, node_map, adjacency, marks)
+    for variant in found:
+        centres = [
+            (node_map[tuple(c)]["lat"], node_map[tuple(c)]["lng"]) for c in variant["path"] if tuple(c) in node_map
+        ]
+        variant["path_latlng"] = analysis_variants.draw_along_ways(centres, requester_user_id, db) if centres else []
+        variant.pop("path")
+    return analysis_schema.TrailVariantsRead(
+        activity_id=activity_id,
+        cell_m=analysis_constants.TRAIL_GRAPH_CELL_M,
+        variants=[analysis_schema.TrailVariantRead(**variant) for variant in found],
+    )
+
+
+def save_variant_mark(
+    activity_id: int,
+    requester_user_id: int,
+    payload: analysis_schema.VariantMarkCreate,
+    db: Session,
+) -> None:
+    """Place the athlete's verdict on one suggested variant."""
+    analysis_crud.save_variant_mark(requester_user_id, activity_id, payload.split_m, payload.verdict, payload.note, db)
+    db.commit()
+    logger.info(
+        "Variant judged",
+        extra=core_logger.context(activity_id=activity_id, split_m=payload.split_m, verdict=payload.verdict),
+    )
+
+
+def clear_variant_mark(activity_id: int, requester_user_id: int, split_m: float, db: Session) -> bool:
+    """Take back the verdict on one variant."""
+    removed = analysis_crud.delete_variant_mark(requester_user_id, activity_id, split_m, db)
+    db.commit()
+    logger.info(
+        "Variant judgement taken back",
+        extra=core_logger.context(activity_id=activity_id, split_m=split_m, removed=removed),
+    )
+    return removed
+
+
+def list_routes(requester_user_id: int, db: Session) -> list[analysis_schema.RouteRead]:
+    """The caller's saved designed routes."""
+    routes = analysis_crud.list_routes(requester_user_id, db)
+    return [_to_route_read(r) for r in routes]
+
+
+def create_route(
+    requester_user_id: int,
+    payload: analysis_schema.RouteCreate,
+    db: Session,
+) -> analysis_schema.RouteRead:
+    """Persist a designed route; its totals are measured here, not trusted from the client."""
+    pts = [(float(g[0]), float(g[1])) for g in payload.geometry]
+    distance = 0.0
+    gain = 0.0
+    prev = None
+    for pt in pts:
+        if prev is not None:
+            step = _ground_m(prev, pt)
+            distance += step
+        prev = pt
+    route = analysis_crud.create_route(
+        requester_user_id, payload.name, payload.geometry, round(distance, 1), round(gain, 1), payload.notes, db
+    )
+    db.commit()
+    db.refresh(route)
+    logger.info(
+        "Route saved",
+        extra=core_logger.context(route_id=route.id, user_id=requester_user_id, distance_m=route.distance_m),
+    )
+    return _to_route_read(route)
+
+
+def delete_route(route_id: int, requester_user_id: int, db: Session) -> bool:
+    """Delete one saved route."""
+    removed = analysis_crud.delete_route(route_id, requester_user_id, db)
+    db.commit()
+    logger.info(
+        "Route deleted", extra=core_logger.context(route_id=route_id, user_id=requester_user_id, removed=removed)
+    )
+    return removed
+
+
+def _ground_m(a: tuple[float, float], b: tuple[float, float]) -> float:
+    lat_m = (b[0] - a[0]) * 111195.0
+    lng_m = (b[1] - a[1]) * 111320.0 * math.cos(math.radians((a[0] + b[0]) / 2.0))
+    return math.hypot(lat_m, lng_m)
+
+
+def _to_route_read(route) -> analysis_schema.RouteRead:
+    return analysis_schema.RouteRead(
+        id=route.id,
+        name=route.name,
+        geometry=route.geometry,
+        distance_m=route.distance_m,
+        gain_m=route.gain_m,
+        notes=route.notes,
+        created_at=route.created_at.isoformat() if route.created_at else "",
     )
 
 

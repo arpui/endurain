@@ -1053,3 +1053,262 @@ def list_trail_marks(
             .order_by(analysis_models.TrailMark.start_m)
         )
     )
+
+
+def list_crossing_way_ids(activity_id: int, user_id: int, db: Session) -> list[int]:
+    """Way ids an activity's full-track coverage matched.
+
+    Args:
+        activity_id: The session.
+        user_id: The athlete.
+        db: Database session.
+
+    Returns:
+        Distinct way ids crossed.
+    """
+    rows = db.execute(
+        select(analysis_models.WayCrossing.way_id)
+        .where(
+            analysis_models.WayCrossing.activity_id == activity_id,
+            analysis_models.WayCrossing.user_id == user_id,
+        )
+        .distinct()
+    ).all()
+    return [int(row[0]) for row in rows]
+
+
+def list_trail_mark_verdicts(activity_id: int, user_id: int, db: Session) -> dict[float, str]:
+    """The athlete's stretch verdicts for one activity, keyed by stretch start."""
+    rows = db.execute(
+        select(analysis_models.TrailMark.start_m, analysis_models.TrailMark.verdict).where(
+            analysis_models.TrailMark.activity_id == activity_id,
+            analysis_models.TrailMark.user_id == user_id,
+        )
+    ).all()
+    return {float(start_m): verdict for start_m, verdict in rows}
+
+
+def replace_user_graph(
+    user_id: int,
+    nodes: Sequence[dict],
+    edges: Sequence[dict],
+    db: Session,
+) -> tuple[int, int]:
+    """Replace the stored personal graph of one athlete wholesale.
+
+    A full replacement per rebuild is what keeps passes and claims from being
+    counted twice; the graph is derived data, cheap to rebuild and never edited
+    by hand.
+
+    Args:
+        user_id: The athlete whose graph it is.
+        nodes: Node rows in grid coordinates with centroids and grades.
+        edges: Directed edge rows with accumulated attributes.
+        db: Database session.
+
+    Returns:
+        ``(nodes_written, edges_written)``.
+    """
+    db.execute(delete(analysis_models.GraphNode).where(analysis_models.GraphNode.user_id == user_id))
+    db.execute(delete(analysis_models.GraphEdge).where(analysis_models.GraphEdge.user_id == user_id))
+    if nodes:
+        db.execute(
+            pg_insert(analysis_models.GraphNode)
+            .values([{**row, "user_id": user_id} for row in nodes])
+            .on_conflict_do_nothing(index_elements=["user_id", "x", "y"])
+        )
+    if edges:
+        db.execute(
+            pg_insert(analysis_models.GraphEdge)
+            .values([{**row, "user_id": user_id} for row in edges])
+            .on_conflict_do_nothing(index_elements=["user_id", "ax", "ay", "bx", "by"])
+        )
+    return len(nodes), len(edges)
+
+
+def list_user_graph_in_bbox(
+    user_id: int,
+    min_x: int,
+    max_x: int,
+    min_y: int,
+    max_y: int,
+    db: Session,
+) -> tuple[list[analysis_models.GraphNode], list[analysis_models.GraphEdge]]:
+    """Graph rows of one athlete inside a grid bounding box.
+
+    Edges qualify when their origin cell is inside: variant searches grow outward
+    from the planned route, so loading by origin covers what the search can walk.
+
+    Args:
+        user_id: The athlete.
+        min_x: Western grid column bound.
+        max_x: Eastern grid column bound.
+        min_y: Southern grid row bound.
+        max_y: Northern grid row bound.
+        db: Database session.
+
+    Returns:
+        ``(nodes, edges)`` inside the box.
+    """
+    nodes = list(
+        db.scalars(
+            select(analysis_models.GraphNode).where(
+                analysis_models.GraphNode.user_id == user_id,
+                analysis_models.GraphNode.x >= min_x,
+                analysis_models.GraphNode.x <= max_x,
+                analysis_models.GraphNode.y >= min_y,
+                analysis_models.GraphNode.y <= max_y,
+            )
+        )
+    )
+    edges = list(
+        db.scalars(
+            select(analysis_models.GraphEdge).where(
+                analysis_models.GraphEdge.user_id == user_id,
+                analysis_models.GraphEdge.ax >= min_x,
+                analysis_models.GraphEdge.ax <= max_x,
+                analysis_models.GraphEdge.ay >= min_y,
+                analysis_models.GraphEdge.ay <= max_y,
+            )
+        )
+    )
+    return nodes, edges
+
+
+def save_variant_mark(
+    user_id: int,
+    activity_id: int,
+    split_m: float,
+    verdict: str,
+    note: str | None,
+    db: Session,
+) -> analysis_models.VariantMark:
+    """Place or replace the athlete's verdict on one suggested variant."""
+    mark = db.get(analysis_models.VariantMark, (user_id, activity_id, split_m))
+    if mark is None:
+        mark = analysis_models.VariantMark(
+            user_id=user_id, activity_id=activity_id, split_m=split_m, verdict=verdict, note=note
+        )
+        db.add(mark)
+    else:
+        mark.verdict = verdict
+        mark.note = note
+    return mark
+
+
+def delete_variant_mark(user_id: int, activity_id: int, split_m: float, db: Session) -> bool:
+    """Take back the verdict on one variant; ``True`` when there was one."""
+    result = db.execute(
+        delete(analysis_models.VariantMark).where(
+            analysis_models.VariantMark.user_id == user_id,
+            analysis_models.VariantMark.activity_id == activity_id,
+            analysis_models.VariantMark.split_m == split_m,
+        )
+    )
+    return bool(result.rowcount)
+
+
+def list_variant_marks(user_id: int, activity_id: int, db: Session) -> list[analysis_models.VariantMark]:
+    """The athlete's variant verdicts for one planned route."""
+    return list(
+        db.scalars(
+            select(analysis_models.VariantMark).where(
+                analysis_models.VariantMark.user_id == user_id,
+                analysis_models.VariantMark.activity_id == activity_id,
+            )
+        )
+    )
+
+
+def create_route(
+    user_id: int,
+    name: str,
+    geometry: list,
+    distance_m: float,
+    gain_m: float,
+    notes: str | None,
+    db: Session,
+) -> analysis_models.Route:
+    """Persist a designed route."""
+    route = analysis_models.Route(
+        user_id=user_id, name=name, geometry=geometry, distance_m=distance_m, gain_m=gain_m, notes=notes
+    )
+    db.add(route)
+    db.flush()
+    return route
+
+
+def list_routes(user_id: int, db: Session) -> list[analysis_models.Route]:
+    """The athlete's saved routes, newest first."""
+    return list(
+        db.scalars(
+            select(analysis_models.Route)
+            .where(analysis_models.Route.user_id == user_id)
+            .order_by(analysis_models.Route.id.desc())
+        )
+    )
+
+
+def get_route(route_id: int, user_id: int, db: Session) -> analysis_models.Route | None:
+    """One saved route of the caller, or ``None``."""
+    return db.get(analysis_models.Route, route_id) if _route_belongs(route_id, user_id, db) else None
+
+
+def _route_belongs(route_id: int, user_id: int, db: Session) -> bool:
+    found = db.execute(
+        select(analysis_models.Route.id).where(
+            analysis_models.Route.id == route_id, analysis_models.Route.user_id == user_id
+        )
+    ).first()
+    return found is not None
+
+
+def delete_route(route_id: int, user_id: int, db: Session) -> bool:
+    """Delete one saved route of the caller; ``True`` when it existed."""
+    result = db.execute(
+        delete(analysis_models.Route).where(
+            analysis_models.Route.id == route_id, analysis_models.Route.user_id == user_id
+        )
+    )
+    return bool(result.rowcount)
+
+
+def has_crossing_in_range(way_id: int, user_id: int, lo_m: float, hi_m: float, db: Session) -> bool:
+    """Whether the athlete's own crossings certify that way in a stretch of it.
+
+    Args:
+        way_id: The mapped way.
+        user_id: The athlete.
+        lo_m: Along-way offset where the stretch starts.
+        hi_m: Along-way offset where it ends.
+        db: Database session.
+
+    Returns:
+        ``True`` when at least one crossing overlaps that stretch.
+    """
+    found = db.execute(
+        select(analysis_models.WayCrossing.way_id)
+        .where(
+            analysis_models.WayCrossing.way_id == way_id,
+            analysis_models.WayCrossing.user_id == user_id,
+            analysis_models.WayCrossing.start_m <= hi_m,
+            analysis_models.WayCrossing.end_m >= lo_m,
+        )
+        .limit(1)
+    ).first()
+    return found is not None
+
+
+def list_user_ids_with_trail_sessions(db: Session) -> list[int]:
+    """Athletes who have at least one measured trail session.
+
+    Args:
+        db: Database session.
+
+    Returns:
+        Distinct user ids, ordered.
+    """
+    rows = db.execute(
+        select(analysis_models.TrailSession.user_id).distinct().order_by(analysis_models.TrailSession.user_id)
+    ).all()
+    return [int(row[0]) for row in rows]
