@@ -10,6 +10,7 @@ crossings certify them in that stretch - the cartography helps, the points rule.
 
 import heapq
 import math
+from bisect import bisect_left, bisect_right
 from itertools import pairwise
 
 from sqlalchemy.orm import Session
@@ -79,49 +80,55 @@ def _rdp(points: list[tuple[float, float]], eps_m: float) -> list[tuple[float, f
     return [points[0], points[-1]]
 
 
+def _xy(node_map: dict, cell) -> tuple[float, float]:
+    """Metric position of a stored node, computed once and carried along."""
+    entry = node_map[cell]
+    xy = entry.get("xy")
+    if xy is None:
+        xy = analysis_graph.to_xy(entry["lat"], entry["lng"])
+        entry["xy"] = xy
+    return xy
+
+
 def _best_variant(adjacency: dict, node_map: dict, start, blocked: set, targets: dict, cutoff_m: float):
-    """Shortest directed path from start to any target, never touching blocked cells."""
+    """Shortest directed path from start to any target, never touching blocked cells.
+
+    Dijkstra pops in order of total length, so the first target popped at a
+    usable distance is the shortest possible reconnection: the walk ends there
+    instead of bloating outward to the cutoff.
+    """
     dist = {start: 0.0}
     prev = {}
     heap = [(0.0, start)]
-    best = None
     while heap:
         d, u = heapq.heappop(heap)
         if d > dist.get(u, math.inf):
             continue
-        if u in targets and d >= analysis_constants.TRAIL_VARIANT_MIN_LEN_M and (best is None or d < best[1]):
-            best = (u, d)
+        if u in targets and d >= analysis_constants.TRAIL_VARIANT_MIN_LEN_M:
+            path = [u]
+            while path[-1] != start:
+                path.append(prev[path[-1]])
+            path.reverse()
+            return path, d
         if d > cutoff_m:
             break
+        uxy = _xy(node_map, u)
         for step in adjacency.get(u, []):
             v = step["to"]
             if v in blocked or step["step_max"] > analysis_constants.TRAIL_GRAPH_MAX_STEP_M:
                 continue
-            centre_len = max(
-                _dist_xy(
-                    analysis_graph.to_xy(node_map[u]["lat"], node_map[u]["lng"]),
-                    analysis_graph.to_xy(node_map[v]["lat"], node_map[v]["lng"]),
-                ),
-                5.0,
-            )
+            centre_len = max(_dist_xy(uxy, _xy(node_map, v)), 5.0)
             nd = d + centre_len
             if nd < dist.get(v, math.inf):
                 dist[v] = nd
                 prev[v] = u
                 heapq.heappush(heap, (nd, v))
-    if best is None:
-        return None
-    target, length = best
-    path = [target]
-    while path[-1] != start:
-        path.append(prev[path[-1]])
-    path.reverse()
-    return path, length
+    return None
 
 
 def _tangent(node_map: dict, a, b) -> tuple[float, float]:
-    axy = analysis_graph.to_xy(node_map[a]["lat"], node_map[a]["lng"])
-    bxy = analysis_graph.to_xy(node_map[b]["lat"], node_map[b]["lng"])
+    axy = _xy(node_map, a)
+    bxy = _xy(node_map, b)
     norm = max(_dist_xy(axy, bxy), 1e-6)
     return (bxy[0] - axy[0]) / norm, (bxy[1] - axy[1]) / norm
 
@@ -161,27 +168,22 @@ def find_variants(
         ]
         if not successors:
             continue
-        targets = {
-            cells[j]: j
-            for j in range(i + 3, len(cells))
-            if analysis_constants.TRAIL_VARIANT_REJOIN_MIN_M
-            <= cum[j] - cum[i]
-            <= analysis_constants.TRAIL_VARIANT_REJOIN_MAX_M
-        }
+        lo = bisect_left(cum, cum[i] + analysis_constants.TRAIL_VARIANT_REJOIN_MIN_M, i + 3)
+        hi = bisect_right(cum, cum[i] + analysis_constants.TRAIL_VARIANT_REJOIN_MAX_M, i + 3)
+        targets = {cells[j]: j for j in range(lo, hi)}
         if not targets:
             continue
         blocked = route_set - set(targets)
+        # no variant can be worth chasing beyond twice the farthest possible
+        # rejoin: cap the walk there so junctions near a route's end cost little
+        cutoff = min(
+            analysis_constants.TRAIL_VARIANT_REJOIN_MAX_M * analysis_constants.TRAIL_VARIANT_MAX_DETOUR_RATIO,
+            2.0 * (cum[hi - 1] - cum[i]),
+        )
         for nbr in successors:
             if nbr in blocked:
                 continue
-            found = _best_variant(
-                adjacency,
-                node_map,
-                nbr,
-                blocked,
-                targets,
-                analysis_constants.TRAIL_VARIANT_REJOIN_MAX_M * analysis_constants.TRAIL_VARIANT_MAX_DETOUR_RATIO,
-            )
+            found = _best_variant(adjacency, node_map, nbr, blocked, targets, cutoff)
             if found is None:
                 continue
             sub_path, _sub_len = found
@@ -189,7 +191,7 @@ def find_variants(
             exit_step = next(s for s in adjacency.get(u, []) if s["to"] == nbr)
             j = targets[path[-1]]
             main_len = cum[j] - cum[i]
-            chain = [analysis_graph.to_xy(node_map[c]["lat"], node_map[c]["lng"]) for c in path]
+            chain = [_xy(node_map, c) for c in path]
             corridor = _rdp(chain, 20.0)
             full_len = sum(_dist_xy(a, b) for a, b in pairwise(corridor))
             if full_len < analysis_constants.TRAIL_VARIANT_MIN_LEN_M:

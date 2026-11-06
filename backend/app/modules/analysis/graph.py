@@ -308,7 +308,10 @@ def graph_from_rows(nodes, edges) -> tuple[dict, dict]:
     cell then gets its position from the grid itself, which is exact by
     construction, and carries no claim of its own.
     """
-    node_map = {(n.x, n.y): {"lat": n.lat, "lng": n.lng, "ele": n.ele, "grade": n.grade} for n in nodes}
+    node_map = {
+        (n.x, n.y): {"lat": n.lat, "lng": n.lng, "ele": n.ele, "grade": n.grade, "xy": to_xy(n.lat, n.lng)}
+        for n in nodes
+    }
     adjacency: dict[tuple[int, int], list[dict]] = {}
     for e in edges:
         adjacency.setdefault((e.ax, e.ay), []).append(
@@ -325,6 +328,7 @@ def graph_from_rows(nodes, edges) -> tuple[dict, dict]:
     for e in edges:
         for cell in ((e.ax, e.ay), (e.bx, e.by)):
             if cell not in node_map:
-                lat, lng = to_latlng(cell[0] * CELL_M, cell[1] * CELL_M)
-                node_map[cell] = {"lat": lat, "lng": lng, "ele": 0.0, "grade": ""}
+                x_m, y_m = cell[0] * CELL_M, cell[1] * CELL_M
+                lat, lng = to_latlng(x_m, y_m)
+                node_map[cell] = {"lat": lat, "lng": lng, "ele": 0.0, "grade": "", "xy": (x_m, y_m)}
     return node_map, adjacency
