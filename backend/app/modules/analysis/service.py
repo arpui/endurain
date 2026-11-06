@@ -2838,28 +2838,96 @@ def list_routes(requester_user_id: int, db: Session) -> list[analysis_schema.Rou
     return [_to_route_read(r) for r in routes]
 
 
+def _route_totals(
+    geometry: list[list[float]],
+    requester_user_id: int,
+    db: Session,
+) -> tuple[float, float]:
+    """Ground distance and elevation gain measured from the polyline itself.
+
+    Distance is the haversine over the vertices; gain is read from the athlete's
+    own ground graph, sampling the stored elevation at each vertex's cell. A
+    drawn route therefore carries a real ascent instead of a zero, and the gain
+    reflects the altitude the athlete actually recorded there.
+    """
+    pts = [(float(g[0]), float(g[1])) for g in geometry]
+    distance = 0.0
+    prev = None
+    for pt in pts:
+        if prev is not None:
+            distance += _ground_m(prev, pt)
+        prev = pt
+    gain = _route_gain(pts, requester_user_id, db)
+    return round(distance, 1), round(gain, 1)
+
+
+def _route_gain(pts: list[tuple[float, float]], user_id: int, db: Session) -> float:
+    """Positive elevation between consecutive vertices, from the graph cells.
+
+    The cell for each vertex is looked up in the athlete's stored nodes; the
+    elevation is the cell's mean, and a step counts only when both endpoints
+    land on known ground.
+    """
+    if len(pts) < 2:
+        return 0.0
+    xs: list[int] = []
+    ys: list[int] = []
+    for lat, lng in pts:
+        x, y = analysis_graph.cell_of(*analysis_graph.to_xy(lat, lng))
+        xs.append(x)
+        ys.append(y)
+    nodes, _ = analysis_crud.list_user_graph_in_bbox(user_id, min(xs) - 1, max(xs) + 1, min(ys) - 1, max(ys) + 1, db)
+    ele_by_cell = {(n.x, n.y): n.ele for n in nodes}
+    gain = 0.0
+    prev_cell: tuple[int, int] | None = None
+    for lat, lng in pts:
+        cell = analysis_graph.cell_of(*analysis_graph.to_xy(lat, lng))
+        if prev_cell is not None and cell in ele_by_cell and prev_cell in ele_by_cell:
+            gain += max(0.0, ele_by_cell[cell] - ele_by_cell[prev_cell])
+        prev_cell = cell
+    return gain
+
+
 def create_route(
     requester_user_id: int,
     payload: analysis_schema.RouteCreate,
     db: Session,
 ) -> analysis_schema.RouteRead:
     """Persist a designed route; its totals are measured here, not trusted from the client."""
-    pts = [(float(g[0]), float(g[1])) for g in payload.geometry]
-    distance = 0.0
-    gain = 0.0
-    prev = None
-    for pt in pts:
-        if prev is not None:
-            step = _ground_m(prev, pt)
-            distance += step
-        prev = pt
+    distance, gain = _route_totals(payload.geometry, requester_user_id, db)
     route = analysis_crud.create_route(
-        requester_user_id, payload.name, payload.geometry, round(distance, 1), round(gain, 1), payload.notes, db
+        requester_user_id, payload.name, payload.geometry, distance, gain, payload.notes, db
     )
     db.commit()
     db.refresh(route)
     logger.info(
         "Route saved",
+        extra=core_logger.context(route_id=route.id, user_id=requester_user_id, distance_m=route.distance_m),
+    )
+    return _to_route_read(route)
+
+
+def update_route(
+    route_id: int,
+    requester_user_id: int,
+    payload: analysis_schema.RouteUpdate,
+    db: Session,
+) -> analysis_schema.RouteRead | None:
+    """Edit a saved route: rename it, redraw its polyline, change its notes.
+
+    The totals are measured again from the new geometry, so an edited route
+    never carries the old route's distance and gain.
+    """
+    distance, gain = _route_totals(payload.geometry, requester_user_id, db)
+    route = analysis_crud.update_route(
+        route_id, requester_user_id, payload.name, payload.geometry, distance, gain, payload.notes, db
+    )
+    if route is None:
+        return None
+    db.commit()
+    db.refresh(route)
+    logger.info(
+        "Route edited",
         extra=core_logger.context(route_id=route.id, user_id=requester_user_id, distance_m=route.distance_m),
     )
     return _to_route_read(route)

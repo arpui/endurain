@@ -249,6 +249,30 @@ def create_route(
     return analysis_service.create_route(token_user_id, payload, db)
 
 
+@router.put(
+    "/routes/{route_id}",
+    response_model=analysis_schema.RouteRead,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def update_route(
+    request: Request,
+    route_id: core_dependencies.PositiveId,
+    payload: analysis_schema.RouteUpdate,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:write"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.RouteRead:
+    """Edit one saved route: name, redrawn polyline, notes.
+
+    Unknown or foreign ids answer 404: the route is simply not there for this
+    athlete. The totals are measured again from the new geometry.
+    """
+    route = analysis_service.update_route(route_id, token_user_id, payload, db)
+    if route is None:
+        raise core_exceptions.NotFoundError
+    return route
+
+
 @router.delete(
     "/routes/{route_id}",
     response_model=None,
