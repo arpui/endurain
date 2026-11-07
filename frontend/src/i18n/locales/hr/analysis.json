@@ -345,6 +345,9 @@
     "points": "{n} točaka",
     "undo": "Ukloni zadnju",
     "cancelEdit": "Odustani",
-    "drawHint": "Kliknite na kartu da dodate točke staze. Kliknite na točku da je uklonite."
+    "drawHint": "Kliknite na kartu da dodate točke staze. Kliknite na točku da je uklonite.",
+    "snap": "Prilagodi mom terenu",
+    "snapHint": "U načinu prilagodbe dionice prate teren koji si već prehodao; one koje ne mogu spremaju se kao ravne crte.",
+    "connectFailed": "Stazu nije bilo moguće prilagoditi tvom terenu. Pokušaj ponovno ili spremi u slobodnom načinu."
   }
 }

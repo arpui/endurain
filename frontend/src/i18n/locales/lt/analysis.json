@@ -345,6 +345,9 @@
     "points": "{n} taškai",
     "undo": "Pašalinti paskutinį",
     "cancelEdit": "Atšaukti",
-    "drawHint": "Spustelėkite žemėlapyje, kad pridėtumėte taškų. Spustelėkite tašką, kad jį pašalintumėte."
+    "drawHint": "Spustelėkite žemėlapyje, kad pridėtumėte taškų. Spustelėkite tašką, kad jį pašalintumėte.",
+    "snap": "Priderinti prie mano žemės",
+    "snapHint": "Priderinimo režimu ruožai seka jau eitą žemę; tie, kurie negali, išsaugomi tiesėmis.",
+    "connectFailed": "Nepavyko priderinti maršruto prie jūsų žemės. Bandykite dar kartą arba išsaugokite laisvu režimu."
   }
 }

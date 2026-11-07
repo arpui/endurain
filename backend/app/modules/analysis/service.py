@@ -2907,6 +2907,69 @@ def create_route(
     return _to_route_read(route)
 
 
+def connect_route(
+    requester_user_id: int,
+    payload: analysis_schema.RouteConnectCreate,
+    db: Session,
+) -> analysis_schema.RouteConnectRead:
+    """Shape a drawn route onto the athlete's own walked ground.
+
+    Each clicked anchor tries to land on a graph cell the athlete has actually
+    crossed; consecutive cells are joined by the shortest walked chain of their
+    transitions (never an edge born of a long GPS step). Where the network
+    cannot carry a stretch - unknown ground, or a walk beyond the detour
+    ceiling - the straight line stands and the stretch is reported unwalked.
+    Nothing is invented: the points that shape the route are the ones their own
+    GPS left behind.
+    """
+    anchors = [(float(point[0]), float(point[1])) for point in payload.points]
+    anchor_xy = [analysis_graph.to_xy(lat, lng) for lat, lng in anchors]
+    straights = [_ground_m(anchors[k], anchors[k + 1]) for k in range(len(anchors) - 1)]
+    pad_cells = int(min(4000.0, max(600.0, max(straights, default=600.0))) / analysis_constants.TRAIL_GRAPH_CELL_M) + 2
+    xs = [cell[0] for cell in map(lambda xy: analysis_graph.cell_of(*xy), anchor_xy)]
+    ys = [cell[1] for cell in map(lambda xy: analysis_graph.cell_of(*xy), anchor_xy)]
+    nodes, edges = analysis_crud.list_user_graph_in_bbox(
+        requester_user_id,
+        min(xs) - pad_cells,
+        max(xs) + pad_cells,
+        min(ys) - pad_cells,
+        max(ys) + pad_cells,
+        db,
+    )
+    node_map, adjacency = analysis_graph.graph_from_rows(nodes, edges)
+    tol = analysis_constants.TRAIL_GRAPH_SNAP_TOL_M
+    cells = [analysis_variants.nearest_cell(node_map, xy, tol) for xy in anchor_xy]
+
+    geometry: list[list[float]] = []
+    walked: list[bool] = []
+
+    def push(lat: float, lng: float) -> None:
+        if geometry and abs(geometry[-1][0] - lat) < 1e-7 and abs(geometry[-1][1] - lng) < 1e-7:
+            return
+        geometry.append([lat, lng])
+
+    first = anchors[0] if cells[0] is None else (node_map[cells[0]]["lat"], node_map[cells[0]]["lng"])
+    push(first[0], first[1])
+    for k in range(1, len(anchors)):
+        chain = None
+        if cells[k - 1] is not None and cells[k] is not None:
+            cutoff = min(
+                analysis_constants.TRAIL_ROUTE_CONNECT_MAX_M,
+                2.0 * straights[k - 1] + 300.0,
+            )
+            chain = analysis_variants.walk_between(adjacency, node_map, cells[k - 1], cells[k], cutoff)
+        if chain:
+            for cell in chain[1:]:
+                entry = node_map[cell]
+                push(entry["lat"], entry["lng"])
+            walked.append(True)
+        else:
+            lat, lng = anchors[k]
+            push(lat, lng)
+            walked.append(False)
+    return analysis_schema.RouteConnectRead(geometry=geometry, walked=walked)
+
+
 def update_route(
     route_id: int,
     requester_user_id: int,

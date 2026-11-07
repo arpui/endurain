@@ -345,6 +345,9 @@
     "points": "{n} punktów",
     "undo": "Usuń ostatni",
     "cancelEdit": "Anuluj",
-    "drawHint": "Kliknij mapę, aby dodać punkty trasy. Kliknij punkt, aby go usunąć."
+    "drawHint": "Kliknij mapę, aby dodać punkty trasy. Kliknij punkt, aby go usunąć.",
+    "snap": "Dopasuj do mojego terenu",
+    "snapHint": "W trybie dopasowania odcinki biegną po terenie, który już przebyłeś; te, które nie mogą, zapisują się jako proste.",
+    "connectFailed": "Nie udało się dopasować trasy do Twojego terenu. Spróbuj ponownie lub zapisz w trybie swobodnym."
   }
 }

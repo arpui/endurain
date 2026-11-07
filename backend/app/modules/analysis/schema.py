@@ -1093,3 +1093,31 @@ class RouteUpdate(BaseModel):
     name: StrictStr = Field(min_length=1, max_length=128)
     geometry: list[list[float]] = Field(min_length=2)
     notes: StrictStr | None = None
+
+
+class RouteConnectCreate(BaseModel):
+    """Payload asking the athlete's own ground to shape a drawn route.
+
+    Attributes:
+        points: Ordered ``[lat, lng]`` anchors as clicked by the designer.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    points: list[list[float]] = Field(min_length=2, max_length=2000)
+
+
+class RouteConnectRead(BaseModel):
+    """The walked form of a drawn polyline.
+
+    Attributes:
+        geometry: Ordered ``[lat, lng]`` polyline; snapped stretches follow the
+            graph, unmatched stretches keep the straight line.
+        walked: One flag per anchor-to-anchor stretch: whether the athlete's
+            own ground could carry it.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    geometry: list[list[float]]
+    walked: list[StrictBool]

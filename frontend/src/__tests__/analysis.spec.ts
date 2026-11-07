@@ -18,6 +18,7 @@ import {
   mapSettings,
   queueLoadRecompute,
   queueThresholdRefresh,
+  connectRoutePoints,
   createRoute,
   deleteRoute,
   fetchRoutes,
@@ -818,6 +819,32 @@ describe('designed routes', () => {
       method: 'DELETE',
       signal: undefined,
     })
+  })
+
+  it('asks the walked connect for a snapped polyline', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      geometry: [
+        [42.3, 1.5],
+        [42.3, 1.50018],
+      ],
+      walked: [true],
+    } satisfies Schemas['RouteConnectRead'])
+    const res = await connectRoutePoints([
+      { lat: 42.3, lng: 1.5 },
+      { lat: 42.30001, lng: 1.50019 },
+    ])
+    expect(apiFetch).toHaveBeenCalledWith('/analysis/routes/connect', {
+      method: 'POST',
+      signal: undefined,
+      body: JSON.stringify({
+        points: [
+          [42.3, 1.5],
+          [42.30001, 1.50019],
+        ],
+      }),
+    })
+    expect(res.walked).toEqual([true])
+    expect(res.points[1]).toEqual({ lat: 42.3, lng: 1.50018 })
   })
 
   it('edits a saved route in place with PUT', async () => {

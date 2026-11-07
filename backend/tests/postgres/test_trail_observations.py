@@ -424,6 +424,56 @@ class TestRouteEditing:
             )
 
 
+class TestRouteConnect:
+    def test_drawn_anchors_are_carried_by_the_walked_graph(self, pg_factory):
+        import math
+
+        ensure_user(pg_factory, _USER_ID)
+        ref_lat = analysis_constants.TRAIL_GRAPH_REF_LAT
+        ref_lng = analysis_constants.TRAIL_GRAPH_REF_LNG
+        cell_m = analysis_constants.TRAIL_GRAPH_CELL_M
+        step_lng = cell_m / (111320.0 * math.cos(math.radians(ref_lat)))
+        # a straight walked street of four cells, plus its edges
+        nodes = [
+            {"x": k, "y": 0, "lat": ref_lat, "lng": ref_lng + k * step_lng, "ele": 100.0, "visits": 2, "grade": ""}
+            for k in range(4)
+        ]
+        edges = [
+            {
+                "ax": k,
+                "ay": 0,
+                "bx": k + 1,
+                "by": 0,
+                "length": cell_m,
+                "gain": 0.0,
+                "loss": 0.0,
+                "passes": 2,
+                "step_max": 5.0,
+                "on_path": 1,
+            }
+            for k in range(3)
+        ]
+        with pg_factory() as db:
+            analysis_crud.replace_user_graph(_USER_ID, nodes, edges, db)
+            db.commit()
+            near_start = [ref_lat, ref_lng + 0.00002]  # ~2 m off cell 0
+            near_end = [ref_lat, ref_lng + 3 * step_lng + 0.00002]
+            res = analysis_service.connect_route(
+                _USER_ID, analysis_schema.RouteConnectCreate(points=[near_start, near_end]), db
+            )
+            assert res.walked == [True]
+            assert len(res.geometry) == 4  # the four cell centres, in order
+            assert abs(res.geometry[0][1] - ref_lng) < 1e-9
+
+            # an anchor over ground never crossed keeps the straight line
+            far = [ref_lat + 0.02, ref_lng]
+            res2 = analysis_service.connect_route(
+                _USER_ID, analysis_schema.RouteConnectCreate(points=[near_start, far]), db
+            )
+            assert res2.walked == [False]
+            assert len(res2.geometry) == 2
+
+
 class TestWayCrossings:
     def test_crossings_replace_round_trip_and_the_marker_gates_the_pass(self, pg_factory):
         ensure_user(pg_factory, _USER_ID)

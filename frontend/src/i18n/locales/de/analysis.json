@@ -345,6 +345,9 @@
     "points": "{n} Punkte",
     "undo": "Letzten entfernen",
     "cancelEdit": "Abbrechen",
-    "drawHint": "Auf die Karte klicken, um Routenpunkte hinzuzufügen. Auf einen Punkt klicken, um ihn zu entfernen."
+    "drawHint": "Auf die Karte klicken, um Routenpunkte hinzuzufügen. Auf einen Punkt klicken, um ihn zu entfernen.",
+    "snap": "An meinen Boden anpassen",
+    "snapHint": "Im Anpassungsmodus folgen Abschnitte dem Boden, den du bereits gelaufen bist; Abschnitte, die nicht passen, werden als Gerade gespeichert.",
+    "connectFailed": "Die Route konnte nicht an deinen Boden angepasst werden. Erneut versuchen oder im freien Modus speichern."
   }
 }
