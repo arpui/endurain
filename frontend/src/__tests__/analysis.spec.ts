@@ -21,6 +21,7 @@ import {
   connectRoutePoints,
   createRoute,
   deleteRoute,
+  fetchRouteCourse,
   fetchRouteSegments,
   fetchRouteVariants,
   fetchRoutes,
@@ -852,6 +853,8 @@ describe('route segment inventory', () => {
         direction: 'reverse',
         covered_m: 380,
         length_m: 409,
+        route_start_m: 1500,
+        route_end_m: 1880,
       },
     ] satisfies Schemas['RouteSegmentMatchRead'][])
     const rows = await fetchRouteSegments(3)
@@ -862,7 +865,20 @@ describe('route segment inventory', () => {
       claim: 'technical',
       direction: 'reverse',
       coveredM: 380,
+      routeStartM: 1500,
+      routeEndM: 1880,
     })
+  })
+})
+
+describe('course export', () => {
+  it('asks the server for the route as a Garmin course blob', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(new Blob(['x']))
+    const blob = await fetchRouteCourse(9)
+    const [url, init] = vi.mocked(apiFetch).mock.calls[0] ?? []
+    expect(String(url)).toBe('/analysis/routes/9/course.fit')
+    expect(init).toMatchObject({ responseType: 'blob' })
+    expect(blob).toBeInstanceOf(Blob)
   })
 })
 

@@ -123,24 +123,26 @@ def longest_snapped_run(
     decreasing pair reverse.
     """
     projected = [project_with_distance(xy, line_xy, offsets) for xy in poly_xy]
-    best: tuple[float, float] | None = None
+    best: tuple[float, float, int, int] | None = None
     best_len = 0.0
     start_along = None
+    start_index = None
     last_along = None
-    for along, dist in projected:
+    last_index = None
+    for k, (along, dist) in enumerate(projected):
         if dist <= tol_m:
             if start_along is None:
-                start_along = along
-            last_along = along
+                start_along, start_index = along, k
+            last_along, last_index = along, k
         elif start_along is not None:
             span = abs(last_along - start_along)
             if span > best_len:
-                best, best_len = (start_along, last_along), span
+                best, best_len = (start_along, last_along, start_index, last_index), span
             start_along = None
     if start_along is not None:
         span = abs(last_along - start_along)
         if span > best_len:
-            best, best_len = (start_along, last_along), span
+            best, best_len = (start_along, last_along, start_index, last_index), span
     return best
 
 

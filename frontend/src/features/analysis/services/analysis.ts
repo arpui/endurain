@@ -1040,6 +1040,8 @@ export async function fetchRouteSegments(
     direction: row.direction as RouteSegmentMatch['direction'],
     coveredM: row.covered_m,
     lengthM: row.length_m,
+    routeStartM: row.route_start_m,
+    routeEndM: row.route_end_m,
   }))
 }
 
@@ -1107,5 +1109,22 @@ export async function postRouteVariantMark(
     method: 'POST',
     signal,
     body: JSON.stringify({ split_m: splitM, verdict }),
+  })
+}
+
+/**
+ * Read one designed route as a Garmin COURSE .fit, annotated only by what
+ * the athlete's own ground backs.
+ *
+ * @param routeId - The saved route to render.
+ * @param signal - Optional abort signal.
+ * @returns The course file bytes as a blob.
+ * @throws {HttpError} When the request fails.
+ */
+export function fetchRouteCourse(routeId: number, signal?: AbortSignal): Promise<Blob> {
+  return apiFetch<Blob>(`/analysis/routes/${routeId}/course.fit`, {
+    responseType: 'blob',
+    timeoutMs: 0,
+    signal,
   })
 }

@@ -1197,6 +1197,8 @@ class RouteSegmentMatchRead(BaseModel):
         direction: ``forward`` / ``reverse`` along the segment geometry.
         covered_m: Length of segment the route runs along.
         length_m: Full segment length.
+        route_start_m: Ground position along the route where the run begins.
+        route_end_m: Ground position along the route where the run ends.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -1209,3 +1211,5 @@ class RouteSegmentMatchRead(BaseModel):
     direction: Literal["forward", "reverse"]
     covered_m: StrictFloat
     length_m: StrictFloat
+    route_start_m: StrictFloat
+    route_end_m: StrictFloat
