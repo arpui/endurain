@@ -436,6 +436,7 @@ export const queryKeys = {
     routes: () => ['analysis', 'routes'] as const,
     segmentNetwork: (showLoops: boolean) => ['analysis', 'segment-network', showLoops] as const,
     routeSegments: (id: number) => ['analysis', 'route-segments', id] as const,
+    routeVariants: (id: number) => ['analysis', 'route-variants', id] as const,
     /**
      * @param months - Window in months back from today, `null` for all history.
      * @returns A best-splits query key for one window.

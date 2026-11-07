@@ -671,8 +671,10 @@ export interface TrailVariant {
 
 /** The variant analysis of one planned route. */
 export interface TrailVariants {
-  /** Activity the variants were searched along. */
-  activityId: number
+  /** Recorded route the variants were searched along, when it was one. */
+  activityId: number | null
+  /** Designed route the variants were searched along, when it was one. */
+  routeId: number | null
   /** Grid size the search walked on, metres. */
   cellM: number
   /** The suggestions, junction order. */

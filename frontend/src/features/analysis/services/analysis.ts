@@ -781,7 +781,8 @@ export async function fetchTrailVariants(
     signal,
   })
   return {
-    activityId: dto.activity_id,
+    activityId: dto.activity_id ?? null,
+    routeId: dto.route_id ?? null,
     cellM: dto.cell_m,
     variants: (dto.variants ?? []).map((v): TrailVariant => ({
       splitM: v.split_m,
@@ -1040,4 +1041,71 @@ export async function fetchRouteSegments(
     coveredM: row.covered_m,
     lengthM: row.length_m,
   }))
+}
+
+/**
+ * Read the reconnection variants suggested along one designed route.
+ *
+ * @param routeId - The saved route whose geometry is the plan.
+ * @param signal - Optional abort signal.
+ * @returns The variant analysis (experimental).
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchRouteVariants(
+  routeId: number,
+  signal?: AbortSignal,
+): Promise<TrailVariants> {
+  const dto = await apiFetch<TrailVariantsDto>(`/analysis/routes/${routeId}/variants`, { signal })
+  return {
+    activityId: dto.activity_id ?? null,
+    routeId: dto.route_id ?? null,
+    cellM: dto.cell_m,
+    variants: (dto.variants ?? []).map((v): TrailVariant => ({
+      splitM: v.split_m,
+      rejoinM: v.rejoin_m,
+      side: v.side as TrailVariant['side'],
+      variantM: v.variant_m,
+      mainM: v.main_m,
+      deltaM: v.delta_m,
+      deltaGainM: v.delta_gain_m,
+      status: v.status as TrailVariant['status'],
+      grade: v.grade,
+      segment: v.segment ?? null,
+      points: (v.path_latlng ?? []).flatMap(([lat, lng]) =>
+        lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+      ),
+      mark: (v.mark ?? null) as TrailVariant['mark'],
+    })),
+  }
+}
+
+/**
+ * Judge one variant suggested for a designed route.
+ *
+ * @param routeId - The designed route judged.
+ * @param splitM - Junction position, as the server reported it.
+ * @param verdict - The verdict, or ``null`` to take it back.
+ * @param signal - Optional abort signal.
+ * @returns Nothing.
+ * @throws {HttpError} When the request fails.
+ */
+export async function postRouteVariantMark(
+  routeId: number,
+  splitM: number,
+  verdict: 'real' | 'falsa' | null,
+  signal?: AbortSignal,
+): Promise<void> {
+  if (verdict === null) {
+    const query = new URLSearchParams({ split_m: String(splitM) })
+    await apiFetch<void>(`/analysis/routes/${routeId}/variants/marks?${query.toString()}`, {
+      method: 'DELETE',
+      signal,
+    })
+    return
+  }
+  await apiFetch<void>(`/analysis/routes/${routeId}/variants/marks`, {
+    method: 'POST',
+    signal,
+    body: JSON.stringify({ split_m: splitM, verdict }),
+  })
 }

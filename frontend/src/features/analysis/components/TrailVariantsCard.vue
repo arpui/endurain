@@ -8,12 +8,17 @@ import { Check, Route as RouteIcon, X } from '@lucide/vue'
 
 import type { TrailVariant } from '@/features/analysis/types'
 
-defineProps<{
-  /** The variant analysis payload. */
-  variants: TrailVariant[]
-  /** The junction the viewer picked, to mirror on the map. */
-  selected: number | null
-}>()
+const props = withDefaults(
+  defineProps<{
+    /** The variant analysis payload. */
+    variants: TrailVariant[]
+    /** The junction the viewer picked, to mirror on the map. */
+    selected: number | null
+    /** Whether the card may offer saving the plan as a route (activity views). */
+    canSaveRoute?: boolean
+  }>(),
+  { canSaveRoute: true },
+)
 
 const emit = defineEmits<{
   /** The viewer picked a variant: the map should draw it. */
@@ -44,7 +49,7 @@ const km = computed(
         {{ t('analysis.variants.title') }}
         <Badge variant="secondary">{{ t('analysis.trail.experimental') }}</Badge>
       </h3>
-      <Button size="sm" variant="outline" @click="emit('saveRoute')">
+      <Button v-if="props.canSaveRoute" size="sm" variant="outline" @click="emit('saveRoute')">
         <RouteIcon class="me-1 size-4" />
         {{ t('analysis.variants.saveAsRoute') }}
       </Button>

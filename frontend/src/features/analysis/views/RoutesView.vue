@@ -12,16 +12,20 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
 import AnalysisSectionsNav from '@/features/analysis/components/AnalysisSectionsNav.vue'
+import TrailVariantsCard from '@/features/analysis/components/TrailVariantsCard.vue'
 import RoutesMap from '@/features/analysis/components/RoutesMap.vue'
 import { connectRoutePoints } from '@/features/analysis/services/analysis'
 import {
   useCreateRouteMutation,
   useDeleteRouteMutation,
   useRouteSegmentsQuery,
+  useRouteVariantMarkMutation,
+  useRouteVariantsQuery,
   useRoutesQuery,
   useSegmentNetworkQuery,
   useUpdateRouteMutation,
 } from '@/features/analysis/composables/useAnalysis'
+import type { TrailVariant } from '@/features/analysis/types'
 import { gradeTrailWay } from '@/features/analysis/utils/trailDegree'
 import { themeColor } from '@/lib/themeColor'
 import type { DesignRoute } from '@/features/analysis/types'
@@ -47,6 +51,25 @@ const networkSegments = computed(() =>
   showSegments.value ? (segmentQuery.data.value?.segments ?? []) : [],
 )
 const inventoryQuery = useRouteSegmentsQuery(selected)
+
+// Variants of the picked designed route: the same engine that serves recorded
+// routes, walked over a polyline the athlete drew.
+const routeVariantsQuery = useRouteVariantsQuery(
+  computed(() => (draft.value === null ? selected.value : null)),
+)
+const routeVariantMarks = useRouteVariantMarkMutation(selected)
+const routeVariantSelected = ref<number | null>(null)
+
+function pickRouteVariant(variant: TrailVariant): void {
+  routeVariantSelected.value = variant.splitM === routeVariantSelected.value ? null : variant.splitM
+}
+
+const routeVariantHighlight = computed(() => {
+  const found = (routeVariantsQuery.data.value?.variants ?? []).find(
+    (candidate) => candidate.splitM === routeVariantSelected.value,
+  )
+  return found ? found.points : null
+})
 
 const numberFormat = computed(
   () => new Intl.NumberFormat(locale.value, { maximumFractionDigits: 2 }),
@@ -225,6 +248,7 @@ function confirmDelete(): void {
           :draft="draft"
           :editing-id="editingId"
           :segments="networkSegments"
+          :highlight="routeVariantHighlight"
           @select="pick"
           @add-point="addPoint"
           @remove-vertex="removeVertex"
@@ -262,6 +286,15 @@ function confirmDelete(): void {
           </li>
         </ul>
       </Card>
+
+      <TrailVariantsCard
+        v-if="draft === null && (routeVariantsQuery.data.value?.variants.length ?? 0) > 0"
+        :variants="routeVariantsQuery.data.value?.variants ?? []"
+        :selected="routeVariantSelected"
+        :can-save-route="false"
+        @select="pickRouteVariant"
+        @mark="(splitM, verdict) => routeVariantMarks.mutate({ splitM, verdict })"
+      />
 
       <Card v-if="routes.length > 0" class="overflow-x-auto p-3">
         <table class="w-full text-body">

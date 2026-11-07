@@ -22,11 +22,13 @@ import {
   createRoute,
   deleteRoute,
   fetchRouteSegments,
+  fetchRouteVariants,
   fetchRoutes,
   fetchSegmentNetwork,
   fetchTrailNetwork,
   fetchTrailSections,
   fetchTrailVariants,
+  postRouteVariantMark,
   postVariantMark,
   updateRoute,
   updateAnalysisSettings,
@@ -807,6 +809,34 @@ describe('trail variant analysis', () => {
     const lastCall = vi.mocked(apiFetch).mock.calls[vi.mocked(apiFetch).mock.calls.length - 1]
     expect(String(lastCall?.[0])).toContain('/activities/2044/trail-variants/marks?split_m=4200')
     expect(lastCall?.[1]).toMatchObject({ method: 'DELETE' })
+  })
+})
+
+describe('variants on designed routes', () => {
+  it('reads route-keyed variants', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      route_id: 9,
+      cell_m: 15,
+      variants: [],
+    } satisfies Schemas['TrailVariantsRead'])
+    const variants = await fetchRouteVariants(9)
+    expect(String(vi.mocked(apiFetch).mock.calls[0]?.[0])).toBe('/analysis/routes/9/variants')
+    expect(variants.routeId).toBe(9)
+    expect(variants.activityId).toBeNull()
+  })
+
+  it('judges route variants on the route endpoint', async () => {
+    vi.mocked(apiFetch).mockResolvedValue(undefined)
+    await postRouteVariantMark(9, 1200, 'real')
+    expect(apiFetch).toHaveBeenCalledWith('/analysis/routes/9/variants/marks', {
+      method: 'POST',
+      signal: undefined,
+      body: JSON.stringify({ split_m: 1200, verdict: 'real' }),
+    })
+    await postRouteVariantMark(9, 1200, null)
+    const last = vi.mocked(apiFetch).mock.calls[vi.mocked(apiFetch).mock.calls.length - 1]
+    expect(String(last?.[0])).toContain('/analysis/routes/9/variants/marks?split_m=1200')
+    expect(last?.[1]).toMatchObject({ method: 'DELETE' })
   })
 })
 

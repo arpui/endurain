@@ -27,6 +27,8 @@ const props = defineProps<{
   editingId?: number | null
   /** The athlete's named corridors, drawn underneath as orientation. */
   segments?: SegmentNetworkItem[]
+  /** The picked variant's line, drawn above everything. */
+  highlight?: GeoPoint[] | null
 }>()
 
 const emit = defineEmits<{
@@ -65,6 +67,14 @@ function overlays(): MapOverlay[] {
         onSelect: () => emit('select', route.id),
       })),
   )
+  if (props.highlight && props.highlight.length > 0) {
+    list.push({
+      points: props.highlight,
+      color: themeColor('--color-goal'),
+      weight: 5,
+      opacity: 0.9,
+    })
+  }
   if (props.draft && props.draft.length > 0) {
     list.push({
       points: props.draft,
@@ -104,7 +114,14 @@ function allPoints(): GeoPoint[] {
 onMounted(mountMap)
 watch(ready, mountMap)
 watch(
-  () => [props.routes, props.selected, props.draft, props.editingId, props.segments],
+  () => [
+    props.routes,
+    props.selected,
+    props.draft,
+    props.editingId,
+    props.segments,
+    props.highlight,
+  ],
   () => {
     if (!instance) {
       mountMap()

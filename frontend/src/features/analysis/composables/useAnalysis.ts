@@ -18,6 +18,7 @@ import {
   fetchActivityIntervals,
   deleteTrailSectionMark,
   fetchRouteSegments,
+  fetchRouteVariants,
   fetchRoutes,
   fetchSegmentNetwork,
   fetchTrailNetwork,
@@ -26,6 +27,7 @@ import {
   fetchTrailSections,
   fetchTrailVariants,
   updateRoute,
+  postRouteVariantMark,
   postVariantMark,
   postTrailSectionMark,
   fetchActivityLapDynamics,
@@ -518,5 +520,45 @@ export function useRouteSegmentsQuery(routeId: MaybeRefOrGetter<number | null>) 
     queryKey: computed(() => queryKeys.analysis.routeSegments(id.value)),
     queryFn: ({ signal }) => fetchRouteSegments(id.value, signal),
     enabled: computed(() => id.value > 0 && isAuthenticated.value),
+  })
+}
+
+/**
+ * Reconnection variants along one designed route (experimental).
+ *
+ * @param routeId - Reactive route id, or null when nothing is picked.
+ * @returns The TanStack query for the route's variant analysis.
+ */
+export function useRouteVariantsQuery(routeId: MaybeRefOrGetter<number | null>) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => {
+    const value = toValue(routeId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.routeVariants(id.value)),
+    queryFn: ({ signal }) => fetchRouteVariants(id.value, signal),
+    enabled: computed(() => id.value > 0 && isAuthenticated.value),
+  })
+}
+
+/**
+ * Judge one variant suggested for a designed route.
+ *
+ * @param routeId - Reactive route id of the designed route.
+ * @returns The mutation; ``verdict: null`` takes the judgement back.
+ */
+export function useRouteVariantMarkMutation(routeId: MaybeRefOrGetter<number | null | undefined>) {
+  const id = computed(() => {
+    const value = toValue(routeId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useInvalidatingMutation({
+    mutationKey: ['analysis', 'route-variant-mark'],
+    invalidateKey: ['analysis', 'route-variants'],
+    mutationFn: ({ splitM, verdict }: { splitM: number; verdict: 'real' | 'falsa' | null }) =>
+      postRouteVariantMark(id.value, splitM, verdict),
   })
 }

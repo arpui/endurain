@@ -4045,6 +4045,52 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/routes/{route_id}/variants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Route Variants
+         * @description Reconnection variants along a designed route.
+         *
+         *     The engine does not care whether a GPS or a finger drew the plan.
+         */
+        get: operations["get_route_variants_api_v1_analysis_routes__route_id__variants_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analysis/routes/{route_id}/variants/marks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Route Variant Mark
+         * @description Judge a designed route's variant: real ground, or a suggestion to bury.
+         */
+        post: operations["post_route_variant_mark_api_v1_analysis_routes__route_id__variants_marks_post"];
+        /**
+         * Delete Route Variant Mark
+         * @description Take back the verdict on one designed route's variant.
+         */
+        delete: operations["delete_route_variant_mark_api_v1_analysis_routes__route_id__variants_marks_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/thresholds/refresh": {
         parameters: {
             query?: never;
@@ -11058,6 +11104,8 @@ export interface components {
             geometry: number[][];
             /** Notes */
             notes?: string | null;
+            /** Source Activity Id */
+            source_activity_id?: number | null;
         };
         /**
          * RouteRead
@@ -12666,13 +12714,16 @@ export interface components {
          * @description The variant analysis of one planned route (experimental).
          *
          *     Attributes:
-         *         activity_id: The route the variants were searched along.
+         *         activity_id: The recorded route the variants were searched along, when it was one.
+         *         route_id: The designed route the variants were searched along, when it was one.
          *         cell_m: Graph grid size the search walked on.
          *         variants: The suggestions, junction order.
          */
         TrailVariantsRead: {
             /** Activity Id */
-            activity_id: number;
+            activity_id?: number | null;
+            /** Route Id */
+            route_id?: number | null;
             /** Cell M */
             cell_m: number;
             /** Variants */
@@ -20757,6 +20808,128 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["RouteSegmentMatchRead"][];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_route_variants_api_v1_analysis_routes__route_id__variants_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                route_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrailVariantsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    post_route_variant_mark_api_v1_analysis_routes__route_id__variants_marks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                route_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VariantMarkCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    delete_route_variant_mark_api_v1_analysis_routes__route_id__variants_marks_delete: {
+        parameters: {
+            query: {
+                split_m: number;
+            };
+            header?: never;
+            path: {
+                route_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

@@ -1178,19 +1178,41 @@ def list_user_graph_in_bbox(
     return nodes, edges
 
 
+def _mark_owner_clause(activity_id: int | None, route_id: int | None):
+    if activity_id is not None:
+        return analysis_models.VariantMark.activity_id == activity_id
+    return analysis_models.VariantMark.route_id == route_id
+
+
 def save_variant_mark(
     user_id: int,
-    activity_id: int,
     split_m: float,
     verdict: str,
     note: str | None,
     db: Session,
+    *,
+    activity_id: int | None = None,
+    route_id: int | None = None,
 ) -> analysis_models.VariantMark:
-    """Place or replace the athlete's verdict on one suggested variant."""
-    mark = db.get(analysis_models.VariantMark, (user_id, activity_id, split_m))
+    """Place or replace the athlete's verdict on one suggested variant.
+
+    The judged plan is either a recorded activity or a designed route.
+    """
+    mark = db.execute(
+        select(analysis_models.VariantMark).where(
+            analysis_models.VariantMark.user_id == user_id,
+            analysis_models.VariantMark.split_m == split_m,
+            _mark_owner_clause(activity_id, route_id),
+        )
+    ).scalar_one_or_none()
     if mark is None:
         mark = analysis_models.VariantMark(
-            user_id=user_id, activity_id=activity_id, split_m=split_m, verdict=verdict, note=note
+            user_id=user_id,
+            activity_id=activity_id,
+            route_id=route_id,
+            split_m=split_m,
+            verdict=verdict,
+            note=note,
         )
         db.add(mark)
     else:
@@ -1199,25 +1221,38 @@ def save_variant_mark(
     return mark
 
 
-def delete_variant_mark(user_id: int, activity_id: int, split_m: float, db: Session) -> bool:
+def delete_variant_mark(
+    user_id: int,
+    split_m: float,
+    db: Session,
+    *,
+    activity_id: int | None = None,
+    route_id: int | None = None,
+) -> bool:
     """Take back the verdict on one variant; ``True`` when there was one."""
     result = db.execute(
         delete(analysis_models.VariantMark).where(
             analysis_models.VariantMark.user_id == user_id,
-            analysis_models.VariantMark.activity_id == activity_id,
             analysis_models.VariantMark.split_m == split_m,
+            _mark_owner_clause(activity_id, route_id),
         )
     )
     return bool(result.rowcount)
 
 
-def list_variant_marks(user_id: int, activity_id: int, db: Session) -> list[analysis_models.VariantMark]:
-    """The athlete's variant verdicts for one planned route."""
+def list_variant_marks(
+    user_id: int,
+    db: Session,
+    *,
+    activity_id: int | None = None,
+    route_id: int | None = None,
+) -> list[analysis_models.VariantMark]:
+    """The athlete's variant verdicts for one planned route (activity or design)."""
     return list(
         db.scalars(
             select(analysis_models.VariantMark).where(
                 analysis_models.VariantMark.user_id == user_id,
-                analysis_models.VariantMark.activity_id == activity_id,
+                _mark_owner_clause(activity_id, route_id),
             )
         )
     )
@@ -1231,10 +1266,17 @@ def create_route(
     gain_m: float,
     notes: str | None,
     db: Session,
+    source_activity_id: int | None = None,
 ) -> analysis_models.Route:
-    """Persist a designed route."""
+    """Persist a designed route, remembering the activity it came from when it did."""
     route = analysis_models.Route(
-        user_id=user_id, name=name, geometry=geometry, distance_m=distance_m, gain_m=gain_m, notes=notes
+        user_id=user_id,
+        name=name,
+        geometry=geometry,
+        distance_m=distance_m,
+        gain_m=gain_m,
+        notes=notes,
+        source_activity_id=source_activity_id,
     )
     db.add(route)
     db.flush()
