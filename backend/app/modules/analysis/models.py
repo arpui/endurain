@@ -899,11 +899,12 @@ class SegmentCrossing(Base, TimestampMixin):
     )
     pass_number: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Pass of the activity over it")
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, comment="Athlete")
+    # (mirrors the effort identity: one pass may cross a segment in both directions)
     along_start_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Along-segment start offset")
     along_end_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Along-segment end offset")
     track_start_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Along-track start offset")
     track_end_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Along-track end offset")
-    direction: Mapped[str] = mapped_column(String(length=7), nullable=False, comment="forward / reverse")
+    direction: Mapped[str] = mapped_column(String(length=7), primary_key=True, comment="forward / reverse")
     grade_pct: Mapped[float | None] = mapped_column(Float, nullable=True, comment="Mean signed grade of the pass")
 
     __table_args__ = (
