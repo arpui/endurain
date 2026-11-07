@@ -324,7 +324,8 @@
     "mark": {
       "real": "Resna tla",
       "falsa": "Lažna"
-    }
+    },
+    "via": "po"
   },
   "routes": {
     "title": "Tvoje proge",
@@ -354,6 +355,10 @@
     "drawHint": "Kliknite na zemljevid za dodajanje točk proge. Kliknite točko, da jo odstranite.",
     "snap": "Prilagodi svojemu terenu",
     "snapHint": "V načinu prilagajanja odseki sledijo teren, ki si ga že prehodil; tisti, ki ne morejo, se shranijo kot premice.",
-    "connectFailed": "Proge ni bilo mogoče prilagoditi tvoji terenu. Poskusi znova ali shrani v prostem načinu."
+    "connectFailed": "Proge ni bilo mogoče prilagoditi tvoji terenu. Poskusi znova ali shrani v prostem načinu.",
+    "showSegments": "Moji odseki",
+    "segmentsTitle": "Odseki te proge",
+    "dirForward": "v njegovi smeri",
+    "dirReverse": "v nasprotni smeri"
   }
 }

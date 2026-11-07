@@ -29,8 +29,10 @@ def cumulative_offsets(points_xy: list[tuple[float, float]]) -> list[float]:
     return offsets
 
 
-def project_along(xy: tuple[float, float], line_xy: list[tuple[float, float]], offsets: list[float]) -> float:
-    """Along-line offset of the point on a polyline nearest to a position."""
+def project_with_distance(
+    xy: tuple[float, float], line_xy: list[tuple[float, float]], offsets: list[float]
+) -> tuple[float, float]:
+    """Along-line offset and distance of the polyline point nearest to a position."""
     best = 0.0
     best_d2 = float("inf")
     for k in range(len(line_xy) - 1):
@@ -45,7 +47,12 @@ def project_along(xy: tuple[float, float], line_xy: list[tuple[float, float]], o
         if d2 < best_d2:
             best_d2 = d2
             best = offsets[k] + tt * math.sqrt(seg2)
-    return best
+    return best, math.sqrt(best_d2)
+
+
+def project_along(xy: tuple[float, float], line_xy: list[tuple[float, float]], offsets: list[float]) -> float:
+    """Along-line offset of the point on a polyline nearest to a position."""
+    return project_with_distance(xy, line_xy, offsets)[0]
 
 
 def effort_along_range(
@@ -100,6 +107,41 @@ def cells_along(
         py = seg_xy[vertex][1] + tt * (seg_xy[min(vertex + 1, len(seg_xy) - 1)][1] - seg_xy[vertex][1])
         cells.add(analysis_graph.cell_of(px, py))
     return cells
+
+
+def longest_snapped_run(
+    poly_xy: list[tuple[float, float]],
+    line_xy: list[tuple[float, float]],
+    offsets: list[float],
+    tol_m: float,
+) -> tuple[float, float] | None:
+    """The segment span a polyline runs along: its longest consecutive stretch.
+
+    The run is the longest sequence of vertices all landing within tolerance of
+    the segment's geometry. Returns the along-offsets of the run's ends, in the
+    order the polyline reaches them: an increasing pair went forward, a
+    decreasing pair reverse.
+    """
+    projected = [project_with_distance(xy, line_xy, offsets) for xy in poly_xy]
+    best: tuple[float, float] | None = None
+    best_len = 0.0
+    start_along = None
+    last_along = None
+    for along, dist in projected:
+        if dist <= tol_m:
+            if start_along is None:
+                start_along = along
+            last_along = along
+        elif start_along is not None:
+            span = abs(last_along - start_along)
+            if span > best_len:
+                best, best_len = (start_along, last_along), span
+            start_along = None
+    if start_along is not None:
+        span = abs(last_along - start_along)
+        if span > best_len:
+            best, best_len = (start_along, last_along), span
+    return best
 
 
 def is_loop(geometry: list, distance_m: float) -> bool:

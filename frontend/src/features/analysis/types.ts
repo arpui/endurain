@@ -480,6 +480,7 @@ export type TrailNetworkDto = Schemas['TrailNetworkRead']
 export type TrailNetworkWayDto = Schemas['TrailNetworkWayRead']
 export type TrailVariantsDto = Schemas['TrailVariantsRead']
 export type SegmentNetworkDto = Schemas['SegmentNetworkRead']
+export type RouteSegmentMatchDto = Schemas['RouteSegmentMatchRead']
 export type RouteDto = Schemas['RouteRead']
 export type TrailPointDto = Schemas['TrailPointRead']
 
@@ -662,6 +663,8 @@ export interface TrailVariant {
   grade: string
   /** The drawn polyline, shaped by certified ways where real. */
   points: GeoPoint[]
+  /** The athlete's own segment it runs along, when one carries most of it. */
+  segment: string | null
   /** The athlete's verdict on it, when placed. */
   mark: VariantVerdict | null
 }
@@ -736,4 +739,23 @@ export interface SegmentNetwork {
   hardRatio: number
   /** Segments with at least one crossing, best claim first. */
   segments: SegmentNetworkItem[]
+}
+
+/** One of the athlete's own segments a saved route runs along. */
+export interface RouteSegmentMatch {
+  /** The segment this is. */
+  segmentId: number
+  /** The athlete's name for it. */
+  name: string
+  /** What its descents back in the named network. */
+  claim: TrailClaim
+  /** Along-segment span the route follows. */
+  alongStartM: number
+  alongEndM: number
+  /** Whether the route goes with or against the segment's own direction. */
+  direction: 'forward' | 'reverse'
+  /** Segment length the route runs along, metres. */
+  coveredM: number
+  /** Full segment length, metres. */
+  lengthM: number
 }

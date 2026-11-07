@@ -324,7 +324,8 @@
     "mark": {
       "real": "Tõeline maapind",
       "falsa": "Vale"
-    }
+    },
+    "via": "läbi"
   },
   "routes": {
     "title": "Su marssruudid",
@@ -354,6 +355,10 @@
     "drawHint": "Klõpsa kaardile marssruudi punktide lisamiseks. Klõpsa punktile selle eemaldamiseks.",
     "snap": "Sobita mu maapinnale",
     "snapHint": "Sobitamise režiimis järgivad lõigud maapinda, mille oled juba läbinud; mis ei sobi, salvestatakse sirgetena.",
-    "connectFailed": "Marssruuti ei õnnestunud sobitada sinu maapinnale. Proovi uuesti või salvesta vab režiimis."
+    "connectFailed": "Marssruuti ei õnnestunud sobitada sinu maapinnale. Proovi uuesti või salvesta vab režiimis.",
+    "showSegments": "Minu lõigud",
+    "segmentsTitle": "Selle marssruudi lõigud",
+    "dirForward": "omas suunas",
+    "dirReverse": "vastassuunas"
   }
 }

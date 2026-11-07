@@ -4025,6 +4025,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/routes/{route_id}/segments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Route Segments
+         * @description Which of the athlete's own segments a saved route runs along.
+         */
+        get: operations["get_route_segments_api_v1_analysis_routes__route_id__segments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/thresholds/refresh": {
         parameters: {
             query?: never;
@@ -11069,6 +11089,44 @@ export interface components {
             created_at: string;
         };
         /**
+         * RouteSegmentMatchRead
+         * @description One segment a drawn or recorded route runs along.
+         *
+         *     Attributes:
+         *         segment_id: Segment identifier.
+         *         name: Segment name.
+         *         claim: The athlete's own claim on it, from the segment network.
+         *         along_start_m: Offset along the segment where the route joins it.
+         *         along_end_m: Offset along the segment where the route leaves it.
+         *         direction: ``forward`` / ``reverse`` along the segment geometry.
+         *         covered_m: Length of segment the route runs along.
+         *         length_m: Full segment length.
+         */
+        RouteSegmentMatchRead: {
+            /** Segment Id */
+            segment_id: number;
+            /** Name */
+            name: string;
+            /**
+             * Claim
+             * @enum {string}
+             */
+            claim: "hard" | "technical" | "mild" | "thin" | "plain";
+            /** Along Start M */
+            along_start_m: number;
+            /** Along End M */
+            along_end_m: number;
+            /**
+             * Direction
+             * @enum {string}
+             */
+            direction: "forward" | "reverse";
+            /** Covered M */
+            covered_m: number;
+            /** Length M */
+            length_m: number;
+        };
+        /**
          * RouteUpdate
          * @description Payload to edit a saved route.
          *
@@ -12567,6 +12625,8 @@ export interface components {
          *         status: ``confirmada`` (evidence-backed) or ``provisional``.
          *         grade: Hardest technical claim found along the variant.
          *         path_latlng: The drawn polyline, shaped by certified ways where real.
+         *         segment: Name of the athlete's own segment the variant runs along, when
+         *             one carries most of it.
          *         mark: The athlete's verdict on it, when placed.
          */
         TrailVariantRead: {
@@ -12596,6 +12656,8 @@ export interface components {
             grade: string;
             /** Path Latlng */
             path_latlng: number[][];
+            /** Segment */
+            segment: string | null;
             /** Mark */
             mark: ("real" | "falsa") | null;
         };
@@ -20655,6 +20717,46 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_route_segments_api_v1_analysis_routes__route_id__segments_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                route_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RouteSegmentMatchRead"][];
+                };
             };
             /** @description Validation Error */
             422: {

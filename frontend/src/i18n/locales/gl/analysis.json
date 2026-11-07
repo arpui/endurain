@@ -324,7 +324,8 @@
     "mark": {
       "real": "Chan real",
       "falsa": "Falsa"
-    }
+    },
+    "via": "por"
   },
   "routes": {
     "title": "As túas rutas",
@@ -354,6 +355,10 @@
     "drawHint": "Fai clic no mapa para engadir puntos da ruta. Fai clic nun punto para telo.",
     "snap": "Axustar ao meu terreo",
     "snapHint": "No modo axustado, os tramos seguen terreo que xa pisaches; os que non poden gardanse como liñas rectas.",
-    "connectFailed": "Non se puido axustar a ruta ao teu terreo. Intentao de novo ou gardaa en modo libre."
+    "connectFailed": "Non se puido axustar a ruta ao teu terreo. Intentao de novo ou gardaa en modo libre.",
+    "showSegments": "Os meus segmentos",
+    "segmentsTitle": "Segmentos desta ruta",
+    "dirForward": "no seu sentido",
+    "dirReverse": "en sentido contrario"
   }
 }

@@ -989,6 +989,8 @@ class TrailVariantRead(BaseModel):
         status: ``confirmada`` (evidence-backed) or ``provisional``.
         grade: Hardest technical claim found along the variant.
         path_latlng: The drawn polyline, shaped by certified ways where real.
+        segment: Name of the athlete's own segment the variant runs along, when
+            one carries most of it.
         mark: The athlete's verdict on it, when placed.
     """
 
@@ -1004,6 +1006,7 @@ class TrailVariantRead(BaseModel):
     status: Literal["confirmada", "provisional"]
     grade: StrictStr
     path_latlng: list[list[float]]
+    segment: StrictStr | None
     mark: Literal["real", "falsa"] | None
 
 

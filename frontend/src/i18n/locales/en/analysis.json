@@ -324,7 +324,8 @@
     "mark": {
       "real": "Real ground",
       "falsa": "False"
-    }
+    },
+    "via": "via"
   },
   "routes": {
     "title": "Your routes",
@@ -354,6 +355,10 @@
     "drawHint": "Click the map to add route points. Click a point to remove it.",
     "snap": "Fit to my ground",
     "snapHint": "In fitted mode, stretches follow ground you have already crossed; stretches that cannot are saved as straight lines.",
-    "connectFailed": "The route could not be fitted to your ground. Try again, or save in free mode."
+    "connectFailed": "The route could not be fitted to your ground. Try again, or save in free mode.",
+    "showSegments": "Your segments",
+    "segmentsTitle": "Segments on this route",
+    "dirForward": "with its direction",
+    "dirReverse": "in the opposite direction"
   }
 }

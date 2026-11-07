@@ -2927,12 +2927,24 @@ def get_activity_variants(
         round(m.split_m, 1): m.verdict for m in analysis_crud.list_variant_marks(requester_user_id, activity_id, db)
     }
     found = analysis_variants.find_variants(cells, cum, node_map, adjacency, marks)
+    segment_claims = {
+        row.segment_id: row.claim for row in get_segment_network(requester_user_id, db, show_loops=True).segments
+    }
     for variant in found:
         centres = [
             (node_map[tuple(c)]["lat"], node_map[tuple(c)]["lng"]) for c in variant["path"] if tuple(c) in node_map
         ]
         variant["path_latlng"] = analysis_variants.draw_along_ways(centres, requester_user_id, db) if centres else []
         variant.pop("path")
+        along = match_segments_for_polyline(
+            requester_user_id,
+            variant["path_latlng"],
+            db,
+            min_share=0.7,
+            min_covered_m=max(150.0, 0.5 * variant["variant_m"]),
+            claims=segment_claims,
+        )
+        variant["segment"] = along[0].name if along else None
     return analysis_schema.TrailVariantsRead(
         activity_id=activity_id,
         cell_m=analysis_constants.TRAIL_GRAPH_CELL_M,
@@ -3041,6 +3053,76 @@ def create_route(
     return _to_route_read(route)
 
 
+def match_segments_for_polyline(
+    user_id: int,
+    geometry: list[list[float]],
+    db: Session,
+    *,
+    min_share: float = 0.4,
+    min_covered_m: float = 120.0,
+    claims: dict[int, str] | None = None,
+) -> list[analysis_schema.RouteSegmentMatchRead]:
+    """Which of the athlete's segments a polyline runs along, and how far.
+
+    A run of consecutive points landing within the cartographic tolerance of a
+    segment's geometry means the route follows that named corridor; the run's
+    along-offsets carry direction. Claims come from the named network (the
+    caller may pass them once to avoid re-aggregating per polyline).
+    """
+    pts = [(float(p0[0]), float(p0[1])) for p0 in geometry]
+    if len(pts) < 2:
+        return []
+    lats = [pt[0] for pt in pts]
+    lngs = [pt[1] for pt in pts]
+    margin = 0.005
+    shapes = segments_integration.list_segment_shapes_in_bbox(
+        min(lats) - margin, min(lngs) - margin, max(lats) + margin, max(lngs) + margin, db
+    )
+    if claims is None:
+        claims = {row.segment_id: row.claim for row in get_segment_network(user_id, db, show_loops=True).segments}
+    poly_xy = [analysis_graph.to_xy(lat, lng) for lat, lng in pts]
+    tol = analysis_constants.TRAIL_VARIANT_WAY_CERT_TOL_M
+    matches: list[analysis_schema.RouteSegmentMatchRead] = []
+    for shape in shapes:
+        seg_xy = analysis_projection.polyline_xy(list(shape.geometry))
+        if len(seg_xy) < 2:
+            continue
+        offsets = analysis_projection.cumulative_offsets(seg_xy)
+        run = analysis_projection.longest_snapped_run(poly_xy, seg_xy, offsets, tol)
+        if run is None:
+            continue
+        along_start, along_end = run
+        covered = abs(along_end - along_start)
+        if covered < min_covered_m or covered < min_share * shape.distance_m:
+            continue
+        matches.append(
+            analysis_schema.RouteSegmentMatchRead(
+                segment_id=shape.id,
+                name=shape.name,
+                claim=claims.get(shape.id, "plain"),
+                along_start_m=min(along_start, along_end),
+                along_end_m=max(along_start, along_end),
+                direction="forward" if along_end >= along_start else "reverse",
+                covered_m=round(covered, 1),
+                length_m=round(shape.distance_m, 1),
+            )
+        )
+    matches.sort(key=lambda row: row.covered_m, reverse=True)
+    return matches
+
+
+def get_route_segments(
+    route_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> list[analysis_schema.RouteSegmentMatchRead]:
+    """The named corridors one saved route runs along."""
+    route = analysis_crud.get_route(route_id, requester_user_id, db)
+    if route is None:
+        raise core_exceptions.NotFoundError
+    return match_segments_for_polyline(requester_user_id, route.geometry, db)
+
+
 def connect_route(
     requester_user_id: int,
     payload: analysis_schema.RouteConnectCreate,
@@ -3071,6 +3153,7 @@ def connect_route(
         db,
     )
     node_map, adjacency = analysis_graph.graph_from_rows(nodes, edges)
+    prefer = analysis_crud.list_segment_preference_cells(requester_user_id, db) or None
     tol = analysis_constants.TRAIL_GRAPH_SNAP_TOL_M
     cells = [analysis_variants.nearest_cell(node_map, xy, tol) for xy in anchor_xy]
 
@@ -3091,7 +3174,7 @@ def connect_route(
                 analysis_constants.TRAIL_ROUTE_CONNECT_MAX_M,
                 2.0 * straights[k - 1] + 300.0,
             )
-            chain = analysis_variants.walk_between(adjacency, node_map, cells[k - 1], cells[k], cutoff)
+            chain = analysis_variants.walk_between(adjacency, node_map, cells[k - 1], cells[k], cutoff, prefer)
         if chain:
             for cell in chain[1:]:
                 entry = node_map[cell]

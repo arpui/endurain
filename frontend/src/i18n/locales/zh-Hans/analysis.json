@@ -324,7 +324,8 @@
     "mark": {
       "real": "实地存在",
       "falsa": "虚假"
-    }
+    },
+    "via": "经由"
   },
   "routes": {
     "title": "你的路线",
@@ -354,6 +355,10 @@
     "drawHint": "点击地图添加路线点；点击某个点将其删除。",
     "snap": "贴合我已走过的地面",
     "snapHint": "贴合模式下，各段会沿你已走过的地面行进；无法贴合的段将保存为直线。",
-    "connectFailed": "无法将路线贴合到你的地面。请重试，或以自由模式保存。"
+    "connectFailed": "无法将路线贴合到你的地面。请重试，或以自由模式保存。",
+    "showSegments": "我的路段",
+    "segmentsTitle": "此路线经过的路段",
+    "dirForward": "正向",
+    "dirReverse": "反向"
   }
 }

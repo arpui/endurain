@@ -324,7 +324,8 @@
     "mark": {
       "real": "Terra real",
       "falsa": "Falsa"
-    }
+    },
+    "via": "per"
   },
   "routes": {
     "title": "Les teves rutes",
@@ -354,6 +355,10 @@
     "drawHint": "Fes clic al mapa per afegir punts a la ruta. Fes clic sobre un punt per treure’l.",
     "snap": "Ajusta al meu terreny",
     "snapHint": "En mode ajustat, els trams segueixen el terreny que ja has trepitjat; els que no poden, es desen en línia recta.",
-    "connectFailed": "No s’ha pogut ajustar la ruta al teu terreny. Torna-ho a provar o desa-la en mode lliure."
+    "connectFailed": "No s’ha pogut ajustar la ruta al teu terreny. Torna-ho a provar o desa-la en mode lliure.",
+    "showSegments": "Els teus segments",
+    "segmentsTitle": "Segments d’aquesta ruta",
+    "dirForward": "en el seu sentit",
+    "dirReverse": "en sentit contrari"
   }
 }

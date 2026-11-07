@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-import type { DesignRoute } from '@/features/analysis/types'
+import type { DesignRoute, SegmentNetworkItem } from '@/features/analysis/types'
+import { gradeTrailWay } from '@/features/analysis/utils/trailDegree'
 import type {
   GeoPoint,
   MapInstance,
@@ -24,6 +25,8 @@ const props = defineProps<{
   draft?: GeoPoint[] | null
   /** The saved route the draft came from; its stored line is hidden while editing. */
   editingId?: number | null
+  /** The athlete's named corridors, drawn underneath as orientation. */
+  segments?: SegmentNetworkItem[]
 }>()
 
 const emit = defineEmits<{
@@ -41,18 +44,27 @@ let instance: MapInstance | null = null
 
 /** Stored routes plus, while editing, the draft with its clickable handles. */
 function overlays(): MapOverlay[] {
-  const list: MapOverlay[] = props.routes
-    .filter((route) => route.id !== (props.editingId ?? -1))
-    .map((route, index) => ({
-      points: route.points,
-      // the designer's own routes carry no technical claim: the brand family
-      // distinguishes them from the analysed ground underneath
-      color: themeColor(index % 2 === 0 ? '--color-brand' : '--color-effort'),
-      weight: route.id === props.selected ? 6 : 4,
-      opacity: route.id === props.selected ? 1 : 0.75,
-      name: route.name,
-      onSelect: () => emit('select', route.id),
-    }))
+  const list: MapOverlay[] = (props.segments ?? []).map((segment) => ({
+    points: segment.points,
+    color: themeColor(gradeTrailWay(segment.claim).colorToken),
+    weight: 3,
+    opacity: 0.5,
+    name: segment.name,
+  }))
+  list.push(
+    ...props.routes
+      .filter((route) => route.id !== (props.editingId ?? -1))
+      .map((route, index) => ({
+        points: route.points,
+        // the designer's own routes carry no technical claim: the brand family
+        // distinguishes them from the analysed ground underneath
+        color: themeColor(index % 2 === 0 ? '--color-brand' : '--color-effort'),
+        weight: route.id === props.selected ? 6 : 4,
+        opacity: route.id === props.selected ? 1 : 0.75,
+        name: route.name,
+        onSelect: () => emit('select', route.id),
+      })),
+  )
   if (props.draft && props.draft.length > 0) {
     list.push({
       points: props.draft,
@@ -92,7 +104,7 @@ function allPoints(): GeoPoint[] {
 onMounted(mountMap)
 watch(ready, mountMap)
 watch(
-  () => [props.routes, props.selected, props.draft, props.editingId],
+  () => [props.routes, props.selected, props.draft, props.editingId, props.segments],
   () => {
     if (!instance) {
       mountMap()

@@ -126,12 +126,21 @@ def _best_variant(adjacency: dict, node_map: dict, start, blocked: set, targets:
     return None
 
 
-def walk_between(adjacency: dict, node_map: dict, start, target, cutoff_m: float) -> list | None:
+def walk_between(
+    adjacency: dict,
+    node_map: dict,
+    start,
+    target,
+    cutoff_m: float,
+    prefer: set[tuple[int, int]] | None = None,
+) -> list | None:
     """Shortest walked chain of cells between two cells of the personal graph.
 
     Same ground rules as the variant search: only the athlete's own directed
     transitions, and none born of a long GPS interpolation. When no chain fits
-    within the cutoff there is no walked answer.
+    within the cutoff there is no walked answer. Cells covered by the athlete's
+    own named segments are favored - ground they chose and repeated is the
+    better answer when more than one chain exists - without excluding the rest.
     """
     if start == target:
         return [start]
@@ -155,7 +164,10 @@ def walk_between(adjacency: dict, node_map: dict, start, target, cutoff_m: float
             v = step["to"]
             if v not in node_map or step["step_max"] > analysis_constants.TRAIL_GRAPH_MAX_STEP_M:
                 continue
-            nd = d + max(_dist_xy(uxy, _xy(node_map, v)), 5.0)
+            weight = max(_dist_xy(uxy, _xy(node_map, v)), 5.0)
+            if prefer is not None and u in prefer and v in prefer:
+                weight *= 0.5
+            nd = d + weight
             if nd < dist.get(v, math.inf):
                 dist[v] = nd
                 prev[v] = u
