@@ -44,6 +44,8 @@ import type {
   ActivityLoadsSummary,
   ActivityLoadsSummaryDto,
   RouteDto,
+  RouteSegmentMatch,
+  RouteSegmentMatchDto,
   SegmentNetworkDto,
   TrailMarkDto,
   TrailNetworkDto,
@@ -791,6 +793,7 @@ export async function fetchTrailVariants(
       deltaGainM: v.delta_gain_m,
       status: v.status as TrailVariant['status'],
       grade: v.grade,
+      segment: v.segment ?? null,
       points: (v.path_latlng ?? []).flatMap(([lat, lng]) =>
         lat === undefined || lng === undefined ? [] : [{ lat, lng }],
       ),
@@ -1010,4 +1013,31 @@ export async function fetchSegmentNetwork(
       ),
     })),
   }
+}
+
+/**
+ * List the athlete's own segments one saved route runs along.
+ *
+ * @param routeId - The saved route.
+ * @param signal - Optional abort signal.
+ * @returns The matched corridors, longest first.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchRouteSegments(
+  routeId: number,
+  signal?: AbortSignal,
+): Promise<RouteSegmentMatch[]> {
+  const dtos = await apiFetch<RouteSegmentMatchDto[]>(`/analysis/routes/${routeId}/segments`, {
+    signal,
+  })
+  return (dtos ?? []).map((row): RouteSegmentMatch => ({
+    segmentId: row.segment_id,
+    name: row.name,
+    claim: row.claim as RouteSegmentMatch['claim'],
+    alongStartM: row.along_start_m,
+    alongEndM: row.along_end_m,
+    direction: row.direction as RouteSegmentMatch['direction'],
+    coveredM: row.covered_m,
+    lengthM: row.length_m,
+  }))
 }

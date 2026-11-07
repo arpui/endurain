@@ -18,13 +18,13 @@ import pytest
 import core.exceptions as core_exceptions
 import modules.activities.activity_streams.constants as activity_streams_constants
 import modules.analysis.constants as analysis_constants
-import modules.analysis.segment_projection as analysis_projection
 import modules.analysis.contracts as analysis_contracts
 import modules.analysis.graph as analysis_graph
 import modules.analysis.intervals as analysis_intervals
 import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
+import modules.analysis.segment_projection as analysis_projection
 import modules.analysis.service as analysis_service
 import modules.analysis.trail as analysis_trail
 import modules.analysis.trail_osm as analysis_trail_osm
@@ -1791,6 +1791,108 @@ class TestSegmentNetwork:
             visible = shown.get_segment_network(7, _db(), show_loops=True)
         assert [s.segment_id for s in visible.segments] == [4]
         assert visible.segments[0].loop is True
+
+
+class TestRouteSegmentMatch:
+    """Named corridors recognized under a drawn or recorded polyline."""
+
+    @staticmethod
+    def _shape(seg_id: int, name: str, north: bool = False):
+        import math as _m
+
+        per_lat = 15.0 / 111195.0
+        per_lng = 15.0 / (111320.0 * _m.cos(_m.radians(42.3)))
+        if north:
+            geometry = [[42.0 + k * per_lat, 1.5] for k in range(20)]
+        else:
+            geometry = [[42.0, 1.5 + k * per_lng] for k in range(20)]
+        return SimpleNamespace(
+            id=seg_id, name=name, distance_m=285.0, elevation_gain_m=None, altitudes=None, geometry=geometry
+        )
+
+    def _match(self, polyline, shapes):
+        with patch(f"{_SVC}.segments_integration.list_segment_shapes_in_bbox", return_value=shapes):
+            return analysis_service.match_segments_for_polyline(7, polyline, _db(), claims={11: "technical"})
+
+    def test_a_run_along_a_segment_is_matched_with_direction(self):
+        import math as _m
+
+        step = 10.0 / (111320.0 * _m.cos(_m.radians(42.3)))
+        along = [[42.0, 1.5 + k * step] for k in range(35)]  # 340 m east, past the end
+        matches = self._match(along, [self._shape(11, "PistaHN 400m")])
+        assert len(matches) == 1
+        m = matches[0]
+        assert m.segment_id == 11 and m.claim == "technical"
+        assert m.direction == "forward"
+        assert m.covered_m > 250.0
+
+    def test_the_return_leg_is_reverse(self):
+        import math as _m
+
+        step = 10.0 / (111320.0 * _m.cos(_m.radians(42.3)))
+        back = [[42.0, 1.5 + (33 - k) * step] for k in range(35)]
+        matches = self._match(back, [self._shape(11, "PistaHN 400m")])
+        assert len(matches) == 1 and matches[0].direction == "reverse"
+
+    def test_a_crossing_is_not_a_traversal(self):
+        import math as _m
+
+        step = 10.0 / (111320.0 * _m.cos(_m.radians(42.3)))
+        cross = [
+            [42.0 + k * step / 111195.0 * 111195.0 / 111195.0, 1.5 + 35 * step] for k in range(10)
+        ]  # north, clear of the east line
+        assert self._match(cross, [self._shape(11, "PistaHN 400m")]) == []
+
+    def test_only_a_majority_share_counts_for_variants(self):
+        import math as _m
+
+        step = 10.0 / (111320.0 * _m.cos(_m.radians(42.3)))
+        partial = [[42.0, 1.5 + k * step] for k in range(14)] + [
+            [42.0 + 200.0 / 111195.0, 1.5 + k * step] for k in range(20)
+        ]
+        with patch(f"{_SVC}.segments_integration.list_segment_shapes_in_bbox", return_value=[self._shape(11, "x")]):
+            loose = analysis_service.match_segments_for_polyline(7, partial, _db(), claims={})
+            tight = analysis_service.match_segments_for_polyline(
+                7, partial, _db(), min_share=0.9, min_covered_m=250.0, claims={}
+            )
+        assert loose and 100.0 < loose[0].covered_m < 200.0
+        assert tight == []
+
+
+class TestWalkPreference:
+    """The fitted drawer favors cells the athlete named as segments."""
+
+    @staticmethod
+    def _fixture(prefer):
+        node_map = {
+            c: {"lat": 42.0, "lng": 1.5, "ele": 0.0, "grade": "", "xy": (c[0] * 15.0, c[1] * 15.0)}
+            for c in [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1)]
+        }
+        adjacency: dict = {}
+
+        def add(a, b):
+            adjacency.setdefault(a, []).append(
+                {"to": b, "step_max": 5.0, "len": 15.0, "gain": 0.0, "loss": 0.0, "passes": 1, "on_path": 0}
+            )
+
+        # straight along y=0; an equally long corridor at y=15, joined at the ends
+        add((0, 0), (1, 0))
+        add((1, 0), (2, 0))
+        add((2, 0), (3, 0))
+        add((3, 0), (4, 0))
+        add((0, 0), (0, 1))
+        add((0, 1), (1, 1))
+        add((1, 1), (2, 1))
+        add((2, 1), (3, 1))
+        add((3, 1), (4, 1))
+        add((4, 1), (4, 0))
+        return analysis_variants.walk_between(adjacency, node_map, (0, 0), (4, 0), 2000.0, prefer)
+
+    def test_an_equal_walk_chooses_the_named_corridor(self):
+        plain = self._fixture(None)
+        preferred = self._fixture({(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 0)})
+        assert plain == [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)]
+        assert preferred == [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 0)]
 
 
 class TestWayCoverage:

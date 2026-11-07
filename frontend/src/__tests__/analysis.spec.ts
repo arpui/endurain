@@ -21,6 +21,7 @@ import {
   connectRoutePoints,
   createRoute,
   deleteRoute,
+  fetchRouteSegments,
   fetchRoutes,
   fetchSegmentNetwork,
   fetchTrailNetwork,
@@ -766,6 +767,7 @@ describe('trail variant analysis', () => {
           delta_gain_m: -15,
           status: 'confirmada',
           grade: 'tech',
+          segment: 'PistaHN 400m',
           path_latlng: [
             [42.47, 0.99],
             [42.471, 0.991],
@@ -785,6 +787,7 @@ describe('trail variant analysis', () => {
       side: 'left',
       status: 'confirmada',
       mark: 'falsa',
+      segment: 'PistaHN 400m',
     })
     expect(variants.variants[0]?.points).toEqual([
       { lat: 42.47, lng: 0.99 },
@@ -804,6 +807,32 @@ describe('trail variant analysis', () => {
     const lastCall = vi.mocked(apiFetch).mock.calls[vi.mocked(apiFetch).mock.calls.length - 1]
     expect(String(lastCall?.[0])).toContain('/activities/2044/trail-variants/marks?split_m=4200')
     expect(lastCall?.[1]).toMatchObject({ method: 'DELETE' })
+  })
+})
+
+describe('route segment inventory', () => {
+  it('lists the named corridors a route runs along', async () => {
+    vi.mocked(apiFetch).mockResolvedValue([
+      {
+        segment_id: 12,
+        name: 'PistaHN 400m',
+        claim: 'technical',
+        along_start_m: 20,
+        along_end_m: 400,
+        direction: 'reverse',
+        covered_m: 380,
+        length_m: 409,
+      },
+    ] satisfies Schemas['RouteSegmentMatchRead'][])
+    const rows = await fetchRouteSegments(3)
+    expect(String(vi.mocked(apiFetch).mock.calls[0]?.[0])).toBe('/analysis/routes/3/segments')
+    expect(rows[0]).toMatchObject({
+      segmentId: 12,
+      name: 'PistaHN 400m',
+      claim: 'technical',
+      direction: 'reverse',
+      coveredM: 380,
+    })
   })
 })
 

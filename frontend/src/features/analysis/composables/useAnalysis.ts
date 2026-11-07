@@ -17,6 +17,7 @@ import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
   deleteTrailSectionMark,
+  fetchRouteSegments,
   fetchRoutes,
   fetchSegmentNetwork,
   fetchTrailNetwork,
@@ -497,5 +498,25 @@ export function useSegmentNetworkQuery(
     queryKey: computed(() => queryKeys.analysis.segmentNetwork(loops.value)),
     queryFn: ({ signal }) => fetchSegmentNetwork(loops.value, signal),
     enabled: computed(() => toValue(enabled) && isAuthenticated.value),
+  })
+}
+
+/**
+ * The athlete's own corridors one saved route runs along (experimental).
+ *
+ * @param routeId - Reactive route id, or null when nothing is picked.
+ * @returns The TanStack query for the route's segment inventory.
+ */
+export function useRouteSegmentsQuery(routeId: MaybeRefOrGetter<number | null>) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => {
+    const value = toValue(routeId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.routeSegments(id.value)),
+    queryFn: ({ signal }) => fetchRouteSegments(id.value, signal),
+    enabled: computed(() => id.value > 0 && isAuthenticated.value),
   })
 }

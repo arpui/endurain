@@ -324,7 +324,8 @@
     "mark": {
       "real": "Valódi talaj",
       "falsa": "Hamis"
-    }
+    },
+    "via": "vagy"
   },
   "routes": {
     "title": "Saját útvonalaid",
@@ -354,6 +355,11 @@
     "drawHint": "Kattints a térképre útvonalpontok hozzáadásához. Kattints egy pontra az eltávolításához.",
     "snap": "Illesztés a saját terepemre",
     "snapHint": "Illesztési módban a szakaszok már bejárt terepet követnek; amelyek nem illeszkednek, egyenes vonalként mentődnek.",
-    "connectFailed": "Az útvonalat nem sikerült a terepedhez illeszteni. Próbáld újra, vagy mentsd szabad módban."
+    "connectFailed": "Az útvonalat nem sikerült a terepedhez illeszteni. Próbáld újra, vagy mentsd szabad módban.",
+    "showSegments": "Saját szakaszaim",
+    "segmentsTitle": "Az útvonal szakaszai",
+    "dirForward": "a irányával megegyező",
+    "dirReverse": "ellenkező irányú",
+    "via": "szakaszán"
   }
 }

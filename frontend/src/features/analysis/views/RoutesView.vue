@@ -17,9 +17,13 @@ import { connectRoutePoints } from '@/features/analysis/services/analysis'
 import {
   useCreateRouteMutation,
   useDeleteRouteMutation,
+  useRouteSegmentsQuery,
   useRoutesQuery,
+  useSegmentNetworkQuery,
   useUpdateRouteMutation,
 } from '@/features/analysis/composables/useAnalysis'
+import { gradeTrailWay } from '@/features/analysis/utils/trailDegree'
+import { themeColor } from '@/lib/themeColor'
 import type { DesignRoute } from '@/features/analysis/types'
 import type { GeoPoint } from '@/composables/useMapProvider'
 
@@ -34,6 +38,15 @@ const selected = ref<number | null>(null)
 function pick(routeId: number): void {
   selected.value = selected.value === routeId ? null : routeId
 }
+
+// The athlete's named corridors underneath the map, and the corridors a picked
+// route runs along: the route tool should speak in their names, not in cells.
+const showSegments = ref(false)
+const segmentQuery = useSegmentNetworkQuery(showSegments, true)
+const networkSegments = computed(() =>
+  showSegments.value ? (segmentQuery.data.value?.segments ?? []) : [],
+)
+const inventoryQuery = useRouteSegmentsQuery(selected)
 
 const numberFormat = computed(
   () => new Intl.NumberFormat(locale.value, { maximumFractionDigits: 2 }),
@@ -201,12 +214,17 @@ function confirmDelete(): void {
             {{ t('analysis.routes.new') }}
           </Button>
         </div>
+        <label class="flex items-center gap-2 text-caption text-muted-foreground">
+          <Switch v-model="showSegments" />
+          {{ t('analysis.routes.showSegments') }}
+        </label>
         <RoutesMap
           :routes="routes"
           :selected="selected"
           :label="t('analysis.routes.mapLabel')"
           :draft="draft"
           :editing-id="editingId"
+          :segments="networkSegments"
           @select="pick"
           @add-point="addPoint"
           @remove-vertex="removeVertex"
@@ -218,6 +236,31 @@ function confirmDelete(): void {
             {{ t('analysis.routes.connectFailed') }}</span
           >
         </p>
+      </Card>
+
+      <Card v-if="selected !== null && (inventoryQuery.data.value?.length ?? 0) > 0" class="p-3">
+        <h3 class="mb-2 text-card-heading">{{ t('analysis.routes.segmentsTitle') }}</h3>
+        <ul class="flex flex-col gap-1 text-meta">
+          <li
+            v-for="row in inventoryQuery.data.value"
+            :key="row.segmentId"
+            class="flex items-center gap-2"
+          >
+            <span
+              class="inline-block size-2.5 rounded-full"
+              :style="{ backgroundColor: themeColor(gradeTrailWay(row.claim).colorToken) }"
+            />
+            <span class="font-medium">{{ row.name }}</span>
+            <span class="text-muted-foreground">
+              {{ Math.round(row.coveredM) }} / {{ Math.round(row.lengthM) }} m ·
+              {{
+                row.direction === 'forward'
+                  ? t('analysis.routes.dirForward')
+                  : t('analysis.routes.dirReverse')
+              }}
+            </span>
+          </li>
+        </ul>
       </Card>
 
       <Card v-if="routes.length > 0" class="overflow-x-auto p-3">

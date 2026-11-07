@@ -308,6 +308,20 @@ def update_route(
     return route
 
 
+@router.get(
+    "/routes/{route_id}/segments",
+    response_model=list[analysis_schema.RouteSegmentMatchRead],
+)
+def get_route_segments(
+    route_id: core_dependencies.PositiveId,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> list[analysis_schema.RouteSegmentMatchRead]:
+    """Which of the athlete's own segments a saved route runs along."""
+    return analysis_service.get_route_segments(route_id, token_user_id, db)
+
+
 @router.delete(
     "/routes/{route_id}",
     response_model=None,
