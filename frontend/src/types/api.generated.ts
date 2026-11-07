@@ -4067,6 +4067,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/routes/{route_id}/course.fit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Route Course
+         * @description A designed route as a Garmin COURSE .fit.
+         *
+         *     Annotated only by what the athlete's own ground backs.
+         */
+        get: operations["get_route_course_api_v1_analysis_routes__route_id__course_fit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/routes/{route_id}/variants/marks": {
         parameters: {
             query?: never;
@@ -11149,6 +11171,8 @@ export interface components {
          *         direction: ``forward`` / ``reverse`` along the segment geometry.
          *         covered_m: Length of segment the route runs along.
          *         length_m: Full segment length.
+         *         route_start_m: Ground position along the route where the run begins.
+         *         route_end_m: Ground position along the route where the run ends.
          */
         RouteSegmentMatchRead: {
             /** Segment Id */
@@ -11173,6 +11197,10 @@ export interface components {
             covered_m: number;
             /** Length M */
             length_m: number;
+            /** Route Start M */
+            route_start_m: number;
+            /** Route End M */
+            route_end_m: number;
         };
         /**
          * RouteUpdate
@@ -20848,6 +20876,44 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["TrailVariantsRead"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_route_course_api_v1_analysis_routes__route_id__course_fit_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                route_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

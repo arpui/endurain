@@ -11,8 +11,10 @@ row is also only exercised by a real database.
 from dataclasses import replace
 from datetime import UTC, date, datetime
 
+import pytest
 from sqlalchemy import select
 
+import core.exceptions as core_exceptions
 import modules.activities.activity.contracts as activity_contracts
 import modules.activities.activity.crud as activity_crud
 import modules.analysis.constants as analysis_constants
@@ -587,6 +589,61 @@ class TestSegmentCrossings:
             analysis_crud.replace_activity_segment_crossings(activity_id, rows, db)
             db.commit()
             assert analysis_crud.list_segment_descent_evidence(_USER_ID, _METHOD, db) == []
+
+
+class TestCourseExport:
+    def test_a_drawn_route_exports_with_only_what_the_graph_backs(self, pg_factory):
+        import math
+
+        from fit_tool.fit_file import FitFile
+
+        ensure_user(pg_factory, _USER_ID)
+        ref_lat = analysis_constants.TRAIL_GRAPH_REF_LAT
+        ref_lng = analysis_constants.TRAIL_GRAPH_REF_LNG
+        cell_m = analysis_constants.TRAIL_GRAPH_CELL_M
+        step_lng = cell_m / (111320.0 * math.cos(math.radians(ref_lat)))
+        # sixteen walked cells in a row: altitude everywhere, hard in the middle
+        nodes = [
+            {
+                "x": k,
+                "y": 0,
+                "lat": ref_lat,
+                "lng": ref_lng + k * step_lng,
+                "ele": 100.0 + k,
+                "visits": 2,
+                "grade": "hard" if 3 <= k <= 13 else "",
+            }
+            for k in range(16)
+        ]
+        with pg_factory() as db:
+            analysis_crud.replace_user_graph(_USER_ID, nodes, [], db)
+            db.commit()
+            geometry = [[ref_lat, ref_lng + k * step_lng] for k in range(16)]
+            created = analysis_service.create_route(
+                _USER_ID, analysis_schema.RouteCreate(name="dur", geometry=geometry), db
+            )
+            db.commit()
+            data = analysis_service.export_route_course(created.id, _USER_ID, db)
+            parsed = FitFile.from_bytes(data)
+            messages = [r.message for r in parsed.records if not r.is_definition and r.message is not None]
+            names = [m.name for m in messages]
+            assert names.count("record") == 16
+            assert names.count("course_point") >= 1
+            records = [m for m in messages if m.name == "record"]
+            assert records[0].altitude == 100.0  # the graph's altitude, not a guess
+            # one hard run (3..13, over 120 m of ground) warns exactly once
+            danger = [m for m in messages if m.name == "course_point" and m.type == 5]
+            assert len(danger) == 1
+
+    def test_a_foreign_route_is_not_exportable(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            created = analysis_service.create_route(
+                _USER_ID, analysis_schema.RouteCreate(name="meva", geometry=[[42.0, 1.5], [42.0, 1.501]]), db
+            )
+            db.commit()
+        with pg_factory() as db, pytest.raises(core_exceptions.NotFoundError):
+            analysis_service.export_route_course(created.id, _USER_ID + 1, db)
 
 
 class TestRouteVariantMarks:

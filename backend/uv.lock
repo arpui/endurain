@@ -837,6 +837,7 @@ dependencies = [
     { name = "apscheduler" },
     { name = "authlib" },
     { name = "fastapi" },
+    { name = "fit-tool" },
     { name = "fitdecode" },
     { name = "garminconnect" },
     { name = "geopy" },
@@ -935,6 +936,7 @@ requires-dist = [
     { name = "authlib", specifier = ">=1.8.0" },
     { name = "boto3", marker = "extra == 'distributed'", specifier = ">=1.43.98" },
     { name = "fastapi", specifier = ">=0.141.1" },
+    { name = "fit-tool", specifier = ">=0.9.16,<0.10" },
     { name = "fitdecode", specifier = ">=0.11.0" },
     { name = "garminconnect", specifier = ">=0.3.16" },
     { name = "geopy", specifier = ">=2.5.0" },
@@ -1054,6 +1056,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/c8/d7/37691dc5063438a448b646f6f2442b4beebf16cc0e18d8cdfa7aeec60b8c/filelock-4.0.4.tar.gz", hash = "sha256:90999ed63a26ccf86b93b959ab10cf1017f422d816be454ed54cbed263e71ab5", size = 244639, upload-time = "2026-09-26T15:19:12.105Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bc/ac/8b9c6dc2aa7e9cf5582e20a337006c3428c3d752c2255dbaca2c78a8be45/filelock-4.0.4-py3-none-any.whl", hash = "sha256:0df72be195ca7892216d16f2edce8d9b93a571f02402972020a8cff84c594c7b", size = 108629, upload-time = "2026-09-26T15:19:10.603Z" },
+]
+
+[[package]]
+name = "fit-tool"
+version = "0.9.16"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/4f/be06a443553f5e74b4e9360724aaf41d0d09dceb0bc69d8faf3fe0f398f0/fit_tool-0.9.16.tar.gz", hash = "sha256:716b75b2fdfc66ca7b82df65f750c1427fd984c558284753f43e2bf8d2188f61", size = 300961, upload-time = "2026-08-05T04:06:48.023Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/4f/f0b1bfbc260007870aa0b05e07bdcdebc6080bfbc52dd680011ab0daa44b/fit_tool-0.9.16-py3-none-any.whl", hash = "sha256:3403c61663cc205da101a9952edcdc31cf9634dce2eb5c12a397eb24cf4aacf0", size = 497174, upload-time = "2026-08-05T04:06:46.48Z" },
 ]
 
 [[package]]

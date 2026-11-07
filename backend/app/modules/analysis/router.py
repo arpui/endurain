@@ -4,7 +4,7 @@ from collections.abc import Callable
 from datetime import date
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Request, Security, status
+from fastapi import APIRouter, Depends, Query, Request, Response, Security, status
 from sqlalchemy.orm import Session
 
 import core.database as core_database
@@ -337,6 +337,28 @@ def get_route_variants(
     The engine does not care whether a GPS or a finger drew the plan.
     """
     return analysis_service.get_route_variants(route_id, token_user_id, db)
+
+
+@router.get(
+    "/routes/{route_id}/course.fit",
+    response_class=Response,
+)
+def get_route_course(
+    route_id: core_dependencies.PositiveId,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> Response:
+    """A designed route as a Garmin COURSE .fit.
+
+    Annotated only by what the athlete's own ground backs.
+    """
+    data = analysis_service.export_route_course(route_id, token_user_id, db)
+    return Response(
+        content=data,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="ruta-{route_id}.fit"'},
+    )
 
 
 @router.post(

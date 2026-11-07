@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Pencil, Plus, Trash2, X } from '@lucide/vue'
+import { Download, Pencil, Plus, Trash2, X } from '@lucide/vue'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useToasts } from '@/composables/useToasts'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,7 @@ import { connectRoutePoints } from '@/features/analysis/services/analysis'
 import {
   useCreateRouteMutation,
   useDeleteRouteMutation,
+  useRouteCourseMutation,
   useRouteSegmentsQuery,
   useRouteVariantMarkMutation,
   useRouteVariantsQuery,
@@ -27,13 +29,16 @@ import {
 } from '@/features/analysis/composables/useAnalysis'
 import type { TrailVariant } from '@/features/analysis/types'
 import { gradeTrailWay } from '@/features/analysis/utils/trailDegree'
+import { downloadBlob } from '@/lib/download'
 import { themeColor } from '@/lib/themeColor'
 import type { DesignRoute } from '@/features/analysis/types'
 import type { GeoPoint } from '@/composables/useMapProvider'
 
 const { t, locale } = useI18n()
+const toasts = useToasts()
 
 const routesQuery = useRoutesQuery()
+const courseMutation = useRouteCourseMutation()
 const routes = computed(() => routesQuery.data.value ?? [])
 
 /** The route the viewer picked, on the map or in the table. */
@@ -102,6 +107,17 @@ function startNew(): void {
   editingId.value = null
   draftName.value = ''
   draftNotes.value = undefined
+}
+
+/** Saves the route as a Garmin course file; annotations come from the server. */
+function downloadCourse(route: DesignRoute): void {
+  courseMutation.mutate(route.id, {
+    onSuccess: (blob) => {
+      downloadBlob(blob, `ruta-${route.id}.fit`)
+      toasts.success(t('analysis.routes.downloadSuccess', { name: route.name }))
+    },
+    onError: () => toasts.error(t('analysis.routes.downloadError')),
+  })
 }
 
 function startEdit(route: DesignRoute): void {
@@ -332,6 +348,15 @@ function confirmDelete(): void {
               </td>
               <td class="py-2 text-right">
                 <div class="flex items-center justify-end gap-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    :aria-label="t('analysis.routes.download')"
+                    :disabled="courseMutation.isPending.value"
+                    @click.stop="downloadCourse(route)"
+                  >
+                    <Download class="size-4" />
+                  </Button>
                   <Button
                     size="sm"
                     variant="ghost"

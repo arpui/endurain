@@ -6,7 +6,7 @@
 
 import { computed, type MaybeRefOrGetter, toValue } from 'vue'
 import { storeToRefs } from 'pinia'
-import { keepPreviousData, useQuery } from '@tanstack/vue-query'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/vue-query'
 
 import type { AnalysisSettingsUpdateDto, FitnessQuery, TrailVerdict } from '../types'
 import type { GeoPoint } from '@/composables/useMapProvider'
@@ -17,6 +17,7 @@ import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   fetchActivityIntervals,
   deleteTrailSectionMark,
+  fetchRouteCourse,
   fetchRouteSegments,
   fetchRouteVariants,
   fetchRoutes,
@@ -560,5 +561,18 @@ export function useRouteVariantMarkMutation(routeId: MaybeRefOrGetter<number | n
     invalidateKey: ['analysis', 'route-variants'],
     mutationFn: ({ splitM, verdict }: { splitM: number; verdict: 'real' | 'falsa' | null }) =>
       postRouteVariantMark(id.value, splitM, verdict),
+  })
+}
+
+/**
+ * Render a designed route as a Garmin course file. Modelled as a mutation for
+ * its in-flight and error states only: it changes no server state, and the
+ * caller is responsible for saving the returned blob.
+ *
+ * @returns The TanStack mutation that produces the .fit blob.
+ */
+export function useRouteCourseMutation() {
+  return useMutation<Blob, Error, number>({
+    mutationFn: (routeId) => fetchRouteCourse(routeId),
   })
 }

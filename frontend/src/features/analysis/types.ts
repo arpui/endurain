@@ -760,4 +760,8 @@ export interface RouteSegmentMatch {
   coveredM: number
   /** Full segment length, metres. */
   lengthM: number
+  /** Where along the route the run begins, metres. */
+  routeStartM: number
+  /** Where along the route the run ends, metres. */
+  routeEndM: number
 }

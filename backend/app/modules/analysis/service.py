@@ -35,6 +35,7 @@ import modules.activities.activity_streams.constants as activity_streams_constan
 import modules.activities.activity_streams.integration_service as activity_streams_integration
 import modules.analysis.constants as analysis_constants
 import modules.analysis.contracts as analysis_contracts
+import modules.analysis.course_export as course_export
 import modules.analysis.crud as analysis_crud
 import modules.analysis.graph as analysis_graph
 import modules.analysis.intervals as analysis_intervals
@@ -3143,6 +3144,9 @@ def match_segments_for_polyline(
     if claims is None:
         claims = {row.segment_id: row.claim for row in get_segment_network(user_id, db, show_loops=True).segments}
     poly_xy = [analysis_graph.to_xy(lat, lng) for lat, lng in pts]
+    poly_cum = [0.0]
+    for index in range(1, len(poly_xy)):
+        poly_cum.append(poly_cum[-1] + analysis_variants._dist_xy(poly_xy[index - 1], poly_xy[index]))
     tol = analysis_constants.TRAIL_VARIANT_WAY_CERT_TOL_M
     matches: list[analysis_schema.RouteSegmentMatchRead] = []
     for shape in shapes:
@@ -3153,7 +3157,7 @@ def match_segments_for_polyline(
         run = analysis_projection.longest_snapped_run(poly_xy, seg_xy, offsets, tol)
         if run is None:
             continue
-        along_start, along_end = run
+        along_start, along_end, index_start, index_end = run
         covered = abs(along_end - along_start)
         if covered < min_covered_m or covered < min_share * shape.distance_m:
             continue
@@ -3167,6 +3171,8 @@ def match_segments_for_polyline(
                 direction="forward" if along_end >= along_start else "reverse",
                 covered_m=round(covered, 1),
                 length_m=round(shape.distance_m, 1),
+                route_start_m=round(poly_cum[index_start], 1),
+                route_end_m=round(poly_cum[index_end], 1),
             )
         )
     matches.sort(key=lambda row: row.covered_m, reverse=True)
@@ -3273,6 +3279,137 @@ def update_route(
         extra=core_logger.context(route_id=route.id, user_id=requester_user_id, distance_m=route.distance_m),
     )
     return _to_route_read(route)
+
+
+def export_route_course(route_id: int, requester_user_id: int, db: Session) -> bytes:
+    """Render a saved route as a Garmin COURSE .fit, annotated only with truth.
+
+    Every mark on the course is one the athlete's own ground backs: named
+    segments the route runs along, the recorded track's detected cores (when
+    the route still is that track), the hard cells under a drawn polyline,
+    confirmed and un-denied variants, and honest "to confirm" markers where
+    the route crosses ground never walked before. Nothing is estimated.
+    """
+    route = analysis_crud.get_route(route_id, requester_user_id, db)
+    if route is None:
+        raise core_exceptions.NotFoundError
+    geo = [(float(pt[0]), float(pt[1])) for pt in route.geometry]
+    cum = course_export.cumulative(geo)
+
+    # altitudes and known ground come from the personal graph
+    xs = [analysis_graph.cell_of(*analysis_graph.to_xy(lat, lng))[0] for lat, lng in geo]
+    ys = [analysis_graph.cell_of(*analysis_graph.to_xy(lat, lng))[1] for lat, lng in geo]
+    nodes, _edges = analysis_crud.list_user_graph_in_bbox(
+        requester_user_id, min(xs) - 1, max(xs) + 1, min(ys) - 1, max(ys) + 1, db
+    )
+    ele_by_cell = {(n.x, n.y): n.ele for n in nodes}
+    grades_by_cell = {(n.x, n.y): n.grade for n in nodes}
+    altitudes: list[float | None] = []
+    known: list[bool] = []
+    for lat, lng in geo:
+        cell = analysis_graph.cell_of(*analysis_graph.to_xy(lat, lng))
+        altitudes.append(ele_by_cell.get(cell))
+        known.append(cell in ele_by_cell)
+
+    points: list[tuple[float, str, int]] = []
+
+    # named corridors: always annotated, icon by what the athlete's descents say
+    matches = match_segments_for_polyline(requester_user_id, route.geometry, db)
+    for match in matches:
+        kind = (
+            course_export.CoursePoint.DANGER
+            if match.claim == "hard"
+            else (
+                course_export.CoursePoint.INFO
+                if match.claim in ("technical", "mild")
+                else course_export.CoursePoint.GENERIC
+            )
+        )
+        points.append((match.route_start_m, match.name, kind))
+
+    # recorded cores, only while the route still is that track
+    if route.source_activity_id is not None:
+        stored = analysis_crud.list_trail_observation(
+            route.source_activity_id, analysis_constants.trail_model_stamp(), db
+        )
+        activity_row = activity_integration.get_activity_for_derivation(route.source_activity_id, db)
+        activity_distance = float(activity_row.distance) if activity_row is not None else 0.0
+        if stored is not None and activity_distance > 0 and abs(cum[-1] - activity_distance) <= 0.1 * activity_distance:
+            verdicts = analysis_crud.list_trail_mark_verdicts(route.source_activity_id, requester_user_id, db)
+            _session_row, sections = stored
+            for section in sections:
+                if section.core_start_m is None or verdicts.get(section.start_m) == "wrong":
+                    continue
+                word = "TEC" if verdicts.get(section.start_m) == "overstated" else "DUR"
+                label = f"{word} {section.core_start_m / 1000.0:.1f}k{section.grade_pct:.0f}%"
+                points.append((section.core_start_m, label, course_export.CoursePoint.DANGER))
+        else:
+            # the plan moved on from its source: fall back to what the claimed
+            # cells under the drawn line know
+            points.extend(_cell_claim_points(geo, cum, grades_by_cell))
+    else:
+        points.extend(_cell_claim_points(geo, cum, grades_by_cell))
+
+    # confirmed variants not denied by the athlete (Model A: junction + finish)
+    marks = {
+        round(m.split_m, 1): m.verdict
+        for m in analysis_crud.list_variant_marks(requester_user_id, db, route_id=route_id)
+    }
+    track = [(None, lat, lng) for lat, lng in geo]
+    for variant in _search_variants(track, marks, requester_user_id, db):
+        if variant.mark == "falsa":
+            continue
+        if variant.status != "confirmada" and variant.mark != "real":
+            continue
+        icon = course_export.CoursePoint.LEFT if variant.side == "left" else course_export.CoursePoint.RIGHT
+        letter = "E" if variant.side == "left" else "D"
+        points.append(
+            (
+                variant.split_m,
+                f"V{letter}{variant.delta_m / 1000.0:+.1f}k{variant.delta_gain_m:+d}m",
+                icon,
+            )
+        )
+        points.append((variant.rejoin_m, f"FI V {variant.rejoin_m / 1000.0:.1f}k", course_export.CoursePoint.STRAIGHT))
+
+    # borders of ground never walked: to confirm, never claimed
+    k = 0
+    while k < len(geo):
+        if not known[k]:
+            start_m = cum[k]
+            while k < len(geo) and not known[k]:
+                k += 1
+            if cum[min(k, len(geo) - 1)] - start_m >= 100.0:
+                points.append((start_m, "? a confirmar", course_export.CoursePoint.GENERIC))
+        else:
+            k += 1
+
+    return course_export.build_course_bytes(route.name, geo, altitudes, points)
+
+
+def _cell_claim_points(
+    geo: list[tuple[float, float]],
+    cum: list[float],
+    grades_by_cell: dict[tuple[int, int], str],
+) -> list[tuple[float, str, int]]:
+    """Warnings carried by the athlete's own hard cells under a drawn line.
+
+    A run of ground the detector called hard on past sessions warns on the
+    watch; runs under 120 m are passing noise, not a stretch.
+    """
+    points: list[tuple[float, str, int]] = []
+    k = 0
+    cells = [analysis_graph.cell_of(*analysis_graph.to_xy(lat, lng)) for lat, lng in geo]
+    while k < len(geo):
+        if grades_by_cell.get(cells[k]) == "hard":
+            start_m = cum[k]
+            while k < len(geo) and grades_by_cell.get(cells[k]) == "hard":
+                k += 1
+            if cum[k - 1] - start_m >= 120.0:
+                points.append((start_m, f"DUR {start_m / 1000.0:.1f}k", course_export.CoursePoint.DANGER))
+        else:
+            k += 1
+    return points
 
 
 def delete_route(route_id: int, requester_user_id: int, db: Session) -> bool:

@@ -19,6 +19,7 @@ dependencies = [
     "alembic>=1.20.0",
     "joserfc>=1.7.5",
     "fitdecode>=0.11.0",
+    "fit-tool>=0.9.16,<0.10",
     "numpy>=2.5.3",
     "geopy>=2.5.0",
     "pydantic-core>=2.46.5",
