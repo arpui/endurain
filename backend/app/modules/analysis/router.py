@@ -339,6 +339,26 @@ def get_route_variants(
     return analysis_service.get_route_variants(route_id, token_user_id, db)
 
 
+@router.post(
+    "/routes/generate",
+    response_model=analysis_schema.RouteGenerateRead,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def generate_route(
+    request: Request,
+    plan: analysis_schema.RouteGenerateCreate,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:write"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.RouteGenerateRead:
+    """Plan a route between two points: ground first, map where it must be.
+
+    The result is a draft the caller edits or discards; provisional ground is
+    reported in it, never hidden.
+    """
+    return analysis_service.plan_route(token_user_id, plan, db)
+
+
 @router.get(
     "/routes/{route_id}/course.fit",
     response_class=Response,

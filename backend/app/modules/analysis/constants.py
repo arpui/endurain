@@ -662,3 +662,27 @@ TRAIL_SEGMENT_LOOP_MAX_LEN_M = 1200.0
 TRAIL_SEGMENT_LOOP_CLOSE_MIN_M = 30.0
 TRAIL_SEGMENT_LOOP_CLOSE_RATIO = 0.10
 TRAIL_ROUTE_CONNECT_MAX_M = 8000.0
+
+#: The A→B generator. Two strata feed one search: the personal graph (ground
+#: the athlete's GPS proved) and the cartographic layer (ways the map draws
+#: over ground nobody has crossed, always provisional). The corridor is the
+#: straight line grown by these bounds: a plan far outside it stops being a
+#: suggestion and starts being an escape.
+TRAIL_ROUTE_GEN_MAX_STRAIGHT_M = 18000.0
+TRAIL_ROUTE_GEN_CUTOFF_FACTOR = 3.0
+#: a mapped vertex joins the walked network when a crossed cell lies this near:
+#: the map and the GPS meeting at a trailhead is what makes the join real.
+TRAIL_ROUTE_GEN_LINK_M = 250.0
+#: an endpoint with no crossed cell this near must still find a mapped vertex;
+#: beyond that the plan has nothing honest to start from.
+TRAIL_ROUTE_GEN_NODE_TOL_M = 400.0
+#: more sessions than this over a way, and the way is infrastructure: the
+#: tanteig mode stops dodging it, because the ground there is probably the
+#: only ground there is.
+TRAIL_ROUTE_GEN_HEAVY_PASSES = 30
+#: detour weights the modes apply where the strata disagree.
+TRAIL_ROUTE_GEN_UNKNOWN_PENALTY = 1.25
+TRAIL_ROUTE_GEN_WAY_PREFER = 0.55
+TRAIL_ROUTE_GEN_LIGHT_PENALTY = 1.3
+TRAIL_ROUTE_GEN_TECH_PREFER = 0.72
+TRAIL_ROUTE_GEN_FLAT_PENALTY = 1.1

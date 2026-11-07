@@ -1085,6 +1085,60 @@ class RouteCreate(BaseModel):
     source_activity_id: StrictInt | None = None
 
 
+class RouteGenerateCreate(BaseModel):
+    """An A→B request: two drawn points and the intention behind the plan.
+
+    Attributes:
+        from_point: Start as ``[lat, lng]``.
+        to_point: End as ``[lat, lng]``.
+        mode: ``curt`` (shortest), ``tecnic`` (seek the hard ground) or
+            ``tanteig`` (prefer mapped ground never crossed).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    from_point: list[StrictFloat] = Field(min_length=2, max_length=2)
+    to_point: list[StrictFloat] = Field(min_length=2, max_length=2)
+    mode: Literal["curt", "tecnic", "tanteig"]
+
+
+class RouteUnknownRangeRead(BaseModel):
+    """One stretch of a generated plan that stays provisional.
+
+    Attributes:
+        start_m: Ground position along the plan where mapped-but-unwalked
+            ground begins.
+        end_m: Where it ends.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    start_m: StrictFloat
+    end_m: StrictFloat
+
+
+class RouteGenerateRead(BaseModel):
+    """A generated plan, offered as an editable draft, never as a saved route.
+
+    Attributes:
+        mode: The intention the plan was searched with.
+        geometry: The plan polyline as ``[lat, lng]`` vertices.
+        distance_m: Ground distance of the plan.
+        gain_m: Elevation gain measured from the athlete's own stored ground.
+        unknown_ranges: Stretches over mapped ground nobody has crossed.
+        unknown_m: Total provisional ground, metres.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    mode: Literal["curt", "tecnic", "tanteig"]
+    geometry: list[list[float]]
+    distance_m: StrictFloat
+    gain_m: StrictFloat
+    unknown_ranges: list[RouteUnknownRangeRead]
+    unknown_m: StrictFloat
+
+
 class RouteUpdate(BaseModel):
     """Payload to edit a saved route.
 

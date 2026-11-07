@@ -591,6 +591,74 @@ class TestSegmentCrossings:
             assert analysis_crud.list_segment_descent_evidence(_USER_ID, _METHOD, db) == []
 
 
+class TestRoutePlanning:
+    def test_a_plan_walks_the_graph_when_short_and_explores_only_when_asked(self, pg_factory):
+        import math
+
+        ensure_user(pg_factory, _USER_ID)
+        ref_lat = analysis_constants.TRAIL_GRAPH_REF_LAT
+        ref_lng = analysis_constants.TRAIL_GRAPH_REF_LNG
+        cell_m = analysis_constants.TRAIL_GRAPH_CELL_M
+        step_lng = cell_m / (111320.0 * math.cos(math.radians(ref_lat)))
+        nodes = [
+            {"x": k, "y": 0, "lat": ref_lat, "lng": ref_lng + k * step_lng, "ele": 100.0, "visits": 2, "grade": ""}
+            for k in range(21)
+        ]
+        edges = [
+            {
+                "ax": k,
+                "ay": 0,
+                "bx": k + 1,
+                "by": 0,
+                "length": cell_m,
+                "gain": 0.0,
+                "loss": 0.0,
+                "passes": 2,
+                "step_max": 4.0,
+                "on_path": 0,
+            }
+            for k in range(20)
+        ]
+        way_lat = ref_lat + 3 * cell_m / 111195.0
+        way_geometry = [(way_lat, ref_lng + k * step_lng) for k in range(21)]
+        way = analysis_contracts.OsmPathRecord(
+            way_id=77001,
+            name=None,
+            tags={"highway": "path"},
+            geometry=way_geometry,
+            length_m=300.0,
+            min_lat=way_lat,
+            min_lng=ref_lng,
+            max_lat=way_lat,
+            max_lng=ref_lng + 20 * step_lng,
+            cache_date=date(2026, 11, 1),
+        )
+        with pg_factory() as db:
+            analysis_crud.replace_user_graph(_USER_ID, nodes, edges, db)
+            analysis_crud.replace_osm_paths([way], db)
+            db.commit()
+            payload = analysis_schema.RouteGenerateCreate(
+                from_point=[ref_lat, ref_lng], to_point=[ref_lat, ref_lng + 20 * step_lng], mode="curt"
+            )
+            curt = analysis_service.plan_route(_USER_ID, payload, db)
+            assert curt.distance_m > 140.0
+            assert curt.unknown_m == 0.0
+            tanteig = analysis_service.plan_route(
+                _USER_ID, analysis_schema.RouteGenerateCreate(**{**payload.model_dump(), "mode": "tanteig"}), db
+            )
+            assert tanteig.unknown_m > 0.0
+            assert tanteig.unknown_ranges[0].start_m < tanteig.unknown_ranges[0].end_m
+
+    def test_a_plan_demands_two_different_nearby_points(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db, pytest.raises(core_exceptions.InvalidInputError):
+            analysis_service.plan_route(
+                _USER_ID,
+                analysis_schema.RouteGenerateCreate(from_point=[42.3, 1.5], to_point=[42.3, 1.5], mode="curt"),
+                db,
+            )
+
+
 class TestCourseExport:
     def test_a_drawn_route_exports_with_only_what_the_graph_backs(self, pg_factory):
         import math
