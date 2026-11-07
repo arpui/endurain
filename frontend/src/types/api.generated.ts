@@ -4067,6 +4067,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/routes/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate Route
+         * @description Plan a route between two points: ground first, map where it must be.
+         *
+         *     The result is a draft the caller edits or discards; provisional ground is
+         *     reported in it, never hidden.
+         */
+        post: operations["generate_route_api_v1_analysis_routes_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/routes/{route_id}/course.fit": {
         parameters: {
             query?: never;
@@ -11130,6 +11153,56 @@ export interface components {
             source_activity_id?: number | null;
         };
         /**
+         * RouteGenerateCreate
+         * @description An A→B request: two drawn points and the intention behind the plan.
+         *
+         *     Attributes:
+         *         from_point: Start as ``[lat, lng]``.
+         *         to_point: End as ``[lat, lng]``.
+         *         mode: ``curt`` (shortest), ``tecnic`` (seek the hard ground) or
+         *             ``tanteig`` (prefer mapped ground never crossed).
+         */
+        RouteGenerateCreate: {
+            /** From Point */
+            from_point: number[];
+            /** To Point */
+            to_point: number[];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "curt" | "tecnic" | "tanteig";
+        };
+        /**
+         * RouteGenerateRead
+         * @description A generated plan, offered as an editable draft, never as a saved route.
+         *
+         *     Attributes:
+         *         mode: The intention the plan was searched with.
+         *         geometry: The plan polyline as ``[lat, lng]`` vertices.
+         *         distance_m: Ground distance of the plan.
+         *         gain_m: Elevation gain measured from the athlete's own stored ground.
+         *         unknown_ranges: Stretches over mapped ground nobody has crossed.
+         *         unknown_m: Total provisional ground, metres.
+         */
+        RouteGenerateRead: {
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "curt" | "tecnic" | "tanteig";
+            /** Geometry */
+            geometry: number[][];
+            /** Distance M */
+            distance_m: number;
+            /** Gain M */
+            gain_m: number;
+            /** Unknown Ranges */
+            unknown_ranges: components["schemas"]["RouteUnknownRangeRead"][];
+            /** Unknown M */
+            unknown_m: number;
+        };
+        /**
          * RouteRead
          * @description One saved designed route.
          *
@@ -11201,6 +11274,21 @@ export interface components {
             route_start_m: number;
             /** Route End M */
             route_end_m: number;
+        };
+        /**
+         * RouteUnknownRangeRead
+         * @description One stretch of a generated plan that stays provisional.
+         *
+         *     Attributes:
+         *         start_m: Ground position along the plan where mapped-but-unwalked
+         *             ground begins.
+         *         end_m: Where it ends.
+         */
+        RouteUnknownRangeRead: {
+            /** Start M */
+            start_m: number;
+            /** End M */
+            end_m: number;
         };
         /**
          * RouteUpdate
@@ -20875,6 +20963,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TrailVariantsRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    generate_route_api_v1_analysis_routes_generate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RouteGenerateCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RouteGenerateRead"];
                 };
             };
             /** @description Validation Error */

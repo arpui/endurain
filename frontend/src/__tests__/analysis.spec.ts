@@ -25,6 +25,7 @@ import {
   fetchRouteSegments,
   fetchRouteVariants,
   fetchRoutes,
+  generateRoutePlan,
   fetchSegmentNetwork,
   fetchTrailNetwork,
   fetchTrailSections,
@@ -868,6 +869,32 @@ describe('route segment inventory', () => {
       routeStartM: 1500,
       routeEndM: 1880,
     })
+  })
+})
+
+describe('A→B generator', () => {
+  it('asks for a plan and reports its provisional ground', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      mode: 'tanteig',
+      geometry: [
+        [42.3, 1.5],
+        [42.31, 1.51],
+      ],
+      distance_m: 2340,
+      gain_m: 120,
+      unknown_ranges: [{ start_m: 800, end_m: 1500 }],
+      unknown_m: 700,
+    } satisfies Schemas['RouteGenerateRead'])
+    const plan = await generateRoutePlan([42.3, 1.5], [42.31, 1.51], 'tanteig')
+    const [url, init] = vi.mocked(apiFetch).mock.calls[0] ?? []
+    expect(String(url)).toBe('/analysis/routes/generate')
+    expect(init).toMatchObject({
+      method: 'POST',
+      body: JSON.stringify({ from_point: [42.3, 1.5], to_point: [42.31, 1.51], mode: 'tanteig' }),
+    })
+    expect(plan.points).toHaveLength(2)
+    expect(plan.unknownRanges[0]).toEqual({ startM: 800, endM: 1500 })
+    expect(plan.unknownM).toBe(700)
   })
 })
 

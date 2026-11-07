@@ -765,3 +765,25 @@ export interface RouteSegmentMatch {
   /** Where along the route the run ends, metres. */
   routeEndM: number
 }
+
+/** Intention the A→B generator searches with. */
+export type RouteGenMode = 'curt' | 'tecnic' | 'tanteig'
+
+/** One stretch of a generated plan that stays provisional. */
+export interface RoutePlanUnknownRange {
+  /** Ground position along the plan where unwalked mapped ground begins. */
+  startM: number
+  endM: number
+}
+
+/** A generated plan, offered for editing before it is ever saved. */
+export interface RoutePlan {
+  mode: RouteGenMode
+  /** The plan's polyline, ready to become a draft. */
+  points: GeoPoint[]
+  distanceM: number
+  gainM: number
+  /** Total provisional ground, metres. */
+  unknownM: number
+  unknownRanges: RoutePlanUnknownRange[]
+}

@@ -8,10 +8,17 @@ import { computed, type MaybeRefOrGetter, toValue } from 'vue'
 import { storeToRefs } from 'pinia'
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/vue-query'
 
-import type { AnalysisSettingsUpdateDto, FitnessQuery, TrailVerdict } from '../types'
+import type {
+  AnalysisSettingsUpdateDto,
+  FitnessQuery,
+  RouteGenMode,
+  RoutePlan,
+  TrailVerdict,
+} from '../types'
 import type { GeoPoint } from '@/composables/useMapProvider'
 
 import { queryKeys } from '@/services/queryKeys'
+import { generateRoutePlan } from '@/features/analysis/services/analysis'
 import { useInvalidatingMutation } from '@/composables/useInvalidatingMutation'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import {
@@ -574,5 +581,22 @@ export function useRouteVariantMarkMutation(routeId: MaybeRefOrGetter<number | n
 export function useRouteCourseMutation() {
   return useMutation<Blob, Error, number>({
     mutationFn: (routeId) => fetchRouteCourse(routeId),
+  })
+}
+
+/**
+ * Ask the generator for an A→B plan. Modelled as a mutation for its
+ * in-flight and error states: a plan is only a proposal, and saving it is a
+ * separate decision the designer takes afterwards.
+ *
+ * @returns The TanStack mutation producing the plan.
+ */
+export function useGenerateRouteMutation() {
+  return useMutation<
+    RoutePlan,
+    Error,
+    { from: [number, number]; to: [number, number]; mode: RouteGenMode }
+  >({
+    mutationFn: ({ from, to, mode }) => generateRoutePlan(from, to, mode),
   })
 }

@@ -44,6 +44,8 @@ import type {
   ActivityLoadsSummary,
   ActivityLoadsSummaryDto,
   RouteDto,
+  RouteGenMode,
+  RoutePlan,
   RouteSegmentMatch,
   RouteSegmentMatchDto,
   SegmentNetworkDto,
@@ -1127,4 +1129,40 @@ export function fetchRouteCourse(routeId: number, signal?: AbortSignal): Promise
     timeoutMs: 0,
     signal,
   })
+}
+
+/**
+ * Ask the generator for an A→B plan: the athlete's own ground first, mapped
+ * ground never crossed only where the mode asks for it. The answer is a draft;
+ * saving it remains the caller's decision.
+ *
+ * @param from - Start as ``[lat, lng]``.
+ * @param to - End as ``[lat, lng]``.
+ * @param mode - The intention: shortest, technical, or prospecting.
+ * @param signal - Optional abort signal.
+ * @returns The plan, with its provisional stretches reported.
+ * @throws {HttpError} When the request fails.
+ */
+export async function generateRoutePlan(
+  from: [number, number],
+  to: [number, number],
+  mode: RouteGenMode,
+  signal?: AbortSignal,
+): Promise<RoutePlan> {
+  const dto = await apiFetch<Schemas['RouteGenerateRead']>('/analysis/routes/generate', {
+    method: 'POST',
+    timeoutMs: 0,
+    signal,
+    body: JSON.stringify({ from_point: from, to_point: to, mode }),
+  })
+  return {
+    mode: dto.mode as RouteGenMode,
+    points: (dto.geometry ?? []).flatMap(([lat, lng]) =>
+      lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+    ),
+    distanceM: dto.distance_m,
+    gainM: dto.gain_m,
+    unknownM: dto.unknown_m,
+    unknownRanges: (dto.unknown_ranges ?? []).map((r) => ({ startM: r.start_m, endM: r.end_m })),
+  }
 }

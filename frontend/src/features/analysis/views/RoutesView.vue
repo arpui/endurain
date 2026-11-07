@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Download, Pencil, Plus, Trash2, X } from '@lucide/vue'
+import { Download, Pencil, Plus, Trash2, Wand2, X } from '@lucide/vue'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -19,6 +19,7 @@ import { connectRoutePoints } from '@/features/analysis/services/analysis'
 import {
   useCreateRouteMutation,
   useDeleteRouteMutation,
+  useGenerateRouteMutation,
   useRouteCourseMutation,
   useRouteSegmentsQuery,
   useRouteVariantMarkMutation,
@@ -27,7 +28,7 @@ import {
   useSegmentNetworkQuery,
   useUpdateRouteMutation,
 } from '@/features/analysis/composables/useAnalysis'
-import type { TrailVariant } from '@/features/analysis/types'
+import type { RouteGenMode, TrailVariant } from '@/features/analysis/types'
 import { gradeTrailWay } from '@/features/analysis/utils/trailDegree'
 import { downloadBlob } from '@/lib/download'
 import { themeColor } from '@/lib/themeColor'
@@ -83,6 +84,72 @@ const numberFormat = computed(
 function km(metres: number): string {
   return `${numberFormat.value.format(metres / 1000)} km`
 }
+
+// --- the plan generator: pick A and B on the map, edit what comes out ---
+// The generator proposes; the draft disposes. A plan lands as an editable
+// draft with its provisional kilometres announced, and saving stays entirely
+// the athlete's decision.
+const genOpen = ref(false)
+const genMode = ref<RouteGenMode>('curt')
+const genA = ref<GeoPoint | null>(null)
+const genB = ref<GeoPoint | null>(null)
+const genMutation = useGenerateRouteMutation()
+
+const genEndpoints = computed(() =>
+  [genA.value, genB.value].filter((point): point is GeoPoint => point !== null),
+)
+
+function startGenerating(): void {
+  genOpen.value = true
+  genA.value = null
+  genB.value = null
+}
+
+function stopGenerating(): void {
+  genOpen.value = false
+  genA.value = null
+  genB.value = null
+}
+
+function onEndpointPick(point: GeoPoint): void {
+  if (genA.value === null) {
+    genA.value = point
+  } else if (genB.value === null) {
+    genB.value = point
+  }
+}
+
+function runGenerate(): void {
+  if (genA.value === null || genB.value === null) {
+    return
+  }
+  genMutation.mutate(
+    {
+      from: [genA.value.lat, genA.value.lng],
+      to: [genB.value.lat, genB.value.lng],
+      mode: genMode.value,
+    },
+    {
+      onSuccess: (plan) => {
+        draft.value = plan.points
+        editingId.value = null
+        draftName.value = ''
+        draftNotes.value = undefined
+        genOpen.value = false
+        toasts.success(
+          t('analysis.routes.generated', { km: km(plan.distanceM), unknown: km(plan.unknownM) }),
+        )
+      },
+      onError: () => toasts.error(t('analysis.routes.generateError')),
+    },
+  )
+}
+
+const genHint = computed(() => {
+  if (genA.value === null) return t('analysis.routes.pickA')
+  if (genB.value === null) return t('analysis.routes.pickB')
+  return t('analysis.routes.pickReady')
+})
 
 // --- the editor: a draft polyline on the map ---
 // null draft means nobody is designing; a draft of points is created by map
@@ -214,10 +281,16 @@ function confirmDelete(): void {
           :description="t('analysis.routes.empty.description')"
         >
           <template #action>
-            <Button size="sm" @click="startNew">
-              <Plus class="me-1 size-4" />
-              {{ t('analysis.routes.new') }}
-            </Button>
+            <div class="flex items-center gap-2">
+              <Button size="sm" variant="outline" @click="startGenerating">
+                <Wand2 class="me-1 size-4" />
+                {{ t('analysis.routes.generate') }}
+              </Button>
+              <Button size="sm" @click="startNew">
+                <Plus class="me-1 size-4" />
+                {{ t('analysis.routes.new') }}
+              </Button>
+            </div>
           </template>
         </EmptyState>
       </Card>
@@ -248,10 +321,41 @@ function confirmDelete(): void {
               {{ t('analysis.routes.cancelEdit') }}
             </Button>
           </template>
-          <Button v-else size="sm" variant="outline" class="ms-auto" @click="startNew">
-            <Plus class="me-1 size-4" />
-            {{ t('analysis.routes.new') }}
-          </Button>
+          <template v-else>
+            <template v-if="!genOpen">
+              <Button size="sm" variant="outline" class="ms-auto" @click="startGenerating">
+                <Wand2 class="me-1 size-4" />
+                {{ t('analysis.routes.generate') }}
+              </Button>
+              <Button size="sm" variant="outline" @click="startNew">
+                <Plus class="me-1 size-4" />
+                {{ t('analysis.routes.new') }}
+              </Button>
+            </template>
+            <template v-else>
+              <span class="me-auto text-caption text-muted-foreground">{{ genHint }}</span>
+              <Button
+                v-for="mode in ['curt', 'tecnic', 'tanteig'] as const"
+                :key="mode"
+                size="sm"
+                :variant="genMode === mode ? 'default' : 'outline'"
+                @click="genMode = mode"
+              >
+                {{ t(`analysis.routes.mode_${mode}`) }}
+              </Button>
+              <Button
+                size="sm"
+                :disabled="genA === null || genB === null || genMutation.isPending.value"
+                @click="runGenerate"
+              >
+                {{ t('analysis.routes.generateGo') }}
+              </Button>
+              <Button size="sm" variant="ghost" @click="stopGenerating">
+                <X class="me-1 size-4" />
+                {{ t('analysis.routes.cancelGenerate') }}
+              </Button>
+            </template>
+          </template>
         </div>
         <label class="flex items-center gap-2 text-caption text-muted-foreground">
           <Switch v-model="showSegments" />
@@ -265,8 +369,11 @@ function confirmDelete(): void {
           :editing-id="editingId"
           :segments="networkSegments"
           :highlight="routeVariantHighlight"
+          :endpoints="genEndpoints"
+          :picking="genOpen"
           @select="pick"
           @add-point="addPoint"
+          @endpoint="onEndpointPick"
           @remove-vertex="removeVertex"
         />
         <p v-if="draft !== null" class="text-caption text-muted-foreground">
