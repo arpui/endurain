@@ -30,14 +30,14 @@ def upgrade() -> None:
         sa.Column("along_end_m", sa.Float(), nullable=False, comment="Along-segment end offset"),
         sa.Column("track_start_m", sa.Float(), nullable=False, comment="Along-track start offset"),
         sa.Column("track_end_m", sa.Float(), nullable=False, comment="Along-track end offset"),
-        sa.Column("direction", sa.String(length=7), nullable=False, comment="forward / reverse"),
+        sa.Column("direction", sa.String(length=7), nullable=False, primary_key=True, comment="forward / reverse"),
         sa.Column("grade_pct", sa.Float(), nullable=True, comment="Mean signed grade of the pass"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
         sa.ForeignKeyConstraint(["segment_id"], ["segments.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["activity_id"], ["activities.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
-        sa.PrimaryKeyConstraint("segment_id", "activity_id", "pass_number"),
+        sa.PrimaryKeyConstraint("segment_id", "activity_id", "pass_number", "direction"),
     )
     op.create_index(
         "ix_analysis_segment_crossings_user_segment", "analysis_segment_crossings", ["user_id", "segment_id"]
