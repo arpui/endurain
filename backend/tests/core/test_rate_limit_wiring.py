@@ -157,6 +157,8 @@ _TIERED_ENDPOINTS = [
     pytest.param(analysis_activity_router.delete_variant_mark, core_rate_limit.WRITE, id="variant-mark-remove"),
     pytest.param(analysis_router.create_route, core_rate_limit.WRITE, id="route-create"),
     pytest.param(analysis_router.connect_route, core_rate_limit.WRITE, id="route-connect"),
+    pytest.param(analysis_router.post_route_variant_mark, core_rate_limit.WRITE, id="route-variant-mark-place"),
+    pytest.param(analysis_router.delete_route_variant_mark, core_rate_limit.WRITE, id="route-variant-mark-remove"),
     pytest.param(analysis_router.update_route, core_rate_limit.WRITE, id="route-update"),
     pytest.param(analysis_router.delete_route, core_rate_limit.WRITE, id="route-delete"),
     pytest.param(

@@ -16,6 +16,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
@@ -812,14 +813,18 @@ class VariantMark(Base, TimestampMixin):
 
     __tablename__ = "analysis_variant_marks"
 
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True, comment="Surrogate id")
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, comment="Athlete judging"
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, comment="Athlete judging"
     )
-    activity_id: Mapped[int] = mapped_column(
-        ForeignKey("activities.id", ondelete="CASCADE"), primary_key=True, comment="Planned route judged"
+    activity_id: Mapped[int | None] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"), nullable=True, comment="Recorded route judged"
+    )
+    route_id: Mapped[int | None] = mapped_column(
+        ForeignKey("analysis_routes.id", ondelete="CASCADE"), nullable=True, comment="Designed route judged"
     )
     split_m: Mapped[float] = mapped_column(
-        Float, primary_key=True, comment="Junction position along the route the variant was judged at"
+        Float, nullable=False, comment="Junction position along the route the variant was judged at"
     )
     verdict: Mapped[str] = mapped_column(String(length=8), nullable=False, comment="real / falsa")
     note: Mapped[str | None] = mapped_column(String(length=256), nullable=True, comment="Optional remark")
@@ -829,7 +834,28 @@ class VariantMark(Base, TimestampMixin):
             f"verdict IN ({', '.join(repr(v) for v in analysis_constants.TRAIL_VARIANT_VERDICTS)})",
             name="ck_analysis_variant_marks_verdict",
         ),
+        CheckConstraint(
+            "(activity_id IS NULL) <> (route_id IS NULL)",
+            name="ck_analysis_variant_marks_one_plan",
+        ),
+        Index(
+            "uq_analysis_variant_marks_activity_split",
+            "user_id",
+            "activity_id",
+            "split_m",
+            unique=True,
+            postgresql_where=text("activity_id IS NOT NULL"),
+        ),
+        Index(
+            "uq_analysis_variant_marks_route_split",
+            "user_id",
+            "route_id",
+            "split_m",
+            unique=True,
+            postgresql_where=text("route_id IS NOT NULL"),
+        ),
         Index("ix_analysis_variant_marks_activity", "activity_id"),
+        Index("ix_analysis_variant_marks_route", "route_id"),
     )
 
 
@@ -861,6 +887,11 @@ class Route(Base, TimestampMixin):
     distance_m: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Ground covered")
     gain_m: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, comment="Elevation gain")
     notes: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Free-text remarks")
+    source_activity_id: Mapped[int | None] = mapped_column(
+        ForeignKey("activities.id", ondelete="SET NULL"),
+        nullable=True,
+        comment="The recorded track this route was saved from, when it was",
+    )
 
     __table_args__ = (Index("ix_analysis_routes_user", "user_id"),)
 

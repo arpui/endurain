@@ -589,6 +589,37 @@ class TestSegmentCrossings:
             assert analysis_crud.list_segment_descent_evidence(_USER_ID, _METHOD, db) == []
 
 
+class TestRouteVariantMarks:
+    def test_a_mark_belongs_to_a_route_or_an_activity_never_both(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            created = analysis_service.create_route(
+                _USER_ID,
+                analysis_schema.RouteCreate(
+                    name="amb variants", geometry=[[42.3, 1.5], [42.3, 1.51]], source_activity_id=None
+                ),
+                db,
+            )
+            analysis_crud.save_variant_mark(_USER_ID, 800.0, "falsa", None, db, route_id=created.id)
+            db.commit()
+            rows = analysis_crud.list_variant_marks(_USER_ID, db, route_id=created.id)
+            assert len(rows) == 1 and rows[0].route_id == created.id and rows[0].activity_id is None
+            # the same split on an activity is another, independent verdict
+            activity_id = _run_activity(db)
+            db.commit()
+            analysis_crud.save_variant_mark(_USER_ID, 800.0, "real", "aquest sí", db, activity_id=activity_id)
+            db.commit()
+            assert len(analysis_crud.list_variant_marks(_USER_ID, db, route_id=created.id)) == 1
+            assert len(analysis_crud.list_variant_marks(_USER_ID, db, activity_id=activity_id)) == 1
+            assert analysis_crud.delete_variant_mark(_USER_ID, 800.0, db, route_id=created.id)
+            db.commit()
+            assert analysis_crud.list_variant_marks(_USER_ID, db, route_id=created.id) == []
+            # variants search on the designed route answers the empty graph honestly
+            vr = analysis_service.get_route_variants(created.id, _USER_ID, db)
+            assert vr.route_id == created.id and vr.variants == []
+            assert analysis_service.get_route_segments(created.id, _USER_ID, db) == []
+
+
 class TestWayCrossings:
     def test_crossings_replace_round_trip_and_the_marker_gates_the_pass(self, pg_factory):
         ensure_user(pg_factory, _USER_ID)

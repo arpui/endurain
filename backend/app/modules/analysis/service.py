@@ -2891,27 +2891,21 @@ def build_personal_graph(user_id: int, db: Session) -> tuple[int, int]:
     return written
 
 
-def get_activity_variants(
-    activity_id: int,
+def _search_variants(
+    track: list[tuple],
+    marks: dict[float, str],
     requester_user_id: int,
     db: Session,
-) -> analysis_schema.TrailVariantsRead:
-    """Search reconnection variants along one of the caller's recorded routes.
+) -> list[analysis_schema.TrailVariantRead]:
+    """Walk the variant engine over one planned track, activity or designed.
 
-    The plan is the activity's own track; the ground the variants may use is the
-    athlete's stored personal graph. Verdicts already placed by the athlete are
-    carried along, and ``falsa`` ones are not repeated.
+    The ground the variants may use is the athlete's stored personal graph;
+    verdicts already placed are carried along, and ``falsa`` ones do not
+    resurface.
     """
-    track = _trail_track(activity_id, db)
-    if len(track) < 10:
-        return analysis_schema.TrailVariantsRead(
-            activity_id=activity_id, cell_m=analysis_constants.TRAIL_GRAPH_CELL_M, variants=[]
-        )
     cells, cum = analysis_variants.route_cells(track, analysis_constants.TRAIL_GRAPH_CELL_M)
     if not cells:
-        return analysis_schema.TrailVariantsRead(
-            activity_id=activity_id, cell_m=analysis_constants.TRAIL_GRAPH_CELL_M, variants=[]
-        )
+        return []
     xs = [c[0] for c in cells]
     ys = [c[1] for c in cells]
     pad = int(analysis_constants.TRAIL_VARIANT_REJOIN_MAX_M / analysis_constants.TRAIL_GRAPH_CELL_M) + 10
@@ -2919,13 +2913,8 @@ def get_activity_variants(
         requester_user_id, min(xs) - pad, max(xs) + pad, min(ys) - pad, max(ys) + pad, db
     )
     if not edges:
-        return analysis_schema.TrailVariantsRead(
-            activity_id=activity_id, cell_m=analysis_constants.TRAIL_GRAPH_CELL_M, variants=[]
-        )
+        return []
     node_map, adjacency = analysis_graph.graph_from_rows(nodes, edges)
-    marks = {
-        round(m.split_m, 1): m.verdict for m in analysis_crud.list_variant_marks(requester_user_id, activity_id, db)
-    }
     found = analysis_variants.find_variants(cells, cum, node_map, adjacency, marks)
     segment_claims = {
         row.segment_id: row.claim for row in get_segment_network(requester_user_id, db, show_loops=True).segments
@@ -2945,10 +2934,48 @@ def get_activity_variants(
             claims=segment_claims,
         )
         variant["segment"] = along[0].name if along else None
+    return [analysis_schema.TrailVariantRead(**variant) for variant in found]
+
+
+def get_activity_variants(
+    activity_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> analysis_schema.TrailVariantsRead:
+    """Search reconnection variants along one of the caller's recorded routes."""
+    track = _trail_track(activity_id, db)
+    marks = {
+        round(m.split_m, 1): m.verdict
+        for m in analysis_crud.list_variant_marks(requester_user_id, db, activity_id=activity_id)
+    }
+    variants = _search_variants(track, marks, requester_user_id, db) if len(track) >= 10 else []
     return analysis_schema.TrailVariantsRead(
-        activity_id=activity_id,
-        cell_m=analysis_constants.TRAIL_GRAPH_CELL_M,
-        variants=[analysis_schema.TrailVariantRead(**variant) for variant in found],
+        activity_id=activity_id, cell_m=analysis_constants.TRAIL_GRAPH_CELL_M, variants=variants
+    )
+
+
+def get_route_variants(
+    route_id: int,
+    requester_user_id: int,
+    db: Session,
+) -> analysis_schema.TrailVariantsRead:
+    """Search reconnection variants along one of the caller's designed routes.
+
+    A plan drawn on the map is searched exactly like a recorded one: the engine
+    walks cells and ground distance, and it does not care whether a GPS or a
+    finger drew them.
+    """
+    route = analysis_crud.get_route(route_id, requester_user_id, db)
+    if route is None:
+        raise core_exceptions.NotFoundError
+    track = [(None, float(pt[0]), float(pt[1])) for pt in route.geometry]
+    marks = {
+        round(m.split_m, 1): m.verdict
+        for m in analysis_crud.list_variant_marks(requester_user_id, db, route_id=route_id)
+    }
+    variants = _search_variants(track, marks, requester_user_id, db) if len(track) >= 10 else []
+    return analysis_schema.TrailVariantsRead(
+        route_id=route_id, cell_m=analysis_constants.TRAIL_GRAPH_CELL_M, variants=variants
     )
 
 
@@ -2959,7 +2986,9 @@ def save_variant_mark(
     db: Session,
 ) -> None:
     """Place the athlete's verdict on one suggested variant."""
-    analysis_crud.save_variant_mark(requester_user_id, activity_id, payload.split_m, payload.verdict, payload.note, db)
+    analysis_crud.save_variant_mark(
+        requester_user_id, payload.split_m, payload.verdict, payload.note, db, activity_id=activity_id
+    )
     db.commit()
     logger.info(
         "Variant judged",
@@ -2969,11 +2998,39 @@ def save_variant_mark(
 
 def clear_variant_mark(activity_id: int, requester_user_id: int, split_m: float, db: Session) -> bool:
     """Take back the verdict on one variant."""
-    removed = analysis_crud.delete_variant_mark(requester_user_id, activity_id, split_m, db)
+    removed = analysis_crud.delete_variant_mark(requester_user_id, split_m, db, activity_id=activity_id)
     db.commit()
     logger.info(
         "Variant judgement taken back",
         extra=core_logger.context(activity_id=activity_id, split_m=split_m, removed=removed),
+    )
+    return removed
+
+
+def save_route_variant_mark(
+    route_id: int,
+    requester_user_id: int,
+    payload: analysis_schema.VariantMarkCreate,
+    db: Session,
+) -> None:
+    """Place the athlete's verdict on a variant suggested for a designed route."""
+    analysis_crud.save_variant_mark(
+        requester_user_id, payload.split_m, payload.verdict, payload.note, db, route_id=route_id
+    )
+    db.commit()
+    logger.info(
+        "Route variant judged",
+        extra=core_logger.context(route_id=route_id, split_m=payload.split_m, verdict=payload.verdict),
+    )
+
+
+def clear_route_variant_mark(route_id: int, requester_user_id: int, split_m: float, db: Session) -> bool:
+    """Take back the verdict on one designed route's variant."""
+    removed = analysis_crud.delete_variant_mark(requester_user_id, split_m, db, route_id=route_id)
+    db.commit()
+    logger.info(
+        "Route variant judgement taken back",
+        extra=core_logger.context(route_id=route_id, split_m=split_m, removed=removed),
     )
     return removed
 
@@ -3041,8 +3098,13 @@ def create_route(
 ) -> analysis_schema.RouteRead:
     """Persist a designed route; its totals are measured here, not trusted from the client."""
     distance, gain = _route_totals(payload.geometry, requester_user_id, db)
+    source_id = payload.source_activity_id
+    if source_id is not None:
+        activity = activity_integration.get_activity_for_derivation(source_id, db)
+        if activity is None or activity.user_id != requester_user_id:
+            source_id = None
     route = analysis_crud.create_route(
-        requester_user_id, payload.name, payload.geometry, distance, gain, payload.notes, db
+        requester_user_id, payload.name, payload.geometry, distance, gain, payload.notes, db, source_id
     )
     db.commit()
     db.refresh(route)

@@ -1014,14 +1014,16 @@ class TrailVariantsRead(BaseModel):
     """The variant analysis of one planned route (experimental).
 
     Attributes:
-        activity_id: The route the variants were searched along.
+        activity_id: The recorded route the variants were searched along, when it was one.
+        route_id: The designed route the variants were searched along, when it was one.
         cell_m: Graph grid size the search walked on.
         variants: The suggestions, junction order.
     """
 
     model_config = ConfigDict(extra="forbid")
 
-    activity_id: StrictInt
+    activity_id: StrictInt | None = None
+    route_id: StrictInt | None = None
     cell_m: StrictFloat
     variants: list[TrailVariantRead]
 
@@ -1080,6 +1082,7 @@ class RouteCreate(BaseModel):
     name: StrictStr = Field(min_length=1, max_length=128)
     geometry: list[list[float]] = Field(min_length=2)
     notes: StrictStr | None = None
+    source_activity_id: StrictInt | None = None
 
 
 class RouteUpdate(BaseModel):

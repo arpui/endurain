@@ -322,6 +322,59 @@ def get_route_segments(
     return analysis_service.get_route_segments(route_id, token_user_id, db)
 
 
+@router.get(
+    "/routes/{route_id}/variants",
+    response_model=analysis_schema.TrailVariantsRead,
+)
+def get_route_variants(
+    route_id: core_dependencies.PositiveId,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.TrailVariantsRead:
+    """Reconnection variants along a designed route.
+
+    The engine does not care whether a GPS or a finger drew the plan.
+    """
+    return analysis_service.get_route_variants(route_id, token_user_id, db)
+
+
+@router.post(
+    "/routes/{route_id}/variants/marks",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def post_route_variant_mark(
+    request: Request,
+    route_id: core_dependencies.PositiveId,
+    mark: analysis_schema.VariantMarkCreate,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:write"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> None:
+    """Judge a designed route's variant: real ground, or a suggestion to bury."""
+    analysis_service.save_route_variant_mark(route_id, token_user_id, mark, db)
+
+
+@router.delete(
+    "/routes/{route_id}/variants/marks",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def delete_route_variant_mark(
+    request: Request,
+    route_id: core_dependencies.PositiveId,
+    split_m: Annotated[float, Query(ge=0)],
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:write"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> None:
+    """Take back the verdict on one designed route's variant."""
+    analysis_service.clear_route_variant_mark(route_id, token_user_id, split_m, db)
+
+
 @router.delete(
     "/routes/{route_id}",
     response_model=None,
