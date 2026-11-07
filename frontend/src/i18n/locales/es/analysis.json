@@ -345,6 +345,9 @@
     "points": "{n} puntos",
     "undo": "Deshacer el último",
     "cancelEdit": "Cancelar",
-    "drawHint": "Haz clic en el mapa para añadir puntos de la ruta. Haz clic en un punto para quitarlo."
+    "drawHint": "Haz clic en el mapa para añadir puntos de la ruta. Haz clic en un punto para quitarlo.",
+    "snap": "Ajustar a mi terreno",
+    "snapHint": "En modo ajustado, los tramos siguen terreno que ya has pisado; los que no pueden se guardan como líneas rectas.",
+    "connectFailed": "No se pudo ajustar la ruta a tu terreno. Inténtalo de nuevo o guárdala en modo libre."
   }
 }

@@ -345,6 +345,9 @@
     "points": "{n} bodů",
     "undo": "Poslední pryč",
     "cancelEdit": "Zrušit",
-    "drawHint": "Kliknutím na mapu přidáte body trasy. Kliknutím na bod jej odstraníte."
+    "drawHint": "Kliknutím na mapu přidáte body trasy. Kliknutím na bod jej odstraníte.",
+    "snap": "Přizpůsobit mému terénu",
+    "snapHint": "V režimu přizpůsobení úseky sledují již projitý terén; ty, které to nelze, se uloží jako přímky.",
+    "connectFailed": "Trasu nebylo možné přizpůsobit tvému terénu. Zkus to znovu, nebo ulož ve volném režimu."
   }
 }

@@ -345,6 +345,9 @@
     "points": "{n} points",
     "undo": "Annuler le dernier",
     "cancelEdit": "Annuler",
-    "drawHint": "Cliquez sur la carte pour ajouter des points. Cliquez sur un point pour le retirer."
+    "drawHint": "Cliquez sur la carte pour ajouter des points. Cliquez sur un point pour le retirer.",
+    "snap": "Ajuster à mon terrain",
+    "snapHint": "En mode ajusté, les tronçons suivent le terrain que vous avez déjà parcouru ; ceux qui ne peuvent pas sont enregistrés en ligne droite.",
+    "connectFailed": "L'itinéraire n'a pas pu être ajusté à votre terrain. Réessayez ou enregistrez en mode libre."
   }
 }

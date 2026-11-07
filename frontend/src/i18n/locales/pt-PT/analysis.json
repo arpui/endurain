@@ -345,6 +345,9 @@
     "points": "{n} pontos",
     "undo": "Remover o último",
     "cancelEdit": "Cancelar",
-    "drawHint": "Clica no mapa para adicionar pontos ao percurso. Clica num ponto para o remover."
+    "drawHint": "Clica no mapa para adicionar pontos ao percurso. Clica num ponto para o remover.",
+    "snap": "Ajustar ao meu terreno",
+    "snapHint": "Em modo ajustado, os troços seguem terreno que já pisaste; os que não podem ficam como linhas retas.",
+    "connectFailed": "Não foi possível ajustar o percurso ao teu terreno. Tenta de novo ou guarda em modo livre."
   }
 }

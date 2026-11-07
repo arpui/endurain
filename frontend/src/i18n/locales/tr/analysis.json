@@ -345,6 +345,9 @@
     "points": "{n} nokta",
     "undo": "Sonuncuyu kaldır",
     "cancelEdit": "İptal",
-    "drawHint": "Rotaya nokta eklemek için haritaya tıklayın. Bir noktayı kaldırmak için üzerine tıklayın."
+    "drawHint": "Rotaya nokta eklemek için haritaya tıklayın. Bir noktayı kaldırmak için üzerine tıklayın.",
+    "snap": "Arazime göre uydur",
+    "snapHint": "Uydurma modunda kesimler daha önce geçtiğin araziyi izler; uymayanlar düz çizgi olarak kaydedilir.",
+    "connectFailed": "Rota arazinize uydurulamadi. Tekrar deneyin veya serbest modda kaydedin."
   }
 }

@@ -345,6 +345,9 @@
     "points": "{n} punkter",
     "undo": "Fortryd sidste",
     "cancelEdit": "Annuller",
-    "drawHint": "Kort på kortet for at tilføje rutepunkter. Klik på et punkt for at fjerne det."
+    "drawHint": "Kort på kortet for at tilføje rutepunkter. Klik på et punkt for at fjerne det.",
+    "snap": "Tilpas til mit grund",
+    "snapHint": "I tilpasningstilstand følger strækninger grund, du allerede har gået på; dem der ikke kan, gemmes som lige linjer.",
+    "connectFailed": "Ruten kunne ikke tilpasses din grund. Prøv igen, eller gem i fri tilstand."
   }
 }

@@ -647,3 +647,8 @@ TRAIL_VARIANT_CONFIRM_SHARE = 0.6
 #: crossings certify that way in that stretch; tolerance of the certification.
 TRAIL_VARIANT_WAY_CERT_TOL_M = 25.0
 TRAIL_VARIANT_VERDICTS = ("real", "falsa")
+#: Route designer snap mode: an anchor counts as known ground within this
+#: distance of a graph cell, and a snapped connection never walks longer than
+#: this per stretch (beyond it the straight line stands).
+TRAIL_GRAPH_SNAP_TOL_M = 120.0
+TRAIL_ROUTE_CONNECT_MAX_M = 8000.0

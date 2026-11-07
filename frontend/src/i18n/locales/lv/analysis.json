@@ -345,6 +345,9 @@
     "points": "{n} punkti",
     "undo": "Noņemt pēdējo",
     "cancelEdit": "Atcelt",
-    "drawHint": "Klikšķiniet kartē, lai pievienotu maršruta punktus. Klikšķiniet uz punkta, lai noņemtu to."
+    "drawHint": "Klikšķiniet kartē, lai pievienotu maršruta punktus. Klikšķiniet uz punkta, lai noņemtu to.",
+    "snap": "Pielāgot manai zemei",
+    "snapHint": "Pielāgošanas režīmā posmi seko jau izstaigātai zemei; tie, kas nevar, tiek saglabāti kā taisnes.",
+    "connectFailed": "Maršrutu nevarēja pielāgot tavai zemei. Mēģini vēlreiz vai saglabā brīvajā režīmā."
   }
 }

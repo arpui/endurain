@@ -345,6 +345,9 @@
     "points": "{n} puncte",
     "undo": "Elimină ultimul",
     "cancelEdit": "Anulare",
-    "drawHint": "Faceți clic pe hartă pentru a adăuga puncte. Faceți clic pe un punct pentru a-l elimina."
+    "drawHint": "Faceți clic pe hartă pentru a adăuga puncte. Faceți clic pe un punct pentru a-l elimina.",
+    "snap": "Potrivire pe terenul meu",
+    "snapHint": "În modul de potrivire, segmentele urmează terenul deja parcurs; cele care nu pot fi potrivite se salvează ca linii drepte.",
+    "connectFailed": "Traseul nu a putut fi potrivit pe terenul tău. Încearcă din nou sau salvează în modul liber."
   }
 }

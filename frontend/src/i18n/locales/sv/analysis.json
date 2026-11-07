@@ -345,6 +345,9 @@
     "points": "{n} punkter",
     "undo": "Ta bort sista",
     "cancelEdit": "Avbryt",
-    "drawHint": "Klicka på kartan för att lägga till ruttpunkter. Klicka på en punkt för att ta bort den."
+    "drawHint": "Klicka på kartan för att lägga till ruttpunkter. Klicka på en punkt för att ta bort den.",
+    "snap": "Anpassa efter min mark",
+    "snapHint": "I anpassat läge följer sträckor mark du redan sprungit på; de som inte kan sparas som räta linjer.",
+    "connectFailed": "Rutten kunde inte anpassas efter din mark. Försök igen eller spara i fritt läge."
   }
 }

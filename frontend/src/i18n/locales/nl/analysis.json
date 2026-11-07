@@ -345,6 +345,9 @@
     "points": "{n} punten",
     "undo": "Laatste verwijderen",
     "cancelEdit": "Annuleren",
-    "drawHint": "Klik op de kaart om routepunten toe te voegen. Klik op een punt om het te verwijderen."
+    "drawHint": "Klik op de kaart om routepunten toe te voegen. Klik op een punt om het te verwijderen.",
+    "snap": "Aanpassen aan mijn terrein",
+    "snapHint": "In aanpasmodus volgen de stukken grond die je al hebt gelopen; stukken die niet passen worden als rechte lijnen opgeslagen.",
+    "connectFailed": "De route kon niet worden aangepast aan jouw terrein. Probeer opnieuw of sla op in vrije modus."
   }
 }

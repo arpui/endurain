@@ -928,6 +928,35 @@ export async function updateRoute(
 }
 
 /**
+ * Shape clicked anchors along the athlete's own walked ground.
+ *
+ * Consecutive anchors that land on crossed cells are joined by the shortest
+ * walked chain of the personal graph; stretches the network cannot carry keep
+ * the straight line and are reported unwalked.
+ *
+ * @param points - The clicked polyline, in order.
+ * @param signal - Optional abort signal.
+ * @returns The walked geometry and one flag per stretch.
+ * @throws {HttpError} When the request fails.
+ */
+export async function connectRoutePoints(
+  points: GeoPoint[],
+  signal?: AbortSignal,
+): Promise<{ points: GeoPoint[]; walked: boolean[] }> {
+  const dto = await apiFetch<Schemas['RouteConnectRead']>('/analysis/routes/connect', {
+    method: 'POST',
+    signal,
+    body: JSON.stringify({ points: points.map((pt) => [pt.lat, pt.lng]) }),
+  })
+  return {
+    points: (dto.geometry ?? []).flatMap(([lat, lng]) =>
+      lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+    ),
+    walked: (dto.walked ?? []) as boolean[],
+  }
+}
+
+/**
  * Delete one saved route.
  *
  * @param routeId - The route to delete.

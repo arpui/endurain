@@ -3955,6 +3955,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/routes/connect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Connect Route
+         * @description Shape clicked anchors along the athlete's own walked ground.
+         *
+         *     Read-only computation over the personal graph: no route is stored here;
+         *     the caller decides whether to keep the walked polyline as a route.
+         */
+        post: operations["connect_route_api_v1_analysis_routes_connect_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/routes/{route_id}": {
         parameters: {
             query?: never;
@@ -10951,6 +10974,33 @@ export interface components {
         RelationshipRead: {
             outgoing?: components["schemas"]["FollowRelationshipRead"] | null;
             incoming?: components["schemas"]["FollowRelationshipRead"] | null;
+        };
+        /**
+         * RouteConnectCreate
+         * @description Payload asking the athlete's own ground to shape a drawn route.
+         *
+         *     Attributes:
+         *         points: Ordered ``[lat, lng]`` anchors as clicked by the designer.
+         */
+        RouteConnectCreate: {
+            /** Points */
+            points: number[][];
+        };
+        /**
+         * RouteConnectRead
+         * @description The walked form of a drawn polyline.
+         *
+         *     Attributes:
+         *         geometry: Ordered ``[lat, lng]`` polyline; snapped stretches follow the
+         *             graph, unmatched stretches keep the straight line.
+         *         walked: One flag per anchor-to-anchor stretch: whether the athlete's
+         *             own ground could carry it.
+         */
+        RouteConnectRead: {
+            /** Geometry */
+            geometry: number[][];
+            /** Walked */
+            walked: boolean[];
         };
         /**
          * RouteCreate
@@ -20346,6 +20396,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RouteRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    connect_route_api_v1_analysis_routes_connect_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RouteConnectCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RouteConnectRead"];
                 };
             };
             /** @description Validation Error */

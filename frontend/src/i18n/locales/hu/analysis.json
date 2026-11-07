@@ -345,6 +345,9 @@
     "points": "{n} pont",
     "undo": "Utolsó törlése",
     "cancelEdit": "Mégse",
-    "drawHint": "Kattints a térképre útvonalpontok hozzáadásához. Kattints egy pontra az eltávolításához."
+    "drawHint": "Kattints a térképre útvonalpontok hozzáadásához. Kattints egy pontra az eltávolításához.",
+    "snap": "Illesztés a saját terepemre",
+    "snapHint": "Illesztési módban a szakaszok már bejárt terepet követnek; amelyek nem illeszkednek, egyenes vonalként mentődnek.",
+    "connectFailed": "Az útvonalat nem sikerült a terepedhez illeszteni. Próbáld újra, vagy mentsd szabad módban."
   }
 }

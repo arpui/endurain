@@ -10,8 +10,10 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
 import AnalysisSectionsNav from '@/features/analysis/components/AnalysisSectionsNav.vue'
 import RoutesMap from '@/features/analysis/components/RoutesMap.vue'
+import { connectRoutePoints } from '@/features/analysis/services/analysis'
 import {
   useCreateRouteMutation,
   useDeleteRouteMutation,
@@ -54,6 +56,10 @@ const createMutation = useCreateRouteMutation()
 const updateMutation = useUpdateRouteMutation()
 const saving = computed(() => createMutation.isPending.value || updateMutation.isPending.value)
 const canSave = computed(() => draftName.value.trim().length > 0 && (draft.value?.length ?? 0) >= 2)
+// Two ways to draw: the honest freehand line, or anchors carried by the
+// athlete's own walked ground (the personal graph shapes what is saved).
+const snapMode = ref(true)
+const connectFailed = ref(false)
 
 function startNew(): void {
   draft.value = []
@@ -88,11 +94,20 @@ function undoLast(): void {
   draft.value?.pop()
 }
 
-function saveDraft(): void {
+async function saveDraft(): Promise<void> {
   if (!canSave.value || !draft.value) {
     return
   }
-  const points = [...draft.value]
+  connectFailed.value = false
+  let points = [...draft.value]
+  if (snapMode.value) {
+    try {
+      points = (await connectRoutePoints(points)).points
+    } catch {
+      connectFailed.value = true
+      return
+    }
+  }
   const name = draftName.value.trim()
   const done = { onSuccess: () => cancelEdit() }
   if (editingId.value === null) {
@@ -163,6 +178,10 @@ function confirmDelete(): void {
               :placeholder="t('analysis.routes.namePlaceholder')"
               class="w-48"
             />
+            <label class="flex items-center gap-2 text-caption text-muted-foreground">
+              <Switch v-model="snapMode" />
+              {{ t('analysis.routes.snap') }}
+            </label>
             <span class="text-caption text-muted-foreground">
               {{ t('analysis.routes.points', { n: draft.length }) }}
             </span>
@@ -194,6 +213,10 @@ function confirmDelete(): void {
         />
         <p v-if="draft !== null" class="text-caption text-muted-foreground">
           {{ t('analysis.routes.drawHint') }}
+          <span v-if="snapMode"> {{ t('analysis.routes.snapHint') }}</span>
+          <span v-if="connectFailed" class="text-hr">
+            {{ t('analysis.routes.connectFailed') }}</span
+          >
         </p>
       </Card>
 

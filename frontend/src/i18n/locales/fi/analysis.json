@@ -345,6 +345,9 @@
     "points": "{n} pistettä",
     "undo": "Poista viimeinen",
     "cancelEdit": "Peruuta",
-    "drawHint": "Lisää reittipisteitä napsauttamassa karttaa. Poista piste napsauttamassa sitä."
+    "drawHint": "Lisää reittipisteitä napsauttamassa karttaa. Poista piste napsauttamassa sitä.",
+    "snap": "Sovita omaan maastoon",
+    "snapHint": "Sovitustilassa osuudet seuraavat jo kulkemaasi maastoa; osuudet, jotka eivät sovi, tallennetaan suorina viivoina.",
+    "connectFailed": "Reittiä ei voitu sovittaa maastoon. Yritä uudelleen tai tallenna vapaassa tilassa."
   }
 }

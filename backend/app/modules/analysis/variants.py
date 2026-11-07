@@ -126,6 +126,57 @@ def _best_variant(adjacency: dict, node_map: dict, start, blocked: set, targets:
     return None
 
 
+def walk_between(adjacency: dict, node_map: dict, start, target, cutoff_m: float) -> list | None:
+    """Shortest walked chain of cells between two cells of the personal graph.
+
+    Same ground rules as the variant search: only the athlete's own directed
+    transitions, and none born of a long GPS interpolation. When no chain fits
+    within the cutoff there is no walked answer.
+    """
+    if start == target:
+        return [start]
+    dist = {start: 0.0}
+    prev = {}
+    heap = [(0.0, start)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist.get(u, math.inf):
+            continue
+        if u == target:
+            path = [u]
+            while path[-1] != start:
+                path.append(prev[path[-1]])
+            path.reverse()
+            return path
+        if d > cutoff_m:
+            break
+        uxy = _xy(node_map, u)
+        for step in adjacency.get(u, []):
+            v = step["to"]
+            if v not in node_map or step["step_max"] > analysis_constants.TRAIL_GRAPH_MAX_STEP_M:
+                continue
+            nd = d + max(_dist_xy(uxy, _xy(node_map, v)), 5.0)
+            if nd < dist.get(v, math.inf):
+                dist[v] = nd
+                prev[v] = u
+                heapq.heappush(heap, (nd, v))
+    return None
+
+
+def nearest_cell(node_map: dict, xy: tuple[float, float], tol_m: float) -> tuple | None:
+    """The graph cell nearest to a metric position, within tolerance."""
+    best = None
+    best_d2 = tol_m * tol_m
+    for cell in node_map:
+        cxy = _xy(node_map, cell)
+        dx = cxy[0] - xy[0]
+        dy = cxy[1] - xy[1]
+        d2 = dx * dx + dy * dy
+        if d2 <= best_d2:
+            best, best_d2 = cell, d2
+    return best
+
+
 def _tangent(node_map: dict, a, b) -> tuple[float, float]:
     axy = _xy(node_map, a)
     bxy = _xy(node_map, b)

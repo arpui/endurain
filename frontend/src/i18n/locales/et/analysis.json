@@ -345,6 +345,9 @@
     "points": "{n} punkti",
     "undo": "Eemalda viimane",
     "cancelEdit": "Loobu",
-    "drawHint": "Klõpsa kaardile marssruudi punktide lisamiseks. Klõpsa punktile selle eemaldamiseks."
+    "drawHint": "Klõpsa kaardile marssruudi punktide lisamiseks. Klõpsa punktile selle eemaldamiseks.",
+    "snap": "Sobita mu maapinnale",
+    "snapHint": "Sobitamise režiimis järgivad lõigud maapinda, mille oled juba läbinud; mis ei sobi, salvestatakse sirgetena.",
+    "connectFailed": "Marssruuti ei õnnestunud sobitada sinu maapinnale. Proovi uuesti või salvesta vab režiimis."
   }
 }

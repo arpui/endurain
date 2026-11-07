@@ -345,6 +345,9 @@
     "points": "{n} punti",
     "undo": "Rimuovi l'ultimo",
     "cancelEdit": "Annulla",
-    "drawHint": "Clicca sulla mappa per aggiungere punti. Clicca su un punto per rimuoverlo."
+    "drawHint": "Clicca sulla mappa per aggiungere punti. Clicca su un punto per rimuoverlo.",
+    "snap": "Adatta al mio terreno",
+    "snapHint": "In modalità adattamento i tratti seguono il terreno che hai già percorso; quelli che non possono vengono salvati come linee rette.",
+    "connectFailed": "Impossibile adattare il percorso al tuo terreno. Riprova o salvalo in modalità libera."
   }
 }

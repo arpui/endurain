@@ -249,6 +249,26 @@ def create_route(
     return analysis_service.create_route(token_user_id, payload, db)
 
 
+@router.post(
+    "/routes/connect",
+    response_model=analysis_schema.RouteConnectRead,
+)
+@core_rate_limit.limiter.limit(core_rate_limit.WRITE)
+def connect_route(
+    request: Request,
+    payload: analysis_schema.RouteConnectCreate,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:write"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.RouteConnectRead:
+    """Shape clicked anchors along the athlete's own walked ground.
+
+    Read-only computation over the personal graph: no route is stored here;
+    the caller decides whether to keep the walked polyline as a route.
+    """
+    return analysis_service.connect_route(token_user_id, payload, db)
+
+
 @router.put(
     "/routes/{route_id}",
     response_model=analysis_schema.RouteRead,
