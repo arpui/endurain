@@ -102,7 +102,9 @@ def build_course_bytes(
 
     point_at: dict[int, list[tuple[str, int]]] = {}
     for ground_m, label, kind in points:
-        point_at.setdefault(vertex_at(ground_m), []).append((label, kind))
+        entries = point_at.setdefault(vertex_at(ground_m), [])
+        if (label, kind) not in entries:  # variants that rejoin together say it once
+            entries.append((label, kind))
 
     builder = FitFileBuilder(auto_define=True, min_string_size=32)
 
