@@ -288,7 +288,13 @@
       "description": "Treba nekoliko silazaka istom stazi da ovaj prikaz ima dokaze."
     },
     "colCrossings": "Prolasci",
-    "showPlain": "Prikaži i pređene staze bez tvrdnje"
+    "showPlain": "Prikaži i pređene staze bez tvrdnje",
+    "tabWays": "Putovi",
+    "tabSegments": "Segmenti",
+    "showLoops": "Prikaži krugove",
+    "colSegment": "Segment",
+    "colLength": "Dužina",
+    "loop": "krug"
   },
   "sectionRoutes": "Staze",
   "variants": {

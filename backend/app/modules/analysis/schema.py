@@ -1121,3 +1121,85 @@ class RouteConnectRead(BaseModel):
 
     geometry: list[list[float]]
     walked: list[StrictBool]
+
+
+class SegmentNetworkSegmentRead(BaseModel):
+    """One named segment as the athlete's own network knows it.
+
+    Attributes:
+        segment_id: Segment identifier.
+        name: Segment name (the athlete's own label, at last).
+        claim: ``hard`` / ``technical`` / ``mild`` / ``thin`` / ``plain``.
+        length_m: Segment length along its geometry.
+        gain_m: Positive gain along the geometry, when the source knew it.
+        crossings_total: Recorded traversals of the segment.
+        descent_crossings: Traversals that held measured technical descents.
+        med_score: Median of the harshest descent index per traversal.
+        q1: First quartile of those indices.
+        q3: Third quartile of those indices.
+        med_grade_pct: Median mean-grade of the traversals, percent.
+        loop: Whether the segment is a short closed circuit (not network).
+        geometry: The stored polyline, for the map.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    segment_id: StrictInt
+    name: StrictStr
+    claim: Literal["hard", "technical", "mild", "thin", "plain"]
+    length_m: StrictFloat
+    gain_m: StrictFloat | None
+    crossings_total: StrictInt
+    descent_crossings: StrictInt
+    med_score: StrictFloat | None
+    q1: StrictFloat | None
+    q3: StrictFloat | None
+    med_grade_pct: StrictFloat | None
+    loop: StrictBool
+    geometry: list[list[float]]
+
+
+class SegmentNetworkRead(BaseModel):
+    """The athlete's named network: segments claimed like ways (experimental).
+
+    Attributes:
+        min_descents: Descents required before a segment is claimed.
+        threshold: The detector's own threshold the bands are multiples of.
+        technical_ratio: Multiple of the threshold that reads firmly technical.
+        hard_ratio: Multiple of the threshold that reads as a hard core.
+        segments: Segments with at least one crossing, best claim first.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    min_descents: StrictInt
+    threshold: StrictFloat
+    technical_ratio: StrictFloat
+    hard_ratio: StrictFloat
+    segments: list[SegmentNetworkSegmentRead]
+
+
+class RouteSegmentMatchRead(BaseModel):
+    """One segment a drawn or recorded route runs along.
+
+    Attributes:
+        segment_id: Segment identifier.
+        name: Segment name.
+        claim: The athlete's own claim on it, from the segment network.
+        along_start_m: Offset along the segment where the route joins it.
+        along_end_m: Offset along the segment where the route leaves it.
+        direction: ``forward`` / ``reverse`` along the segment geometry.
+        covered_m: Length of segment the route runs along.
+        length_m: Full segment length.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    segment_id: StrictInt
+    name: StrictStr
+    claim: Literal["hard", "technical", "mild", "thin", "plain"]
+    along_start_m: StrictFloat
+    along_end_m: StrictFloat
+    direction: Literal["forward", "reverse"]
+    covered_m: StrictFloat
+    length_m: StrictFloat

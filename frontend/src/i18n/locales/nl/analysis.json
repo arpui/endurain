@@ -288,7 +288,13 @@
       "description": "Enkele afdalingen over hetzelfde pad zijn nodig voordat dit overzicht bewijs heeft."
     },
     "colCrossings": "Doorgangen",
-    "showPlain": "Ook gekruiste paden zonder bewering tonen"
+    "showPlain": "Ook gekruiste paden zonder bewering tonen",
+    "tabWays": "Paden",
+    "tabSegments": "Segmenten",
+    "showLoops": "Toon rondjes",
+    "colSegment": "Segment",
+    "colLength": "Lengte",
+    "loop": "rondje"
   },
   "sectionRoutes": "Routes",
   "variants": {

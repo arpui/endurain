@@ -288,7 +288,13 @@
       "description": "Potrzeba kilku zjazdów tą samą ścieżką, aby ten widok miał dowody."
     },
     "colCrossings": "Przejścia",
-    "showPlain": "Pokaż też przebyte bez twierdzenia"
+    "showPlain": "Pokaż też przebyte bez twierdzenia",
+    "tabWays": "Drogi",
+    "tabSegments": "Segmenty",
+    "showLoops": "Pokaż pętle",
+    "colSegment": "Segment",
+    "colLength": "Długość",
+    "loop": "pętla"
   },
   "sectionRoutes": "Trasy",
   "variants": {

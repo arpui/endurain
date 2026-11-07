@@ -288,7 +288,13 @@
       "description": "Muutama laskeutuma samaa polkua pitkin tarvitaan, jolla näkymällä on näyttöä."
     },
     "colCrossings": "Kulennukset",
-    "showPlain": "Näytä myös kuljetut polut ilman väitteitä"
+    "showPlain": "Näytä myös kuljetut polut ilman väitteitä",
+    "tabWays": "Reitit",
+    "tabSegments": "Segmentit",
+    "showLoops": "Näytä kierrokset",
+    "colSegment": "Segmentti",
+    "colLength": "Pituus",
+    "loop": "kierros"
   },
   "sectionRoutes": "Reitit",
   "variants": {

@@ -288,7 +288,13 @@
       "description": "Je potřeba několik sestupů touž cestou, aby tento pohled měl důkazy."
     },
     "colCrossings": "Průchody",
-    "showPlain": "Zobrazit také prošlé cesty bez tvrzení"
+    "showPlain": "Zobrazit také prošlé cesty bez tvrzení",
+    "tabWays": "Cesty",
+    "tabSegments": "Segmenty",
+    "showLoops": "Zobrazit okruhy",
+    "colSegment": "Segment",
+    "colLength": "Délka",
+    "loop": "okruh"
   },
   "sectionRoutes": "Trasy",
   "variants": {

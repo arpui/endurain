@@ -288,7 +288,13 @@
       "description": "Il faut quelques descentes du même sentier pour que cette vue ait des preuves."
     },
     "colCrossings": "Passages",
-    "showPlain": "Afficher aussi les sentiers traversés sans affirmation"
+    "showPlain": "Afficher aussi les sentiers traversés sans affirmation",
+    "tabWays": "Chemins",
+    "tabSegments": "Segments",
+    "showLoops": "Afficher les boucles",
+    "colSegment": "Segment",
+    "colLength": "Longueur",
+    "loop": "boucle"
   },
   "sectionRoutes": "Itinéraires",
   "variants": {

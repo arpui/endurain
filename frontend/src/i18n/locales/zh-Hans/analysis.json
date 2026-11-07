@@ -288,7 +288,13 @@
       "description": "同一条路径上还需几次下坡，此视图才有依据。"
     },
     "colCrossings": "穿越次数",
-    "showPlain": "显示未作断言的已穿越路径"
+    "showPlain": "显示未作断言的已穿越路径",
+    "tabWays": "道路",
+    "tabSegments": "路段",
+    "showLoops": "显示环线",
+    "colSegment": "路段",
+    "colLength": "长度",
+    "loop": "环线"
   },
   "sectionRoutes": "路线",
   "variants": {

@@ -288,7 +288,13 @@
       "description": "同一條路徑上還需幾次下坡，此檢視才有依據。"
     },
     "colCrossings": "穿越次數",
-    "showPlain": "顯示未作斷言的已穿越路徑"
+    "showPlain": "顯示未作斷言的已穿越路徑",
+    "tabWays": "道路",
+    "tabSegments": "路段",
+    "showLoops": "顯示環線",
+    "colSegment": "路段",
+    "colLength": "長度",
+    "loop": "環線"
   },
   "sectionRoutes": "路線",
   "variants": {

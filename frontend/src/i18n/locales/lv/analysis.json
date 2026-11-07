@@ -288,7 +288,13 @@
       "description": "Vajadzīgas dažas nolaišanās pa to pašu celiņu, lai šim skatam būtu pierādījumu."
     },
     "colCrossings": "Šķērsojumi",
-    "showPlain": "Rādīt arī šķērsotos bez apgalvojuma"
+    "showPlain": "Rādīt arī šķērsotos bez apgalvojuma",
+    "tabWays": "Celi",
+    "tabSegments": "Nogriezniki",
+    "showLoops": "Rādīt apļus",
+    "colSegment": "Nogrieznis",
+    "colLength": "Garums",
+    "loop": "aplis"
   },
   "sectionRoutes": "Maršruti",
   "variants": {

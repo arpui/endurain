@@ -41,9 +41,11 @@ import modules.analysis.intervals as analysis_intervals
 import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
 import modules.analysis.schema as analysis_schema
+import modules.analysis.segment_projection as analysis_projection
 import modules.analysis.trail as analysis_trail
 import modules.analysis.trail_osm as analysis_trail_osm
 import modules.analysis.variants as analysis_variants
+import modules.segments.integration_service as segments_integration
 import modules.users.users.integration_service as users_integration
 
 logger = core_logger.get_logger(__name__)
@@ -2569,6 +2571,111 @@ def compute_way_crossings_for_activity(activity_id: int, db: Session) -> int:
     return stored
 
 
+def compute_segment_crossings_for_activity(activity_id: int, db: Session) -> int:
+    """Project one activity's stored segment efforts onto track and segment.
+
+    The segment engine answers *that* a pass happened, with stream indices; this
+    turns those indices into ground: the span along the segment's geometry, the
+    span along the activity's own track (which is what ties the pass to the
+    technical observation later), and the mean signed grade from the athlete's
+    elevation stream. A pass over a junction that covered only a sliver of the
+    segment is dropped: it would fake a traversal.
+
+    Args:
+        activity_id: The activity to project.
+        db: Database session.
+
+    Returns:
+        The number of segment crossings stored.
+    """
+    activity = activity_integration.get_activity_for_derivation(activity_id, db)
+    if activity is None or activity.user_id is None or sport_group(activity.activity_type) != "run":
+        return 0
+    efforts = segments_integration.list_activity_effort_records(activity_id, db)
+    if not efforts:
+        return 0
+    track = _trail_track(activity_id, db)
+    if len(track) < 2:
+        return 0
+    stamps = [analysis_graph._utc_naive(stamp) for stamp, _lat, _lng in track]
+    xy = [analysis_graph.to_xy(lat, lng) for _stamp, lat, lng in track]
+    cum: list[float] = [0.0]
+    for k in range(1, len(xy)):
+        cum.append(cum[-1] + analysis_variants._dist_xy(xy[k - 1], xy[k]))
+
+    lats = [lat for _stamp, lat, _lng in track]
+    lngs = [lng for _stamp, _lat, lng in track]
+    margin = 0.01
+    shapes = {
+        shape.id: shape
+        for shape in segments_integration.list_segment_shapes_in_bbox(
+            min(lats) - margin, min(lngs) - margin, max(lats) + margin, max(lngs) + margin, db
+        )
+    }
+
+    _, ele_values, ele_stamps = _stream_samples(
+        activity_id,
+        activity_streams_constants.STREAM_TYPE_ELEVATION,
+        "ele",
+        db,
+        keep_zeros=True,
+    )
+    ele_stamps = [analysis_graph._utc_naive(stamp) for stamp in ele_stamps]
+    ele_values = list(ele_values)
+
+    def ele_at(stamp) -> float | None:
+        if not ele_stamps:
+            return None
+        i = bisect_left(ele_stamps, stamp)
+        best = i if i < len(ele_stamps) else len(ele_stamps) - 1
+        if best > 0 and abs((stamp - ele_stamps[best - 1]).total_seconds()) < abs(
+            (stamp - ele_stamps[best]).total_seconds()
+        ):
+            best -= 1
+        if abs((stamp - ele_stamps[best]).total_seconds()) > 30.0:
+            return None
+        return float(ele_values[best])
+
+    rows: list[dict] = []
+    cells: set[tuple[int, int, int]] = set()
+    for effort in efforts:
+        if effort.coverage is not None and effort.coverage < analysis_constants.TRAIL_SEGMENT_PASS_MIN_COVERAGE:
+            continue
+        shape = shapes.get(effort.segment_id)
+        if shape is None:
+            continue
+        i0 = max(0, min(effort.stream_index_start, len(track) - 2))
+        i1 = max(i0, min(effort.stream_index_end, len(track) - 1))
+        seg_xy = analysis_projection.polyline_xy(list(shape.geometry))
+        if len(seg_xy) < 2:
+            continue
+        seg_offsets = analysis_projection.cumulative_offsets(seg_xy)
+        along_start, along_end = analysis_projection.effort_along_range(xy, seg_xy, seg_offsets, i0, i1)
+        up = ele_at(stamps[i0])
+        down = ele_at(stamps[i1])
+        span = max(cum[i1] - cum[i0], 1.0)
+        grade_pct = None if up is None or down is None else round((down - up) / span * 100.0, 2)
+        rows.append(
+            {
+                "segment_id": effort.segment_id,
+                "user_id": activity.user_id,
+                "pass_number": effort.pass_number,
+                "along_start_m": round(along_start, 1),
+                "along_end_m": round(along_end, 1),
+                "track_start_m": round(cum[i0], 1),
+                "track_end_m": round(cum[i1], 1),
+                "direction": effort.direction,
+                "grade_pct": grade_pct,
+            }
+        )
+        for cell in analysis_projection.cells_along(seg_xy, seg_offsets, along_start, along_end):
+            cells.add((effort.segment_id, *cell))
+
+    written = analysis_crud.replace_activity_segment_crossings(activity_id, rows, db)
+    analysis_crud.insert_segment_cells(sorted(cells), db)
+    return written
+
+
 def reconcile_way_crossings(db: Session, *, only_missing: bool = True) -> int:
     """Cover every run activity whose whole track has not been matched to ways yet.
 
@@ -2592,11 +2699,53 @@ def reconcile_way_crossings(db: Session, *, only_missing: bool = True) -> int:
         after_id = max(activity_ids)
         if only_missing:
             activity_ids = sorted(analysis_crud.activity_ids_needing_coverage(activity_ids, method, cache_date, db))
+        segment_written = 0
         for activity_id in activity_ids:
             written += compute_way_crossings_for_activity(activity_id, db)
+            segment_written += compute_segment_crossings_for_activity(activity_id, db)
         db.commit()
-    logger.info("Way coverage pass finished", extra=core_logger.context(only_missing=only_missing, crossings=written))
+    logger.info(
+        "Way coverage pass finished",
+        extra=core_logger.context(only_missing=only_missing, crossings=written, segment_crossings=segment_written),
+    )
     return written
+
+
+def _claim_bands(entry: dict, hard_cut: float, technical_cut: float) -> tuple:
+    """The claim band a set of descents earns, with its honest spread.
+
+    Same rules for every kind of ground - mapped way or named segment: the
+    median over per-session worst descents decides the band, fewer than the
+    minimum descents stays thin, and quartiles travel alongside because a
+    median without its spread means nothing.
+
+    Args:
+        entry: Accumulated ``descents`` (activity -> worst score) and
+            ``grades`` (activity -> per-crossing mean grades).
+        hard_cut: Score that reads as a hard core.
+        technical_cut: Score that reads as firmly technical.
+
+    Returns:
+        ``(scores, median, q1, q3, median_grade, claim)``; the numerics are
+        ``None`` and the claim ``plain`` when no descent was measured there.
+    """
+    scores = sorted(entry["descents"].values())
+    if not scores:
+        return [], None, None, None, None, "plain"
+    med = float(statistics.median(scores))
+    q1, _, q3 = statistics.quantiles(scores, n=4) if len(scores) >= 2 else (med, med, med)
+    grade_med = (
+        float(statistics.median([statistics.median(v) for v in entry["grades"].values()])) if entry["grades"] else None
+    )
+    if len(scores) < analysis_constants.TRAIL_NETWORK_MIN_DESCENTS:
+        claim = "thin"
+    elif med >= hard_cut:
+        claim = "hard"
+    elif med >= technical_cut:
+        claim = "technical"
+    else:
+        claim = "mild"
+    return scores, med, q1, q3, grade_med, claim
 
 
 def get_trail_network(
@@ -2656,22 +2805,7 @@ def get_trail_network(
         if path is None:
             continue
         entry = per_way.get(way_id, {"descents": {}, "ascents": set(), "hard": set(), "grades": {}})
-        scores = sorted(entry["descents"].values())
-        if scores:
-            med = float(statistics.median(scores))
-            q1, _, q3 = statistics.quantiles(scores, n=4) if len(scores) >= 2 else (med, med, med)
-            grade_med: float | None = float(statistics.median([statistics.median(v) for v in entry["grades"].values()]))
-            if len(scores) < analysis_constants.TRAIL_NETWORK_MIN_DESCENTS:
-                claim = "thin"
-            elif med >= hard_cut:
-                claim = "hard"
-            elif med >= technical_cut:
-                claim = "technical"
-            else:
-                claim = "mild"
-        else:
-            med = q1 = q3 = grade_med = None
-            claim = "plain"
+        scores, med, q1, q3, grade_med, claim = _claim_bands(entry, hard_cut, technical_cut)
         ways.append(
             analysis_schema.TrailNetworkWayRead(
                 way_id=way_id,
@@ -3021,6 +3155,87 @@ def _to_route_read(route) -> analysis_schema.RouteRead:
         gain_m=route.gain_m,
         notes=route.notes,
         created_at=route.created_at.isoformat() if route.created_at else "",
+    )
+
+
+def get_segment_network(
+    user_id: int,
+    db: Session,
+    *,
+    show_loops: bool = False,
+    limit: int = 2000,
+) -> analysis_schema.SegmentNetworkRead:
+    """Aggregate every named segment the athlete ran over, claimed like a way.
+
+    The ways network describes ground the cartography names; this one describes
+    ground the athlete named themselves. The claim rules are deliberately the
+    same - descents only, minimum traversals, median with its quartiles - so a
+    ``hard`` means the same thing in either layer. Short closed circuits (a
+    lap of a field) are real training but not travel: they stay out unless
+    asked for.
+
+    Args:
+        user_id: The athlete whose crossings count.
+        db: Database session.
+        show_loops: Include short closed circuits.
+        limit: Maximum number of segments handed back.
+
+    Returns:
+        The named network, best claim first.
+    """
+    method = analysis_constants.trail_model_stamp()
+    threshold = analysis_constants.TRAIL_THRESHOLD
+    hard_cut = threshold * analysis_constants.TRAIL_HARD_RATIO
+    technical_cut = threshold * analysis_constants.TRAIL_TECHNICAL_RATIO
+
+    shapes = {shape.id: shape for shape in segments_integration.list_segment_shapes(db)}
+    crossings = analysis_crud.list_user_segment_crossings(user_id, db)
+
+    totals: dict[int, int] = {}
+    per_seg: dict[int, dict] = {}
+    for crossing in crossings:
+        totals[crossing.segment_id] = totals.get(crossing.segment_id, 0) + 1
+        entry = per_seg.setdefault(crossing.segment_id, {"descents": {}, "ascents": set(), "grades": {}})
+        if crossing.grade_pct is not None:
+            entry["grades"].setdefault(crossing.activity_id, []).append(crossing.grade_pct)
+    for crossing, section in analysis_crud.list_segment_descent_evidence(user_id, method, db):
+        entry = per_seg.setdefault(crossing.segment_id, {"descents": {}, "ascents": set(), "grades": {}})
+        worst = entry["descents"].get(crossing.activity_id, 0.0)
+        entry["descents"][crossing.activity_id] = max(worst, section.score)
+
+    segments: list[analysis_schema.SegmentNetworkSegmentRead] = []
+    for segment_id, entry in per_seg.items():
+        shape = shapes.get(segment_id)
+        if shape is None:
+            continue
+        loop = analysis_projection.is_loop(list(shape.geometry), shape.distance_m)
+        if loop and not show_loops:
+            continue
+        scores, med, q1, q3, grade_med, claim = _claim_bands(entry, hard_cut, technical_cut)
+        segments.append(
+            analysis_schema.SegmentNetworkSegmentRead(
+                segment_id=segment_id,
+                name=shape.name,
+                claim=claim,
+                length_m=round(shape.distance_m, 1),
+                gain_m=None if shape.elevation_gain_m is None else round(shape.elevation_gain_m, 1),
+                crossings_total=totals.get(segment_id, len(scores)),
+                descent_crossings=len(scores),
+                med_score=None if med is None else round(med, 3),
+                q1=None if q1 is None else round(q1, 3),
+                q3=None if q3 is None else round(q3, 3),
+                med_grade_pct=grade_med,
+                loop=loop,
+                geometry=[[float(pt[0]), float(pt[1])] for pt in shape.geometry],
+            )
+        )
+    segments.sort(key=lambda row: (row.descent_crossings, row.med_score or 0.0), reverse=True)
+    return analysis_schema.SegmentNetworkRead(
+        min_descents=analysis_constants.TRAIL_NETWORK_MIN_DESCENTS,
+        threshold=threshold,
+        technical_ratio=analysis_constants.TRAIL_TECHNICAL_RATIO,
+        hard_ratio=analysis_constants.TRAIL_HARD_RATIO,
+        segments=segments[:limit],
     )
 
 

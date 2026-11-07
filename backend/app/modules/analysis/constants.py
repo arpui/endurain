@@ -651,4 +651,11 @@ TRAIL_VARIANT_VERDICTS = ("real", "falsa")
 #: distance of a graph cell, and a snapped connection never walks longer than
 #: this per stretch (beyond it the straight line stands).
 TRAIL_GRAPH_SNAP_TOL_M = 120.0
+#: A segment pass counts toward the named network only when it covers at least
+#: this fraction of the segment: junction crossings would fake traversals.
+TRAIL_SEGMENT_PASS_MIN_COVERAGE = 0.5
+#: A short closed segment is a circuit, not travel: it does not make network.
+TRAIL_SEGMENT_LOOP_MAX_LEN_M = 1200.0
+TRAIL_SEGMENT_LOOP_CLOSE_MIN_M = 20.0
+TRAIL_SEGMENT_LOOP_CLOSE_RATIO = 0.05
 TRAIL_ROUTE_CONNECT_MAX_M = 8000.0

@@ -18,6 +18,7 @@ import {
   fetchActivityIntervals,
   deleteTrailSectionMark,
   fetchRoutes,
+  fetchSegmentNetwork,
   fetchTrailNetwork,
   createRoute,
   deleteRoute,
@@ -475,5 +476,26 @@ export function useDeleteRouteMutation() {
     mutationKey: ['analysis', 'route-delete'],
     invalidateKey: queryKeys.analysis.all(),
     mutationFn: (routeId: number) => deleteRoute(routeId),
+  })
+}
+
+/**
+ * The athlete's named network: segments claimed like ways (experimental).
+ *
+ * @param enabled - Whether the caller wants it fetched.
+ * @param showLoops - Reactive flag including short closed circuits.
+ * @returns The TanStack query for the named network.
+ */
+export function useSegmentNetworkQuery(
+  enabled: MaybeRefOrGetter<boolean> = true,
+  showLoops: MaybeRefOrGetter<boolean> = false,
+) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const loops = computed(() => toValue(showLoops))
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.segmentNetwork(loops.value)),
+    queryFn: ({ signal }) => fetchSegmentNetwork(loops.value, signal),
+    enabled: computed(() => toValue(enabled) && isAuthenticated.value),
   })
 }

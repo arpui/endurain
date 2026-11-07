@@ -288,7 +288,13 @@
       "description": "Néhány ugyanazon ösvényen megtett lefelé haladás kell, hogy ez a nézet bizonyítékokra támaszkodhasson."
     },
     "colCrossings": "Áthaladások",
-    "showPlain": "Az igény nélküli bejárt ösvények mutatása"
+    "showPlain": "Az igény nélküli bejárt ösvények mutatása",
+    "tabWays": "Ösvények",
+    "tabSegments": "Szakaszok",
+    "showLoops": "Körök megjelenítése",
+    "colSegment": "Szakasz",
+    "colLength": "Hossz",
+    "loop": "kör"
   },
   "sectionRoutes": "Útvonalak",
   "variants": {

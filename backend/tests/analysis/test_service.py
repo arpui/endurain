@@ -18,6 +18,7 @@ import pytest
 import core.exceptions as core_exceptions
 import modules.activities.activity_streams.constants as activity_streams_constants
 import modules.analysis.constants as analysis_constants
+import modules.analysis.segment_projection as analysis_projection
 import modules.analysis.contracts as analysis_contracts
 import modules.analysis.graph as analysis_graph
 import modules.analysis.intervals as analysis_intervals
@@ -1690,6 +1691,108 @@ class TestPersonalGraphAndVariants:
         assert found == []
 
 
+class TestSegmentProjection:
+    """The along/track axes and the circuit test, in the metre frame."""
+
+    def test_a_pass_sweeps_the_segment_from_end_to_end(self):
+        # segment: 0→300 m east; track: same line, indices 2..18 every 15 m
+        import math as _m
+
+        per_m = 1.0 / (111320.0 * _m.cos(_m.radians(analysis_constants.TRAIL_GRAPH_REF_LAT)))
+        seg = [(42.0, 1.5 + k * 100.0 * per_m) for k in range(4)]  # 300 m of segment
+        seg_xy = analysis_projection.polyline_xy(seg)
+        seg_off = analysis_projection.cumulative_offsets(seg_xy)
+        track_xy = [analysis_graph.to_xy(42.0, 1.5 + k * 15.0 * per_m) for k in range(20)]  # 285 m of track
+        lo, hi = analysis_projection.effort_along_range(track_xy, seg_xy, seg_off, 2, 18)
+        assert 260.0 <= hi <= 285.0
+        assert 15.0 <= lo <= 45.0
+
+    def test_a_field_lap_is_a_circuit_but_a_piste_is_network(self):
+        import math as _m
+
+        ref = analysis_constants.TRAIL_GRAPH_REF_LAT
+        step = 15.0 / (111320.0 * _m.cos(_m.radians(ref)))
+        loop = [[42.0, 1.5 + k * step] for k in range(20)] + [[42.0, 1.5]]  # 285 m closed
+        out = [[42.0, 1.5 + k * step] for k in range(20)]  # 285 m open
+        assert analysis_projection.is_loop(loop, 285.0) is True
+        assert analysis_projection.is_loop(out, 285.0) is False
+
+    def test_cells_along_stamp_the_segment_geometry(self):
+        seg_xy = [(0.0, 0.0), (60.0, 0.0)]
+        seg_off = [0.0, 60.0]
+        cells = analysis_projection.cells_along(seg_xy, seg_off, 0.0, 60.0)
+        assert (0, 0) in cells and (4, 0) in cells
+        assert all(y == 0 for _x, y in cells)
+
+
+class TestSegmentNetwork:
+    """Named ground, claimed exactly like mapped ground."""
+
+    @staticmethod
+    def _shape(segment_id: int, name: str, closed: bool = False):
+        pts = [[42.0, 1.5], [42.0, 1.503]]
+        if closed:
+            pts = [[42.0, 1.5], [42.0, 1.5005], [42.0, 1.5]]
+        return SimpleNamespace(
+            id=segment_id,
+            name=name,
+            distance_m=285.0 if closed else 332.0,
+            elevation_gain_m=None,
+            altitudes=None,
+            geometry=pts,
+        )
+
+    def _run(self, segments, crossings, evidence):
+        with (
+            patch(f"{_SVC}.segments_integration.list_segment_shapes", return_value=segments),
+            patch(f"{_SVC}.analysis_crud.list_user_segment_crossings", return_value=crossings),
+            patch(f"{_SVC}.analysis_crud.list_segment_descent_evidence", return_value=evidence),
+        ):
+            return analysis_service.get_segment_network(7, _db())
+
+    def test_three_technical_descents_claim_a_segment(self):
+        seg = self._shape(1, "PistaHN 400m")
+        mid_band = (
+            analysis_constants.TRAIL_THRESHOLD
+            * (analysis_constants.TRAIL_TECHNICAL_RATIO + analysis_constants.TRAIL_HARD_RATIO)
+            / 2.0
+        )
+        crossings = [SimpleNamespace(segment_id=1, activity_id=a, grade_pct=-9.0) for a in (10, 11, 12)]
+        evidence = [(c, SimpleNamespace(activity_id=c.activity_id, score=mid_band, core_score=None)) for c in crossings]
+        net = self._run([seg], crossings, evidence)
+        assert [s.claim for s in net.segments] == ["technical"]
+        assert net.segments[0].name == "PistaHN 400m"
+        assert net.segments[0].descent_crossings == 3
+
+    def test_two_descents_stay_thin(self):
+        seg = self._shape(2, "tfa")
+        crossings = [SimpleNamespace(segment_id=2, activity_id=a, grade_pct=-7.0) for a in (10, 11)]
+        evidence = [(c, SimpleNamespace(activity_id=c.activity_id, score=2.5, core_score=2.9)) for c in crossings]
+        net = self._run([seg], crossings, evidence)
+        assert net.segments[0].claim == "thin"
+
+    def test_crossings_without_measured_descent_are_plain(self):
+        seg = self._shape(3, "pla")
+        crossings = [SimpleNamespace(segment_id=3, activity_id=a, grade_pct=1.0) for a in (10, 11, 12, 13)]
+        net = self._run([seg], crossings, [])
+        assert net.segments[0].claim == "plain"
+
+    def test_a_field_lap_is_out_of_the_network_unless_asked(self):
+        seg = self._shape(4, "Volta herba pista", closed=True)
+        crossings = [SimpleNamespace(segment_id=4, activity_id=a, grade_pct=-1.0) for a in (10, 11, 12)]
+        hidden = self._run([seg], crossings, [])
+        assert hidden.segments == []
+        shown = analysis_service  # same call, show_loops on
+        with (
+            patch(f"{_SVC}.segments_integration.list_segment_shapes", return_value=[seg]),
+            patch(f"{_SVC}.analysis_crud.list_user_segment_crossings", return_value=crossings),
+            patch(f"{_SVC}.analysis_crud.list_segment_descent_evidence", return_value=[]),
+        ):
+            visible = shown.get_segment_network(7, _db(), show_loops=True)
+        assert [s.segment_id for s in visible.segments] == [4]
+        assert visible.segments[0].loop is True
+
+
 class TestWayCoverage:
     """Whole-track matching: the network is every crossed way, not only the hard ones."""
 
@@ -1745,10 +1848,12 @@ class TestWayCoverage:
                 return_value={10, 12},
             ),
             patch(f"{_SVC}.compute_way_crossings_for_activity", return_value=2) as cover,
+            patch(f"{_SVC}.compute_segment_crossings_for_activity", return_value=0) as seg_cover,
         ):
             written = analysis_service.reconcile_way_crossings(db)
         assert written == 4
         assert [call.args[0] for call in cover.call_args_list] == [10, 12]
+        assert [call.args[0] for call in seg_cover.call_args_list] == [10, 12]
 
 
 class TestTrailCartography:

@@ -474,6 +474,121 @@ class TestRouteConnect:
             assert len(res2.geometry) == 2
 
 
+class TestSegmentCrossings:
+    """Named ground on both axes: the along-segment and along-track spans, and
+    the evidence join that rides the track axis without any re-matching."""
+
+    @staticmethod
+    def _seed(db):
+        import modules.segments.constants as segments_constants
+        import modules.segments.contracts as segments_contracts
+        import modules.segments.crud as segments_crud
+
+        activity_id = _run_activity(db)
+        segment = segments_crud.create_segment(
+            segments_contracts.SegmentRecord(
+                name="PistaHN 400m",
+                source=segments_constants.SegmentSource.MANUAL,
+                source_id=None,
+                distance_m=409.0,
+                elevation_gain_m=9.0,
+                altitudes=None,
+                min_lat=42.0,
+                min_lng=1.5,
+                max_lat=42.01,
+                max_lng=1.51,
+                geometry=[[42.0, 1.5], [42.01, 1.5]],
+            ),
+            _USER_ID,
+            db,
+        )
+        analysis_crud.replace_trail_observation(
+            user_id=_USER_ID,
+            activity_id=activity_id,
+            method=_METHOD,
+            observation=analysis_contracts.TrailSessionRecord(
+                v_base_ms=2.4, cadence_available=True, total_m=5000.0, technical_m=200.0
+            ),
+            sections=[
+                analysis_contracts.TrailSectionRecord(
+                    start_m=1000.0,
+                    length_m=200.0,
+                    grade_pct=-8.0,
+                    avg_speed_ms=3.0,
+                    gap_deficit=0.4,
+                    cadence_jitter=0.2,
+                    brake_score=0.5,
+                    score=2.2,
+                    direction="descent",
+                    core_start_m=None,
+                    core_end_m=None,
+                    core_score=None,
+                    v_base_ms=2.4,
+                    cadence_available=True,
+                    total_m=5000.0,
+                    start_t=_START,
+                    end_t=_START,
+                )
+            ],
+            db=db,
+        )
+        return activity_id, segment.id
+
+    def test_a_pass_and_its_descent_join_and_stay_idempotent(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            activity_id, segment_id = self._seed(db)
+            db.commit()
+            rows = [
+                {
+                    "segment_id": segment_id,
+                    "user_id": _USER_ID,
+                    "pass_number": 1,
+                    "along_start_m": 20.0,
+                    "along_end_m": 380.0,
+                    "track_start_m": 950.0,
+                    "track_end_m": 1300.0,
+                    "direction": "forward",
+                    "grade_pct": -7.0,
+                }
+            ]
+            assert analysis_crud.replace_activity_segment_crossings(activity_id, rows, db) == 1
+            analysis_crud.insert_segment_cells([(segment_id, 0, 0), (segment_id, 0, 0), (segment_id, 1, 0)], db)
+            db.commit()
+
+            assert len(analysis_crud.list_user_segment_crossings(_USER_ID, db)) == 1
+            evidence = analysis_crud.list_segment_descent_evidence(_USER_ID, _METHOD, db)
+            assert len(evidence) == 1 and evidence[0][1].score == 2.2
+            assert analysis_crud.list_segment_preference_cells(_USER_ID, db) == {(0, 0), (1, 0)}
+
+            # re-running the projection converges: no double count
+            assert analysis_crud.replace_activity_segment_crossings(activity_id, rows, db) == 1
+            db.commit()
+            assert len(analysis_crud.list_user_segment_crossings(_USER_ID, db)) == 1
+
+    def test_a_pass_over_another_part_of_the_track_is_not_evidence(self, pg_factory):
+        ensure_user(pg_factory, _USER_ID)
+        with pg_factory() as db:
+            activity_id, segment_id = self._seed(db)
+            db.commit()
+            rows = [
+                {
+                    "segment_id": segment_id,
+                    "user_id": _USER_ID,
+                    "pass_number": 1,
+                    "along_start_m": 10.0,
+                    "along_end_m": 400.0,
+                    "track_start_m": 2000.0,
+                    "track_end_m": 2300.0,
+                    "direction": "forward",
+                    "grade_pct": -6.0,
+                }
+            ]
+            analysis_crud.replace_activity_segment_crossings(activity_id, rows, db)
+            db.commit()
+            assert analysis_crud.list_segment_descent_evidence(_USER_ID, _METHOD, db) == []
+
+
 class TestWayCrossings:
     def test_crossings_replace_round_trip_and_the_marker_gates_the_pass(self, pg_factory):
         ensure_user(pg_factory, _USER_ID)

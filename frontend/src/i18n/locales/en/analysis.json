@@ -288,7 +288,13 @@
       "description": "A few descents of the same path accumulate the evidence this view needs."
     },
     "colCrossings": "Traversed",
-    "showPlain": "Also draw crossed ways that carry no claim"
+    "showPlain": "Also draw crossed ways that carry no claim",
+    "tabWays": "Ways",
+    "tabSegments": "Segments",
+    "showLoops": "Show circuits",
+    "colSegment": "Segment",
+    "colLength": "Length",
+    "loop": "circuit"
   },
   "sectionRoutes": "Routes",
   "variants": {

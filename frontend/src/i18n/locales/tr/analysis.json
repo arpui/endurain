@@ -288,7 +288,13 @@
       "description": "Bu görünümün kanıt için aynı patikadan birkaç inişe ihtiyacı var."
     },
     "colCrossings": "Geçisler",
-    "showPlain": "İddiasız geçilen patikaları da göster"
+    "showPlain": "İddiasız geçilen patikaları da göster",
+    "tabWays": "Yollar",
+    "tabSegments": "Segmentler",
+    "showLoops": "Turları göster",
+    "colSegment": "Segment",
+    "colLength": "Uzunluk",
+    "loop": "tur"
   },
   "sectionRoutes": "Rotalar",
   "variants": {

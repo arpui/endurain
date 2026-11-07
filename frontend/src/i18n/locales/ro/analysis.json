@@ -288,7 +288,13 @@
       "description": "Sunt necesare câteva coborâri pe aceeași potecă pentru ca această vedere să aibă dovezi."
     },
     "colCrossings": "Treceri",
-    "showPlain": "Arată și potecile străbătute fără pretenții"
+    "showPlain": "Arată și potecile străbătute fără pretenții",
+    "tabWays": "Drumuri",
+    "tabSegments": "Tronsoane",
+    "showLoops": "Afișează buclele",
+    "colSegment": "Segment",
+    "colLength": "Lungime",
+    "loop": "buclă"
   },
   "sectionRoutes": "Trasee",
   "variants": {

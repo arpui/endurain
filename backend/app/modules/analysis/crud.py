@@ -1338,3 +1338,99 @@ def list_user_ids_with_trail_sessions(db: Session) -> list[int]:
         select(analysis_models.TrailSession.user_id).distinct().order_by(analysis_models.TrailSession.user_id)
     ).all()
     return [int(row[0]) for row in rows]
+
+
+def replace_activity_segment_crossings(activity_id: int, rows: Sequence[dict], db: Session) -> int:
+    """Rewrite every stored segment crossing of one activity (idempotent pass).
+
+    Args:
+        activity_id: The activity whose crossings to rewrite.
+        rows: Crossing rows without the activity key (already known).
+        db: Database session.
+
+    Returns:
+        The number of crossings written.
+    """
+    db.execute(
+        delete(analysis_models.SegmentCrossing).where(analysis_models.SegmentCrossing.activity_id == activity_id)
+    )
+    for row in rows:
+        db.add(analysis_models.SegmentCrossing(activity_id=activity_id, **row))
+    db.flush()
+    return len(rows)
+
+
+def insert_segment_cells(cell_rows: Sequence[tuple[int, int, int]], db: Session) -> None:
+    """Stamp which grid cells each segment covers; duplicates are simply kept out."""
+    if not cell_rows:
+        return
+    db.execute(
+        pg_insert(analysis_models.SegmentCell)
+        .values([{"segment_id": segment_id, "x": x, "y": y} for segment_id, x, y in cell_rows])
+        .on_conflict_do_nothing(index_elements=["segment_id", "x", "y"])
+    )
+
+
+def list_user_segment_crossings(user_id: int, db: Session) -> list[analysis_models.SegmentCrossing]:
+    """Every stored segment crossing of one athlete."""
+    return list(
+        db.scalars(select(analysis_models.SegmentCrossing).where(analysis_models.SegmentCrossing.user_id == user_id))
+    )
+
+
+def list_segment_descent_evidence(
+    user_id: int,
+    method: str,
+    db: Session,
+) -> list[tuple[analysis_models.SegmentCrossing, analysis_models.TrailSection]]:
+    """Measured descents that fall inside a segment pass, paired with that pass.
+
+    The join rides on the track axis: both rows carry positions along the same
+    activity, so a stretch belongs to the pass that ran through it without any
+    re-matching of geometry.
+
+    Args:
+        user_id: The athlete whose observations are considered.
+        method: The detector parameters stamped on the observations.
+        db: Database session.
+
+    Returns:
+        ``(crossing, stretch)`` pairs for the current detector.
+    """
+    return list(
+        db.execute(
+            select(analysis_models.SegmentCrossing, analysis_models.TrailSection)
+            .join(
+                analysis_models.TrailSection,
+                (analysis_models.TrailSection.activity_id == analysis_models.SegmentCrossing.activity_id)
+                & (analysis_models.TrailSection.user_id == analysis_models.SegmentCrossing.user_id)
+                & (analysis_models.TrailSection.start_m <= analysis_models.SegmentCrossing.track_end_m)
+                & (
+                    analysis_models.TrailSection.start_m + analysis_models.TrailSection.length_m
+                    >= analysis_models.SegmentCrossing.track_start_m
+                ),
+            )
+            .where(
+                analysis_models.SegmentCrossing.user_id == user_id,
+                analysis_models.TrailSection.method == method,
+                analysis_models.TrailSection.direction == "descent",
+            )
+        )
+    )
+
+
+def list_segment_preference_cells(user_id: int, db: Session) -> set[tuple[int, int]]:
+    """Cells covered by the segments this athlete has actually crossed.
+
+    The fitted drawer's preference: ground the athlete named and repeated is
+    favored over ground merely crossed once.
+    """
+    segment_ids = select(analysis_models.SegmentCrossing.segment_id).where(
+        analysis_models.SegmentCrossing.user_id == user_id
+    )
+    rows = db.execute(
+        select(analysis_models.SegmentCell.x, analysis_models.SegmentCell.y).where(
+            analysis_models.SegmentCell.segment_id.in_(segment_ids)
+        )
+    ).all()
+    return {(int(x), int(y)) for x, y in rows}
