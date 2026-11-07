@@ -672,7 +672,12 @@ TRAIL_ROUTE_GEN_MAX_STRAIGHT_M = 18000.0
 TRAIL_ROUTE_GEN_CUTOFF_FACTOR = 3.0
 #: a mapped vertex joins the walked network when a crossed cell lies this near:
 #: the map and the GPS meeting at a trailhead is what makes the join real.
-TRAIL_ROUTE_GEN_LINK_M = 250.0
+#: wider, and every mapped vertex becomes a free shortcut through ground the
+#: athlete has never stepped on.
+TRAIL_ROUTE_GEN_LINK_M = 40.0
+#: the joins one vertex may keep, nearest first: a crossing point meets a
+#: handful of cells, not a crowd.
+TRAIL_ROUTE_GEN_LINK_MAX = 4
 #: an endpoint with no crossed cell this near must still find a mapped vertex;
 #: beyond that the plan has nothing honest to start from.
 TRAIL_ROUTE_GEN_NODE_TOL_M = 400.0
