@@ -114,22 +114,36 @@ def longest_snapped_run(
     line_xy: list[tuple[float, float]],
     offsets: list[float],
     tol_m: float,
-) -> tuple[float, float] | None:
+) -> tuple[float, float, int, int] | None:
     """The segment span a polyline runs along: its longest consecutive stretch.
 
     The run is the longest sequence of vertices all landing within tolerance of
     the segment's geometry. Returns the along-offsets of the run's ends, in the
-    order the polyline reaches them: an increasing pair went forward, a
-    decreasing pair reverse.
+    order the polyline reaches them (an increasing pair went forward, a
+    decreasing pair reverse), together with the polyline indices of those ends.
+
+    Sampling keeps the cost sane on dense polylines, as in effort_along_range:
+    a run of at least the covered minimum is still caught when vertices are
+    checked every few tens of metres, and a point outside the line's bounding
+    box grown by the tolerance can never land within it.
     """
-    projected = [project_with_distance(xy, line_xy, offsets) for xy in poly_xy]
+    min_x = min(pt[0] for pt in line_xy) - tol_m
+    max_x = max(pt[0] for pt in line_xy) + tol_m
+    min_y = min(pt[1] for pt in line_xy) - tol_m
+    max_y = max(pt[1] for pt in line_xy) + tol_m
+    stride = max(1, len(poly_xy) // 600)
     best: tuple[float, float, int, int] | None = None
     best_len = 0.0
     start_along = None
     start_index = None
     last_along = None
     last_index = None
-    for k, (along, dist) in enumerate(projected):
+    for k in range(0, len(poly_xy), stride):
+        xy = poly_xy[k]
+        if xy[0] < min_x or xy[0] > max_x or xy[1] < min_y or xy[1] > max_y:
+            along, dist = 0.0, tol_m + 1.0
+        else:
+            along, dist = project_with_distance(xy, line_xy, offsets)
         if dist <= tol_m:
             if start_along is None:
                 start_along, start_index = along, k
