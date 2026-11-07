@@ -35,7 +35,6 @@ def upgrade() -> None:
         ondelete="SET NULL",
     )
 
-    op.alter_column("analysis_variant_marks", "activity_id", existing_type=sa.Integer(), nullable=True)
     op.add_column(
         "analysis_variant_marks", sa.Column("route_id", sa.Integer(), nullable=True, comment="Designed route judged")
     )
@@ -48,13 +47,15 @@ def upgrade() -> None:
         ondelete="CASCADE",
     )
 
-    # surrogate key: the natural key now lives in two mutually exclusive halves
+    # surrogate key first: activity_id cannot become nullable while the old
+    # composite primary key still holds it
     op.execute("CREATE SEQUENCE analysis_variant_marks_id_seq")
     op.execute(
         "ALTER TABLE analysis_variant_marks ADD COLUMN id bigint NOT NULL DEFAULT nextval('analysis_variant_marks_id_seq')"
     )
     op.execute("ALTER SEQUENCE analysis_variant_marks_id_seq OWNED BY analysis_variant_marks.id")
     op.execute("ALTER TABLE analysis_variant_marks DROP CONSTRAINT analysis_variant_marks_pkey")
+    op.alter_column("analysis_variant_marks", "activity_id", existing_type=sa.Integer(), nullable=True)
     op.execute("ALTER TABLE analysis_variant_marks ADD CONSTRAINT analysis_variant_marks_pkey PRIMARY KEY (id)")
     op.create_check_constraint(
         "ck_analysis_variant_marks_one_plan",
