@@ -275,9 +275,9 @@ def plan_between(
     dist = {start: 0.0}
     prev: dict[tuple, dict] = {}
     heap = [(0.0, 0, start)]
-    tie = 0
+    seq = 0
     while heap:
-        d, tie, u = heapq.heappop(heap)
+        d, _entry, u = heapq.heappop(heap)
         if d > dist.get(u, math.inf):
             continue
         if u == target:
@@ -300,8 +300,8 @@ def plan_between(
             if nd < dist.get(v, math.inf):
                 dist[v] = nd
                 prev[v] = {**step, "from": u, "from_node": node_map[u], "to_node": node_map[v]}
-                tie += 1
-                heapq.heappush(heap, (nd, tie, v))
+                seq += 1
+                heapq.heappush(heap, (nd, seq, v))
     return None
 
 
