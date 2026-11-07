@@ -70,7 +70,7 @@ class TestModes:
     def test_tanteig_prefers_mapped_ground_nobody_has_crossed(self):
         nodes, edges = _graph_chain(21)
         a, b = _latlng(0, 0), _latlng(20, 0)
-        way = _way(7, [_latlng(0, 3), _latlng(10, 3), _latlng(20, 3)])  # parallel, same length, never walked
+        way = _way(7, [_latlng(0, 2), _latlng(10, 2), _latlng(20, 2)])  # parallel, near, never walked
         node_map, adjacency, start, target = route_plan.build_layers(a, b, nodes, edges, [way], {}, 3000.0)
         steps = route_plan.plan_between(node_map, adjacency, start, target, 3000.0, "tanteig")
         assert steps is not None
@@ -84,7 +84,9 @@ class TestModes:
         nodes, edges = _graph_chain(11)
         for e in edges:
             e.passes = 40
-        way = _way(9, [_latlng(0, 3), _latlng(10, 3)])
+        # an arch: its virgin promise (cost ~60 m of links + 0.55x the length)
+        # beats dodged light ground and loses to infrastructure
+        way = _way(9, [_latlng(0, 2), _latlng(4, 6), _latlng(6, 6), _latlng(10, 2)])
         a, b = _latlng(0, 0), _latlng(10, 0)
         node_map, adjacency, start, target = route_plan.build_layers(a, b, nodes, edges, [way], {}, 3000.0)
         steps = route_plan.plan_between(node_map, adjacency, start, target, 3000.0, "tanteig")
@@ -101,7 +103,7 @@ class TestModes:
         for k in range(6, 15):
             nodes[k].grade = "hard"
         a, b = _latlng(0, 0), _latlng(20, 0)
-        way = _way(7, [_latlng(0, 3), _latlng(10, 3), _latlng(20, 3)], highway="footway")
+        way = _way(7, [_latlng(0, 2), _latlng(10, 2), _latlng(20, 2)], highway="footway")
         node_map, adjacency, start, target = route_plan.build_layers(a, b, nodes, edges, [way], {}, 3000.0)
         steps = route_plan.plan_between(node_map, adjacency, start, target, 3000.0, "tecnic")
         assert all(step.get("kind") != "way" for step in steps)
@@ -125,7 +127,7 @@ class TestGroundRules:
 
     def test_crossed_ways_are_known_ground(self):
         nodes, edges = _graph_chain(11)
-        way = _way(4, [_latlng(0, 4), _latlng(10, 4), _latlng(11, 0)])
+        way = _way(4, [_latlng(0, 2), _latlng(10, 2), _latlng(11, 0)])
         a, b = _latlng(0, 0), _latlng(11, 0)
         node_map, adjacency, start, target = route_plan.build_layers(a, b, nodes, edges, [way], {4: 2}, 3000.0)
         steps = route_plan.plan_between(node_map, adjacency, start, target, 3000.0, "tanteig")

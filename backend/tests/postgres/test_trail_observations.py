@@ -619,7 +619,7 @@ class TestRoutePlanning:
             }
             for k in range(20)
         ]
-        way_lat = ref_lat + 3 * cell_m / 111195.0
+        way_lat = ref_lat + 2 * cell_m / 111195.0
         way_geometry = [(way_lat, ref_lng + k * step_lng) for k in range(21)]
         way = analysis_contracts.OsmPathRecord(
             way_id=77001,

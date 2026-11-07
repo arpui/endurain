@@ -196,18 +196,21 @@ def _link_layers(node_map: dict, adjacency: dict) -> None:
     for key, entry in node_map.items():
         if key[0] == "o":
             mapped_grid[(math.floor(entry["xy"][0] / link), math.floor(entry["xy"][1] / link))].append(key)
+    cap = _C.TRAIL_ROUTE_GEN_LINK_MAX
     for key, entry in node_map.items():
         if key[0] == "o":
             continue
         gx, gy = math.floor(entry["xy"][0] / link), math.floor(entry["xy"][1] / link)
+        near: list[tuple[float, tuple]] = []
         for bx in (gx - 1, gx, gx + 1):
             for by in (gy - 1, gy, gy + 1):
                 for other in mapped_grid.get((bx, by), []):
                     d = _ground_m(entry["xy"], node_map[other]["xy"])
-                    if d > link:
-                        continue
-                    adjacency.setdefault(key, []).append({"to": other, "len": d, "kind": "link", "passes": 0})
-                    adjacency.setdefault(other, []).append({"to": key, "len": d, "kind": "link", "passes": 0})
+                    if d <= link:
+                        near.append((d, other))
+        for d, other in sorted(near)[:cap]:
+            adjacency.setdefault(key, []).append({"to": other, "len": d, "kind": "link", "passes": 0})
+            adjacency.setdefault(other, []).append({"to": key, "len": d, "kind": "link", "passes": 0})
 
 
 def _anchor(node_map: dict, adjacency: dict, xy: tuple[float, float], latlng: tuple[float, float]) -> tuple | None:
