@@ -288,7 +288,13 @@
       "description": "Faltam algumas descidas pelo mesmo caminho para esta vista ter evidências."
     },
     "colCrossings": "Travessias",
-    "showPlain": "Mostrar também os caminhos atravessados sem alegação"
+    "showPlain": "Mostrar também os caminhos atravessados sem alegação",
+    "tabWays": "Caminhos",
+    "tabSegments": "Segmentos",
+    "showLoops": "Mostrar circuitos",
+    "colSegment": "Segmento",
+    "colLength": "Comprimento",
+    "loop": "circuito"
   },
   "sectionRoutes": "Percurso",
   "variants": {

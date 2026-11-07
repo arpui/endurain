@@ -288,7 +288,13 @@
       "description": "Sama raja mõned laskumised on vajalikud, et see vaade saaks tõendusmaterjali."
     },
     "colCrossings": "Ületused",
-    "showPlain": "Näita ka ületatud radu ilma väiteita"
+    "showPlain": "Näita ka ületatud radu ilma väiteita",
+    "tabWays": "Teed",
+    "tabSegments": "Lõigud",
+    "showLoops": "Näita ringe",
+    "colSegment": "Lõik",
+    "colLength": "Pikkus",
+    "loop": "ring"
   },
   "sectionRoutes": "Marssruudid",
   "variants": {

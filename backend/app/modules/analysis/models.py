@@ -863,3 +863,72 @@ class Route(Base, TimestampMixin):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Free-text remarks")
 
     __table_args__ = (Index("ix_analysis_routes_user", "user_id"),)
+
+
+class SegmentCrossing(Base, TimestampMixin):
+    """One pass of one activity over one named segment, projected on both axes.
+
+    The segment engine already knows an effort happened; this row says where:
+    the offsets along the segment the pass covered, and the offsets along the
+    activity's own track where it ran. The track axis is what ties the pass to
+    the technical observation without any geometry re-matching, and the along
+    axis is what a future course export or a named variant needs.
+
+    Attributes:
+        segment_id: The segment traversed.
+        activity_id: The session of the crossing.
+        pass_number: Which pass of the activity over the segment this is.
+        user_id: The athlete who crossed it.
+        along_start_m: Smallest offset along the segment reached by the pass.
+        along_end_m: Largest offset along the segment reached by the pass.
+        track_start_m: Ground position along the activity track where it starts.
+        track_end_m: Ground position along the activity track where it ends.
+        direction: ``forward`` / ``reverse`` along the stored geometry.
+        grade_pct: Mean signed grade of the pass from the athlete's own
+            elevations (positive climbed, negative descended); ``None`` when
+            the elevation stream could not answer.
+    """
+
+    __tablename__ = "analysis_segment_crossings"
+
+    segment_id: Mapped[int] = mapped_column(
+        ForeignKey("segments.id", ondelete="CASCADE"), primary_key=True, comment="Segment traversed"
+    )
+    activity_id: Mapped[int] = mapped_column(
+        ForeignKey("activities.id", ondelete="CASCADE"), primary_key=True, comment="Session of the crossing"
+    )
+    pass_number: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Pass of the activity over it")
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, comment="Athlete")
+    along_start_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Along-segment start offset")
+    along_end_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Along-segment end offset")
+    track_start_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Along-track start offset")
+    track_end_m: Mapped[float] = mapped_column(Float, nullable=False, comment="Along-track end offset")
+    direction: Mapped[str] = mapped_column(String(length=7), nullable=False, comment="forward / reverse")
+    grade_pct: Mapped[float | None] = mapped_column(Float, nullable=True, comment="Mean signed grade of the pass")
+
+    __table_args__ = (
+        Index("ix_analysis_segment_crossings_user_segment", "user_id", "segment_id"),
+        Index("ix_analysis_segment_crossings_activity", "activity_id"),
+    )
+
+
+class SegmentCell(Base):
+    """One grid cell a named segment covers, for the fitted drawer's preference.
+
+    Ground the athlete defined as a segment (and repeated) is worth favoring
+    when a drawn route is snapped onto the personal graph: the preference is
+    this table, derived from segment geometry, cheap and never edited by hand.
+
+    Attributes:
+        segment_id: The segment covering the cell.
+        x: Grid column of the cell.
+        y: Grid row of the cell.
+    """
+
+    __tablename__ = "analysis_segment_cells"
+
+    segment_id: Mapped[int] = mapped_column(
+        ForeignKey("segments.id", ondelete="CASCADE"), primary_key=True, comment="Segment covering it"
+    )
+    x: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Grid column")
+    y: Mapped[int] = mapped_column(Integer, primary_key=True, comment="Grid row")

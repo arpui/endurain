@@ -288,7 +288,13 @@
       "description": "Reikia kelių nusileidimų tuo pačiu taku, kad šis vaizdas turėtų įrodymų."
     },
     "colCrossings": "Pravažimai",
-    "showPlain": "Rodyti ir pereitas be įvertinimo takus"
+    "showPlain": "Rodyti ir pereitas be įvertinimo takus",
+    "tabWays": "Keliai",
+    "tabSegments": "Atkarpos",
+    "showLoops": "Rodyti ratus",
+    "colSegment": "Atkarpa",
+    "colLength": "Ilgis",
+    "loop": "ratas"
   },
   "sectionRoutes": "Maršrutai",
   "variants": {

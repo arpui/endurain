@@ -288,7 +288,13 @@
       "description": "Några nedstigningar samma stig krävs innan den här vyn har evidens."
     },
     "colCrossings": "Passager",
-    "showPlain": "Vis även korsade stigar utan påstående"
+    "showPlain": "Vis även korsade stigar utan påstående",
+    "tabWays": "Stigar",
+    "tabSegments": "Segment",
+    "showLoops": "Vis varv",
+    "colSegment": "Segment",
+    "colLength": "Längd",
+    "loop": "varv"
   },
   "sectionRoutes": "Rutter",
   "variants": {

@@ -393,3 +393,93 @@ def count_efforts_for_segment(
     if direction is not None:
         stmt = stmt.where(segments_models.SegmentEffort.direction == direction)
     return int(db.scalar(stmt) or 0)
+
+
+def list_segment_shapes(db: Session) -> list[segments_contracts.SegmentShape]:
+    """Every stored segment as a published shape (geometry and totals).
+
+    Args:
+        db: Database session.
+
+    Returns:
+        All segments as ``SegmentShape`` DTOs.
+    """
+    return [
+        segments_contracts.SegmentShape(
+            id=segment.id,
+            name=segment.name,
+            distance_m=segment.distance_m,
+            elevation_gain_m=segment.elevation_gain_m,
+            altitudes=segment.altitudes,
+            geometry=segment.geometry,
+        )
+        for segment in db.scalars(select(segments_models.Segment)).all()
+    ]
+
+
+def list_segment_shapes_in_bbox(
+    min_lat: float,
+    min_lng: float,
+    max_lat: float,
+    max_lng: float,
+    db: Session,
+) -> list[segments_contracts.SegmentShape]:
+    """Segments whose bounding box touches a viewport, as published shapes.
+
+    Args:
+        min_lat: Viewport south edge.
+        min_lng: Viewport west edge.
+        max_lat: Viewport north edge.
+        max_lng: Viewport east edge.
+        db: Database session.
+
+    Returns:
+        Matching segments as ``SegmentShape`` DTOs.
+    """
+    rows = db.scalars(
+        select(segments_models.Segment).where(
+            segments_models.Segment.min_lat <= max_lat,
+            segments_models.Segment.max_lat >= min_lat,
+            segments_models.Segment.min_lng <= max_lng,
+            segments_models.Segment.max_lng >= min_lng,
+        )
+    ).all()
+    return [
+        segments_contracts.SegmentShape(
+            id=segment.id,
+            name=segment.name,
+            distance_m=segment.distance_m,
+            elevation_gain_m=segment.elevation_gain_m,
+            altitudes=segment.altitudes,
+            geometry=segment.geometry,
+        )
+        for segment in rows
+    ]
+
+
+def list_effort_records_for_activity(activity_id: int, db: Session) -> list[segments_contracts.SegmentEffortRecord]:
+    """The efforts stored for one activity, reduced to their traversed ranges.
+
+    Args:
+        activity_id: The activity.
+        db: Database session.
+
+    Returns:
+        Effort DTOs ordered by segment and pass.
+    """
+    rows = db.scalars(
+        select(segments_models.SegmentEffort)
+        .where(segments_models.SegmentEffort.activity_id == activity_id)
+        .order_by(segments_models.SegmentEffort.segment_id, segments_models.SegmentEffort.pass_number)
+    ).all()
+    return [
+        segments_contracts.SegmentEffortRecord(
+            segment_id=effort.segment_id,
+            direction=effort.direction,
+            pass_number=effort.pass_number,
+            stream_index_start=effort.stream_index_start,
+            stream_index_end=effort.stream_index_end,
+            coverage=effort.coverage,
+        )
+        for effort in rows
+    ]

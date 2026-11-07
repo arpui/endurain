@@ -288,7 +288,13 @@
       "description": "Faltan algunos descensos por el mismo camino para que esta vista tenga evidencia en la que apoyarse."
     },
     "colCrossings": "Travesías",
-    "showPlain": "Dibuja también los caminos cruzados sin reclamo"
+    "showPlain": "Dibuja también los caminos cruzados sin reclamo",
+    "tabWays": "Caminos",
+    "tabSegments": "Segmentos",
+    "showLoops": "Mostrar circuitos",
+    "colSegment": "Segmento",
+    "colLength": "Longitud",
+    "loop": "circuito"
   },
   "sectionRoutes": "Rutas",
   "variants": {

@@ -288,7 +288,13 @@
       "description": "Falten uns quants descensos del mateix camí perquè aquesta vista tingui evidència per dir res."
     },
     "colCrossings": "Travessades",
-    "showPlain": "Dibuixa també els camins travessats sense claim"
+    "showPlain": "Dibuixa també els camins travessats sense claim",
+    "tabWays": "Camins",
+    "tabSegments": "Segments",
+    "showLoops": "Mostra circuits",
+    "colSegment": "Segment",
+    "colLength": "Longitud",
+    "loop": "circuit"
   },
   "sectionRoutes": "Rutes",
   "variants": {

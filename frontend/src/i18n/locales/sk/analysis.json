@@ -288,7 +288,13 @@
       "description": "Je potrebných niekoľko zostupov tou istou cestou, aby tento pohľad mal dôkazy."
     },
     "colCrossings": "Prechody",
-    "showPlain": "Zobraziť aj prejdené cesty bez tvrdenia"
+    "showPlain": "Zobraziť aj prejdené cesty bez tvrdenia",
+    "tabWays": "Chodníky",
+    "tabSegments": "Segmenty",
+    "showLoops": "Zobraziť okruhy",
+    "colSegment": "Segment",
+    "colLength": "Dĺžka",
+    "loop": "okruh"
   },
   "sectionRoutes": "Trasy",
   "variants": {

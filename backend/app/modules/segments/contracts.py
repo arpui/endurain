@@ -120,3 +120,45 @@ class SegmentMatchAudit:
     rejected_pass_count: int
     best_span_frac: float
     best_coverage: float
+
+
+@dataclass(frozen=True)
+class SegmentShape:
+    """A stored segment as a published geometry, for network and design readers.
+
+    Attributes:
+        id: Segment identifier.
+        name: Display name.
+        distance_m: Length along the geometry.
+        elevation_gain_m: Positive gain along the geometry, when known.
+        altitudes: Per-point altitude index-aligned with the geometry, when known.
+        geometry: Ordered ``[[lat, lng], ...]`` polyline.
+    """
+
+    id: int
+    name: str
+    distance_m: float
+    elevation_gain_m: float | None
+    altitudes: Sequence[float] | None
+    geometry: Sequence[Sequence[float]]
+
+
+@dataclass(frozen=True)
+class SegmentEffortRecord:
+    """One stored effort reduced to where it ran, for projection readers.
+
+    Attributes:
+        segment_id: The segment traversed.
+        direction: ``forward`` / ``reverse`` along the stored geometry.
+        pass_number: Which pass of the activity this effort is.
+        stream_index_start: First stream index of the traversed range.
+        stream_index_end: Last stream index of the traversed range.
+        coverage: Fraction of the segment the effort covers.
+    """
+
+    segment_id: int
+    direction: str
+    pass_number: int
+    stream_index_start: int
+    stream_index_end: int
+    coverage: float | None

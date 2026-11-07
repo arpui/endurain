@@ -220,6 +220,21 @@ def get_trail_network(
 
 
 @router.get(
+    "/segments-network",
+    response_model=analysis_schema.SegmentNetworkRead,
+)
+def get_segments_network(
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+    show_loops: Annotated[bool, Query()] = False,
+    limit: Annotated[int, Query(ge=1, le=5000)] = 2000,
+) -> analysis_schema.SegmentNetworkRead:
+    """The athlete's own named network: segments claimed on descents alone."""
+    return analysis_service.get_segment_network(token_user_id, db, show_loops=show_loops, limit=limit)
+
+
+@router.get(
     "/routes",
     response_model=list[analysis_schema.RouteRead],
 )

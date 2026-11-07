@@ -22,6 +22,7 @@ import {
   createRoute,
   deleteRoute,
   fetchRoutes,
+  fetchSegmentNetwork,
   fetchTrailNetwork,
   fetchTrailSections,
   fetchTrailVariants,
@@ -699,6 +700,49 @@ describe('trail network', () => {
     ])
     expect(network.ways[0]?.sacScale).toBe('demanding_mountain_hiking')
     expect(network.ways[0]?.tracktype).toBeNull()
+  })
+})
+
+describe('segment network (named ground)', () => {
+  it('maps named segments with their claims and geometry', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      min_descents: 3,
+      threshold: 0.62,
+      technical_ratio: 1.3,
+      hard_ratio: 2.0,
+      segments: [
+        {
+          segment_id: 12,
+          name: 'PistaHN 400m',
+          claim: 'technical',
+          length_m: 409,
+          gain_m: 9,
+          crossings_total: 485,
+          descent_crossings: 12,
+          med_score: 1.0,
+          q1: 0.9,
+          q3: 1.1,
+          med_grade_pct: -7.5,
+          loop: false,
+          geometry: [
+            [42.4, 0.9],
+            [42.41, 0.91],
+          ],
+        },
+      ],
+    } satisfies Schemas['SegmentNetworkRead'])
+    const net = await fetchSegmentNetwork(false)
+    expect(String(vi.mocked(apiFetch).mock.calls[0]?.[0])).toContain(
+      '/analysis/segments-network?show_loops=false',
+    )
+    expect(net.segments[0]).toMatchObject({
+      segmentId: 12,
+      name: 'PistaHN 400m',
+      claim: 'technical',
+      descentCrossings: 12,
+      loop: false,
+    })
+    expect(net.segments[0]?.points[1]).toEqual({ lat: 42.41, lng: 0.91 })
   })
 })
 

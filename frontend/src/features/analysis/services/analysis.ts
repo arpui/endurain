@@ -44,12 +44,15 @@ import type {
   ActivityLoadsSummary,
   ActivityLoadsSummaryDto,
   RouteDto,
+  SegmentNetworkDto,
   TrailMarkDto,
   TrailNetworkDto,
   TrailVariantsDto,
   TrailNetworkWay,
   TrailSection,
   DesignRoute,
+  SegmentNetwork,
+  SegmentNetworkItem,
   TrailNetwork,
   TrailVariant,
   TrailVariants,
@@ -966,4 +969,45 @@ export async function connectRoutePoints(
  */
 export async function deleteRoute(routeId: number, signal?: AbortSignal): Promise<void> {
   await apiFetch<void>(`/analysis/routes/${routeId}`, { method: 'DELETE', signal })
+}
+
+/**
+ * Read the athlete's named network: segments claimed on descents alone.
+ *
+ * @param showLoops - Include short closed circuits (laps of a field).
+ * @param signal - Optional abort signal.
+ * @returns The named network (experimental).
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchSegmentNetwork(
+  showLoops = false,
+  signal?: AbortSignal,
+): Promise<SegmentNetwork> {
+  const query = new URLSearchParams({ show_loops: String(showLoops), limit: '5000' })
+  const dto = await apiFetch<SegmentNetworkDto>(`/analysis/segments-network?${query.toString()}`, {
+    signal,
+  })
+  return {
+    minDescents: dto.min_descents,
+    threshold: dto.threshold,
+    technicalRatio: dto.technical_ratio,
+    hardRatio: dto.hard_ratio,
+    segments: (dto.segments ?? []).map((row): SegmentNetworkItem => ({
+      segmentId: row.segment_id,
+      name: row.name,
+      claim: row.claim as SegmentNetworkItem['claim'],
+      lengthM: row.length_m,
+      gainM: row.gain_m,
+      crossingsTotal: row.crossings_total,
+      descentCrossings: row.descent_crossings,
+      medScore: row.med_score,
+      q1: row.q1,
+      q3: row.q3,
+      medGradePct: row.med_grade_pct,
+      loop: row.loop,
+      points: (row.geometry ?? []).flatMap(([lat, lng]) =>
+        lat === undefined || lng === undefined ? [] : [{ lat, lng }],
+      ),
+    })),
+  }
 }

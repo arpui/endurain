@@ -288,7 +288,13 @@
       "description": "Et par nedstigninger samme sti må til før denne visningen har bevis."
     },
     "colCrossings": "Gjennomganger",
-    "showPlain": "Vis også kryssete stier uten påstand"
+    "showPlain": "Vis også kryssete stier uten påstand",
+    "tabWays": "Stier",
+    "tabSegments": "Segmenter",
+    "showLoops": "Vis runder",
+    "colSegment": "Segment",
+    "colLength": "Lengde",
+    "loop": "runde"
   },
   "sectionRoutes": "Ruter",
   "variants": {

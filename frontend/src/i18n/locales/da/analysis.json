@@ -288,7 +288,13 @@
       "description": "Et par nedstigninger ad samme sti skal til, før denne visning har evidens nedstigningsnetværk"
     },
     "colCrossings": "Gennemgange",
-    "showPlain": "Vis også krydsede stier uden hævdelse"
+    "showPlain": "Vis også krydsede stier uden hævdelse",
+    "tabWays": "Veje",
+    "tabSegments": "Segmenter",
+    "showLoops": "Vis omgange",
+    "colSegment": "Segment",
+    "colLength": "Længde",
+    "loop": "omgang"
   },
   "sectionRoutes": "Ruter",
   "variants": {

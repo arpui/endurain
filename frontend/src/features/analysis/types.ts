@@ -479,6 +479,7 @@ export type TrailMarkDto = Schemas['TrailMarkRead']
 export type TrailNetworkDto = Schemas['TrailNetworkRead']
 export type TrailNetworkWayDto = Schemas['TrailNetworkWayRead']
 export type TrailVariantsDto = Schemas['TrailVariantsRead']
+export type SegmentNetworkDto = Schemas['SegmentNetworkRead']
 export type RouteDto = Schemas['RouteRead']
 export type TrailPointDto = Schemas['TrailPointRead']
 
@@ -691,4 +692,48 @@ export interface DesignRoute {
   notes: string | null
   /** Creation instant, ISO. */
   createdAt: string
+}
+
+/** One named segment as the athlete's own network knows it. */
+export interface SegmentNetworkItem {
+  /** The segment this is. */
+  segmentId: number
+  /** The athlete's own name for it. */
+  name: string
+  /** What its descents back: same bands as the mapped network. */
+  claim: TrailClaim
+  /** Segment length along its geometry, metres. */
+  lengthM: number
+  /** Positive gain along the geometry, when the source knew it. */
+  gainM: number | null
+  /** Recorded traversals of it. */
+  crossingsTotal: number
+  /** Traversals that held measured technical descents. */
+  descentCrossings: number
+  /** Median of the harshest descent index per traversal. */
+  medScore: number | null
+  /** First quartile of that distribution. */
+  q1: number | null
+  /** Third quartile of it. */
+  q3: number | null
+  /** Median mean grade of its traversals, percent. */
+  medGradePct: number | null
+  /** Whether it is a short closed circuit rather than travel. */
+  loop: boolean
+  /** The stored polyline, for the map. */
+  points: GeoPoint[]
+}
+
+/** The athlete's named network: segments claimed like ways. */
+export interface SegmentNetwork {
+  /** Traversals required before a segment is claimed. */
+  minDescents: number
+  /** The detector's own threshold the bands are multiples of. */
+  threshold: number
+  /** Multiple of the threshold that reads firmly technical. */
+  technicalRatio: number
+  /** Multiple of the threshold that reads as a hard core. */
+  hardRatio: number
+  /** Segments with at least one crossing, best claim first. */
+  segments: SegmentNetworkItem[]
 }

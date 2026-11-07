@@ -3931,6 +3931,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/segments-network": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Segments Network
+         * @description The athlete's own named network: segments claimed on descents alone.
+         */
+        get: operations["get_segments_network_api_v1_analysis_segments_network_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/routes": {
         parameters: {
             query?: never;
@@ -11355,6 +11375,79 @@ export interface components {
             best_span_frac: number;
             /** Best Coverage */
             best_coverage: number;
+        };
+        /**
+         * SegmentNetworkRead
+         * @description The athlete's named network: segments claimed like ways (experimental).
+         *
+         *     Attributes:
+         *         min_descents: Descents required before a segment is claimed.
+         *         threshold: The detector's own threshold the bands are multiples of.
+         *         technical_ratio: Multiple of the threshold that reads firmly technical.
+         *         hard_ratio: Multiple of the threshold that reads as a hard core.
+         *         segments: Segments with at least one crossing, best claim first.
+         */
+        SegmentNetworkRead: {
+            /** Min Descents */
+            min_descents: number;
+            /** Threshold */
+            threshold: number;
+            /** Technical Ratio */
+            technical_ratio: number;
+            /** Hard Ratio */
+            hard_ratio: number;
+            /** Segments */
+            segments: components["schemas"]["SegmentNetworkSegmentRead"][];
+        };
+        /**
+         * SegmentNetworkSegmentRead
+         * @description One named segment as the athlete's own network knows it.
+         *
+         *     Attributes:
+         *         segment_id: Segment identifier.
+         *         name: Segment name (the athlete's own label, at last).
+         *         claim: ``hard`` / ``technical`` / ``mild`` / ``thin`` / ``plain``.
+         *         length_m: Segment length along its geometry.
+         *         gain_m: Positive gain along the geometry, when the source knew it.
+         *         crossings_total: Recorded traversals of the segment.
+         *         descent_crossings: Traversals that held measured technical descents.
+         *         med_score: Median of the harshest descent index per traversal.
+         *         q1: First quartile of those indices.
+         *         q3: Third quartile of those indices.
+         *         med_grade_pct: Median mean-grade of the traversals, percent.
+         *         loop: Whether the segment is a short closed circuit (not network).
+         *         geometry: The stored polyline, for the map.
+         */
+        SegmentNetworkSegmentRead: {
+            /** Segment Id */
+            segment_id: number;
+            /** Name */
+            name: string;
+            /**
+             * Claim
+             * @enum {string}
+             */
+            claim: "hard" | "technical" | "mild" | "thin" | "plain";
+            /** Length M */
+            length_m: number;
+            /** Gain M */
+            gain_m: number | null;
+            /** Crossings Total */
+            crossings_total: number;
+            /** Descent Crossings */
+            descent_crossings: number;
+            /** Med Score */
+            med_score: number | null;
+            /** Q1 */
+            q1: number | null;
+            /** Q3 */
+            q3: number | null;
+            /** Med Grade Pct */
+            med_grade_pct: number | null;
+            /** Loop */
+            loop: boolean;
+            /** Geometry */
+            geometry: number[][];
         };
         /**
          * SegmentRead
@@ -20325,6 +20418,47 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TrailNetworkRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_segments_network_api_v1_analysis_segments_network_get: {
+        parameters: {
+            query?: {
+                show_loops?: boolean;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SegmentNetworkRead"];
                 };
             };
             /** @description Validation Error */

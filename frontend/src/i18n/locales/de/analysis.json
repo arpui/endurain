@@ -288,7 +288,13 @@
       "description": "Einige Abfahrten auf demselben Weg müssen sich ansammeln, damit diese Ansicht Belege hat."
     },
     "colCrossings": "Querungen",
-    "showPlain": "Auch passierte Wege ohne Anspruch zeigen"
+    "showPlain": "Auch passierte Wege ohne Anspruch zeigen",
+    "tabWays": "Wege",
+    "tabSegments": "Segmente",
+    "showLoops": "Runden anzeigen",
+    "colSegment": "Segment",
+    "colLength": "Länge",
+    "loop": "Runde"
   },
   "sectionRoutes": "Routen",
   "variants": {

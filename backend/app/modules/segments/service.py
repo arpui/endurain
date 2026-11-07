@@ -469,3 +469,24 @@ def _store_matches_for_activity(
             extra=core_logger.context(activity_id=activity_id, efforts=count),
         )
     return count
+
+
+def list_segment_shapes(db: Session) -> list[segments_contracts.SegmentShape]:
+    """Every stored segment as a published shape. Delegates to ``crud``."""
+    return segments_crud.list_segment_shapes(db)
+
+
+def list_segment_shapes_in_bbox(
+    min_lat: float,
+    min_lng: float,
+    max_lat: float,
+    max_lng: float,
+    db: Session,
+) -> list[segments_contracts.SegmentShape]:
+    """Segments touching a viewport, as published shapes. Delegates to ``crud``."""
+    return segments_crud.list_segment_shapes_in_bbox(min_lat, min_lng, max_lat, max_lng, db)
+
+
+def list_activity_effort_records(activity_id: int, db: Session) -> list[segments_contracts.SegmentEffortRecord]:
+    """One activity's efforts as range DTOs. Delegates to ``crud``."""
+    return segments_crud.list_effort_records_for_activity(activity_id, db)

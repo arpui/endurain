@@ -288,7 +288,13 @@
       "description": "Servono alcune discese sullo stesso sentiero perché questa vista abbia evidenze."
     },
     "colCrossings": "Attraversamenti",
-    "showPlain": "Mostra anche i sentieri attraversati senza rivendita"
+    "showPlain": "Mostra anche i sentieri attraversati senza rivendita",
+    "tabWays": "Sentieri",
+    "tabSegments": "Segmenti",
+    "showLoops": "Mostra anelli",
+    "colSegment": "Segmento",
+    "colLength": "Lunghezza",
+    "loop": "anello"
   },
   "sectionRoutes": "Percorsi",
   "variants": {

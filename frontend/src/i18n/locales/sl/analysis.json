@@ -288,7 +288,13 @@
       "description": "Potrebnih je nekaj spustov po isti poti, da ta pogled sploh ima dokaze."
     },
     "colCrossings": "Prehodi",
-    "showPlain": "Pokaži tudi prehojene poti brez trditve"
+    "showPlain": "Pokaži tudi prehojene poti brez trditve",
+    "tabWays": "Poti",
+    "tabSegments": "Odseki",
+    "showLoops": "Pokaži kroge",
+    "colSegment": "Odsek",
+    "colLength": "Dolžina",
+    "loop": "krog"
   },
   "sectionRoutes": "Proge",
   "variants": {
