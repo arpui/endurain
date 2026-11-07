@@ -29,6 +29,10 @@ const props = defineProps<{
   segments?: SegmentNetworkItem[]
   /** The picked variant's line, drawn above everything. */
   highlight?: GeoPoint[] | null
+  /** Endpoints of a plan being picked: drawn as handles, joined by a line. */
+  endpoints?: GeoPoint[] | null
+  /** Whether map taps pick plan endpoints instead of doing nothing. */
+  picking?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -38,6 +42,8 @@ const emit = defineEmits<{
   addPoint: [point: GeoPoint]
   /** The viewer picked a draft handle: remove that point. */
   removeVertex: [index: number]
+  /** The viewer tapped the map while picking: that point is the next endpoint. */
+  endpoint: [point: GeoPoint]
 }>()
 
 const ready = useRenderProvidersReady()
@@ -67,6 +73,15 @@ function overlays(): MapOverlay[] {
         onSelect: () => emit('select', route.id),
       })),
   )
+  if (props.endpoints && props.endpoints.length > 0) {
+    list.push({
+      points: props.endpoints,
+      color: themeColor('--color-goal'),
+      weight: 2,
+      opacity: 0.9,
+      vertices: props.endpoints,
+    })
+  }
   if (props.highlight && props.highlight.length > 0) {
     list.push({
       points: props.highlight,
@@ -93,7 +108,11 @@ function renderOptions(): MapRenderOptions {
     // no single base track: every route is an overlay, so the empty track is honest
     track: { points: [] },
     overlays: overlays(),
-    onMapClick: props.draft ? (point) => emit('addPoint', point) : undefined,
+    onMapClick: props.draft
+      ? (point) => emit('addPoint', point)
+      : props.picking
+        ? (point) => emit('endpoint', point)
+        : undefined,
   }
 }
 
