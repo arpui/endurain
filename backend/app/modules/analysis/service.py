@@ -41,6 +41,7 @@ import modules.analysis.graph as analysis_graph
 import modules.analysis.intervals as analysis_intervals
 import modules.analysis.maths as analysis_maths
 import modules.analysis.methods as analysis_methods
+import modules.analysis.route_plan as analysis_route_plan
 import modules.analysis.schema as analysis_schema
 import modules.analysis.segment_projection as analysis_projection
 import modules.analysis.trail as analysis_trail
@@ -3253,6 +3254,44 @@ def connect_route(
             push(lat, lng)
             walked.append(False)
     return analysis_schema.RouteConnectRead(geometry=geometry, walked=walked)
+
+
+def plan_route(
+    requester_user_id: int,
+    payload: analysis_schema.RouteGenerateCreate,
+    db: Session,
+) -> analysis_schema.RouteGenerateRead:
+    """Plan a route between two drawn points over ground and map.
+
+    The answer is a draft, not a decision: the athlete edits it, saves it or
+    throws it away. What it crosses that nobody has walked is reported, never
+    hidden; what it uses is either the athlete's own graph or a way the map
+    actually draws.
+    """
+    from_point = (float(payload.from_point[0]), float(payload.from_point[1]))
+    to_point = (float(payload.to_point[0]), float(payload.to_point[1]))
+    _straight, cutoff, boxes = analysis_route_plan.corridor(from_point, to_point)
+    gx0, gx1, gy0, gy1 = boxes["graph"]
+    nodes, edges = analysis_crud.list_user_graph_in_bbox(requester_user_id, gx0, gx1, gy0, gy1, db)
+    w0, w1, la0, la1 = boxes["ways"]
+    ways = [(row.way_id, row.tags, row.geometry) for row in analysis_crud.list_osm_paths_in_box(w0, w1, la0, la1, db)]
+    crossed = analysis_crud.list_user_way_crossing_counts(requester_user_id, db)
+    node_map, adjacency, start, target = analysis_route_plan.build_layers(
+        from_point, to_point, nodes, edges, ways, crossed, cutoff
+    )
+    steps = analysis_route_plan.plan_between(node_map, adjacency, start, target, cutoff, payload.mode)
+    if steps is None:
+        raise core_exceptions.InvalidInputError("no ground inside the corridor connects these points")
+    geometry, unknown = analysis_route_plan.geometry_and_gaps(steps)
+    distance, gain = _route_totals(geometry, requester_user_id, db)
+    return analysis_schema.RouteGenerateRead(
+        mode=payload.mode,
+        geometry=geometry,
+        distance_m=distance,
+        gain_m=gain,
+        unknown_ranges=[analysis_schema.RouteUnknownRangeRead(start_m=s, end_m=e) for s, e in unknown],
+        unknown_m=round(sum(e - s for s, e in unknown), 1),
+    )
 
 
 def update_route(
