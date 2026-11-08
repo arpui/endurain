@@ -13,8 +13,6 @@ const SECTIONS = [
   { name: 'analysis', key: 'analysis.sectionLoad' },
   { name: 'analysis-power', key: 'analysis.sectionPower' },
   { name: 'analysis-best-times', key: 'analysis.sectionBest' },
-  { name: 'analysis-trail-network', key: 'analysis.sectionTrailNetwork' },
-  { name: 'analysis-routes', key: 'analysis.sectionRoutes' },
 ] as const
 </script>
 

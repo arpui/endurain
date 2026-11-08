@@ -12,7 +12,6 @@ import { ErrorState } from '@/components/ui/error-state'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
-import AnalysisSectionsNav from '@/features/analysis/components/AnalysisSectionsNav.vue'
 import TrailVariantsCard from '@/features/analysis/components/TrailVariantsCard.vue'
 import RoutesMap from '@/features/analysis/components/RoutesMap.vue'
 import { connectRoutePoints } from '@/features/analysis/services/analysis'
@@ -269,8 +268,6 @@ function confirmDelete(): void {
       <h1 class="text-page-title">{{ t('analysis.routes.title') }}</h1>
       <p class="text-body">{{ t('analysis.routes.subtitle') }}</p>
     </header>
-
-    <AnalysisSectionsNav />
 
     <ErrorState v-if="routesQuery.isError.value" :title="t('analysis.loadFailed')" />
 

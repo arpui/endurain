@@ -19,5 +19,8 @@
   "updateAvailable": "有可用更新",
   "updateAvailableTitle": "版本 {version} 现已推出",
   "updateViewRelease": "查看发行说明",
-  "segments": "路段"
+  "segments": "路段",
+  "trips": "行程",
+  "tripsTrailNetwork": "路径网络",
+  "tripsRoutes": "路线规划"
 }

@@ -19,5 +19,8 @@
   "updateAvailable": "Na voljo je posodobitev",
   "updateAvailableTitle": "Na voljo je različica {version}",
   "updateViewRelease": "Poglej opombe ob izdaji",
-  "segments": "Odseki"
+  "segments": "Odseki",
+  "trips": "Izleti",
+  "tripsTrailNetwork": "Mreža poti",
+  "tripsRoutes": "Načrti poti"
 }

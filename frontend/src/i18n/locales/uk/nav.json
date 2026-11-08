@@ -19,5 +19,8 @@
   "updateAvailable": "Доступне оновлення",
   "updateAvailableTitle": "Доступна версія {version}",
   "updateViewRelease": "Переглянути примітки до випуску",
-  "segments": "Відрізки"
+  "segments": "Відрізки",
+  "trips": "Маршрути",
+  "tripsTrailNetwork": "Мережа стежок",
+  "tripsRoutes": "Плани маршрутів"
 }

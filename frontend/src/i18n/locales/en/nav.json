@@ -19,5 +19,8 @@
   "updateAvailable": "Update available",
   "updateAvailableTitle": "Version {version} is available",
   "updateViewRelease": "View release notes",
-  "segments": "Segments"
+  "segments": "Segments",
+  "trips": "Journeys",
+  "tripsTrailNetwork": "Path network",
+  "tripsRoutes": "Route plans"
 }

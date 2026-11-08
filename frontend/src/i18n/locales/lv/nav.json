@@ -19,5 +19,8 @@
   "updateAvailable": "Pieejams atjauninājums",
   "updateAvailableTitle": "Pieejama versija {version}",
   "updateViewRelease": "Skatīt laidiena piezīmes",
-  "segments": "Posmi"
+  "segments": "Posmi",
+  "trips": "Maršruti",
+  "tripsTrailNetwork": "Celiņu tīkls",
+  "tripsRoutes": "Maršrutu plāni"
 }

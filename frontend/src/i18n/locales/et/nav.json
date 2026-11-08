@@ -19,5 +19,8 @@
   "updateAvailable": "Saadaval on uuendus",
   "updateAvailableTitle": "Saadaval on versioon {version}",
   "updateViewRelease": "Vaata versiooni märkmeid",
-  "segments": "Lõigud"
+  "segments": "Lõigud",
+  "trips": "Marshrudid",
+  "tripsTrailNetwork": "Rajavõrgustik",
+  "tripsRoutes": "Marshrud"
 }
