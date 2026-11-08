@@ -58,6 +58,17 @@ const networkSegments = computed(() =>
 )
 const inventoryQuery = useRouteSegmentsQuery(selected)
 
+// --- the editor: a draft polyline on the map ---
+// null draft means nobody is designing; a draft of points is created by map
+// taps and thinned by picking its handles. Saving measures totals server-side.
+// declared before the variant queries: those ask whether a draft is open, and
+// a query subscribes while setup still runs - the answer must exist by then.
+const draft = ref<GeoPoint[] | null>(null)
+/** null draft id: a brand-new route; otherwise the saved route being redrawn. */
+const editingId = ref<number | null>(null)
+const draftName = ref('')
+const draftNotes = ref<string | undefined>(undefined)
+
 // Variants of the picked designed route: the same engine that serves recorded
 // routes, walked over a polyline the athlete drew.
 const routeVariantsQuery = useRouteVariantsQuery(
@@ -150,15 +161,6 @@ const genHint = computed(() => {
   if (genB.value === null) return t('analysis.routes.pickB')
   return t('analysis.routes.pickReady')
 })
-
-// --- the editor: a draft polyline on the map ---
-// null draft means nobody is designing; a draft of points is created by map
-// taps and thinned by picking its handles. Saving measures totals server-side.
-const draft = ref<GeoPoint[] | null>(null)
-/** null draft id: a brand-new route; otherwise the saved route being redrawn. */
-const editingId = ref<number | null>(null)
-const draftName = ref('')
-const draftNotes = ref<string | undefined>(undefined)
 
 const createMutation = useCreateRouteMutation()
 const updateMutation = useUpdateRouteMutation()
