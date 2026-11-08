@@ -19,5 +19,8 @@
   "updateAvailable": "Update beschikbaar",
   "updateAvailableTitle": "Versie {version} is beschikbaar",
   "updateViewRelease": "Release-opmerkingen bekijken",
-  "segments": "Segmenten"
+  "segments": "Segmenten",
+  "trips": "Trajecten",
+  "tripsTrailNetwork": "Padennetwerk",
+  "tripsRoutes": "Routekaarten"
 }

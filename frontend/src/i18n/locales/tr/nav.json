@@ -19,5 +19,8 @@
   "updateAvailable": "Güncelleme mevcut",
   "updateAvailableTitle": "{version} sürümü mevcut",
   "updateViewRelease": "Sürüm notlarını görüntüle",
-  "segments": "Segmentler"
+  "segments": "Segmentler",
+  "trips": "Yolculuklar",
+  "tripsTrailNetwork": "Patika ağı",
+  "tripsRoutes": "Rota planları"
 }

@@ -19,5 +19,8 @@
   "updateAvailable": "Uppdatering tillgänglig",
   "updateAvailableTitle": "Version {version} är tillgänglig",
   "updateViewRelease": "Visa versionsanteckningar",
-  "segments": "Segment"
+  "segments": "Segment",
+  "trips": "Turer",
+  "tripsTrailNetwork": "Stignät",
+  "tripsRoutes": "Rutplaner"
 }

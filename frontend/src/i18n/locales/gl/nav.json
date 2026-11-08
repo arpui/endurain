@@ -19,5 +19,8 @@
   "updateAvailable": "Actualización dispoñible",
   "updateAvailableTitle": "A versión {version} está dispoñible",
   "updateViewRelease": "Ver notas da versión",
-  "segments": "Segmentos"
+  "segments": "Segmentos",
+  "trips": "Traxectos",
+  "tripsTrailNetwork": "Rede de camiños",
+  "tripsRoutes": "Rutas"
 }

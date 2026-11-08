@@ -19,5 +19,8 @@
   "updateAvailable": "Налично е обновление",
   "updateAvailableTitle": "Налична е версия {version}",
   "updateViewRelease": "Виж бележките към изданието",
-  "segments": "Сегменти"
+  "segments": "Сегменти",
+  "trips": "Маршрути",
+  "tripsTrailNetwork": "Мрежа от пътеки",
+  "tripsRoutes": "Маршрути планове"
 }

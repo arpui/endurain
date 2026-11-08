@@ -19,5 +19,8 @@
   "updateAvailable": "Frissítés érhető el",
   "updateAvailableTitle": "A(z) {version} verzió elérhető",
   "updateViewRelease": "Kiadási jegyzék megtekintése",
-  "segments": "Szakaszok"
+  "segments": "Szakaszok",
+  "trips": "Útvonalak",
+  "tripsTrailNetwork": "Ösvényhálózat",
+  "tripsRoutes": "Útvonaltervek"
 }

@@ -8,7 +8,6 @@ import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Skeleton } from '@/components/ui/skeleton'
-import AnalysisSectionsNav from '@/features/analysis/components/AnalysisSectionsNav.vue'
 import TrailNetworkMap from '@/features/analysis/components/TrailNetworkMap.vue'
 import {
   useSegmentNetworkQuery,
@@ -94,8 +93,6 @@ function grade(value: number | null): string {
       </div>
       <p class="text-body">{{ t('analysis.trailNetwork.subtitle') }}</p>
     </header>
-
-    <AnalysisSectionsNav />
 
     <Tabs :model-value="view" @update:model-value="view = $event as 'ways' | 'segments'">
       <TabsList>

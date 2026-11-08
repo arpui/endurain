@@ -19,5 +19,8 @@
   "updateAvailable": "Dostupno ažuriranje",
   "updateAvailableTitle": "Verzija {version} je dostupna",
   "updateViewRelease": "Pogledaj napomene o izdanju",
-  "segments": "Deonice"
+  "segments": "Deonice",
+  "trips": "Путања",
+  "tripsTrailNetwork": "Мрежа стаза",
+  "tripsRoutes": "Планови рутова"
 }

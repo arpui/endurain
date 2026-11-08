@@ -19,5 +19,8 @@
   "updateAvailable": "Dostupno ažuriranje",
   "updateAvailableTitle": "Verzija {version} je dostupna",
   "updateViewRelease": "Pogledaj napomene uz izdanje",
-  "segments": "Dionice"
+  "segments": "Dionice",
+  "trips": "Dnevnice",
+  "tripsTrailNetwork": "Mreža staza",
+  "tripsRoutes": "Planovi ruta"
 }

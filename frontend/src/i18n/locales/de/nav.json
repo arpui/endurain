@@ -19,5 +19,8 @@
   "updateAvailable": "Update verfügbar",
   "updateAvailableTitle": "Version {version} ist verfügbar",
   "updateViewRelease": "Versionshinweise anzeigen",
-  "segments": "Segmente"
+  "segments": "Segmente",
+  "trips": "Touren",
+  "tripsTrailNetwork": "Wegenetz",
+  "tripsRoutes": "Routen"
 }

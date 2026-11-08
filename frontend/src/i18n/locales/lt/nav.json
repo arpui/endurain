@@ -19,5 +19,8 @@
   "updateAvailable": "Yra atnaujinimas",
   "updateAvailableTitle": "Prieinama versija {version}",
   "updateViewRelease": "Peržiūrėti leidimo pastabas",
-  "segments": "Atkarpos"
+  "segments": "Atkarpos",
+  "trips": "Kelionės",
+  "tripsTrailNetwork": "Takų tinklas",
+  "tripsRoutes": "Maršrutai"
 }

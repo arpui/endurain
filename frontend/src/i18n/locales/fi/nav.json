@@ -19,5 +19,8 @@
   "updateAvailable": "Päivitys saatavilla",
   "updateAvailableTitle": "Versio {version} on saatavilla",
   "updateViewRelease": "Näytä julkaisutiedot",
-  "segments": "Osiot"
+  "segments": "Osiot",
+  "trips": "Reitit",
+  "tripsTrailNetwork": "Polkuverkko",
+  "tripsRoutes": "Reittisuunnitelmat"
 }

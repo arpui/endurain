@@ -19,5 +19,8 @@
   "updateAvailable": "Dostupná aktualizace",
   "updateAvailableTitle": "Je dostupná verze {version}",
   "updateViewRelease": "Zobrazit poznámky k vydání",
-  "segments": "Sekce"
+  "segments": "Sekce",
+  "trips": "Trasy",
+  "tripsTrailNetwork": "Síť cest",
+  "tripsRoutes": "Plány tras"
 }

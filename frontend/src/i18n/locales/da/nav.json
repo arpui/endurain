@@ -19,5 +19,8 @@
   "updateAvailable": "Opdatering tilgængelig",
   "updateAvailableTitle": "Version {version} er tilgængelig",
   "updateViewRelease": "Se udgivelsesnoter",
-  "segments": "Segmenter"
+  "segments": "Segmenter",
+  "trips": "Ruter",
+  "tripsTrailNetwork": "Stinetværk",
+  "tripsRoutes": "Ruteplaner"
 }

@@ -19,5 +19,8 @@
   "updateAvailable": "Actualizare disponibilă",
   "updateAvailableTitle": "Versiunea {version} este disponibilă",
   "updateViewRelease": "Vezi notele de lansare",
-  "segments": "Segment"
+  "segments": "Segment",
+  "trips": "Trasee",
+  "tripsTrailNetwork": "Rețea de cărări",
+  "tripsRoutes": "Planuri de trasee"
 }
