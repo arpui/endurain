@@ -5,6 +5,7 @@ import type { AppConfig, FeatureFlags } from '@/features/config/types'
 import { HttpError } from '@/services/http'
 import { DEFAULT_APP_CONFIG, fetchAppConfig } from '@/features/config/services/config'
 import { useTelemetry } from '@/composables/useTelemetry'
+import { hasAbsoluteApiBase, resetApiBaseResolution, useSameOriginApi } from '@/services/runtime'
 
 const config = ref<AppConfig>(DEFAULT_APP_CONFIG)
 
@@ -32,14 +33,31 @@ const configError = ref(false)
  */
 export async function loadAppConfig(): Promise<void> {
   configError.value = false
+  resetApiBaseResolution()
   try {
     config.value = await fetchAppConfig()
   } catch (error) {
     if (error instanceof HttpError) {
       return
     }
+    // The configured absolute host is unreachable from this browser. The page
+    // itself was served by the backend, so this origin works: pin the session
+    // to same-origin and probe again before declaring a configuration error.
+    let lastError: unknown = error
+    if (hasAbsoluteApiBase()) {
+      useSameOriginApi()
+      try {
+        config.value = await fetchAppConfig()
+        return
+      } catch (retryError) {
+        if (retryError instanceof HttpError) {
+          return
+        }
+        lastError = retryError
+      }
+    }
     configError.value = true
-    useTelemetry().captureError(error, { scope: 'loadAppConfig', configError: true })
+    useTelemetry().captureError(lastError, { scope: 'loadAppConfig', configError: true })
   }
 }
 

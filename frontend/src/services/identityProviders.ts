@@ -1,6 +1,6 @@
 import type { IdentityProviderPublic, SsoTokenExchangeResponse } from '@/types'
 
-import { apiFetch, API_BASE_URL } from './http'
+import { apiBaseUrl, apiFetch } from './http'
 
 /**
  * Fetches enabled public identity providers.
@@ -23,7 +23,7 @@ export function fetchEnabledIdentityProviders(): Promise<IdentityProviderPublic[
  * @returns Absolute SSO initiation URL.
  */
 export function getIdentityProviderLoginUrl(slug: string, params: URLSearchParams): string {
-  return `${API_BASE_URL}/public/idp/login/${encodeURIComponent(slug)}?${params.toString()}`
+  return `${apiBaseUrl()}/public/idp/login/${encodeURIComponent(slug)}?${params.toString()}`
 }
 
 /**

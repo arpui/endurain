@@ -34,6 +34,10 @@ export async function fetchPublicServerSettings(): Promise<PublicServerSettings>
   const settings = await apiFetch<PublicServerSettings>('/public/server_settings', {
     auth: false,
     retryOnUnauthorized: false,
+    // Boot probes this before anything else reaches the API: an unreachable
+    // runtime host should fail fast enough for the same-origin retry to feel
+    // like one load, not two long waits.
+    timeoutMs: 8000,
   })
   setAllowedRedirectSchemes(settings.allowed_redirect_schemes)
   return settings

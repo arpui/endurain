@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { getApiBaseUrl, getBackendAssetUrl } from '@/services/runtime'
+import {
+  getApiBaseUrl,
+  getBackendAssetUrl,
+  getWebSocketUrl,
+  hasAbsoluteApiBase,
+  useSameOriginApi,
+} from '@/services/runtime'
 
 describe('runtime backend configuration', () => {
   beforeEach(() => {
@@ -28,6 +34,24 @@ describe('runtime backend configuration', () => {
 
     expect(getBackendAssetUrl('https://cdn.test/activity_media/5_a.jpg?sig=x')).toBe(
       'https://cdn.test/activity_media/5_a.jpg?sig=x',
+    )
+  })
+
+  it('falls back to same-origin once pinned, for API, assets and the socket', () => {
+    // multi-homed install: the page loaded over an address the configured
+    // ENDURAIN_HOST does not name, and the probe against that host failed.
+    // last in the file: the pin lives for the rest of the session.
+    window.env = { ENDURAIN_HOST: 'http://192.168.31.118:6174' }
+    expect(getApiBaseUrl()).toBe('http://192.168.31.118:6174/api/v1')
+    expect(hasAbsoluteApiBase()).toBe(true)
+
+    useSameOriginApi()
+
+    expect(getApiBaseUrl()).toBe('/api/v1')
+    expect(hasAbsoluteApiBase()).toBe(false)
+    expect(getBackendAssetUrl('/server_images/login.png')).toBe('/server_images/login.png')
+    expect(getWebSocketUrl('/ws')).toBe(
+      `${window.location.origin.replace(/^http/, 'ws')}/api/v1/ws`,
     )
   })
 })
