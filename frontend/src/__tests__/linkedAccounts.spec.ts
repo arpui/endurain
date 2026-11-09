@@ -13,7 +13,7 @@ import {
 
 vi.mock('@/services/http', () => ({
   apiFetch: vi.fn<typeof apiFetch>(),
-  API_BASE_URL: '/api/v1',
+  apiBaseUrl: () => '/api/v1',
 }))
 
 const linkedDto: LinkedProviderDto = {

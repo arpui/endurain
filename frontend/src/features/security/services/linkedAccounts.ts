@@ -5,7 +5,7 @@ import type {
   StepUpInput,
 } from '@/features/security/types'
 
-import { API_BASE_URL, apiFetch } from '@/services/http'
+import { apiBaseUrl, apiFetch } from '@/services/http'
 
 /**
  * Maps a raw linked-provider payload to the clean {@link LinkedProvider} model
@@ -88,7 +88,7 @@ export function buildLinkStartUrl(
   returnPath = '/settings/security',
 ): string {
   const params = new URLSearchParams({ link_token: token, redirect: returnPath })
-  return `${API_BASE_URL}/profile/idp/${idpId}/link?${params.toString()}`
+  return `${apiBaseUrl()}/profile/idp/${idpId}/link?${params.toString()}`
 }
 
 /**

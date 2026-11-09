@@ -11,6 +11,14 @@ function trimTrailingSlash(value: string): string {
 }
 
 /**
+ * Whether the session resolved to same-origin API paths after the configured
+ * absolute host proved unreachable from this browser (multi-homed installs:
+ * LAN, VPN, localhost all reach the page, but `ENDURAIN_HOST` names one
+ * address that may not be routable from wherever the page loaded).
+ */
+let sameOriginOnly = false
+
+/**
  * Returns the runtime backend host configured by `/env.js`.
  *
  * @returns The configured backend host, or `null` when not set.
@@ -21,14 +29,47 @@ export function getRuntimeBackendHost(): string | null {
 }
 
 /**
- * Resolves the API base URL using runtime config first, then build-time fallback.
+ * Whether an absolute API base is configured and may still be in use —
+ * the condition under which a network failure warrants a same-origin retry.
+ *
+ * @returns True when `/env.js` set a backend host for this session.
+ */
+export function hasAbsoluteApiBase(): boolean {
+  return getRuntimeBackendHost() !== null && !sameOriginOnly
+}
+
+/**
+ * Pins the session to same-origin API paths: the configured absolute host is
+ * unreachable from this browser, but the page itself was served by the
+ * backend, so the current origin is a working one.
+ */
+export function useSameOriginApi(): void {
+  sameOriginOnly = true
+}
+
+/**
+ * Clears the same-origin pin: each configuration-probe cycle decides the base
+ * afresh, so a recovered network (or a changed ``ENDURAIN_HOST``) is retried
+ * against the configured absolute host on the next probe.
+ */
+export function resetApiBaseResolution(): void {
+  sameOriginOnly = false
+}
+
+/**
+ * Resolves the API base URL: runtime config first, then build-time fallback,
+ * then same-origin — unless the session pinned same-origin after a failed probe.
  *
  * @returns API base URL without a trailing slash.
  */
 export function getApiBaseUrl(): string {
-  const runtimeHost = getRuntimeBackendHost()
+  const runtimeHost = sameOriginOnly ? null : getRuntimeBackendHost()
   if (runtimeHost) {
     return `${runtimeHost}${API_PATH}`
+  }
+
+  if (sameOriginOnly) {
+    return API_PATH
   }
 
   const buildTimeUrl = import.meta.env.VITE_API_URL?.trim()
@@ -50,7 +91,7 @@ export function getBackendAssetUrl(path: string): string {
     return path
   }
   const normalizedPath = path.replace(/^\/+/, '')
-  const runtimeHost = getRuntimeBackendHost()
+  const runtimeHost = sameOriginOnly ? null : getRuntimeBackendHost()
   return runtimeHost ? `${runtimeHost}/${normalizedPath}` : `/${normalizedPath}`
 }
 

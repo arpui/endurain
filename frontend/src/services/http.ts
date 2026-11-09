@@ -4,8 +4,15 @@ import { clearAuthTokens, getAccessToken, getCsrfToken, setAuthTokens } from './
 import { getApiBaseUrl } from './runtime'
 import { emitSessionExpired } from './sessionExpiry'
 
-/** API base URL resolved from `/env.js`, then `VITE_API_URL`, then same-origin. */
-export const API_BASE_URL = getApiBaseUrl()
+/**
+ * The API base, resolved per request: a session that falls back to
+ * same-origin after an unreachable runtime host must not keep stamping the
+ * dead absolute URL onto later calls. Resolved from `/env.js`, then
+ * `VITE_API_URL`, then same-origin.
+ *
+ * @returns The current absolute base or the same-origin API path.
+ */
+export const apiBaseUrl = (): string => getApiBaseUrl()
 
 const STATE_CHANGING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 
@@ -196,13 +203,13 @@ async function refreshAuthTokens(): Promise<AuthTokenResponse> {
  * Performs one request without retry handling.
  *
  * @typeParam T - Expected response body.
- * @param path - Path relative to {@link API_BASE_URL}.
+ * @param path - Path relative to {@link apiBaseUrl}.
  * @param init - Fetch options.
  * @returns The parsed response body.
  * @throws {HttpError} When the response status is not 2xx.
  */
 async function rawApiFetch<T>(path: string, init: ApiFetchOptions = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${apiBaseUrl()}${path}`, {
     ...init,
     credentials: 'include',
     headers: buildHeaders(init),
@@ -251,7 +258,7 @@ async function rawApiFetch<T>(path: string, init: ApiFetchOptions = {}): Promise
  * non-2xx responses.
  *
  * @typeParam T - Expected shape of the parsed JSON response.
- * @param path - Path relative to {@link API_BASE_URL} (e.g. `/config`).
+ * @param path - Path relative to {@link apiBaseUrl} (e.g. `/config`).
  * @param init - Standard `fetch` options plus auth/retry options.
  * @returns The parsed JSON response body.
  * @throws {HttpError} When the response status is not 2xx.
