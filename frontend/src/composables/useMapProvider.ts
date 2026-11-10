@@ -57,6 +57,8 @@ export interface MapOverlay {
   vertices?: GeoPoint[]
   /** Called with the handle's index when the viewer picks one. */
   onVertexClick?: (index: number) => void
+  /** Called when the viewer drags a handle and releases it at a new place. */
+  onVertexDragEnd?: (index: number, point: GeoPoint) => void
 }
 
 /** Options controlling a single map render. */

@@ -25,7 +25,22 @@ vi.mock('@/services/http', () => {
 // the map is a provider seam over real Leaflet: irrelevant for the view's own
 // rendering and unavailable under jsdom
 vi.mock('@/features/analysis/components/RoutesMap.vue', () => ({
-  default: { name: 'RoutesMap', template: '<div class="map-stub" />' },
+  default: {
+    name: 'RoutesMap',
+    props: {
+      routes: { type: Array, default: () => [] },
+      selected: { type: Number, default: null },
+      label: { type: String, default: '' },
+      draft: { type: Array, default: null },
+      editingId: { type: Number, default: null },
+      segments: { type: Array, default: undefined },
+      highlight: { type: Array, default: null },
+      endpoints: { type: Array, default: null },
+      water: { type: Array, default: undefined },
+      picking: { type: Boolean, default: false },
+    },
+    template: '<div class="map-stub" />',
+  },
 }))
 
 /**
@@ -51,10 +66,21 @@ function routeAnswers(): Record<string, unknown> {
 
 describe('routes view', () => {
   let pinia: ReturnType<typeof createPinia>
+  let router: ReturnType<typeof createRouter>
 
   beforeEach(() => {
     pinia = createPinia()
     setActivePinia(pinia)
+    router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        'analysis',
+        'analysis-power',
+        'analysis-best-times',
+        'analysis-trail-network',
+        'analysis-routes',
+      ].map((name) => ({ path: `/${name}`, name, component: { template: '<div />' } })),
+    })
     useAuthStore().isAuthenticated = true
     vi.mocked(apiFetch).mockReset()
     vi.mocked(apiFetch).mockImplementation((url: unknown) => {
@@ -66,16 +92,6 @@ describe('routes view', () => {
   })
 
   it('renders the saved routes without crashing', async () => {
-    const router = createRouter({
-      history: createMemoryHistory(),
-      routes: [
-        'analysis',
-        'analysis-power',
-        'analysis-best-times',
-        'analysis-trail-network',
-        'analysis-routes',
-      ].map((name) => ({ path: `/${name}`, name, component: { template: '<div />' } })),
-    })
     const wrapper = mount(RoutesView, {
       global: {
         plugins: [
@@ -92,5 +108,39 @@ describe('routes view', () => {
     })
     await flushPromises()
     expect(wrapper.text()).toContain('Cursa smoke')
+  })
+
+  it('replaces the draft array on every edit so the map redraws', async () => {
+    const wrapper = mount(RoutesView, {
+      global: {
+        plugins: [pinia, router, i18n, [VueQueryPlugin, { queryClient: new QueryClient() }]],
+        stubs: { teleport: true },
+      },
+    })
+    await flushPromises()
+    // open the designer
+    wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('New route'))
+      ?.trigger('click')
+    await flushPromises()
+    const map = wrapper.findComponent({ name: 'RoutesMap' })
+    const before = map.props('draft') as unknown[]
+    map.vm.$emit('addPoint', { lat: 42.31, lng: 1.51 })
+    await flushPromises()
+    const after = map.props('draft') as unknown[]
+    expect(after).toHaveLength(before.length + 1)
+    // the identity must change: the map watches it, a mutation in place draws nothing
+    expect(after).not.toBe(before)
+    expect(wrapper.text()).toContain('1 point')
+
+    map.vm.$emit('moveVertex', 0, { lat: 42.99, lng: 1.99 })
+    await flushPromises()
+    expect((map.props('draft') as Array<{ lat: number }>)[0]?.lat).toBe(42.99)
+    expect(map.props('draft')).not.toBe(after)
+
+    map.vm.$emit('removeVertex', 0)
+    await flushPromises()
+    expect(map.props('draft')).toHaveLength(0)
   })
 })
