@@ -787,3 +787,44 @@ export interface RoutePlan {
   unknownM: number
   unknownRanges: RoutePlanUnknownRange[]
 }
+
+/** The athlete's own pace rule, as published by the guide pack. */
+export interface RouteGuidePace {
+  /** Seconds per kilometre of flat ground. */
+  perKmS: number
+  /** Extra seconds per 100 m climbed. */
+  per100mGainS: number
+  /** Extra seconds per 100 m descended. */
+  per100mLossS: number
+  /** Extra seconds per kilometre of technical ground. */
+  perTechnicalKmS: number
+  /** Median relative miss over the sessions it was fitted on (0-1). */
+  error: number
+  /** Sessions it was fitted on. */
+  sessions: number
+}
+
+/** One mapped water point near the route. */
+export interface RouteGuideWater {
+  /** What the map vouches: ``font`` is drinking water, ``spring`` nobody promises. */
+  kind: 'font' | 'spring'
+  /** Mapped name, when the map carries one. */
+  name: string | null
+  /** Ground position along the route, metres. */
+  atM: number
+  /** Where it sits beside the line, for the map. */
+  point: GeoPoint
+}
+
+/** The guide pack, trimmed to what the route view shows. */
+export interface RouteGuide {
+  distanceM: number
+  gainM: number
+  lossM: number
+  /** Predicted moving time, or ``null`` when there is no pace rule yet. */
+  estTimeS: number | null
+  pace: RouteGuidePace | null
+  water: RouteGuideWater[]
+  /** Ground never crossed before, metres. */
+  unknownM: number
+}

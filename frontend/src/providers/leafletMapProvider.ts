@@ -186,6 +186,21 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
             }
             overlays.push(line)
           }
+          if (overlay.markers) {
+            overlay.markers.forEach((marker) => {
+              const dot = circleMarker([marker.point.lat, marker.point.lng], {
+                radius: 6,
+                color: marker.color,
+                weight: 2,
+                fillColor: '#ffffff',
+                fillOpacity: 1,
+              }).addTo(map)
+              if (marker.label) {
+                dot.bindTooltip(marker.label)
+              }
+              overlays.push(dot)
+            })
+          }
           if (overlay.vertices && overlay.onVertexClick) {
             overlay.vertices.forEach((vertex, index) => {
               const handle = circleMarker([vertex.lat, vertex.lng], {

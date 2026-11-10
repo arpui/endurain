@@ -20,6 +20,7 @@ import {
   useDeleteRouteMutation,
   useGenerateRouteMutation,
   useRouteCourseMutation,
+  useRouteGuideQuery,
   useRouteSegmentsQuery,
   useRouteVariantMarkMutation,
   useRouteVariantsQuery,
@@ -86,6 +87,24 @@ const routeVariantHighlight = computed(() => {
   )
   return found ? found.points : null
 })
+
+// The guide pack of the picked route: the same annotations the course and a
+// phone replay, read here as predicted time, pace rule, water and the ground
+// still to confirm. It takes seconds (variant search runs inside), so the
+// card simply appears when the answer is there. Declared after the editor
+// state: a query subscribes during setup and must not ask about a draft that
+// is not there yet.
+const guideQuery = useRouteGuideQuery(
+  computed(() => (draft.value === null ? selected.value : null)),
+)
+const guide = computed(() => guideQuery.data.value ?? null)
+
+function formatDuration(seconds: number): string {
+  const minutes = Math.round(seconds / 60)
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return h > 0 ? `${h} h ${String(m).padStart(2, '0')} min` : `${m} min`
+}
 
 const numberFormat = computed(
   () => new Intl.NumberFormat(locale.value, { maximumFractionDigits: 2 }),
@@ -369,6 +388,7 @@ function confirmDelete(): void {
           :segments="networkSegments"
           :highlight="routeVariantHighlight"
           :endpoints="genEndpoints"
+          :water="guide?.water ?? []"
           :picking="genOpen"
           @select="pick"
           @add-point="addPoint"
@@ -417,6 +437,52 @@ function confirmDelete(): void {
         @select="pickRouteVariant"
         @mark="(splitM, verdict) => routeVariantMarks.mutate({ splitM, verdict })"
       />
+
+      <Card v-if="guide" class="flex flex-col gap-2 p-3">
+        <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <span class="text-caption font-medium text-muted-foreground">
+            {{ t('analysis.routes.guideTitle') }}
+          </span>
+          <span v-if="guide.estTimeS !== null" class="text-body">
+            {{ t('analysis.routes.guideEstTime', { time: formatDuration(guide.estTimeS) }) }}
+          </span>
+          <span v-else class="text-caption text-muted-foreground">
+            {{ t('analysis.routes.guideNoPace') }}
+          </span>
+          <span v-if="guide.pace" class="text-caption text-muted-foreground">
+            {{
+              t('analysis.routes.guidePaceNote', {
+                pct: Math.round(guide.pace.error * 100),
+                n: guide.pace.sessions,
+              })
+            }}
+          </span>
+          <span v-if="guide.unknownM > 0" class="text-caption text-muted-foreground">
+            {{ t('analysis.routes.guideUnknown', { km: km(guide.unknownM) }) }}
+          </span>
+        </div>
+        <ul v-if="guide.water.length > 0" class="flex flex-wrap gap-x-4 gap-y-1 text-caption">
+          <li v-for="spring in guide.water" :key="spring.atM" class="flex items-center gap-1.5">
+            <span
+              class="size-2.5 shrink-0 rounded-full border"
+              :style="{ borderColor: themeColor('--color-info'), backgroundColor: 'transparent' }"
+            />
+            <span>
+              {{
+                spring.name ??
+                t(
+                  spring.kind === 'font'
+                    ? 'analysis.routes.guideWaterFont'
+                    : 'analysis.routes.guideWaterSpring',
+                )
+              }}
+            </span>
+            <span class="text-muted-foreground">
+              {{ t('analysis.routes.guideWaterAt', { km: km(spring.atM) }) }}
+            </span>
+          </li>
+        </ul>
+      </Card>
 
       <Card v-if="routes.length > 0" class="overflow-x-auto p-3">
         <table class="w-full text-body">

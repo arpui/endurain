@@ -22,6 +22,7 @@ import {
   createRoute,
   deleteRoute,
   fetchRouteCourse,
+  fetchRouteGuide,
   fetchRouteSegments,
   fetchRouteVariants,
   fetchRoutes,
@@ -895,6 +896,70 @@ describe('A→B generator', () => {
     expect(plan.points).toHaveLength(2)
     expect(plan.unknownRanges[0]).toEqual({ startM: 800, endM: 1500 })
     expect(plan.unknownM).toBe(700)
+  })
+})
+
+describe('route guide pack', () => {
+  it('reads the guide and places water at the nearest vertex', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      route_id: 7,
+      name: 'smoke',
+      generated_at: '2026-11-10T14:46:25+00:00',
+      distance_m: 6897.2,
+      gain_m: 1393.1,
+      loss_m: 700.5,
+      est_time_s: 6815,
+      pace: {
+        per_km_s: 296.8,
+        per_100m_gain_s: 196.3,
+        per_100m_loss_s: 0,
+        per_technical_km_s: 663.2,
+        error: 0.082,
+        sessions: 2542,
+      },
+      track: [
+        [42.3, 1.5, 1000, 0, 0],
+        [42.31, 1.51, 1100, 1000, 500],
+        [42.32, 1.52, 1050, 2000, 900],
+      ],
+      events: [
+        { kind: 'water', at_m: 1050, label: 'FONT', name: null, off_route_m: 30, water: 'font' },
+        { kind: 'unknown', at_m: 4740, end_m: 6900, label: '? a confirmar' },
+        { kind: 'hard', at_m: 200, end_m: 400, label: 'DUR 0.2k' },
+      ],
+      variants: [],
+    } satisfies Schemas['RouteGuideRead'])
+    const guide = await fetchRouteGuide(7)
+    expect(String(vi.mocked(apiFetch).mock.calls[0]?.[0])).toBe('/analysis/routes/7/guide')
+    expect(guide.estTimeS).toBe(6815)
+    expect(guide.pace?.sessions).toBe(2542)
+    expect(guide.water).toHaveLength(1)
+    expect(guide.water[0]).toMatchObject({
+      kind: 'font',
+      atM: 1050,
+      point: { lat: 42.31, lng: 1.51 },
+    })
+    expect(guide.unknownM).toBeCloseTo(2160)
+  })
+
+  it('answers null time when there is no pace rule yet', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      route_id: 8,
+      name: 'sense ritme',
+      generated_at: '2026-11-10T14:46:25+00:00',
+      distance_m: 1000,
+      gain_m: 10,
+      loss_m: 10,
+      est_time_s: null,
+      pace: null,
+      track: [],
+      events: [],
+      variants: [],
+    } satisfies Schemas['RouteGuideRead'])
+    const guide = await fetchRouteGuide(8)
+    expect(guide.estTimeS).toBeNull()
+    expect(guide.pace).toBeNull()
+    expect(guide.water).toEqual([])
   })
 })
 

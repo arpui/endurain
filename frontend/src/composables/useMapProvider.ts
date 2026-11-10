@@ -29,6 +29,15 @@ export interface MapTrack {
 }
 
 /** An extra polyline drawn on top of the track (e.g. an analysed section). */
+/** One labelled point drawn on the map, not clickable by design. */
+export interface MapMarker {
+  point: GeoPoint
+  /** Dot colour as a CSS colour string. */
+  color: string
+  /** Tooltip text shown on hover. */
+  label?: string
+}
+
 export interface MapOverlay {
   /** Ordered coordinates forming the overlay polyline. */
   points: GeoPoint[]
@@ -42,6 +51,8 @@ export interface MapOverlay {
   opacity?: number
   /** Called when the viewer picks the overlay on the map. */
   onSelect?: () => void
+  /** Non-interactive dots with tooltips: plan endpoints, water points. */
+  markers?: MapMarker[]
   /** Editable handles drawn along the overlay (route designers). */
   vertices?: GeoPoint[]
   /** Called with the handle's index when the viewer picks one. */

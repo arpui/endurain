@@ -29,8 +29,10 @@ const props = defineProps<{
   segments?: SegmentNetworkItem[]
   /** The picked variant's line, drawn above everything. */
   highlight?: GeoPoint[] | null
-  /** Endpoints of a plan being picked: drawn as handles, joined by a line. */
+  /** Endpoints of a plan being picked: drawn as labelled dots, joined by a line. */
   endpoints?: GeoPoint[] | null
+  /** Mapped water near the picked route, drawn as dots the athlete can read. */
+  water?: { point: GeoPoint; name: string | null; kind: 'font' | 'spring' }[]
   /** Whether map taps pick plan endpoints instead of doing nothing. */
   picking?: boolean
 }>()
@@ -79,7 +81,22 @@ function overlays(): MapOverlay[] {
       color: themeColor('--color-goal'),
       weight: 2,
       opacity: 0.9,
-      vertices: props.endpoints,
+      markers: props.endpoints.map((point, index) => ({
+        point,
+        color: themeColor('--color-goal'),
+        label: index === 0 ? 'A' : 'B',
+      })),
+    })
+  }
+  if (props.water && props.water.length > 0) {
+    list.push({
+      points: [],
+      color: themeColor('--color-info'),
+      markers: props.water.map((spring) => ({
+        point: spring.point,
+        color: themeColor('--color-info'),
+        label: spring.name ?? (spring.kind === 'font' ? 'Font' : 'Deu?'),
+      })),
     })
   }
   if (props.highlight && props.highlight.length > 0) {
