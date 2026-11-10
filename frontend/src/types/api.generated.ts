@@ -4112,6 +4112,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/analysis/routes/{route_id}/guide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Route Guide
+         * @description A designed route as a self-contained guide pack.
+         *
+         *     The line with altitude, ground distance and estimated time, and every
+         *     event and variant a phone or watch announces along it - built to be
+         *     downloaded once and replayed offline.
+         */
+        get: operations["get_route_guide_api_v1_analysis_routes__route_id__guide_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analysis/routes/{route_id}/variants/marks": {
         parameters: {
             query?: never;
@@ -11203,6 +11227,133 @@ export interface components {
             unknown_m: number;
         };
         /**
+         * RouteGuideEventRead
+         * @description One thing a route guide announces, placed by ground distance.
+         *
+         *     Attributes:
+         *         kind: ``segment`` (a named corridor of the athlete's), ``hard`` /
+         *             ``technical`` (ground their own descents found so), ``variant`` (a
+         *             reconnecting alternative leaves the route here), ``unknown`` (ground
+         *             they have never crossed) or ``water``.
+         *         at_m: Ground position along the route where it starts.
+         *         end_m: Where it ends; ``None`` for a single place.
+         *         label: The short form a watch shows (at most 15 bytes).
+         *         name: Full name, when it has one.
+         *         claim: Technical claim on the stretch, when one applies.
+         *         side: ``left`` / ``right`` / ``straight`` for a variant.
+         *         delta_m: Variant minus main ground, metres.
+         *         delta_gain_m: Variant minus main elevation gain, metres.
+         *         delta_time_s: Variant minus main estimated time, seconds.
+         *         confirmed: Whether a variant is evidence-backed or judged real.
+         *         off_route_m: How far off the line a water point sits.
+         *         water: ``font`` (drinking water) or ``spring`` (unvouched source).
+         */
+        RouteGuideEventRead: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "segment" | "hard" | "technical" | "variant" | "unknown" | "water";
+            /** At M */
+            at_m: number;
+            /** End M */
+            end_m?: number | null;
+            /** Label */
+            label: string;
+            /** Name */
+            name?: string | null;
+            /** Claim */
+            claim?: string | null;
+            /** Side */
+            side?: ("left" | "right" | "straight") | null;
+            /** Delta M */
+            delta_m?: number | null;
+            /** Delta Gain M */
+            delta_gain_m?: number | null;
+            /** Delta Time S */
+            delta_time_s?: number | null;
+            /** Confirmed */
+            confirmed?: boolean | null;
+            /** Off Route M */
+            off_route_m?: number | null;
+            /** Water */
+            water?: ("font" | "spring") | null;
+        };
+        /**
+         * RouteGuidePaceRead
+         * @description The athlete's own pace rule a guide's times were estimated with.
+         *
+         *     Attributes:
+         *         per_km_s: Seconds per kilometre of ground.
+         *         per_100m_gain_s: Extra seconds per 100 m climbed.
+         *         per_100m_loss_s: Extra seconds per 100 m descended.
+         *         per_technical_km_s: Extra seconds per kilometre of technical ground.
+         *         error: Median relative miss over the sessions the rule was fitted on.
+         *         sessions: Sessions the rule was fitted on.
+         */
+        RouteGuidePaceRead: {
+            /** Per Km S */
+            per_km_s: number;
+            /** Per 100M Gain S */
+            per_100m_gain_s: number;
+            /** Per 100M Loss S */
+            per_100m_loss_s: number;
+            /** Per Technical Km S */
+            per_technical_km_s: number;
+            /** Error */
+            error: number;
+            /** Sessions */
+            sessions: number;
+        };
+        /**
+         * RouteGuideRead
+         * @description Everything a guide needs to walk someone along a route, in one piece.
+         *
+         *     The pack is self-contained on purpose: a phone or a watch downloads it at
+         *     home and replays it against its own GPS with no network. Every position is
+         *     ground distance along ``track``, so a client only has to know how far along
+         *     the line it is.
+         *
+         *     Attributes:
+         *         route_id: The designed route.
+         *         name: Route name.
+         *         generated_at: When the pack was built, ISO.
+         *         distance_m: Ground distance of the route.
+         *         gain_m: Elevation gain over known ground.
+         *         loss_m: Elevation loss over known ground.
+         *         est_time_s: Estimated time by the athlete's own pace rule.
+         *         pace: The rule itself, with how well it fits; ``None`` when the athlete
+         *             has too few measured sessions for one.
+         *         track: One row per vertex: ``[lat, lng, altitude, ground_m, eta_s]``;
+         *             altitude is ``None`` on ground never crossed, ``eta_s`` when no
+         *             rule exists.
+         *         events: What the guide announces, in ground order.
+         *         variants: The reconnecting alternatives, with their drawn paths.
+         */
+        RouteGuideRead: {
+            /** Route Id */
+            route_id: number;
+            /** Name */
+            name: string;
+            /** Generated At */
+            generated_at: string;
+            /** Distance M */
+            distance_m: number;
+            /** Gain M */
+            gain_m: number;
+            /** Loss M */
+            loss_m: number;
+            /** Est Time S */
+            est_time_s: number | null;
+            pace: components["schemas"]["RouteGuidePaceRead"] | null;
+            /** Track */
+            track: (number | null)[][];
+            /** Events */
+            events: components["schemas"]["RouteGuideEventRead"][];
+            /** Variants */
+            variants: components["schemas"]["TrailVariantRead"][];
+        };
+        /**
          * RouteRead
          * @description One saved designed route.
          *
@@ -12786,6 +12937,8 @@ export interface components {
          *         main_m: Ground of the stretch it replaces.
          *         delta_m: Variant minus main, metres.
          *         delta_gain_m: Variant minus main elevation gain, metres.
+         *         delta_time_s: Variant minus main time by the athlete's own pace rule,
+         *             seconds; ``None`` when no rule was asked for or none can be fitted.
          *         status: ``confirmada`` (evidence-backed) or ``provisional``.
          *         grade: Hardest technical claim found along the variant.
          *         path_latlng: The drawn polyline, shaped by certified ways where real.
@@ -12811,6 +12964,8 @@ export interface components {
             delta_m: number;
             /** Delta Gain M */
             delta_gain_m: number;
+            /** Delta Time S */
+            delta_time_s?: number | null;
             /**
              * Status
              * @enum {string}
@@ -21044,6 +21199,46 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Unexpected error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    get_route_guide_api_v1_analysis_routes__route_id__guide_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                route_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RouteGuideRead"];
+                };
             };
             /** @description Validation Error */
             422: {
