@@ -3227,63 +3227,67 @@ def connect_route(
     payload: analysis_schema.RouteConnectCreate,
     db: Session,
 ) -> analysis_schema.RouteConnectRead:
-    """Shape a drawn route onto the athlete's own walked ground.
+    """Shape a drawn route onto the ground the network knows.
 
-    Each clicked anchor tries to land on a graph cell the athlete has actually
-    crossed; consecutive cells are joined by the shortest walked chain of their
-    transitions (never an edge born of a long GPS step). Where the network
-    cannot carry a stretch - unknown ground, or a walk beyond the detour
-    ceiling - the straight line stands and the stretch is reported unwalked.
-    Nothing is invented: the points that shape the route are the ones their own
-    GPS left behind.
+    Each clicked anchor lands where it can: on a cell the athlete actually
+    crossed, or on a mapped vertex near it. Consecutive anchors are joined by
+    the cheapest honest chain of the same network the A→B generator searches -
+    the personal graph first, mapped ways where walked ground cannot carry the
+    stretch. Every stretch says how it was carried: over walked ground, over
+    map ground never crossed (still to confirm), or not carried at all, where
+    the straight line stands. Nothing is invented.
     """
     anchors = [(float(point[0]), float(point[1])) for point in payload.points]
     anchor_xy = [analysis_graph.to_xy(lat, lng) for lat, lng in anchors]
     straights = [_ground_m(anchors[k], anchors[k + 1]) for k in range(len(anchors) - 1)]
-    pad_cells = int(min(4000.0, max(600.0, max(straights, default=600.0))) / analysis_constants.TRAIL_GRAPH_CELL_M) + 2
-    xs = [cell[0] for cell in map(lambda xy: analysis_graph.cell_of(*xy), anchor_xy)]
-    ys = [cell[1] for cell in map(lambda xy: analysis_graph.cell_of(*xy), anchor_xy)]
-    nodes, edges = analysis_crud.list_user_graph_in_bbox(
-        requester_user_id,
-        min(xs) - pad_cells,
-        max(xs) + pad_cells,
-        min(ys) - pad_cells,
-        max(ys) + pad_cells,
-        db,
-    )
+    boxes = analysis_route_plan.corridor_around(anchors)
+    gx0, gx1, gy0, gy1 = boxes["graph"]
+    nodes, edges = analysis_crud.list_user_graph_in_bbox(requester_user_id, gx0, gx1, gy0, gy1, db)
     node_map, adjacency = analysis_graph.graph_from_rows(nodes, edges)
+    w0, w1, la0, la1 = boxes["ways"]
+    ways = [(row.way_id, row.tags, row.geometry) for row in analysis_crud.list_osm_paths_in_box(w0, w1, la0, la1, db)]
+    crossed = analysis_crud.list_user_way_crossing_counts(requester_user_id, db)
+    analysis_route_plan.add_way_layer(node_map, adjacency, ways, crossed)
+    analysis_route_plan.link_layers(node_map, adjacency)
     prefer = analysis_crud.list_segment_preference_cells(requester_user_id, db) or None
-    tol = analysis_constants.TRAIL_GRAPH_SNAP_TOL_M
-    cells = [analysis_variants.nearest_cell(node_map, xy, tol) for xy in anchor_xy]
+
+    keys = [
+        analysis_route_plan.anchor_point(node_map, adjacency, xy, latlng)
+        for xy, latlng in zip(anchor_xy, anchors, strict=True)
+    ]
 
     geometry: list[list[float]] = []
-    walked: list[bool] = []
+    carried: list[str] = []
 
     def push(lat: float, lng: float) -> None:
         if geometry and abs(geometry[-1][0] - lat) < 1e-7 and abs(geometry[-1][1] - lng) < 1e-7:
             return
         geometry.append([lat, lng])
 
-    first = anchors[0] if cells[0] is None else (node_map[cells[0]]["lat"], node_map[cells[0]]["lng"])
+    first = anchors[0] if keys[0] is None else (node_map[keys[0]]["lat"], node_map[keys[0]]["lng"])
     push(first[0], first[1])
     for k in range(1, len(anchors)):
         chain = None
-        if cells[k - 1] is not None and cells[k] is not None:
+        if keys[k - 1] is not None and keys[k] is not None:
             cutoff = min(
                 analysis_constants.TRAIL_ROUTE_CONNECT_MAX_M,
                 2.0 * straights[k - 1] + 300.0,
             )
-            chain = analysis_variants.walk_between(adjacency, node_map, cells[k - 1], cells[k], cutoff, prefer)
+            chain = analysis_route_plan.plan_between(node_map, adjacency, keys[k - 1], keys[k], cutoff, "curt", prefer)
         if chain:
-            for cell in chain[1:]:
-                entry = node_map[cell]
+            for step in chain:
+                entry = node_map[step["to"]]
                 push(entry["lat"], entry["lng"])
-            walked.append(True)
+            carried.append("mapped" if analysis_route_plan.chain_is_mapped(chain) else "walked")
         else:
             lat, lng = anchors[k]
             push(lat, lng)
-            walked.append(False)
-    return analysis_schema.RouteConnectRead(geometry=geometry, walked=walked)
+            carried.append("straight")
+    return analysis_schema.RouteConnectRead(
+        geometry=geometry,
+        carried=carried,
+        walked=[kind == "walked" for kind in carried],
+    )
 
 
 def plan_route(
