@@ -25,6 +25,7 @@ import {
   fetchActivityIntervals,
   deleteTrailSectionMark,
   fetchRouteCourse,
+  fetchRouteGuide,
   fetchRouteSegments,
   fetchRouteVariants,
   fetchRoutes,
@@ -598,5 +599,26 @@ export function useGenerateRouteMutation() {
     { from: [number, number]; to: [number, number]; mode: RouteGenMode }
   >({
     mutationFn: ({ from, to, mode }) => generateRoutePlan(from, to, mode),
+  })
+}
+
+/**
+ * The guide pack of one designed route: predicted time, pace rule, water and
+ * ground still to confirm.
+ *
+ * @param routeId - Reactive route id, or null when nothing is picked.
+ * @returns The TanStack query for the route's guide.
+ */
+export function useRouteGuideQuery(routeId: MaybeRefOrGetter<number | null>) {
+  const { isAuthenticated } = storeToRefs(useAuthStore())
+  const id = computed(() => {
+    const value = toValue(routeId)
+    return typeof value === 'number' && value > 0 ? value : 0
+  })
+
+  return useQuery({
+    queryKey: computed(() => queryKeys.analysis.routeGuide(id.value)),
+    queryFn: ({ signal }) => fetchRouteGuide(id.value, signal),
+    enabled: computed(() => id.value > 0 && isAuthenticated.value),
   })
 }

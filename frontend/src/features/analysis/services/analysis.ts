@@ -45,6 +45,8 @@ import type {
   ActivityLoadsSummaryDto,
   RouteDto,
   RouteGenMode,
+  RouteGuide,
+  RouteGuideWater,
   RoutePlan,
   RouteSegmentMatch,
   RouteSegmentMatchDto,
@@ -1164,5 +1166,68 @@ export async function generateRoutePlan(
     gainM: dto.gain_m,
     unknownM: dto.unknown_m,
     unknownRanges: (dto.unknown_ranges ?? []).map((r) => ({ startM: r.start_m, endM: r.end_m })),
+  }
+}
+
+/**
+ * Read the guide pack of one saved route and trim it to what the view shows:
+ * the predicted time, the pace rule behind it, nearby water and the ground
+ * still to confirm. Water positions come from the track: the guide places
+ * every event by ground distance, and the vertex nearest that distance is
+ * where the marker belongs.
+ *
+ * @param routeId - The saved route to guide.
+ * @param signal - Optional abort signal.
+ * @returns The trimmed guide.
+ * @throws {HttpError} When the request fails.
+ */
+export async function fetchRouteGuide(routeId: number, signal?: AbortSignal): Promise<RouteGuide> {
+  const dto = await apiFetch<Schemas['RouteGuideRead']>(`/analysis/routes/${routeId}/guide`, {
+    signal,
+  })
+  const track = (dto.track ?? []) as Array<Array<number | null>>
+  const atMetres = (metres: number): GeoPoint | null => {
+    let nearest: GeoPoint | null = null
+    let bestD = Number.POSITIVE_INFINITY
+    for (const row of track) {
+      const [lat, lng, , m] = row
+      if (typeof lat !== 'number' || typeof lng !== 'number' || typeof m !== 'number') continue
+      const d = Math.abs(m - metres)
+      if (d < bestD) {
+        bestD = d
+        nearest = { lat, lng }
+      }
+    }
+    return nearest
+  }
+  const water: RouteGuideWater[] = (dto.events ?? [])
+    .filter((e) => e.kind === 'water' && e.at_m !== undefined)
+    .map((e) => ({
+      kind: (e.water === 'spring' ? 'spring' : 'font') as RouteGuideWater['kind'],
+      name: e.name ?? null,
+      atM: e.at_m ?? 0,
+      point: atMetres(e.at_m ?? 0),
+    }))
+    .filter((w): w is RouteGuideWater & { point: GeoPoint } => w.point !== null)
+  const unknownM = (dto.events ?? [])
+    .filter((e) => e.kind === 'unknown')
+    .reduce((total, e) => total + Math.max(0, (e.end_m ?? e.at_m ?? 0) - (e.at_m ?? 0)), 0)
+  return {
+    distanceM: dto.distance_m,
+    gainM: dto.gain_m,
+    lossM: dto.loss_m,
+    estTimeS: dto.est_time_s ?? null,
+    pace: dto.pace
+      ? {
+          perKmS: dto.pace.per_km_s,
+          per100mGainS: dto.pace.per_100m_gain_s,
+          per100mLossS: dto.pace.per_100m_loss_s,
+          perTechnicalKmS: dto.pace.per_technical_km_s,
+          error: dto.pace.error,
+          sessions: dto.pace.sessions,
+        }
+      : null,
+    water,
+    unknownM,
   }
 }
