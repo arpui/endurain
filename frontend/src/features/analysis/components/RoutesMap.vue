@@ -44,6 +44,8 @@ const emit = defineEmits<{
   addPoint: [point: GeoPoint]
   /** The viewer picked a draft handle: remove that point. */
   removeVertex: [index: number]
+  /** The viewer dragged a draft handle and released it: that point moved. */
+  moveVertex: [index: number, point: GeoPoint]
   /** The viewer tapped the map while picking: that point is the next endpoint. */
   endpoint: [point: GeoPoint]
 }>()
@@ -51,6 +53,27 @@ const emit = defineEmits<{
 const ready = useRenderProvidersReady()
 const container = ref<HTMLElement | null>(null)
 let instance: MapInstance | null = null
+
+/** Handles stop being one-per-point past this: a dense saved route would
+otherwise bury the map in thousands of grabbers; the evenly sampled set
+keeps every stretch editable. */
+const MAX_HANDLES = 150
+
+/** Which draft points get handles, as their original indices. */
+function handleIndices(points: GeoPoint[]): number[] {
+  if (points.length <= MAX_HANDLES) {
+    return points.map((_, index) => index)
+  }
+  const step = Math.ceil(points.length / MAX_HANDLES)
+  const indices: number[] = []
+  for (let index = 0; index < points.length; index += step) {
+    indices.push(index)
+  }
+  if (indices[indices.length - 1] !== points.length - 1) {
+    indices.push(points.length - 1)
+  }
+  return indices
+}
 
 /** Stored routes plus, while editing, the draft with its clickable handles. */
 function overlays(): MapOverlay[] {
@@ -108,13 +131,29 @@ function overlays(): MapOverlay[] {
     })
   }
   if (props.draft && props.draft.length > 0) {
+    const draft = props.draft
+    const handles = handleIndices(draft)
     list.push({
-      points: props.draft,
+      points: draft,
       color: themeColor('--color-effort'),
       weight: 5,
       opacity: 0.95,
-      vertices: props.draft,
-      onVertexClick: (index) => emit('removeVertex', index),
+      vertices: handles.flatMap((index) => {
+        const point = draft[index]
+        return point ? [point] : []
+      }),
+      onVertexClick: (handle) => {
+        const original = handles[handle]
+        if (original !== undefined) {
+          emit('removeVertex', original)
+        }
+      },
+      onVertexDragEnd: (handle, point) => {
+        const original = handles[handle]
+        if (original !== undefined) {
+          emit('moveVertex', original, point)
+        }
+      },
     })
   }
   return list
@@ -157,6 +196,9 @@ watch(
     props.editingId,
     props.segments,
     props.highlight,
+    props.endpoints,
+    props.water,
+    props.picking,
   ],
   () => {
     if (!instance) {

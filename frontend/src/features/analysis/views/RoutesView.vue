@@ -219,18 +219,32 @@ function cancelEdit(): void {
   editingId.value = null
 }
 
+// draft changes replace the array, never mutate it in place: the map watches
+// the draft's identity, and a push would draw nothing while counting points.
 function addPoint(point: GeoPoint): void {
   if (draft.value) {
-    draft.value.push(point)
+    draft.value = [...draft.value, point]
   }
 }
 
 function removeVertex(index: number): void {
-  draft.value?.splice(index, 1)
+  if (draft.value) {
+    draft.value = draft.value.filter((_, position) => position !== index)
+  }
+}
+
+function moveVertex(index: number, point: GeoPoint): void {
+  if (draft.value) {
+    const next = [...draft.value]
+    next[index] = point
+    draft.value = next
+  }
 }
 
 function undoLast(): void {
-  draft.value?.pop()
+  if (draft.value) {
+    draft.value = draft.value.slice(0, -1)
+  }
 }
 
 async function saveDraft(): Promise<void> {
@@ -392,6 +406,7 @@ function confirmDelete(): void {
           :picking="genOpen"
           @select="pick"
           @add-point="addPoint"
+          @move-vertex="moveVertex"
           @endpoint="onEndpointPick"
           @remove-vertex="removeVertex"
         />

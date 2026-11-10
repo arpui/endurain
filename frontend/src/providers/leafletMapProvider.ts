@@ -8,6 +8,8 @@
  */
 import {
   circleMarker,
+  divIcon,
+  marker,
   map as createMap,
   polyline,
   tileLayer,
@@ -172,19 +174,21 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
         }
         for (const overlay of extra) {
           const points = toLatLngs(overlay.points)
+          const positions: [number, number][] = points
+          let lineRef: ReturnType<typeof polyline> | null = null
           if (points.length > 0) {
-            const line = polyline(points, {
+            lineRef = polyline(points, {
               color: overlay.color,
               weight: overlay.weight ?? 6,
               opacity: overlay.opacity ?? 0.85,
             }).addTo(map)
             if (overlay.name) {
-              line.bindTooltip(overlay.name)
+              lineRef.bindTooltip(overlay.name)
             }
             if (overlay.onSelect) {
-              line.on('click', overlay.onSelect)
+              lineRef.on('click', overlay.onSelect)
             }
-            overlays.push(line)
+            overlays.push(lineRef)
           }
           if (overlay.markers) {
             overlay.markers.forEach((marker) => {
@@ -212,6 +216,43 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
               }).addTo(map)
               handle.on('click', () => overlay.onVertexClick?.(index))
               overlays.push(handle)
+              if (overlay.onVertexDragEnd) {
+                // a transparent draggable grabber over the handle: dragging
+                // moves the handle and redraws the line inside the provider
+                // (no full re-render, which would destroy the layer being
+                // dragged); only the release reports up to the app
+                const grabber = marker([vertex.lat, vertex.lng], {
+                  draggable: true,
+                  opacity: 0,
+                  icon: divIcon({ className: '', iconSize: [20, 20] }),
+                }).addTo(map)
+                let dragged = false
+                grabber.on('dragstart', () => {
+                  dragged = false
+                })
+                grabber.on('drag', () => {
+                  dragged = true
+                  const at = grabber.getLatLng()
+                  handle.setLatLng(at)
+                  positions[index] = [at.lat, at.lng]
+                  lineRef?.setLatLngs(positions)
+                })
+                grabber.on('dragend', () => {
+                  if (!dragged) {
+                    return
+                  }
+                  const at = grabber.getLatLng()
+                  overlay.onVertexDragEnd?.(index, { lat: at.lat, lng: at.lng })
+                })
+                grabber.on('click', () => {
+                  if (dragged) {
+                    dragged = false
+                    return
+                  }
+                  overlay.onVertexClick?.(index)
+                })
+                overlays.push(grabber)
+              }
             })
           }
         }
