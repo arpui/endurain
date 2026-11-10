@@ -31,6 +31,8 @@ const props = defineProps<{
   highlight?: GeoPoint[] | null
   /** Endpoints of a plan being picked: drawn as labelled dots, joined by a line. */
   endpoints?: GeoPoint[] | null
+  /** Where to open when there is nothing to frame yet: last route's start. */
+  center?: GeoPoint | null
   /** Mapped water near the picked route, drawn as dots the athlete can read. */
   water?: { point: GeoPoint; name: string | null; kind: 'font' | 'spring' }[]
   /** Whether map taps pick plan endpoints instead of doing nothing. */
@@ -179,7 +181,14 @@ function mountMap(): void {
   }
   const { provider } = useMapProvider()
   instance = provider.mount(container.value, renderOptions())
-  instance.focus(allPoints())
+  const points = allPoints()
+  if (points.length >= 2) {
+    instance.focus(points)
+  } else if (props.center) {
+    // a fresh draft: open near the athlete's own ground, zoomed enough to
+    // see where the first click lands - never the whole world
+    instance.panTo?.(props.center, 16)
+  }
 }
 
 function allPoints(): GeoPoint[] {
@@ -206,6 +215,12 @@ watch(
       return
     }
     instance.update(renderOptions())
+    // with no hint to open on (an athlete without saved routes yet), the
+    // second point is the first frameable content: pull the view from the
+    // world down to where they are actually drawing
+    if (!props.center && props.draft && props.draft.length === 2) {
+      instance.focus(props.draft)
+    }
   },
 )
 watch(

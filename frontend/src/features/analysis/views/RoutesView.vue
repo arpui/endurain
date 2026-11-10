@@ -402,6 +402,7 @@ function confirmDelete(): void {
           :segments="networkSegments"
           :highlight="routeVariantHighlight"
           :endpoints="genEndpoints"
+          :center="routes[0]?.points[0] ?? null"
           :water="guide?.water ?? []"
           :picking="genOpen"
           @select="pick"

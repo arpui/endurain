@@ -151,14 +151,28 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
         onMapClick?.({ lat: event.latlng.lat, lng: event.latlng.lng })
       })
 
-      /** Re-fits the viewport to a track's bounds (or the world when empty). */
+      /**
+       * Frames a track's bounds - once, and only real geometry.
+       *
+       * The camera is the viewer's: an update must never yank it (a designer
+       * clicking points would lose their place every time), the empty track
+       * of a surface that draws through overlays means nothing, and a
+       * single point would zoom past any useful level. The first render
+       * carrying a spread of points is what earns the fit; explicit
+       * recenter and focus still frame on demand.
+       */
+      let framed = false
       const fit = (track: MapTrack): void => {
         const bounds = boundsOf(track)
-        if (bounds) {
-          map.fitBounds(bounds, { padding: [24, 24] })
-        } else {
-          map.setView([0, 0], 2)
+        if (!bounds) {
+          return
         }
+        const [[south, west], [north, east]] = bounds
+        if ((south === north && west === east) || framed) {
+          return
+        }
+        framed = true
+        map.fitBounds(bounds, { padding: [24, 24] })
       }
 
       const draw = (track: MapTrack, extra: MapOverlay[] = []): void => {
@@ -279,8 +293,13 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
         focus(points: GeoPoint[]): void {
           const bounds = boundsOf({ points })
           if (bounds) {
+            framed = true
             map.fitBounds(bounds, { padding: [24, 24] })
           }
+        },
+        panTo(point: GeoPoint, zoom: number): void {
+          framed = true
+          map.setView([point.lat, point.lng], zoom)
         },
         destroy(): void {
           map.remove()

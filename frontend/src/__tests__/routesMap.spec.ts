@@ -42,6 +42,8 @@ const chain = (n: number): GeoPoint[] => Array.from({ length: n }, (_, i) => poi
 /** The last options handed to the map, plus how often it was asked to redraw. */
 let lastOptions: MapRenderOptions | null = null
 let updateCalls = 0
+let focused: number[] = []
+let panned: { lat: number; lng: number; zoom: number }[] = []
 
 async function mountMap(props: Record<string, unknown>) {
   const wrapper = mount(RoutesMap, {
@@ -55,6 +57,8 @@ describe('routes map editor', () => {
   beforeEach(async () => {
     lastOptions = null
     updateCalls = 0
+    focused = []
+    panned = []
     await registerRenderProviders()
     const inner = useMapProvider().provider
     setMapProvider({
@@ -68,6 +72,14 @@ describe('routes map editor', () => {
             lastOptions = next
             updateCalls += 1
             instance.update(next)
+          },
+          focus: (points: GeoPoint[]): void => {
+            focused.push(points.length)
+            instance.focus(points)
+          },
+          panTo: (center: GeoPoint, zoom: number): void => {
+            panned.push({ lat: center.lat, lng: center.lng, zoom })
+            instance.panTo?.(center, zoom)
           },
         }
       },
@@ -110,5 +122,26 @@ describe('routes map editor', () => {
     const afterEndpoints = updateCalls
     await wrapper.setProps({ water: [{ point: point(1), name: 'Font Freda', kind: 'font' }] })
     expect(updateCalls).toBeGreaterThan(afterEndpoints)
+  })
+
+  it("opens a fresh draft near the athlete's ground, not on the world", async () => {
+    await mountMap({ draft: [point(0)], center: point(5) })
+    expect(panned).toEqual([{ lat: point(5).lat, lng: point(5).lng, zoom: 16 }])
+    expect(focused).toEqual([])
+  })
+
+  it('frames a hand-drawn line when it starts and never on later clicks', async () => {
+    const wrapper = await mountMap({ draft: [] })
+    await wrapper.setProps({ draft: chain(2) })
+    expect(focused).toEqual([2])
+    const frames = focused.length
+    await wrapper.setProps({ draft: chain(3) })
+    expect(focused).toHaveLength(frames)
+  })
+
+  it('focuses the full line when a saved route is edited', async () => {
+    await mountMap({ draft: chain(30), center: point(5) })
+    expect(focused).toEqual([30])
+    expect(panned).toEqual([])
   })
 })

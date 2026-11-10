@@ -81,6 +81,8 @@ export interface MapInstance {
   recenter(): void
   /** Fits the viewport to one subset of the drawn geometry (e.g. a section). */
   focus(points: GeoPoint[]): void
+  /** Centers the map on one place at a chosen zoom, without fitting. */
+  panTo?(point: GeoPoint, zoom: number): void
   /** Tears down the map and releases resources. */
   destroy(): void
 }
@@ -107,6 +109,7 @@ const noopMapProvider: MapProvider = {
       update() {},
       recenter() {},
       focus() {},
+      panTo() {},
       destroy() {},
     }
   },
