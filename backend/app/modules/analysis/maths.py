@@ -13,6 +13,7 @@ count), while callers drop heart-rate zeros first because they mean "no signal".
 """
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from math import exp
 from statistics import median
@@ -646,3 +647,74 @@ def short_peak_runaway(
             if isolated and (best is None or mean > best[1]):
                 best = (dur_s, mean, v_mean)
     return best
+
+
+@dataclass(frozen=True)
+class PaceModel:
+    """An athlete's own rule of thumb for how long ground takes them.
+
+    The seconds a run took, explained by what it covered: so much per metre of
+    ground, so much more per metre climbed, descended and spent on technical
+    terrain. It is fitted over their own sessions and says how well it fits.
+
+    Attributes:
+        per_m: Seconds per metre of ground.
+        per_gain_m: Extra seconds per metre climbed.
+        per_loss_m: Extra seconds per metre descended.
+        per_technical_m: Extra seconds per metre of technical ground.
+        error: Median relative miss over the sessions it was fitted on (0-1).
+        sessions: Sessions it was fitted on.
+    """
+
+    per_m: float
+    per_gain_m: float
+    per_loss_m: float
+    per_technical_m: float
+    error: float
+    sessions: int
+
+    def seconds(self, distance_m: float, gain_m: float, loss_m: float, technical_m: float) -> float:
+        """Time the rule gives a stretch of ground."""
+        return (
+            self.per_m * distance_m
+            + self.per_gain_m * gain_m
+            + self.per_loss_m * loss_m
+            + self.per_technical_m * technical_m
+        )
+
+
+def fit_pace_model(
+    sessions: Sequence[tuple[float, float, float, float, float]],
+    min_sessions: int = analysis_constants.TRAIL_PACE_MIN_SESSIONS,
+) -> PaceModel | None:
+    """Fit the athlete's pace rule over their own sessions.
+
+    Least squares on the relative miss, so a long day in the mountains weighs
+    like a short run rather than drowning it. A term that comes out negative
+    would let a long enough stretch take no time at all, so it is dropped
+    before fitting again.
+
+    Args:
+        sessions: ``(distance_m, gain_m, loss_m, technical_m, moving_s)`` per session.
+        min_sessions: Fewest sessions a rule may be fitted on.
+
+    Returns:
+        The rule, or ``None`` when there are too few sessions to fit one.
+    """
+    rows = np.asarray([row for row in sessions if row[4] > 0 and row[0] > 0], dtype=float)
+    if len(rows) < min_sessions:
+        return None
+    relative = rows[:, :4] / rows[:, 4:5]
+    kept = [0, 1, 2, 3]
+    coefficients = np.zeros(4)
+    while kept:
+        solved, *_ = np.linalg.lstsq(relative[:, kept], np.ones(len(rows)), rcond=None)
+        negative = [term for term, value in zip(kept, solved, strict=True) if value < 0 and term != 0]
+        if not negative:
+            coefficients[kept] = solved
+            break
+        kept = [term for term in kept if term not in negative]
+    if coefficients[0] <= 0:
+        return None
+    error = float(np.median(np.abs(relative @ coefficients - 1.0)))
+    return PaceModel(*(float(value) for value in coefficients), error=error, sessions=len(rows))

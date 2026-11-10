@@ -161,12 +161,12 @@ def activity_graph_rows(
     xy = [to_xy(lat, lng) for _s, lat, lng in points]
     evidence = _on_path_flags(xy, way_geometries_for_activity(activity_id, user_id, db))
 
-    cells: dict[tuple[int, int], list[float]] = {}  # [lat_sum, lng_sum, ele_sum, n]
+    cells: dict[tuple[int, int], list[float]] = {}  # [lat_sum, lng_sum, ele_sum, n, ele_n]
     edges: dict[tuple[tuple[int, int], tuple[int, int]], list[float]] = {}  # len, gain, loss, passes, step_max, on_path
     occ: dict[tuple[int, int], list[list[float]]] = {}  # cell -> [[enter_m, exit_m], ...]
     prev_cell = None
     prev_xy = None
-    prev_ele: float | None = None
+    entry_ele: float | None = None  # altitude where the track entered prev_cell
     prev_index = -1
     cum = 0.0
     for index, (stamp, lat, lng) in enumerate(points):
@@ -177,6 +177,7 @@ def activity_graph_rows(
             if step > MAX_JUMP_M:
                 prev_xy = (x, y)
                 prev_cell = None
+                entry_ele = None
                 prev_index = -1
                 continue
             cum += step
@@ -184,12 +185,14 @@ def activity_graph_rows(
         cell = cell_of(x, y)
         node = cells.get(cell)
         if node is None:
-            cells[cell] = [lat, lng, ele or 0.0, 1]
-        else:
-            node[0] += lat
-            node[1] += lng
-            node[2] += ele or 0.0
-            node[3] += 1
+            node = cells[cell] = [0.0, 0.0, 0.0, 0, 0]
+        node[0] += lat
+        node[1] += lng
+        node[3] += 1
+        if ele is not None:
+            # a sample without altitude places the cell but says nothing of its height
+            node[2] += ele
+            node[4] += 1
         ranges = occ.setdefault(cell, [])
         if ranges and cum - ranges[-1][1] <= 1.0:
             ranges[-1][1] = cum
@@ -197,8 +200,10 @@ def activity_graph_rows(
             ranges.append([cum, cum])
         if prev_cell is not None and cell != prev_cell:
             length = math.hypot(x - prev_xy[0], y - prev_xy[1])
-            gain = max(0.0, ele - prev_ele) if ele is not None and prev_ele is not None else 0.0
-            loss = max(0.0, prev_ele - ele) if ele is not None and prev_ele is not None else 0.0
+            # the traversal's climb runs from entering the origin cell to entering
+            # this one: the samples spent inside a cell are part of crossing it
+            gain = max(0.0, ele - entry_ele) if ele is not None and entry_ele is not None else 0.0
+            loss = max(0.0, entry_ele - ele) if ele is not None and entry_ele is not None else 0.0
             on_path = 1 if _along(evidence[prev_index], evidence[index], x - prev_xy[0], y - prev_xy[1]) else 0
             edge = edges.get((prev_cell, cell))
             if edge is None:
@@ -210,7 +215,9 @@ def activity_graph_rows(
                 edge[3] += 1
                 edge[4] = max(edge[4], step)
                 edge[5] += on_path
-        prev_cell, prev_xy, prev_ele, prev_index = cell, (x, y), ele, index
+        if ele is not None and (cell != prev_cell or entry_ele is None):
+            entry_ele = ele
+        prev_cell, prev_xy, prev_index = cell, (x, y), index
 
     # cell grades: the stored observation projected by ground distance
     cell_grades: dict[tuple[int, int], str] = {}
@@ -238,7 +245,8 @@ def activity_graph_rows(
             "y": c[1],
             "lat": v[0] / v[3],
             "lng": v[1] / v[3],
-            "ele": v[2] / v[3],
+            "ele": v[2] / v[4] if v[4] else 0.0,
+            "ele_visits": int(v[4]),
             "visits": int(v[3]),
             "grade": cell_grades.get(c, ""),
         }
@@ -276,14 +284,16 @@ def merge_activity_into_graph(
             graph_nodes[key] = {
                 "lat_sum": row["lat"] * row["visits"],
                 "lng_sum": row["lng"] * row["visits"],
-                "ele_sum": row["ele"] * row["visits"],
+                "ele_sum": row["ele"] * row["ele_visits"],
+                "ele_visits": row["ele_visits"],
                 "visits": row["visits"],
                 "grade": row["grade"],
             }
         else:
             acc["lat_sum"] += row["lat"] * row["visits"]
             acc["lng_sum"] += row["lng"] * row["visits"]
-            acc["ele_sum"] += row["ele"] * row["visits"]
+            acc["ele_sum"] += row["ele"] * row["ele_visits"]
+            acc["ele_visits"] += row["ele_visits"]
             acc["visits"] += row["visits"]
             if GRADE_RANK[row["grade"]] > GRADE_RANK[acc["grade"]]:
                 acc["grade"] = row["grade"]
@@ -306,7 +316,7 @@ def graph_from_rows(nodes, edges) -> tuple[dict, dict]:
 
     An edge can leave the bounding box its origin was loaded by: its destination
     cell then gets its position from the grid itself, which is exact by
-    construction, and carries no claim of its own.
+    construction, and carries no claim of its own - no altitude either.
     """
     node_map = {
         (n.x, n.y): {"lat": n.lat, "lng": n.lng, "ele": n.ele, "grade": n.grade, "xy": to_xy(n.lat, n.lng)}
@@ -330,5 +340,63 @@ def graph_from_rows(nodes, edges) -> tuple[dict, dict]:
             if cell not in node_map:
                 x_m, y_m = cell[0] * CELL_M, cell[1] * CELL_M
                 lat, lng = to_latlng(x_m, y_m)
-                node_map[cell] = {"lat": lat, "lng": lng, "ele": 0.0, "grade": "", "xy": (x_m, y_m)}
+                node_map[cell] = {"lat": lat, "lng": lng, "ele": None, "grade": "", "xy": (x_m, y_m)}
     return node_map, adjacency
+
+
+def ground_profile(cum: list[float], elevations: list[float | None]) -> list[float | None]:
+    """Altitude along a line over the graph, smoothed over ground distance.
+
+    A cell's stored altitude is the mean of every session that crossed it, each
+    with its own altimeter offset, so neighbouring cells disagree by metres the
+    ground does not have. Averaging the cells within a window of ground around
+    each vertex keeps the shape of the climb and drops that disagreement.
+
+    Args:
+        cum: Cumulative ground distance at each vertex, metres.
+        elevations: Stored cell altitude under each vertex, ``None`` on ground
+            the athlete never crossed.
+
+    Returns:
+        One altitude per vertex; ``None`` stays ``None``.
+    """
+    half = analysis_constants.TRAIL_PROFILE_WINDOW_M / 2.0
+    profile: list[float | None] = []
+    lo = hi = 0
+    total = 0.0
+    count = 0
+    for index, value in enumerate(elevations):
+        while hi < len(cum) and cum[hi] <= cum[index] + half:
+            if elevations[hi] is not None:
+                total += elevations[hi]
+                count += 1
+            hi += 1
+        while cum[lo] < cum[index] - half:
+            if elevations[lo] is not None:
+                total -= elevations[lo]
+                count -= 1
+            lo += 1
+        profile.append(None if value is None or count == 0 else total / count)
+    return profile
+
+
+def profile_gain(profile: list[float | None]) -> float:
+    """Positive elevation along a profile, counting only rises that hold.
+
+    A rise counts once it clears the hysteresis threshold; unknown ground
+    (``None``) contributes nothing and the count starts afresh after it.
+    """
+    threshold = analysis_constants.TRAIL_PROFILE_GAIN_THRESHOLD_M
+    gain = 0.0
+    reference: float | None = None
+    for value in profile:
+        if value is None:
+            reference = None
+        elif reference is None:
+            reference = value
+        elif value - reference >= threshold:
+            gain += value - reference
+            reference = value
+        elif reference - value >= threshold:
+            reference = value
+    return gain

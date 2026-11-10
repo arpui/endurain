@@ -900,3 +900,38 @@ class TestKernelCap:
                 steady, None, None, None, 1.0, cp, None, None, {"rss_kernel_cap_if": 0.0}
             )
         )
+
+
+class TestPaceModel:
+    @staticmethod
+    def _sessions(count: int = 40):
+        # an athlete who takes 300 s per km, 4 s more per metre climbed and
+        # half a second more per technical metre; descents cost them nothing
+        sessions = []
+        for k in range(count):
+            distance = 5000.0 + 400.0 * k
+            gain = 20.0 * (k % 7)
+            loss = 15.0 * (k % 5)
+            technical = 100.0 * (k % 4)
+            sessions.append((distance, gain, loss, technical, 0.3 * distance + 4.0 * gain + 0.5 * technical))
+        return sessions
+
+    def test_the_rule_recovers_what_the_sessions_were_made_of(self):
+        model = analysis_maths.fit_pace_model(self._sessions())
+        assert model is not None and model.sessions == 40
+        assert model.per_m == pytest.approx(0.3, abs=1e-6)
+        assert model.per_gain_m == pytest.approx(4.0, abs=1e-6)
+        assert model.per_loss_m == pytest.approx(0.0, abs=1e-6)
+        assert model.per_technical_m == pytest.approx(0.5, abs=1e-6)
+        assert model.error == pytest.approx(0.0, abs=1e-9)
+        assert model.seconds(1000.0, 100.0, 0.0, 0.0) == pytest.approx(700.0)
+
+    def test_a_term_that_would_give_time_back_is_dropped(self):
+        # descents that make the athlete faster than flat would fit a negative term
+        sessions = [(d, g, lo, t, s - 0.4 * lo) for d, g, lo, t, s in self._sessions()]
+        model = analysis_maths.fit_pace_model(sessions)
+        assert model is not None
+        assert model.per_loss_m == 0.0 and model.per_m > 0
+
+    def test_too_few_sessions_fit_no_rule(self):
+        assert analysis_maths.fit_pace_model(self._sessions(5)) is None

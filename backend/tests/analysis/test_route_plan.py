@@ -1,11 +1,13 @@
 """The A→B planner: two strata, one search, three intentions."""
 
+import math
 from types import SimpleNamespace
 
 import pytest
 
 import core.exceptions as core_exceptions
 import modules.analysis.constants as analysis_constants
+import modules.analysis.graph as analysis_graph
 import modules.analysis.route_plan as route_plan
 
 REF_LAT = analysis_constants.TRAIL_GRAPH_REF_LAT
@@ -139,3 +141,64 @@ class TestGroundRules:
         assert route_plan.way_is_technical({"highway": "footway", "sac_scale": "T3"})
         assert not route_plan.way_is_technical({"highway": "footway"})
         assert not route_plan.way_is_technical(None)
+
+
+class TestGroundProfile:
+    def test_the_climb_survives_and_the_cell_disagreement_does_not(self):
+        cum = [15.0 * k for k in range(60)]
+        steady = [1000.0 + k for k in range(60)]
+        noisy = [value + (8.0 if k % 2 else -8.0) for k, value in enumerate(steady)]
+        gain = analysis_graph.profile_gain(analysis_graph.ground_profile(cum, noisy))
+        assert 50.0 <= gain <= 62.0  # 59 m of real climb; the raw rises sum to ~500
+
+    def test_unknown_ground_claims_no_altitude_and_no_gain(self):
+        cum = [0.0, 15.0, 30.0, 45.0]
+        profile = analysis_graph.ground_profile(cum, [100.0, None, None, 300.0])
+        assert profile[1] is None and profile[2] is None
+        assert analysis_graph.profile_gain(profile) == 0.0
+
+
+class TestActivityGraphRows:
+    @staticmethod
+    def _rows(monkeypatch, altitudes):
+        from datetime import datetime, timedelta
+
+        start = datetime(2026, 1, 1, 8, 0, 0)
+        # 3 m per second eastwards: five samples inside every 15 m cell
+        step_lng = 3.0 / (111320.0 * math.cos(math.radians(analysis_constants.TRAIL_GRAPH_REF_LAT)))
+        track = [
+            (
+                start + timedelta(seconds=k),
+                analysis_constants.TRAIL_GRAPH_REF_LAT,
+                analysis_constants.TRAIL_GRAPH_REF_LNG + (k - 2) * step_lng,
+            )
+            for k in range(len(altitudes))
+        ]
+        samples = [(stamp, alt) for (stamp, _lat, _lng), alt in zip(track, altitudes, strict=True) if alt is not None]
+        monkeypatch.setattr(analysis_graph.analysis_service, "_trail_track", lambda *_a: track)
+        monkeypatch.setattr(
+            analysis_graph.analysis_service,
+            "_stream_samples",
+            lambda *_a, **_k: (None, tuple(alt for _s, alt in samples), tuple(stamp for stamp, _a in samples)),
+        )
+        monkeypatch.setattr(analysis_graph, "way_geometries_for_activity", lambda *_a: [])
+        monkeypatch.setattr(analysis_graph.analysis_crud, "list_trail_observation", lambda *_a: None)
+        return analysis_graph.activity_graph_rows(1, 1, None)
+
+    def test_a_traversal_climbs_what_the_whole_cell_climbed(self, monkeypatch):
+        # one metre up per sample, five samples per cell: each crossing is 5 m of climb
+        _nodes, edges, _grades = self._rows(monkeypatch, [100.0 + k for k in range(30)])
+        assert len(edges) == 5
+        assert all(edge["gain"] == pytest.approx(5.0) and edge["loss"] == 0.0 for edge in edges)
+
+    def test_a_track_without_altitude_does_not_lower_the_cell(self, monkeypatch):
+        graph_nodes: dict = {}
+        with_altitude, _edges, _grades = self._rows(monkeypatch, [500.0] * 30)
+        analysis_graph.merge_activity_into_graph(graph_nodes, {}, with_altitude, [])
+        # the same ground again, its altimeter silent for the first minute
+        silent, _edges, _grades = self._rows(monkeypatch, [None] * 60 + [500.0] * 5)
+        assert min(silent, key=lambda row: row["x"])["ele_visits"] == 0
+        analysis_graph.merge_activity_into_graph(graph_nodes, {}, silent, [])
+        first = graph_nodes[(0, 0)]
+        assert first["visits"] == 10 and first["ele_visits"] == 5
+        assert first["ele_sum"] / first["ele_visits"] == pytest.approx(500.0)

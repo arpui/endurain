@@ -986,6 +986,8 @@ class TrailVariantRead(BaseModel):
         main_m: Ground of the stretch it replaces.
         delta_m: Variant minus main, metres.
         delta_gain_m: Variant minus main elevation gain, metres.
+        delta_time_s: Variant minus main time by the athlete's own pace rule,
+            seconds; ``None`` when no rule was asked for or none can be fitted.
         status: ``confirmada`` (evidence-backed) or ``provisional``.
         grade: Hardest technical claim found along the variant.
         path_latlng: The drawn polyline, shaped by certified ways where real.
@@ -1003,6 +1005,7 @@ class TrailVariantRead(BaseModel):
     main_m: StrictInt
     delta_m: StrictInt
     delta_gain_m: StrictInt
+    delta_time_s: StrictInt | None = None
     status: Literal["confirmada", "provisional"]
     grade: StrictStr
     path_latlng: list[list[float]]
@@ -1137,6 +1140,107 @@ class RouteGenerateRead(BaseModel):
     gain_m: StrictFloat
     unknown_ranges: list[RouteUnknownRangeRead]
     unknown_m: StrictFloat
+
+
+class RouteGuidePaceRead(BaseModel):
+    """The athlete's own pace rule a guide's times were estimated with.
+
+    Attributes:
+        per_km_s: Seconds per kilometre of ground.
+        per_100m_gain_s: Extra seconds per 100 m climbed.
+        per_100m_loss_s: Extra seconds per 100 m descended.
+        per_technical_km_s: Extra seconds per kilometre of technical ground.
+        error: Median relative miss over the sessions the rule was fitted on.
+        sessions: Sessions the rule was fitted on.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    per_km_s: StrictFloat
+    per_100m_gain_s: StrictFloat
+    per_100m_loss_s: StrictFloat
+    per_technical_km_s: StrictFloat
+    error: StrictFloat
+    sessions: StrictInt
+
+
+class RouteGuideEventRead(BaseModel):
+    """One thing a route guide announces, placed by ground distance.
+
+    Attributes:
+        kind: ``segment`` (a named corridor of the athlete's), ``hard`` /
+            ``technical`` (ground their own descents found so), ``variant`` (a
+            reconnecting alternative leaves the route here), ``unknown`` (ground
+            they have never crossed) or ``water``.
+        at_m: Ground position along the route where it starts.
+        end_m: Where it ends; ``None`` for a single place.
+        label: The short form a watch shows (at most 15 bytes).
+        name: Full name, when it has one.
+        claim: Technical claim on the stretch, when one applies.
+        side: ``left`` / ``right`` / ``straight`` for a variant.
+        delta_m: Variant minus main ground, metres.
+        delta_gain_m: Variant minus main elevation gain, metres.
+        delta_time_s: Variant minus main estimated time, seconds.
+        confirmed: Whether a variant is evidence-backed or judged real.
+        off_route_m: How far off the line a water point sits.
+        water: ``font`` (drinking water) or ``spring`` (unvouched source).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["segment", "hard", "technical", "variant", "unknown", "water"]
+    at_m: StrictFloat
+    end_m: StrictFloat | None = None
+    label: StrictStr
+    name: StrictStr | None = None
+    claim: StrictStr | None = None
+    side: Literal["left", "right", "straight"] | None = None
+    delta_m: StrictInt | None = None
+    delta_gain_m: StrictInt | None = None
+    delta_time_s: StrictInt | None = None
+    confirmed: StrictBool | None = None
+    off_route_m: StrictFloat | None = None
+    water: Literal["font", "spring"] | None = None
+
+
+class RouteGuideRead(BaseModel):
+    """Everything a guide needs to walk someone along a route, in one piece.
+
+    The pack is self-contained on purpose: a phone or a watch downloads it at
+    home and replays it against its own GPS with no network. Every position is
+    ground distance along ``track``, so a client only has to know how far along
+    the line it is.
+
+    Attributes:
+        route_id: The designed route.
+        name: Route name.
+        generated_at: When the pack was built, ISO.
+        distance_m: Ground distance of the route.
+        gain_m: Elevation gain over known ground.
+        loss_m: Elevation loss over known ground.
+        est_time_s: Estimated time by the athlete's own pace rule.
+        pace: The rule itself, with how well it fits; ``None`` when the athlete
+            has too few measured sessions for one.
+        track: One row per vertex: ``[lat, lng, altitude, ground_m, eta_s]``;
+            altitude is ``None`` on ground never crossed, ``eta_s`` when no
+            rule exists.
+        events: What the guide announces, in ground order.
+        variants: The reconnecting alternatives, with their drawn paths.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    route_id: StrictInt
+    name: StrictStr
+    generated_at: StrictStr
+    distance_m: StrictFloat
+    gain_m: StrictFloat
+    loss_m: StrictFloat
+    est_time_s: StrictInt | None
+    pace: RouteGuidePaceRead | None
+    track: list[list[float | None]]
+    events: list[RouteGuideEventRead]
+    variants: list[TrailVariantRead]
 
 
 class RouteUpdate(BaseModel):
