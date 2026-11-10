@@ -467,8 +467,19 @@ class TestRouteConnect:
                 _USER_ID, analysis_schema.RouteConnectCreate(points=[near_start, near_end]), db
             )
             assert res.walked == [True]
+            assert res.carried == ["walked"]
+            assert res.spans == [len(res.geometry) - 1]  # the one stretch ends at the last point
             assert len(res.geometry) == 4  # the four cell centres, in order
             assert abs(res.geometry[0][1] - ref_lng) < 1e-9
+
+            # three anchors: each stretch ends at its own boundary, sharing it
+            res3 = analysis_service.connect_route(
+                _USER_ID,
+                analysis_schema.RouteConnectCreate(points=[near_start, [ref_lat, ref_lng + step_lng], near_end]),
+                db,
+            )
+            assert res3.carried == ["walked", "walked"]
+            assert res3.spans == [1, 3]
 
             # an anchor over ground never crossed keeps the straight line
             far = [ref_lat + 0.02, ref_lng]
@@ -476,6 +487,8 @@ class TestRouteConnect:
                 _USER_ID, analysis_schema.RouteConnectCreate(points=[near_start, far]), db
             )
             assert res2.walked == [False]
+            assert res2.carried == ["straight"]
+            assert res2.spans == [1]
             assert len(res2.geometry) == 2
 
     def test_a_gap_with_no_walked_chain_is_carried_by_a_mapped_way(self, pg_factory):
@@ -516,6 +529,7 @@ class TestRouteConnect:
             )
             assert res.carried == ["mapped"]
             assert res.walked == [False]
+            assert res.spans == [len(res.geometry) - 1]
             # the line leaves the straight: it bends through the mapped way
             assert len(res.geometry) > 2
             assert any(abs(pt[0] - way_lat) < 1e-9 for pt in res.geometry)

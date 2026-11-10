@@ -3258,6 +3258,7 @@ def connect_route(
 
     geometry: list[list[float]] = []
     carried: list[str] = []
+    spans: list[int] = []
 
     def push(lat: float, lng: float) -> None:
         if geometry and abs(geometry[-1][0] - lat) < 1e-7 and abs(geometry[-1][1] - lng) < 1e-7:
@@ -3283,9 +3284,14 @@ def connect_route(
             lat, lng = anchors[k]
             push(lat, lng)
             carried.append("straight")
+        # the stretch ends where its last pushed point lies: consecutive
+        # stretches share that boundary point, so slicing [prev..end] paints
+        # each kind without gaps
+        spans.append(len(geometry) - 1)
     return analysis_schema.RouteConnectRead(
         geometry=geometry,
         carried=carried,
+        spans=spans,
         walked=[kind == "walked" for kind in carried],
     )
 
