@@ -631,6 +631,28 @@ TRAIL_NETWORK_MAX_WAYS = 5000
 TRAIL_GRAPH_CELL_M = 15.0
 TRAIL_GRAPH_MAX_JUMP_M = 150.0
 TRAIL_GRAPH_MAX_STEP_M = 60.0
+#: Altitude read along a line over the graph: cell means are averaged over this
+#: much ground, and a rise counts as gain once it clears the threshold. Measured
+#: on recorded tracks whose own gain is known (1401/688/1312 m -> 1441/573/1375).
+TRAIL_PROFILE_WINDOW_M = 100.0
+TRAIL_PROFILE_GAIN_THRESHOLD_M = 3.0
+#: Water points a route guide mentions: what the map calls them, and how far
+#: off the line one may sit and still be "on the route".
+TRAIL_WATER_KINDS = ("font", "spring")
+TRAIL_GUIDE_WATER_REACH_M = 60.0
+
+
+def trail_water_kind_sql_list() -> str:
+    """Return the quoted ``IN (...)`` list of :data:`TRAIL_WATER_KINDS`."""
+    return ", ".join(f"'{kind}'" for kind in TRAIL_WATER_KINDS)
+
+
+#: The athlete's own pace rule is fitted over their measured runs; under this
+#: many sessions there is no rule to speak of. Sessions outside the speed band
+#: are recordings gone wrong, not running.
+TRAIL_PACE_MIN_SESSIONS = 20
+TRAIL_PACE_MIN_DISTANCE_M = 2000.0
+TRAIL_PACE_SPEED_BAND_MS = (0.8, 7.0)
 #: Reference of the local metric frame: good across the whole region at <0.1% error.
 TRAIL_GRAPH_REF_LAT = 42.3
 TRAIL_GRAPH_REF_LNG = 1.5

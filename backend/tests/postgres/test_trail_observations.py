@@ -390,22 +390,25 @@ class TestRouteEditing:
         ref_lng = analysis_constants.TRAIL_GRAPH_REF_LNG
         cell_m = analysis_constants.TRAIL_GRAPH_CELL_M
         step_lng = cell_m / (111320.0 * math.cos(math.radians(ref_lat)))
-        ele = [100.0, 110.0, 105.0, 120.0]
+        # a steady 1 m-per-cell climb whose cells disagree by ±6 m, as cells
+        # averaged over different sessions do: the climb is 39 m, the raw
+        # cell-to-cell rises add up to over 250 m
+        ele = [100.0 + k + (6.0 if k % 2 else -6.0) for k in range(40)]
         nodes = [
             {"x": k, "y": 0, "lat": ref_lat, "lng": ref_lng + k * step_lng, "ele": ele[k], "visits": 1, "grade": ""}
-            for k in range(4)
+            for k in range(40)
         ]
-        pts = [[ref_lat, ref_lng + k * step_lng] for k in range(4)]
+        pts = [[ref_lat, ref_lng + k * step_lng] for k in range(40)]
         with pg_factory() as db:
             analysis_crud.replace_user_graph(_USER_ID, nodes, [], db)
             db.commit()
             created = analysis_service.create_route(
                 _USER_ID, analysis_schema.RouteCreate(name="pujada", geometry=pts), db
             )
-            assert created.gain_m == 25.0  # 100→110 (+10) and 105→120 (+15)
-            assert created.distance_m > 40.0
+            assert 30.0 <= created.gain_m <= 45.0  # the climb, not the disagreement
+            assert created.distance_m > 580.0
 
-            shorter = pts[:2] + pts[3:]
+            shorter = pts[:21]
             edited = analysis_service.update_route(
                 created.id,
                 _USER_ID,
@@ -414,8 +417,8 @@ class TestRouteEditing:
             )
             assert edited is not None
             assert edited.name == "rebaixada" and edited.notes == "editada"
-            assert edited.gain_m == 20.0  # 100→110 (+10) and 110→120 (+10)
-            assert len(edited.geometry) == 3 and edited.distance_m == created.distance_m
+            assert 12.0 <= edited.gain_m <= 25.0  # half the route, half the climb
+            assert len(edited.geometry) == 21 and edited.distance_m < created.distance_m
 
             # another athlete's eyes: the route is simply not there
             assert (
@@ -698,10 +701,91 @@ class TestCourseExport:
             assert names.count("record") == 16
             assert names.count("course_point") >= 1
             records = [m for m in messages if m.name == "record"]
-            assert records[0].altitude == 100.0  # the graph's altitude, not a guess
+            # the graph's altitude (cells 100, 101, ... averaged along the ground), not a guess
+            assert 100.0 <= records[0].altitude <= 103.0
             # one hard run (3..13, over 120 m of ground) warns exactly once
             danger = [m for m in messages if m.name == "course_point" and m.type == 5]
             assert len(danger) == 1
+
+    def test_a_guide_pack_places_water_hard_ground_and_time_along_the_line(self, pg_factory, monkeypatch):
+        import math
+        from datetime import date
+
+        from fit_tool.fit_file import FitFile
+
+        import modules.analysis.maths as analysis_maths
+
+        ensure_user(pg_factory, _USER_ID)
+        ref_lat = analysis_constants.TRAIL_GRAPH_REF_LAT
+        ref_lng = analysis_constants.TRAIL_GRAPH_REF_LNG
+        cell_m = analysis_constants.TRAIL_GRAPH_CELL_M
+        step_lng = cell_m / (111320.0 * math.cos(math.radians(ref_lat)))
+        # forty walked cells climbing a metre each, hard from 150 m to 375 m
+        nodes = [
+            {
+                "x": k,
+                "y": 0,
+                "lat": ref_lat,
+                "lng": ref_lng + k * step_lng,
+                "ele": 100.0 + k,
+                "visits": 2,
+                "grade": "hard" if 10 <= k <= 25 else "",
+            }
+            for k in range(40)
+        ]
+        today = date(2026, 11, 9)
+        waters = [
+            # 20 m north of the line at cell 30; and a spring far off it
+            analysis_contracts.OsmWaterRecord(
+                1, "font", "Font del Roc", ref_lat + 20.0 / 111195.0, ref_lng + 30 * step_lng, today
+            ),
+            analysis_contracts.OsmWaterRecord(2, "spring", None, ref_lat + 300.0 / 111195.0, ref_lng, today),
+        ]
+        with pg_factory() as db:
+            analysis_crud.replace_user_graph(_USER_ID, nodes, [], db)
+            assert analysis_crud.replace_osm_waters(waters, db) == 2
+            # the same extract again describes, never duplicates
+            assert analysis_crud.replace_osm_waters(waters[:1], db) == 1
+            db.commit()
+            geometry = [[ref_lat, ref_lng + k * step_lng] for k in range(40)]
+            created = analysis_service.create_route(
+                _USER_ID, analysis_schema.RouteCreate(name="guiada", geometry=geometry), db
+            )
+            db.commit()
+
+            # no measured sessions: the pack still guides, and claims no time
+            bare = analysis_service.get_route_guide(created.id, _USER_ID, db)
+            assert bare.pace is None and bare.est_time_s is None
+            assert all(row[4] is None for row in bare.track)
+            assert [event.kind for event in bare.events] == ["hard", "water"]
+            hard, water = bare.events
+            assert hard.at_m == pytest.approx(150.0, abs=1.0) and hard.end_m == pytest.approx(375.0, abs=1.0)
+            assert water.name == "Font del Roc" and water.water == "font"
+            assert water.at_m == pytest.approx(450.0, abs=1.0) and water.off_route_m == pytest.approx(20.0, abs=0.5)
+            assert 30.0 <= bare.gain_m <= 39.0 and bare.loss_m == 0.0
+            assert bare.track[-1][3] == bare.distance_m
+
+            # with the athlete's rule: 300 s/km, 4 s per metre climbed, 0.5 s per technical metre
+            rule = analysis_maths.PaceModel(0.3, 4.0, 0.0, 0.5, 0.1, 30)
+            monkeypatch.setattr(analysis_service, "_pace_model", lambda *_a: rule)
+            timed = analysis_service.get_route_guide(created.id, _USER_ID, db)
+            assert timed.pace is not None and timed.pace.per_km_s == 300.0 and timed.pace.sessions == 30
+            etas = [row[4] for row in timed.track]
+            assert etas[0] == 0 and etas == sorted(etas)
+            ground_only = 0.3 * timed.distance_m
+            assert ground_only + 4.0 * 30.0 + 0.5 * 200.0 <= timed.est_time_s <= ground_only + 4.0 * 39.0 + 0.5 * 260.0
+
+            # the watch gets the same water point, with the water icon
+            parsed = FitFile.from_bytes(analysis_service.export_route_course(created.id, _USER_ID, db))
+            points = [
+                r.message
+                for r in parsed.records
+                if not r.is_definition and r.message is not None and r.message.name == "course_point"
+            ]
+            assert [(m.course_point_name, m.type) for m in points if m.type == 3] == [("Font del Roc", 3)]
+
+            with pytest.raises(core_exceptions.NotFoundError):
+                analysis_service.get_route_guide(created.id, _USER_ID + 1, db)
 
     def test_a_foreign_route_is_not_exportable(self, pg_factory):
         ensure_user(pg_factory, _USER_ID)

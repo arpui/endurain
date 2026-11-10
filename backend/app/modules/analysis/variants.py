@@ -189,6 +189,27 @@ def nearest_cell(node_map: dict, xy: tuple[float, float], tol_m: float) -> tuple
     return best
 
 
+def _chain_stats(node_map: dict, chain: list) -> tuple[float, float, float]:
+    """Gain, loss and technical ground along a chain of cells.
+
+    Altitude is read like any line over the graph; technical ground is what
+    the chain covers arriving at cells the athlete's descents called so.
+    """
+    known = [cell for cell in chain if cell in node_map]
+    if len(known) < 2:
+        return 0.0, 0.0, 0.0
+    cum = [0.0]
+    technical = 0.0
+    for a, b in pairwise(known):
+        step = _dist_xy(_xy(node_map, a), _xy(node_map, b))
+        cum.append(cum[-1] + step)
+        if node_map[b]["grade"]:
+            technical += step
+    profile = analysis_graph.ground_profile(cum, [node_map[cell]["ele"] for cell in known])
+    descent = [None if value is None else -value for value in profile]
+    return analysis_graph.profile_gain(profile), analysis_graph.profile_gain(descent), technical
+
+
 def _tangent(node_map: dict, a, b) -> tuple[float, float]:
     axy = _xy(node_map, a)
     bxy = _xy(node_map, b)
@@ -213,7 +234,9 @@ def find_variants(
         marks: existing verdicts keyed by junction ground position (metres).
 
     Returns:
-        One dict per surviving candidate, with status and drawn-ready cell path.
+        One dict per surviving candidate, with status and drawn-ready cell path;
+        ``delta_loss_m`` and ``delta_technical_m`` ride along for whoever
+        estimates the variant's time.
     """
     route_set = set(cells)
     out: list[dict] = []
@@ -269,11 +292,8 @@ def find_variants(
             steps = [exit_step] + [
                 next(s for s in adjacency.get(path[k], []) if s["to"] == path[k + 1]) for k in range(len(path) - 1)
             ]
-            gain = sum(s["gain"] for s in steps)
-            main_gain = sum(
-                next((s["gain"] for s in adjacency.get(cells[k], []) if s["to"] == cells[k + 1]), 0.0)
-                for k in range(i, j)
-            )
+            gain, loss, technical = _chain_stats(node_map, path)
+            main_gain, main_loss, main_technical = _chain_stats(node_map, cells[i : j + 1])
             confident = sum(s["len"] for s in steps if s["passes"] >= 2 or s["on_path"] >= 1)
             status = (
                 "confirmada"
@@ -298,6 +318,8 @@ def find_variants(
                     "main_m": round(main_len),
                     "delta_m": round(full_len - main_len),
                     "delta_gain_m": round(gain - main_gain),
+                    "delta_loss_m": loss - main_loss,
+                    "delta_technical_m": technical - main_technical,
                     "status": status,
                     "grade": grade,
                     "path": [[c[0], c[1]] for c in path],

@@ -491,6 +491,39 @@ class OsmPath(Base, TimestampMixin):
     cache_date: Mapped[date] = mapped_column(Date, nullable=False, comment="Day the extract was taken")
 
 
+class OsmWater(Base, TimestampMixin):
+    """One mapped water point a route guide can mention.
+
+    Imported with the rest of the cartography, never fetched per request. The
+    map's own distinction is kept: a ``font`` is tagged as drinking water, a
+    ``spring`` is a source nobody vouches for.
+
+    Attributes:
+        osm_id: The OpenStreetMap node id.
+        kind: ``font`` or ``spring``.
+        name: Its name, when mapped.
+        lat: Latitude.
+        lng: Longitude.
+        cache_date: Day the extract was taken.
+    """
+
+    __tablename__ = "analysis_osm_waters"
+
+    osm_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, comment="OpenStreetMap node id")
+    kind: Mapped[str] = mapped_column(String(length=8), nullable=False, comment="font / spring")
+    name: Mapped[str | None] = mapped_column(String(length=256), nullable=True, comment="Name, when mapped")
+    lat: Mapped[float] = mapped_column(Float, nullable=False, comment="Latitude")
+    lng: Mapped[float] = mapped_column(Float, nullable=False, comment="Longitude")
+    cache_date: Mapped[date] = mapped_column(Date, nullable=False, comment="Day the extract was taken")
+
+    __table_args__ = (
+        CheckConstraint(
+            f"kind IN ({analysis_constants.trail_water_kind_sql_list()})", name="ck_analysis_osm_waters_kind"
+        ),
+        Index("ix_analysis_osm_waters_position", "lat", "lng"),
+    )
+
+
 class TrailMark(Base, TimestampMixin):
     """What the athlete says about one stretch the detector claimed.
 

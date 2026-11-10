@@ -688,6 +688,86 @@ def replace_osm_paths(
     return len(paths)
 
 
+def replace_osm_waters(
+    waters: Sequence[analysis_contracts.OsmWaterRecord],
+    db: Session,
+) -> int:
+    """Store imported water points, replacing what the extract re-describes.
+
+    Args:
+        waters: The water points the extract carries.
+        db: Database session.
+
+    Returns:
+        The number of points written.
+    """
+    for water in waters:
+        values = {
+            "kind": water.kind,
+            "name": water.name,
+            "lat": water.lat,
+            "lng": water.lng,
+            "cache_date": water.cache_date,
+        }
+        db.execute(
+            pg_insert(analysis_models.OsmWater)
+            .values(osm_id=water.osm_id, **values)
+            .on_conflict_do_update(index_elements=[analysis_models.OsmWater.osm_id], set_=values)
+        )
+    return len(waters)
+
+
+def list_osm_waters_in_box(
+    min_lat: float,
+    max_lat: float,
+    min_lng: float,
+    max_lng: float,
+    db: Session,
+) -> list[analysis_models.OsmWater]:
+    """Return the stored water points inside an area.
+
+    Args:
+        min_lat: South edge of the area.
+        max_lat: North edge.
+        min_lng: West edge.
+        max_lng: East edge.
+        db: Database session.
+
+    Returns:
+        The water points in the box.
+    """
+    return list(
+        db.scalars(
+            select(analysis_models.OsmWater).where(
+                analysis_models.OsmWater.lat >= min_lat,
+                analysis_models.OsmWater.lat <= max_lat,
+                analysis_models.OsmWater.lng >= min_lng,
+                analysis_models.OsmWater.lng <= max_lng,
+            )
+        )
+    )
+
+
+def list_trail_session_technical_m(user_id: int, method: str, db: Session) -> dict[int, float]:
+    """Technical ground per measured session of one athlete.
+
+    Args:
+        user_id: The athlete.
+        method: The detector model stamp the sessions were measured with.
+        db: Database session.
+
+    Returns:
+        ``activity_id -> technical metres`` for every session measured.
+    """
+    rows = db.execute(
+        select(analysis_models.TrailSession.activity_id, analysis_models.TrailSession.technical_m).where(
+            analysis_models.TrailSession.user_id == user_id,
+            analysis_models.TrailSession.method == method,
+        )
+    )
+    return {activity_id: technical_m for activity_id, technical_m in rows}
+
+
 def get_osm_cache_date(db: Session) -> date | None:
     """Return the day of the newest stored OpenStreetMap extract.
 

@@ -243,6 +243,28 @@ class OsmPathRecord:
 
 
 @dataclass(frozen=True)
+class OsmWaterRecord:
+    """One mapped water point, as an extract described it.
+
+    Attributes:
+        osm_id: The OpenStreetMap node id.
+        kind: ``font`` (drinking water) or ``spring`` (a source the map does not
+            promise is drinkable).
+        name: Its name, when mapped.
+        lat: Latitude.
+        lng: Longitude.
+        cache_date: Day the extract was taken.
+    """
+
+    osm_id: int
+    kind: str
+    name: str | None
+    lat: float
+    lng: float
+    cache_date: date
+
+
+@dataclass(frozen=True)
 class OsmMatchRecord:
     """Which mapped way a measured stretch lies on, and where along it.
 

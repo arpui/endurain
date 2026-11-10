@@ -381,6 +381,25 @@ def get_route_course(
     )
 
 
+@router.get(
+    "/routes/{route_id}/guide",
+    response_model=analysis_schema.RouteGuideRead,
+)
+def get_route_guide(
+    route_id: core_dependencies.PositiveId,
+    _check_scopes: Annotated[Callable, Security(auth_dependencies.check_scopes, scopes=["analysis:read"])],
+    token_user_id: Annotated[int, Depends(auth_dependencies.get_sub_from_access_token)],
+    db: Annotated[Session, Depends(core_database.get_db)],
+) -> analysis_schema.RouteGuideRead:
+    """A designed route as a self-contained guide pack.
+
+    The line with altitude, ground distance and estimated time, and every
+    event and variant a phone or watch announces along it - built to be
+    downloaded once and replayed offline.
+    """
+    return analysis_service.get_route_guide(route_id, token_user_id, db)
+
+
 @router.post(
     "/routes/{route_id}/variants/marks",
     response_model=None,
