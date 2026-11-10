@@ -95,6 +95,41 @@ def corridor(from_latlng: tuple[float, float], to_latlng: tuple[float, float]) -
     return straight, cutoff_m, boxes
 
 
+def corridor_around(points: list[tuple[float, float]]) -> dict:
+    """The load boxes for anchors spread over one design.
+
+    Wider the farther apart the anchors sit, capped so a design never loads
+    the world; the cartographic box covers the same ground in degrees.
+    """
+    xys = [analysis_graph.to_xy(lat, lng) for lat, lng in points]
+    spread = max(
+        (_ground_m(a, b) for i, a in enumerate(xys) for b in xys[i + 1 :]),
+        default=0.0,
+    )
+    pad_m = min(max(spread, 2000.0), 14000.0)
+    cell = _C.TRAIL_GRAPH_CELL_M
+    min_x = math.floor((min(xy[0] for xy in xys) - pad_m) / cell)
+    max_x = math.ceil((max(xy[0] for xy in xys) + pad_m) / cell)
+    min_y = math.floor((min(xy[1] for xy in xys) - pad_m) / cell)
+    max_y = math.ceil((max(xy[1] for xy in xys) + pad_m) / cell)
+    corner_a = analysis_graph.to_latlng(min_x * cell, min_y * cell)
+    corner_b = analysis_graph.to_latlng(max_x * cell, max_y * cell)
+    return {
+        "graph": (min_x, max_x, min_y, max_y),
+        "ways": (
+            min(corner_a[0], corner_b[0]),
+            max(corner_a[0], corner_b[0]),
+            min(corner_a[1], corner_b[1]),
+            max(corner_a[1], corner_b[1]),
+        ),
+    }
+
+
+def chain_is_mapped(steps: list[dict]) -> bool:
+    """Whether a walked chain rests at some point on never-crossed map ground."""
+    return any(step.get("kind") == "way" and not (step.get("passes", 0) > 0 or step.get("walked")) for step in steps)
+
+
 def build_layers(
     from_latlng: tuple[float, float],
     to_latlng: tuple[float, float],
@@ -124,19 +159,19 @@ def build_layers(
             the map offers anything to start from.
     """
     node_map, adjacency = analysis_graph.graph_from_rows(nodes, edges)
-    _add_way_layer(node_map, adjacency, ways, crossed)
-    _link_layers(node_map, adjacency)
+    add_way_layer(node_map, adjacency, ways, crossed)
+    link_layers(node_map, adjacency)
 
     a_xy = analysis_graph.to_xy(*from_latlng)
     b_xy = analysis_graph.to_xy(*to_latlng)
-    start_key = _anchor(node_map, adjacency, a_xy, from_latlng)
-    target_key = _anchor(node_map, adjacency, b_xy, to_latlng)
+    start_key = anchor_point(node_map, adjacency, a_xy, from_latlng)
+    target_key = anchor_point(node_map, adjacency, b_xy, to_latlng)
     if start_key is None or target_key is None:
         raise core_exceptions.InvalidInputError("an endpoint sits on neither walked nor mapped ground")
     return node_map, adjacency, start_key, target_key
 
 
-def _add_way_layer(
+def add_way_layer(
     node_map: dict,
     adjacency: dict,
     ways: list[tuple[int, dict | None, list]],
@@ -189,7 +224,7 @@ def _add_way_layer(
             adjacency.setdefault(keys[k + 1], []).append({**step, "to": keys[k]})
 
 
-def _link_layers(node_map: dict, adjacency: dict) -> None:
+def link_layers(node_map: dict, adjacency: dict) -> None:
     """Join mapped vertices to crossed cells that meet at a trailhead."""
     link = _C.TRAIL_ROUTE_GEN_LINK_M
     mapped_grid: dict[tuple[int, int], list[tuple]] = defaultdict(list)
@@ -213,7 +248,7 @@ def _link_layers(node_map: dict, adjacency: dict) -> None:
             adjacency.setdefault(other, []).append({"to": key, "len": d, "kind": "link", "passes": 0})
 
 
-def _anchor(node_map: dict, adjacency: dict, xy: tuple[float, float], latlng: tuple[float, float]) -> tuple | None:
+def anchor_point(node_map: dict, adjacency: dict, xy: tuple[float, float], latlng: tuple[float, float]) -> tuple | None:
     """Resolve a drawn endpoint onto the network.
 
     First the athlete's own ground, then the map's vertices, then a synthetic
@@ -265,13 +300,14 @@ def plan_between(
     target: tuple,
     cutoff_m: float,
     mode: str,
+    prefer: set | None = None,
 ) -> list[dict] | None:
     """The mode's cheapest chain of steps between two network nodes.
 
     Returns the steps taken, each carrying its origin and destination nodes,
     or ``None`` when nothing inside the corridor connects the pair.
     """
-    weight_of = _weights_for(mode, node_map)
+    weight_of = _weights_for(mode, node_map, prefer)
     dist = {start: 0.0}
     prev: dict[tuple, dict] = {}
     heap = [(0.0, 0, start)]
@@ -305,7 +341,7 @@ def plan_between(
     return None
 
 
-def _weights_for(mode: str, node_map: dict):
+def _weights_for(mode: str, node_map: dict, prefer: set | None = None):
     """The mode's cost function over one step into one node."""
 
     def weight(u: tuple, step: dict) -> float:
@@ -315,6 +351,8 @@ def _weights_for(mode: str, node_map: dict):
             # walk_between: the per-pass mean length encodes detours, not the
             # distance a plan now covering that edge would actually walk
             base = max(_ground_m(node_map[u]["xy"], node_map[step["to"]]["xy"]), 5.0)
+            if prefer is not None and u in prefer and step["to"] in prefer:
+                base *= 0.5  # ground the athlete chose and repeated wins ties
         else:
             base = max(step["len"], 5.0)
         if kind == "link":

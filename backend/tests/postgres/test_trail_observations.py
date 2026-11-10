@@ -478,6 +478,48 @@ class TestRouteConnect:
             assert res2.walked == [False]
             assert len(res2.geometry) == 2
 
+    def test_a_gap_with_no_walked_chain_is_carried_by_a_mapped_way(self, pg_factory):
+        import math
+
+        ensure_user(pg_factory, _USER_ID)
+        ref_lat = analysis_constants.TRAIL_GRAPH_REF_LAT
+        ref_lng = analysis_constants.TRAIL_GRAPH_REF_LNG
+        cell_m = analysis_constants.TRAIL_GRAPH_CELL_M
+        step_lng = cell_m / (111320.0 * math.cos(math.radians(ref_lat)))
+        # two crossed cells far apart with NO walked chain between them,
+        # and a mapped way one cell to the side that connects the spots
+        nodes = [
+            {"x": k, "y": 0, "lat": ref_lat, "lng": ref_lng + k * step_lng, "ele": 100.0, "visits": 1, "grade": ""}
+            for k in (0, 10)
+        ]
+        way_lat = ref_lat + cell_m / 111195.0
+        way = analysis_contracts.OsmPathRecord(
+            way_id=77002,
+            name=None,
+            tags={"highway": "path"},
+            geometry=[(way_lat, ref_lng + k * step_lng) for k in range(11)],
+            length_m=150.0,
+            min_lat=way_lat,
+            min_lng=ref_lng,
+            max_lat=way_lat,
+            max_lng=ref_lng + 10 * step_lng,
+            cache_date=date(2026, 11, 1),
+        )
+        with pg_factory() as db:
+            analysis_crud.replace_user_graph(_USER_ID, nodes, [], db)
+            analysis_crud.replace_osm_paths([way], db)
+            db.commit()
+            res = analysis_service.connect_route(
+                _USER_ID,
+                analysis_schema.RouteConnectCreate(points=[[ref_lat, ref_lng], [ref_lat, ref_lng + 10 * step_lng]]),
+                db,
+            )
+            assert res.carried == ["mapped"]
+            assert res.walked == [False]
+            # the line leaves the straight: it bends through the mapped way
+            assert len(res.geometry) > 2
+            assert any(abs(pt[0] - way_lat) < 1e-9 for pt in res.geometry)
+
 
 class TestSegmentCrossings:
     """Named ground on both axes: the along-segment and along-track spans, and
