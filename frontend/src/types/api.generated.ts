@@ -11148,6 +11148,8 @@ export interface components {
          *     Attributes:
          *         geometry: Ordered ``[lat, lng]`` polyline; snapped stretches follow the
          *             graph, unmatched stretches keep the straight line.
+         *         carried: One kind per anchor-to-anchor stretch: whose network carried
+         *             it - walked ground, mapped ground never crossed, or none.
          *         walked: One flag per anchor-to-anchor stretch: whether the athlete's
          *             own ground could carry it.
          */
@@ -11156,6 +11158,8 @@ export interface components {
             geometry: number[][];
             /** Walked */
             walked: boolean[];
+            /** Carried */
+            carried: ("walked" | "mapped" | "straight")[];
         };
         /**
          * RouteCreate
