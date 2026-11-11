@@ -1279,6 +1279,9 @@ class RouteConnectRead(BaseModel):
             graph, unmatched stretches keep the straight line.
         carried: One kind per anchor-to-anchor stretch: whose network carried
             it - walked ground, mapped ground never crossed, or none.
+        spans: One index per anchor-to-anchor stretch: the position in
+            ``geometry`` where that stretch ends (inclusive); stretches share
+            their boundary point.
         walked: One flag per anchor-to-anchor stretch: whether the athlete's
             own ground could carry it.
     """
@@ -1288,6 +1291,7 @@ class RouteConnectRead(BaseModel):
     geometry: list[list[float]]
     walked: list[StrictBool]
     carried: list[Literal["walked", "mapped", "straight"]]
+    spans: list[StrictInt]
 
 
 class SegmentNetworkSegmentRead(BaseModel):

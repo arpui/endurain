@@ -49,6 +49,8 @@ export interface MapOverlay {
   weight?: number
   /** Stroke opacity in [0, 1]; providers default to their own emphasis. */
   opacity?: number
+  /** Dash pattern in pixels (dash, gap); providers draw solid without it. */
+  dashArray?: string
   /** Called when the viewer picks the overlay on the map. */
   onSelect?: () => void
   /** Non-interactive dots with tooltips: plan endpoints, water points. */

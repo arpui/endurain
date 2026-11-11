@@ -1039,6 +1039,8 @@ describe('designed routes', () => {
         [42.3, 1.50018],
       ],
       walked: [true],
+      carried: ['walked'],
+      spans: [1],
     } satisfies Schemas['RouteConnectRead'])
     const res = await connectRoutePoints([
       { lat: 42.3, lng: 1.5 },
@@ -1055,6 +1057,8 @@ describe('designed routes', () => {
       }),
     })
     expect(res.walked).toEqual([true])
+    expect(res.carried).toEqual(['walked'])
+    expect(res.spans).toEqual([1])
     expect(res.points[1]).toEqual({ lat: 42.3, lng: 1.50018 })
   })
 

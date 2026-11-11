@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Download, Pencil, Plus, Trash2, Wand2, X } from '@lucide/vue'
 
@@ -32,7 +32,7 @@ import type { RouteGenMode, TrailVariant } from '@/features/analysis/types'
 import { gradeTrailWay } from '@/features/analysis/utils/trailDegree'
 import { downloadBlob } from '@/lib/download'
 import { themeColor } from '@/lib/themeColor'
-import type { DesignRoute } from '@/features/analysis/types'
+import type { DesignRoute, RoutePreview } from '@/features/analysis/types'
 import type { GeoPoint } from '@/composables/useMapProvider'
 
 const { t, locale } = useI18n()
@@ -189,6 +189,56 @@ const canSave = computed(() => draftName.value.trim().length > 0 && (draft.value
 const snapMode = ref(true)
 const connectFailed = ref(false)
 
+// live preview: shortly after the drawing pauses, the server shapes the anchors
+// and the shaped line rides over the raw one - what is saved is what is seen.
+// A failed or stale answer is simply no answer: the raw line stands alone.
+const preview = ref<(RoutePreview & { source: GeoPoint[] }) | null>(null)
+let previewTimer: ReturnType<typeof setTimeout> | null = null
+let previewAbort: AbortController | null = null
+
+function refreshPreview(): void {
+  if (previewTimer !== null) {
+    clearTimeout(previewTimer)
+    previewTimer = null
+  }
+  previewAbort?.abort()
+  previewAbort = null
+  preview.value = null
+  const points = draft.value
+  if (!snapMode.value || !points || points.length < 2) {
+    return
+  }
+  previewTimer = setTimeout(() => {
+    previewTimer = null
+    const controller = new AbortController()
+    previewAbort = controller
+    connectRoutePoints(points, controller.signal)
+      .then((shaped) => {
+        // only the draft still on screen owns the answer
+        if (draft.value === points) {
+          preview.value = {
+            points: shaped.points,
+            carried: shaped.carried,
+            spans: shaped.spans,
+            source: points,
+          }
+        }
+      })
+      .catch(() => {
+        // a preview is a courtesy
+      })
+  }, 350)
+}
+
+watch(draft, refreshPreview)
+watch(snapMode, refreshPreview)
+onBeforeUnmount(() => {
+  if (previewTimer !== null) {
+    clearTimeout(previewTimer)
+  }
+  previewAbort?.abort()
+})
+
 function startNew(): void {
   draft.value = []
   editingId.value = null
@@ -254,11 +304,16 @@ async function saveDraft(): Promise<void> {
   connectFailed.value = false
   let points = [...draft.value]
   if (snapMode.value) {
-    try {
-      points = (await connectRoutePoints(points)).points
-    } catch {
-      connectFailed.value = true
-      return
+    if (preview.value && preview.value.source === draft.value) {
+      // the answer on screen is for exactly these anchors: save it, no round two
+      points = preview.value.points
+    } else {
+      try {
+        points = (await connectRoutePoints(points)).points
+      } catch {
+        connectFailed.value = true
+        return
+      }
     }
   }
   const name = draftName.value.trim()
@@ -403,6 +458,7 @@ function confirmDelete(): void {
           :highlight="routeVariantHighlight"
           :endpoints="genEndpoints"
           :center="routes[0]?.points[0] ?? null"
+          :preview="preview"
           :water="guide?.water ?? []"
           :picking="genOpen"
           @select="pick"
