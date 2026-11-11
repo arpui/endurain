@@ -195,6 +195,7 @@ export function createLeafletMapProvider(config: LeafletMapProviderConfig = {}):
               color: overlay.color,
               weight: overlay.weight ?? 6,
               opacity: overlay.opacity ?? 0.85,
+              dashArray: overlay.dashArray,
             }).addTo(map)
             if (overlay.name) {
               lineRef.bindTooltip(overlay.name)

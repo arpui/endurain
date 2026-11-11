@@ -699,6 +699,17 @@ export interface DesignRoute {
   createdAt: string
 }
 
+/** A live answer for a drawn route: the shaped line with one kind and one
+end index per anchor-to-anchor stretch (the stretches share their boundary). */
+export interface RoutePreview {
+  /** The shaped geometry, in order. */
+  points: GeoPoint[]
+  /** Whose network carried each stretch. */
+  carried: ('walked' | 'mapped' | 'straight')[]
+  /** Position in points where each stretch ends, inclusive. */
+  spans: number[]
+}
+
 /** One named segment as the athlete's own network knows it. */
 export interface SegmentNetworkItem {
   /** The segment this is. */

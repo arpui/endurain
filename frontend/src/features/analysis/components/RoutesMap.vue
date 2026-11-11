@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-import type { DesignRoute, SegmentNetworkItem } from '@/features/analysis/types'
+import type { DesignRoute, RoutePreview, SegmentNetworkItem } from '@/features/analysis/types'
 import { gradeTrailWay } from '@/features/analysis/utils/trailDegree'
 import type {
   GeoPoint,
@@ -33,6 +33,8 @@ const props = defineProps<{
   endpoints?: GeoPoint[] | null
   /** Where to open when there is nothing to frame yet: last route's start. */
   center?: GeoPoint | null
+  /** The server's shaping of the draft so far: drawn over the raw line. */
+  preview?: RoutePreview | null
   /** Mapped water near the picked route, drawn as dots the athlete can read. */
   water?: { point: GeoPoint; name: string | null; kind: 'font' | 'spring' }[]
   /** Whether map taps pick plan endpoints instead of doing nothing. */
@@ -132,14 +134,37 @@ function overlays(): MapOverlay[] {
       opacity: 0.9,
     })
   }
+  if (props.preview && props.preview.points.length >= 2) {
+    // the connect answer over the raw draft: walked ground solid, map ground
+    // dashed (never crossed, still to confirm), nothing carrying it a pale thin line
+    const preview = props.preview
+    const color = themeColor('--color-effort')
+    let start = 0
+    preview.carried.forEach((kind, stretch) => {
+      const end = preview.spans[stretch] ?? preview.points.length - 1
+      const slice = preview.points.slice(start, end + 1)
+      start = end
+      if (slice.length < 2) {
+        return
+      }
+      list.push(
+        kind === 'walked'
+          ? { points: slice, color, weight: 6, opacity: 0.9 }
+          : kind === 'mapped'
+            ? { points: slice, color, weight: 5, opacity: 0.8, dashArray: '10 8' }
+            : { points: slice, color, weight: 2, opacity: 0.5 },
+      )
+    })
+  }
   if (props.draft && props.draft.length > 0) {
     const draft = props.draft
     const handles = handleIndices(draft)
     list.push({
       points: draft,
       color: themeColor('--color-effort'),
-      weight: 5,
-      opacity: 0.95,
+      // under a preview the raw line steps back: the shaped one is the answer
+      weight: props.preview ? 2 : 5,
+      opacity: props.preview ? 0.4 : 0.95,
       vertices: handles.flatMap((index) => {
         const point = draft[index]
         return point ? [point] : []
@@ -207,6 +232,7 @@ watch(
     props.highlight,
     props.endpoints,
     props.water,
+    props.preview,
     props.picking,
   ],
   () => {

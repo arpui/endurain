@@ -112,6 +112,36 @@ describe('routes map editor', () => {
     expect(updateCalls).toBeGreaterThan(before)
   })
 
+  it('draws the connect preview as one line per stretch, styled by kind', async () => {
+    await mountMap({
+      draft: chain(3),
+      preview: {
+        points: chain(5),
+        carried: ['walked', 'mapped', 'straight', 'walked'],
+        spans: [1, 2, 3, 4],
+      },
+    })
+    const overs = lastOptions?.overlays ?? []
+    // four two-point stretches, sliced at the shared boundaries
+    const stretches = overs.filter(
+      (overlay) => (overlay.points?.length ?? 0) === 2 && !overlay.vertices,
+    )
+    expect(stretches).toHaveLength(4)
+    // mapped ground stands out dashed; the raw draft steps back under the answer
+    expect(stretches.filter((overlay) => overlay.dashArray)).toHaveLength(1)
+    const draftOverlay = overs.find((overlay) => overlay.vertices)
+    expect(draftOverlay?.weight).toBe(2)
+  })
+
+  it('redraws when a preview arrives or is withdrawn', async () => {
+    const wrapper = await mountMap({ draft: chain(2) })
+    await wrapper.setProps({ preview: { points: chain(3), carried: ['walked'], spans: [2] } })
+    expect(updateCalls).toBeGreaterThan(0)
+    const afterArrival = updateCalls
+    await wrapper.setProps({ preview: null })
+    expect(updateCalls).toBeGreaterThan(afterArrival)
+  })
+
   it('redraws when picking state, endpoints or water change', async () => {
     const wrapper = await mountMap({ draft: [] })
     await wrapper.setProps({ picking: true })

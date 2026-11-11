@@ -38,6 +38,8 @@ vi.mock('@/features/analysis/components/RoutesMap.vue', () => ({
       endpoints: { type: Array, default: null },
       water: { type: Array, default: undefined },
       picking: { type: Boolean, default: false },
+      center: { type: Object, default: null },
+      preview: { type: Object, default: null },
     },
     template: '<div class="map-stub" />',
   },
@@ -142,5 +144,63 @@ describe('routes view', () => {
     map.vm.$emit('removeVertex', 0)
     await flushPromises()
     expect(map.props('draft')).toHaveLength(0)
+  })
+
+  it('previews the shaped line after a pause, and drops it on the next edit', async () => {
+    // teach the connect answer alongside the list
+    const answers = routeAnswers()
+    vi.mocked(apiFetch).mockImplementation((url: unknown) => {
+      const key = String(url)
+      if (key === '/analysis/routes/connect') {
+        return Promise.resolve({
+          geometry: [
+            [42.4, 1.4],
+            [42.5, 1.5],
+            [42.6, 1.6],
+          ],
+          carried: ['walked', 'mapped'],
+          spans: [1, 2],
+          walked: [true, false],
+        })
+      }
+      if (key in answers) return Promise.resolve(answers[key])
+      return Promise.reject(new Error(`unexpected request: ${key}`))
+    })
+    const wrapper = mount(RoutesView, {
+      global: {
+        plugins: [pinia, router, i18n, [VueQueryPlugin, { queryClient: new QueryClient() }]],
+        stubs: { teleport: true },
+      },
+    })
+    await flushPromises()
+    wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('New route'))
+      ?.trigger('click')
+    await flushPromises()
+    const map = wrapper.findComponent({ name: 'RoutesMap' })
+    vi.useFakeTimers()
+    try {
+      map.vm.$emit('addPoint', { lat: 42.31, lng: 1.51 })
+      map.vm.$emit('addPoint', { lat: 42.32, lng: 1.52 })
+      await flushPromises()
+      expect(map.props('preview')).toBeNull() // not asked yet: the drawing has not paused
+      await vi.advanceTimersByTimeAsync(400)
+      await flushPromises()
+      const shaped = map.props('preview') as {
+        carried: string[]
+        spans: number[]
+        points: unknown[]
+      }
+      expect(shaped.carried).toEqual(['walked', 'mapped'])
+      expect(shaped.spans).toEqual([1, 2])
+      expect(shaped.points).toHaveLength(3)
+      // a new edit retires the stale answer, before the next question lands
+      map.vm.$emit('addPoint', { lat: 42.33, lng: 1.53 })
+      await flushPromises()
+      expect(map.props('preview')).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })

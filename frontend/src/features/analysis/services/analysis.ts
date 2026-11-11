@@ -57,6 +57,7 @@ import type {
   TrailNetworkWay,
   TrailSection,
   DesignRoute,
+  RoutePreview,
   SegmentNetwork,
   SegmentNetworkItem,
   TrailNetwork,
@@ -939,21 +940,22 @@ export async function updateRoute(
 }
 
 /**
- * Shape clicked anchors along the athlete's own walked ground.
+ * Shape clicked anchors along the ground the network knows.
  *
- * Consecutive anchors that land on crossed cells are joined by the shortest
- * walked chain of the personal graph; stretches the network cannot carry keep
- * the straight line and are reported unwalked.
+ * Stretches ride the athlete's walked graph first and mapped ways where
+ * walking cannot carry them; every stretch reports its kind, and stretches
+ * share their boundary point in the geometry.
  *
  * @param points - The clicked polyline, in order.
  * @param signal - Optional abort signal.
- * @returns The walked geometry and one flag per stretch.
+ * @returns The shaped geometry, one flag and kind per stretch, and the
+ *   geometry index where each stretch ends.
  * @throws {HttpError} When the request fails.
  */
 export async function connectRoutePoints(
   points: GeoPoint[],
   signal?: AbortSignal,
-): Promise<{ points: GeoPoint[]; walked: boolean[] }> {
+): Promise<RoutePreview & { walked: boolean[] }> {
   const dto = await apiFetch<Schemas['RouteConnectRead']>('/analysis/routes/connect', {
     method: 'POST',
     signal,
@@ -963,6 +965,8 @@ export async function connectRoutePoints(
     points: (dto.geometry ?? []).flatMap(([lat, lng]) =>
       lat === undefined || lng === undefined ? [] : [{ lat, lng }],
     ),
+    carried: (dto.carried ?? []) as RoutePreview['carried'],
+    spans: (dto.spans ?? []) as number[],
     walked: (dto.walked ?? []) as boolean[],
   }
 }
